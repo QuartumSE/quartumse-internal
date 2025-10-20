@@ -82,6 +82,7 @@ This will:
 - Run classical shadows estimation
 - Compare to baseline direct measurement
 - Generate provenance manifests in `data/manifests/`
+- Save shot data to `data/shots/` (Parquet format with diagnostics)
 - Print metrics (SSR, CI coverage)
 
 ### 6. Explore the Codebase
@@ -93,7 +94,10 @@ tree src/quartumse/  # or use `ls -R src/quartumse/` on Windows
 # View a sample manifest
 ls data/manifests/
 
-# Generate an HTML report from a manifest
+# View shot data files
+ls data/shots/
+
+# Generate an HTML report from a manifest (includes shot diagnostics)
 quartumse report data/manifests/<experiment-id>.json --output report.html
 ```
 

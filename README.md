@@ -85,6 +85,7 @@ Output:
 1.0*ZZZ: 1.0000 ± 0.0398
 
 Provenance manifest saved: data/manifests/a3f2b...json
+Shot data saved: data/shots/a3f2b...parquet
 ```
 
 ---
@@ -105,8 +106,25 @@ Measure once, estimate many observables offline:
 
 Every experiment generates:
 - **JSON Manifest:** Circuit, backend calibration, mitigation config, seeds, versions
-- **Shot Data:** Parquet files with raw measurement outcomes
-- **HTML/PDF Reports:** Human-readable experiment summaries
+- **Shot Data:** Parquet files with raw measurement outcomes + diagnostics
+  - Measurement basis distribution (X/Y/Z frequencies)
+  - Bitstring histograms (top outcome patterns)
+  - Qubit marginal probabilities (single-qubit statistics)
+- **HTML/PDF Reports:** Human-readable experiment summaries with integrated diagnostics
+
+**Replay capability:** Re-compute new observables from saved shot data without re-running on hardware.
+
+```python
+# Replay from saved manifest to compute new observables
+from quartumse import ShadowEstimator
+
+estimator = ShadowEstimator()
+new_observables = [Observable("XXX", coefficient=1.0)]
+result = estimator.replay_from_manifest(
+    "data/manifests/a3f2b...json",
+    observables=new_observables
+)
+```
 
 ### 📈 Cost-for-Accuracy Metrics
 
@@ -132,6 +150,7 @@ One API, multiple backends:
 - [x] Repository structure & CI/CD
 - [x] Provenance Manifest v1 schema
 - [x] Classical Shadows v0 (baseline)
+- [x] Shot data persistence + diagnostics
 - [x] S-T01 experiment scaffold (GHZ states)
 - [ ] Full S-T01 validation (SSR ≥ 1.2×, CI coverage ≥ 90%)
 - [ ] Starter experiments for C, O, B, M workstreams

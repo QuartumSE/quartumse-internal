@@ -9,7 +9,7 @@ from qiskit import QuantumCircuit
 from qiskit_aer import AerSimulator
 
 from quartumse import ShadowEstimator
-from quartumse.reporting.shot_data import ShotDataWriter
+from quartumse.reporting.shot_data import ShotDataDiagnostics, ShotDataWriter
 from quartumse.shadows import ShadowConfig
 from quartumse.shadows.core import Observable
 
@@ -91,12 +91,16 @@ class TestShadowEstimatorPersistence:
             parquet_files = list(shots_dir.glob("*.parquet"))
             assert len(parquet_files) == 1
 
-            # Verify we can load the shot data
+            # Verify manifest references the correct shot file
             from quartumse.reporting.manifest import ProvenanceManifest
 
             manifest_path = Path(result.manifest_path)
             manifest = ProvenanceManifest.from_json(manifest_path)
             experiment_id = manifest.schema.experiment_id
+
+            shot_path = Path(manifest.schema.shot_data_path)
+            assert shot_path.exists()
+            assert shot_path == estimator.shot_data_writer.shots_dir / f"{experiment_id}.parquet"
 
             loaded_bases, loaded_outcomes, loaded_num_qubits = (
                 estimator.shot_data_writer.load_shadow_measurements(experiment_id)
@@ -105,6 +109,19 @@ class TestShadowEstimatorPersistence:
             assert loaded_num_qubits == 2
             assert loaded_bases.shape == (50, 2)
             assert loaded_outcomes.shape == (50, 2)
+
+            # Diagnostics should be computable
+            diagnostics = estimator.shot_data_writer.summarize_shadow_measurements(experiment_id)
+            assert isinstance(diagnostics, ShotDataDiagnostics)
+            assert diagnostics.total_shots == 50
+
+            # Manifest validation should succeed when file is present
+            assert manifest.validate()
+
+            # Removing the shot file should trigger validation failure
+            shot_path.unlink()
+            with pytest.raises(FileNotFoundError):
+                manifest.validate()
 
     def test_replay_from_manifest(self):
         """Test replaying an experiment from saved manifest and shot data."""
@@ -211,3 +228,32 @@ class TestShadowEstimatorPersistence:
             assert set(replayed_result.observables.keys()) == set(
                 original_result.observables.keys()
             )
+
+
+def test_summarize_shadow_measurements_computes_expected_statistics():
+    """ShotDataWriter should compute intuitive diagnostics from toy data."""
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        writer = ShotDataWriter(Path(tmpdir))
+
+        experiment_id = "diag-test"
+        measurement_bases = np.array([[0, 1], [0, 1], [2, 2]])
+        measurement_outcomes = np.array([[0, 1], [0, 1], [1, 0]])
+
+        writer.save_shadow_measurements(
+            experiment_id, measurement_bases, measurement_outcomes, num_qubits=2
+        )
+
+        diagnostics = writer.summarize_shadow_measurements(experiment_id)
+
+        assert diagnostics.total_shots == 3
+        assert diagnostics.num_qubits == 2
+        assert diagnostics.measurement_basis_distribution["ZX"] == 2
+        assert diagnostics.measurement_basis_distribution["YY"] == 1
+
+        # Top bitstrings should include the repeated 01 outcome
+        assert diagnostics.bitstring_histogram.get("01", 0) >= 2
+
+        marginals = diagnostics.qubit_marginals
+        assert pytest.approx(marginals[0]["0"], 1e-6) == 2 / 3
+        assert pytest.approx(marginals[1]["1"], 1e-6) == 2 / 3

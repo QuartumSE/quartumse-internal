@@ -1,0 +1,121 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║                  QUARTUMSE QUICKSTART GUIDE                       ║
+║                       (5-Minute Setup)                            ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+┌───────────────────────────────────────────────────────────────────┐
+│ STEP 1: Launch Jupyter                                           │
+└───────────────────────────────────────────────────────────────────┘
+
+From terminal in: C:\Users\User\Desktop\Projects\QuartumSE
+
+Command:
+  jupyter notebook
+
+What happens:
+  → Terminal shows: "Jupyter Notebook is running at http://localhost:8888..."
+  → Browser opens automatically
+  → Keep terminal open (this is the server)
+
+
+┌───────────────────────────────────────────────────────────────────┐
+│ STEP 2: Open the Notebook                                        │
+└───────────────────────────────────────────────────────────────────┘
+
+In the browser:
+  1. Click: notebooks/ folder
+  2. Click: quickstart_shot_persistence.ipynb
+  3. Notebook opens in new tab
+
+
+┌───────────────────────────────────────────────────────────────────┐
+│ STEP 3: Run All Cells                                            │
+└───────────────────────────────────────────────────────────────────┘
+
+Two options:
+
+A) Run all at once:
+   - Click: Cell → Run All
+   - Wait ~5 seconds
+   - Scroll through output
+
+B) Run cell-by-cell:
+   - Click first cell
+   - Press: Shift+Enter (run and move to next)
+   - Repeat for each cell
+
+
+┌───────────────────────────────────────────────────────────────────┐
+│ WHAT YOU'LL SEE (Key Milestones)                                │
+└───────────────────────────────────────────────────────────────────┘
+
+✓ Cell 1-2:  Imports and circuit creation
+✓ Cell 5:    Estimation runs (~2s)
+✓ Cell 6:    Observable results displayed
+✓ Cell 7:    Parquet file created (~10 KB)
+✓ Cell 8-9:  Replay matches original exactly
+✓ Cell 10-11: NEW observables from SAME data
+
+
+┌───────────────────────────────────────────────────────────────────┐
+│ TROUBLESHOOTING                                                   │
+└───────────────────────────────────────────────────────────────────┘
+
+Problem: "ModuleNotFoundError: No module named 'quartumse'"
+Fix:     pip install -e .
+
+Problem: Jupyter won't open
+Fix:     Check terminal for port number, manually open:
+         http://localhost:8888
+
+Problem: Kernel dies
+Fix:     Click Kernel → Restart & Run All
+
+
+┌───────────────────────────────────────────────────────────────────┐
+│ KEYBOARD SHORTCUTS (In Jupyter)                                  │
+└───────────────────────────────────────────────────────────────────┘
+
+Shift+Enter    Run current cell, move to next
+Ctrl+Enter     Run current cell, stay on it
+A              Insert cell above
+B              Insert cell below
+DD             Delete cell
+Z              Undo delete
+
+
+┌───────────────────────────────────────────────────────────────────┐
+│ STOP JUPYTER (When Done)                                         │
+└───────────────────────────────────────────────────────────────────┘
+
+In the terminal where Jupyter is running:
+  Press: Ctrl+C
+  Type:  y
+  Press: Enter
+
+Browser tabs will close automatically.
+
+
+┌───────────────────────────────────────────────────────────────────┐
+│ WHERE TO FIND OUTPUT FILES                                       │
+└───────────────────────────────────────────────────────────────────┘
+
+QuartumSE/
+├── notebook_data/
+│   ├── manifests/
+│   │   └── <uuid>.json        ← Experiment metadata
+│   └── shots/
+│       └── <uuid>.parquet      ← Shadow measurement data
+
+
+┌───────────────────────────────────────────────────────────────────┐
+│ NEXT STEPS                                                        │
+└───────────────────────────────────────────────────────────────────┘
+
+1. Explore the notebook - modify shadow_size, add observables
+2. Read INSTALL_GUIDE.md for detailed setup instructions
+3. Check experiments/shadows/S_T01_ghz_baseline.py for CLI version
+4. Review PROJECT_BIBLE.md to understand the vision
+
+Questions? See: https://github.com/QuartumSE/quartumse/issues
+

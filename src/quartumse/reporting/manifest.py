@@ -15,7 +15,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class CircuitFingerprint(BaseModel):
@@ -35,6 +35,14 @@ class CircuitFingerprint(BaseModel):
             qasm = info.data.get("qasm3", "")
             return hashlib.sha256(qasm.encode()).hexdigest()[:16]
         return v
+
+    @model_validator(mode="after")
+    def ensure_hash(self) -> "CircuitFingerprint":
+        """Ensure a circuit hash is populated even if validator shortcuts."""
+
+        if self.circuit_hash is None:
+            self.circuit_hash = hashlib.sha256(self.qasm3.encode()).hexdigest()[:16]
+        return self
 
 
 class BackendSnapshot(BaseModel):
@@ -141,7 +149,7 @@ class ManifestSchema(BaseModel):
 
     # Execution context
     backend: BackendSnapshot
-    mitigation: MitigationConfig
+    mitigation: MitigationConfig = Field(default_factory=MitigationConfig)
     shadows: Optional[ShadowsConfig] = None
 
     # Results & data
@@ -217,13 +225,17 @@ class ProvenanceManifest:
         """Update the results summary."""
         self.schema.results_summary.update(results)
 
-    def validate(self) -> bool:
-        """Validate the manifest schema."""
-        try:
-            # Pydantic validation happens automatically
-            return True
-        except Exception:
-            return False
+    def validate(self, *, require_shot_file: bool = True) -> bool:
+        """Validate the manifest schema and ensure referenced artifacts exist."""
+
+        if require_shot_file:
+            shot_path = Path(self.schema.shot_data_path)
+            if not shot_path.exists():
+                raise FileNotFoundError(
+                    f"Shot data referenced by manifest is missing: {shot_path}"
+                )
+
+        return True
 
     def __repr__(self) -> str:
         return (

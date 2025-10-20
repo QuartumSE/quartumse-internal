@@ -69,3 +69,19 @@ def simple_observables_2q():
         Observable("ZZ", coefficient=1.0),
         Observable("XX", coefficient=1.0),
     ]
+def pytest_addoption(parser):
+    """Register no-op coverage options for offline test environments."""
+
+    parser.addoption(
+        "--cov",
+        action="append",
+        default=[],
+        help="No-op stub to satisfy pytest configuration when pytest-cov is unavailable.",
+    )
+    parser.addoption(
+        "--cov-report",
+        action="append",
+        default=[],
+        help="No-op stub to satisfy pytest configuration when pytest-cov is unavailable.",
+    )
+

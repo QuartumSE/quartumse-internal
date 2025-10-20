@@ -188,6 +188,7 @@ class ShadowEstimator(Estimator):
                 estimates,
                 shadow_size,
                 execution_time,
+                shot_data_path,
             )
             manifest_path = self.data_dir / "manifests" / f"{experiment_id}.json"
             manifest_path.parent.mkdir(parents=True, exist_ok=True)
@@ -293,6 +294,7 @@ class ShadowEstimator(Estimator):
         estimates: Dict,
         shadow_size: int,
         execution_time: float,
+        shot_data_path: Path,
     ) -> ProvenanceManifest:
         """Create provenance manifest for the experiment."""
         import platform
@@ -359,7 +361,7 @@ class ShadowEstimator(Estimator):
             backend=backend_snapshot,
             mitigation=self.mitigation_config,
             shadows=shadows_config,
-            shot_data_path=f"data/shots/{experiment_id}.parquet",
+            shot_data_path=str(shot_data_path.resolve()),
             results_summary=estimates,
             resource_usage=resource_usage,
             random_seed=self.shadow_config.random_seed,

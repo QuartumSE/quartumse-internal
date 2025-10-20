@@ -11,6 +11,7 @@ from typing import Any, Dict, List, Optional, Union
 from jinja2 import Template
 
 from quartumse.reporting.manifest import ProvenanceManifest
+from quartumse.reporting.shot_data import ShotDataDiagnostics, ShotDataWriter
 
 
 HTML_TEMPLATE = """
@@ -156,6 +157,34 @@ HTML_TEMPLATE = """
         </table>
     </div>
 
+    {% if shot_diagnostics %}
+    <div class="section">
+        <h2>Shot Diagnostics</h2>
+        <p><strong>Total Shots:</strong> {{ shot_diagnostics.total_shots }}</p>
+        <h3>Measurement Basis Distribution</h3>
+        <table>
+            <tr><th>Basis String</th><th>Count</th></tr>
+            {% for basis, count in shot_diagnostics.measurement_basis_distribution.items() %}
+            <tr><td>{{ basis }}</td><td>{{ count }}</td></tr>
+            {% endfor %}
+        </table>
+        <h3>Top Bitstrings</h3>
+        <table>
+            <tr><th>Bitstring</th><th>Count</th></tr>
+            {% for bitstring, count in shot_diagnostics.bitstring_histogram.items() %}
+            <tr><td>{{ bitstring }}</td><td>{{ count }}</td></tr>
+            {% endfor %}
+        </table>
+        <h3>Marginal Probabilities</h3>
+        <table>
+            <tr><th>Qubit</th><th>P(0)</th><th>P(1)</th></tr>
+            {% for qubit, probs in shot_diagnostics.qubit_marginals.items() %}
+            <tr><td>{{ qubit }}</td><td>{{ "{:.3f}".format(probs['0']) }}</td><td>{{ "{:.3f}".format(probs['1']) }}</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+
     <div class="section">
         <h2>Backend Calibration Snapshot</h2>
         <p><strong>Timestamp:</strong> {{ manifest.backend.calibration_timestamp }}</p>
@@ -194,14 +223,24 @@ HTML_TEMPLATE = """
 class Report:
     """Container for experiment report data."""
 
-    def __init__(self, manifest: ProvenanceManifest, plots: Optional[Dict[str, Any]] = None):
+    def __init__(
+        self,
+        manifest: ProvenanceManifest,
+        plots: Optional[Dict[str, Any]] = None,
+        shot_diagnostics: Optional[ShotDataDiagnostics] = None,
+    ):
         self.manifest = manifest
         self.plots = plots or {}
+        self.shot_diagnostics = shot_diagnostics
 
     def to_html(self, output_path: Optional[Union[str, Path]] = None) -> str:
         """Generate HTML report."""
         template = Template(HTML_TEMPLATE)
-        html = template.render(manifest=self.manifest.schema, now=datetime.utcnow().isoformat())
+        html = template.render(
+            manifest=self.manifest.schema,
+            now=datetime.utcnow().isoformat(),
+            shot_diagnostics=self.shot_diagnostics.to_dict() if self.shot_diagnostics else None,
+        )
 
         if output_path:
             Path(output_path).write_text(html)
@@ -228,7 +267,14 @@ class ReportGenerator:
     def from_manifest_file(manifest_path: Union[str, Path]) -> Report:
         """Create a report from a manifest JSON file."""
         manifest = ProvenanceManifest.from_json(manifest_path)
-        return Report(manifest)
+
+        shot_diagnostics = None
+        try:
+            shot_diagnostics = ShotDataWriter.summarize_parquet(manifest.schema.shot_data_path)
+        except FileNotFoundError:
+            shot_diagnostics = None
+
+        return Report(manifest, shot_diagnostics=shot_diagnostics)
 
     @staticmethod
     def batch_generate(

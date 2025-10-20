@@ -243,7 +243,7 @@ class Report:
         )
 
         if output_path:
-            Path(output_path).write_text(html)
+            Path(output_path).write_text(html, encoding='utf-8')
 
         return html
 

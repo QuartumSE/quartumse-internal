@@ -25,7 +25,7 @@ class CircuitFingerprint(BaseModel):
     num_qubits: int
     depth: int
     gate_counts: Dict[str, int] = Field(default_factory=dict)
-    circuit_hash: str = Field(description="SHA256 hash of QASM")
+    circuit_hash: Optional[str] = Field(default=None, description="SHA256 hash of QASM")
 
     @field_validator("circuit_hash", mode="before")
     @classmethod

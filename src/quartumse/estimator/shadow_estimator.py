@@ -1,11 +1,13 @@
 """Shadow-based estimator implementation."""
 
+import hashlib
 import time
 import uuid
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
+import pandas as pd
 from qiskit import QuantumCircuit, qasm3, transpile
 from qiskit.providers import Backend
 from qiskit_aer import AerSimulator
@@ -21,6 +23,7 @@ from quartumse.reporting.manifest import (
     ResourceUsage,
     ShadowsConfig,
 )
+from quartumse.reporting.shot_data import ShotDataWriter
 from quartumse.shadows.config import ShadowConfig, ShadowVersion
 from quartumse.shadows.core import Observable
 from quartumse.shadows.v0_baseline import RandomLocalCliffordShadows
@@ -70,6 +73,9 @@ class ShadowEstimator(Estimator):
 
         # Initialize shadow implementation based on version
         self.shadow_impl = self._create_shadow_implementation()
+        
+        # Initialize shot data writer
+        self.shot_data_writer = ShotDataWriter(self.data_dir)
 
     def _create_shadow_implementation(self):
         """Factory for shadow implementations."""
@@ -147,6 +153,14 @@ class ShadowEstimator(Estimator):
 
         measurement_outcomes = np.array(measurement_outcomes)
 
+        # Save shot data to Parquet
+        shot_data_path = self.shot_data_writer.save_shadow_measurements(
+            experiment_id=experiment_id,
+            measurement_bases=self.shadow_impl.measurement_bases,
+            measurement_outcomes=measurement_outcomes,
+            num_qubits=circuit.num_qubits,
+        )
+
         # Reconstruct shadows
         self.shadow_impl.reconstruct_classical_shadow(
             measurement_outcomes, self.shadow_impl.measurement_bases
@@ -201,6 +215,76 @@ class ShadowEstimator(Estimator):
 
         return max_shadow_size
 
+
+    def replay_from_manifest(
+        self,
+        manifest_path: Union[str, Path],
+        observables: Optional[List[Observable]] = None,
+    ) -> EstimationResult:
+        """
+        Replay an experiment from a saved manifest and shot data.
+
+        This allows re-estimation of observables from previously collected shot data
+        without re-executing circuits on the backend.
+
+        Args:
+            manifest_path: Path to the provenance manifest JSON file
+            observables: Optional new list of observables to estimate. If None,
+                        uses observables from the original manifest.
+
+        Returns:
+            EstimationResult with re-estimated observables
+        """
+        manifest_path = Path(manifest_path)
+        if not manifest_path.exists():
+            raise FileNotFoundError(f"Manifest not found: {manifest_path}")
+
+        # Load manifest
+        manifest = ProvenanceManifest.from_json(manifest_path)
+        experiment_id = manifest.schema.experiment_id
+
+        # Load shot data
+        measurement_bases, measurement_outcomes, num_qubits = (
+            self.shot_data_writer.load_shadow_measurements(experiment_id)
+        )
+
+        # Reconstruct shadows with loaded data
+        # Create temporary shadow implementation if needed
+        shadow_config = ShadowConfig(
+            version=ShadowVersion(manifest.schema.shadows.version),
+            shadow_size=manifest.schema.shadows.shadow_size,
+            random_seed=manifest.schema.random_seed,
+        )
+        shadow_impl = RandomLocalCliffordShadows(shadow_config)
+        shadow_impl.measurement_bases = measurement_bases
+        shadow_impl.reconstruct_classical_shadow(measurement_outcomes, measurement_bases)
+
+        # Use observables from manifest if not provided
+        if observables is None:
+            observables = [
+                Observable(obs_dict["pauli"], obs_dict.get("coefficient", 1.0))
+                for obs_dict in manifest.schema.observables
+            ]
+
+        # Estimate all observables
+        estimates = {}
+        for obs in observables:
+            estimate = shadow_impl.estimate_observable(obs)
+            estimates[str(obs)] = {
+                "expectation_value": estimate.expectation_value,
+                "variance": estimate.variance,
+                "ci_95": estimate.confidence_interval,
+                "ci_width": estimate.ci_width,
+            }
+
+        return EstimationResult(
+            observables=estimates,
+            shots_used=manifest.schema.shadows.shadow_size,
+            execution_time=0.0,  # No execution time for replay
+            backend_name=manifest.schema.backend.backend_name,
+            manifest_path=str(manifest_path),
+        )
+
     def _create_manifest(
         self,
         experiment_id: str,
@@ -227,17 +311,24 @@ class ShadowEstimator(Estimator):
             gate_name = instruction.operation.name
             gate_counts[gate_name] = gate_counts.get(gate_name, 0) + 1
 
+        circuit_hash = hashlib.sha256(qasm_str.encode()).hexdigest()[:16]
+        
         circuit_fp = CircuitFingerprint(
             qasm3=qasm_str,
             num_qubits=circuit.num_qubits,
             depth=circuit.depth(),
             gate_counts=gate_counts,
+            circuit_hash=circuit_hash,
         )
 
         # Backend snapshot
+        backend_version = getattr(self.backend, "version", "unknown")
+        if not isinstance(backend_version, str):
+            backend_version = str(backend_version)
+            
         backend_snapshot = BackendSnapshot(
             backend_name=self.backend.name,
-            backend_version=getattr(self.backend, "version", "unknown"),
+            backend_version=backend_version,
             num_qubits=self.backend.configuration().n_qubits,
             basis_gates=self.backend.configuration().basis_gates,
             calibration_timestamp=time.time(),
@@ -264,7 +355,7 @@ class ShadowEstimator(Estimator):
         manifest_schema = ManifestSchema(
             experiment_id=experiment_id,
             circuit=circuit_fp,
-            observables=[{"pauli": str(obs)} for obs in observables],
+            observables=[{"pauli": obs.pauli_string, "coefficient": obs.coefficient} for obs in observables],
             backend=backend_snapshot,
             mitigation=self.mitigation_config,
             shadows=shadows_config,
@@ -274,7 +365,7 @@ class ShadowEstimator(Estimator):
             random_seed=self.shadow_config.random_seed,
             quartumse_version=__version__,
             qiskit_version=qiskit.__version__,
-            python_version=f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.patch}",
+            python_version=f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
         )
 
         return ProvenanceManifest(manifest_schema)

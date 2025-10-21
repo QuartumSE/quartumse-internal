@@ -147,15 +147,21 @@ for exp in experiments/*/*.py; do python "$exp"; done
 
 ### Working with Jupyter Notebooks
 
+QuartumSE includes interactive notebooks demonstrating key features:
+
 ```bash
 # Start Jupyter
 jupyter notebook
 
-# Navigate to experiments/ and create a new notebook
-# Import QuartumSE:
-#   from quartumse import ShadowEstimator, ShadowConfig
-#   from quartumse.shadows.core import Observable
+# Available notebooks:
+#   notebooks/quickstart_shot_persistence.ipynb    - Shot data + replay
+#   notebooks/noise_aware_shadows_demo.ipynb       - MEM + noise-aware shadows (NEW!)
 ```
+
+**Recommended flow for new users:**
+1. Start with `quickstart_shot_persistence.ipynb` to learn the basics
+2. Try `noise_aware_shadows_demo.ipynb` to see MEM and v1 shadows in action
+3. Experiment with your own circuits and observables
 
 ## IBM Quantum Setup (Phase 1+)
 

@@ -1,0 +1,148 @@
+{
+  "validation_date": "2025-10-21",
+  "validation_summary": {
+    "s_t01_baseline_v0": {
+      "variant": "st01",
+      "shadow_version": "v0_baseline",
+      "mitigation": "none",
+      "results": [
+        {
+          "qubits": 3,
+          "shadow_size": 500,
+          "baseline_shots": 1000,
+          "ci_coverage": 0.40,
+          "ssr_estimated": 15.59,
+          "status": "FAIL",
+          "ci_coverage_target": 0.90,
+          "ssr_target": 1.2
+        },
+        {
+          "qubits": 4,
+          "shadow_size": 500,
+          "baseline_shots": 1000,
+          "ci_coverage": 0.4286,
+          "ssr_estimated": 10.98,
+          "status": "FAIL",
+          "ci_coverage_target": 0.90,
+          "ssr_target": 1.2
+        },
+        {
+          "qubits": 5,
+          "shadow_size": 500,
+          "baseline_shots": 1000,
+          "ci_coverage": 0.4444,
+          "ssr_estimated": 19.75,
+          "status": "FAIL",
+          "ci_coverage_target": 0.90,
+          "ssr_target": 1.2
+        }
+      ],
+      "overall_status": "FAIL",
+      "pass_criteria": {
+        "ssr_met": true,
+        "ci_coverage_met": false
+      }
+    },
+    "s_t02_noise_aware_v1_mem": {
+      "variant": "st02",
+      "shadow_version": "v1_noise_aware",
+      "mitigation": "MEM",
+      "results": [
+        {
+          "qubits": 3,
+          "shadow_size": 500,
+          "baseline_shots": 1000,
+          "ci_coverage": 0.60,
+          "ssr_estimated": 2.58,
+          "status": "FAIL",
+          "ci_coverage_target": 0.90,
+          "ssr_target": 1.2
+        },
+        {
+          "qubits": 4,
+          "shadow_size": 500,
+          "baseline_shots": 1000,
+          "ci_coverage": 0.5714,
+          "ssr_estimated": 9.17,
+          "status": "FAIL",
+          "ci_coverage_target": 0.90,
+          "ssr_target": 1.2
+        },
+        {
+          "qubits": 5,
+          "shadow_size": 500,
+          "baseline_shots": 1000,
+          "ci_coverage": 0.4444,
+          "ssr_estimated": 2.13,
+          "status": "FAIL",
+          "ci_coverage_target": 0.90,
+          "ssr_target": 1.2
+        }
+      ],
+      "overall_status": "FAIL",
+      "pass_criteria": {
+        "ssr_met": true,
+        "ci_coverage_met": false
+      }
+    }
+  },
+  "critical_findings": {
+    "ssr_validation": {
+      "target": "≥1.2×",
+      "achieved": "2.13× to 19.75× across all runs",
+      "status": "✅ PASS",
+      "note": "Significantly exceeds target"
+    },
+    "ci_coverage_validation": {
+      "target": "≥90%",
+      "achieved": "40% to 60% across all runs",
+      "status": "❌ FAIL",
+      "note": "Systematic underperformance"
+    },
+    "critical_bug_identified": {
+      "description": "Multi-qubit correlation observables systematically underestimated",
+      "examples": [
+        "ZZI expected 1.0, shadows estimate ~0.12",
+        "ZIZ expected 1.0, shadows estimate ~0.10",
+        "ZZII expected 1.0, shadows estimate ~0.12"
+      ],
+      "impact": "HIGH - Affects accuracy of entanglement and correlation measurements",
+      "affected_observables": "All multi-qubit Pauli strings with multiple Z operators",
+      "status": "BLOCKING - Must fix before Phase 1 completion"
+    }
+  },
+  "phase_1_exit_criteria_status": {
+    "ssr_on_simulator": {
+      "target": "≥1.2×",
+      "achieved": "2.13× to 19.75×",
+      "status": "✅ PASS"
+    },
+    "ssr_on_ibm_hardware": {
+      "target": "≥1.1×",
+      "achieved": "Not tested yet",
+      "status": "⏳ PENDING"
+    },
+    "ci_coverage": {
+      "target": "≥80% (code) + ≥90% (experiment results)",
+      "achieved": "76% (code), 40-60% (experiments)",
+      "status": "❌ FAIL"
+    },
+    "reproducibility": {
+      "target": "Seeds + manifests working",
+      "achieved": "✅ Working",
+      "status": "✅ PASS"
+    },
+    "patent_themes": {
+      "target": "Top 3 identified",
+      "achieved": "Identified in STRATEGIC_ANALYSIS.md but not formally documented",
+      "status": "⏳ PENDING"
+    }
+  },
+  "next_actions": [
+    "CRITICAL: Investigate and fix multi-qubit correlation observable bug",
+    "Rerun validation after bug fix",
+    "Test on IBM hardware once simulator results are correct",
+    "Formally document patent themes",
+    "Update STATUS_REPORT.md with findings"
+  ]
+}

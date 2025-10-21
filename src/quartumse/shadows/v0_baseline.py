@@ -126,19 +126,25 @@ class RandomLocalCliffordShadows(ClassicalShadows):
         """
         Compute Pauli expectation for a single shadow snapshot.
 
-        For random Pauli measurements, the estimator is:
-        - If measured in compatible basis: use outcome
-        - Otherwise: 0 (or unbiased random)
+        For random local Clifford shadows, the unbiased estimator is:
+        - If measured in compatible basis: 3^k * (product of signs)
+        - Otherwise: 0
+
+        where k is the support size (number of non-identity Paulis).
+        The 3^k factor comes from the inverse channel: ρ̂ = 3|b⟩⟨b| - I.
         """
         pauli_string = observable.pauli_string
         num_qubits = len(pauli_string)
 
         expectation = 1.0
+        support_size = 0  # Count non-identity Paulis
 
         for qubit_idx in range(num_qubits):
             pauli = pauli_string[qubit_idx]
             if pauli == "I":
                 continue  # Identity doesn't affect expectation
+
+            support_size += 1
 
             # Map Pauli to basis index
             pauli_to_basis = {"X": 1, "Y": 2, "Z": 0}
@@ -155,7 +161,9 @@ class RandomLocalCliffordShadows(ClassicalShadows):
                 # Incompatible measurement: estimator is 0
                 return 0.0
 
-        return expectation * observable.coefficient
+        # Apply 3^k scaling factor from inverse channel
+        scaling_factor = 3 ** support_size
+        return scaling_factor * expectation * observable.coefficient
 
     def estimate_observable(
         self, observable: Observable, shadow_data: Optional[np.ndarray] = None

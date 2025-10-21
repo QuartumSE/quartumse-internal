@@ -70,10 +70,12 @@ class NoiseAwareRandomLocalCliffordShadows(RandomLocalCliffordShadows):
         pauli_string = observable.pauli_string
         relevant_qubits: List[int] = []
         pauli_to_basis = {"X": 1, "Y": 2, "Z": 0}
+        support_size = 0  # Count non-identity Paulis
 
         for qubit_idx, pauli in enumerate(pauli_string):
             if pauli == "I":
                 continue
+            support_size += 1
             required_basis = pauli_to_basis.get(pauli)
             if required_basis is None:
                 return 0.0
@@ -99,7 +101,9 @@ class NoiseAwareRandomLocalCliffordShadows(RandomLocalCliffordShadows):
 
             expectation += probability * parity
 
-        return expectation * observable.coefficient
+        # Apply 3^k scaling factor for classical shadows inverse channel
+        scaling_factor = 3 ** support_size
+        return scaling_factor * expectation * observable.coefficient
 
     @staticmethod
     def _bitstring_to_index(bitstring: str) -> int:

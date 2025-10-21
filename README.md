@@ -16,7 +16,7 @@
 QuartumSE is building the **default measurement and observability layer** for quantum computing. We provide:
 
 - **Shot-efficient observable estimation** using classical shadows (v0→v4)
-- **Rigorous confidence intervals** via bootstrapping and Bayesian inference
+- **Confidence interval estimation** via normal approximations today (bootstrap/Bayesian upgrades are on the roadmap)
 - **Full provenance tracking** for reproducible quantum experiments
 - **Vendor-neutral platform** supporting IBM Quantum, AWS Braket, and more
 - **Cost-for-accuracy metrics** (SSR, RMSE@$) to quantify efficiency gains
@@ -128,11 +128,11 @@ while still emitting a provenance snapshot.
 
 Measure once, estimate many observables offline:
 
-- **v0 (Baseline):** Random local Clifford measurements ✅
-- **v1 (Noise-Aware):** Inverse channel calibration + MEM ✅
-- **v2 (Fermionic):** Direct 2-RDM estimation for quantum chemistry
-- **v3 (Adaptive):** Derandomized measurement selection
-- **v4 (Robust):** Bayesian inference with bootstrapped CIs
+- [x] **v0 (Baseline):** Random local Clifford measurements
+- [x] **v1 (Noise-Aware):** Inverse channel calibration + MEM
+- [ ] **v2 (Fermionic):** Direct 2-RDM estimation for quantum chemistry
+- [ ] **v3 (Adaptive):** Derandomized measurement selection
+- [ ] **v4 (Robust):** Bayesian inference with bootstrapped CIs
 
 ### 📊 Provenance & Reproducibility
 
@@ -173,6 +173,18 @@ One API, multiple backends:
 
 ---
 
+## R&D Notebooks
+
+Use the notebooks below to reproduce Phase 1 experiments, iterate on mitigation ideas, and benchmark updates:
+
+- `notebooks/s_t01_ghz_classical_shadows.ipynb` – End-to-end S‑T01 pipeline on Aer, including SSR/CI diagnostics and manifest replay.
+- `notebooks/noise_aware_shadows_demo.ipynb` – Explore MEM-enhanced classical shadows (S‑T02 prototype).
+- `notebooks/quickstart_shot_persistence.ipynb` – Demonstrates shot data persistence and replay utilities.
+
+Each notebook saves data into a local `notebook_artifacts/` directory so you can inspect manifests without touching the main `data/` tree.
+
+---
+
 ## Project Status
 
 ### Phase 1 (Now → Nov 2025)
@@ -196,7 +208,7 @@ One API, multiple backends:
 - CI coverage ≥ 80%
 - Patent themes identified
 
-See [ROADMAP.md](ROADMAP.md) for full timeline through Phase 5 (Public Beta, Sep 2026).
+See [ROADMAP.md](ROADMAP.md) for full timeline through Phase 5 (Public Beta, Sep 2026) and [STATUS_REPORT.md](STATUS_REPORT.md) for the latest alignment review and next actions.
 
 ---
 

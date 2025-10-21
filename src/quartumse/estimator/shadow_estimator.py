@@ -147,17 +147,18 @@ class ShadowEstimator(Estimator):
 
         # Determine shadow size
         if target_precision:
-            # Use worst-case observable (largest support)
-            max_support = max(
-                sum(1 for p in obs.pauli_string if p != "I") for obs in observables
-            )
-            shadow_size = self.shadow_impl.estimate_shadow_size_needed(
-                Observable("I" * (len(observables[0].pauli_string) - max_support) + "Z" * max_support),
-                target_precision,
-            )
+            required_sizes = [
+                self.shadow_impl.estimate_shadow_size_needed(obs, target_precision)
+                for obs in observables
+            ]
+            shadow_size = max(required_sizes) if required_sizes else self.shadow_config.shadow_size
+            if shadow_size <= 0:
+                raise ValueError("Shadow size estimation produced a non-positive value")
             self.shadow_config.shadow_size = shadow_size
+            self.shadow_impl.config.shadow_size = shadow_size
         else:
             shadow_size = self.shadow_config.shadow_size
+            self.shadow_impl.config.shadow_size = shadow_size
 
         # Generate shadow measurement circuits
         shadow_circuits = self.shadow_impl.generate_measurement_circuits(circuit, shadow_size)
@@ -296,7 +297,17 @@ class ShadowEstimator(Estimator):
             shadow_size=manifest.schema.shadows.shadow_size,
             random_seed=manifest.schema.random_seed,
         )
-        shadow_impl = RandomLocalCliffordShadows(shadow_config)
+        if shadow_config.version == ShadowVersion.V0_BASELINE:
+            shadow_impl = RandomLocalCliffordShadows(shadow_config)
+        elif shadow_config.version == ShadowVersion.V1_NOISE_AWARE:
+            raise NotImplementedError(
+                "Replaying noise-aware classical shadows (v1) is not yet supported because"
+                " calibrated confusion matrices are not stored in manifests."
+            )
+        else:
+            raise NotImplementedError(
+                f"Replay for shadow version {shadow_config.version.value} is not implemented"
+            )
         shadow_impl.measurement_bases = measurement_bases
         shadow_impl.reconstruct_classical_shadow(measurement_outcomes, measurement_bases)
 

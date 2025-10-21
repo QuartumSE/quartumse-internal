@@ -128,8 +128,8 @@ while still emitting a provenance snapshot.
 
 Measure once, estimate many observables offline:
 
-- **v0 (Baseline):** Random local Clifford measurements
-- **v1 (Noise-Aware):** Inverse channel calibration + MEM
+- **v0 (Baseline):** Random local Clifford measurements ✅
+- **v1 (Noise-Aware):** Inverse channel calibration + MEM ✅
 - **v2 (Fermionic):** Direct 2-RDM estimation for quantum chemistry
 - **v3 (Adaptive):** Derandomized measurement selection
 - **v4 (Robust):** Bayesian inference with bootstrapped CIs
@@ -184,9 +184,11 @@ One API, multiple backends:
 - [x] Classical Shadows v0 (baseline)
 - [x] Shot data persistence + diagnostics
 - [x] S-T01 experiment scaffold (GHZ states)
+- [x] S-T02 experiment (noise-aware shadows with MEM)
 - [ ] Full S-T01 validation (SSR ≥ 1.2×, CI coverage ≥ 90%)
 - [ ] Starter experiments for C, O, B, M workstreams
-- [ ] MEM + ZNE integration
+- [x] MEM integration (ZNE pending)
+- [x] Noise-aware classical shadows v1
 - [x] IBM Quantum connector
 
 **Exit Criteria:**

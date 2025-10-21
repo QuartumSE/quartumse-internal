@@ -12,6 +12,8 @@ from qiskit import QuantumCircuit, qasm3, transpile
 from qiskit.providers import Backend
 from qiskit_aer import AerSimulator
 
+from quartumse.connectors import create_backend_snapshot, resolve_backend
+
 from quartumse import __version__
 from quartumse.estimator.base import Estimator, EstimationResult
 from quartumse.reporting.manifest import (
@@ -58,11 +60,22 @@ class ShadowEstimator(Estimator):
             data_dir: Directory for storing shot data and manifests
         """
         # Handle backend
+        self._backend_descriptor: Optional[str] = None
+        self._backend_snapshot: Optional[BackendSnapshot] = None
+
         if isinstance(backend, str):
-            if backend == "aer_simulator":
+            self._backend_descriptor = backend
+            if ":" in backend:
+                resolved_backend, snapshot = resolve_backend(backend)
+                backend = resolved_backend
+                self._backend_snapshot = snapshot
+            elif backend == "aer_simulator":
                 backend = AerSimulator()
+                self._backend_snapshot = create_backend_snapshot(backend)
             else:
                 raise ValueError(f"Unknown backend string: {backend}")
+        else:
+            self._backend_descriptor = getattr(backend, "name", None)
 
         super().__init__(backend, shadow_config)
 
@@ -324,18 +337,7 @@ class ShadowEstimator(Estimator):
         )
 
         # Backend snapshot
-        backend_version = getattr(self.backend, "version", "unknown")
-        if not isinstance(backend_version, str):
-            backend_version = str(backend_version)
-            
-        backend_snapshot = BackendSnapshot(
-            backend_name=self.backend.name,
-            backend_version=backend_version,
-            num_qubits=self.backend.configuration().n_qubits,
-            basis_gates=self.backend.configuration().basis_gates,
-            calibration_timestamp=time.time(),
-            properties_hash="",  # TODO: Capture full properties
-        )
+        backend_snapshot = self._backend_snapshot or create_backend_snapshot(self.backend)
 
         # Shadows config
         shadows_config = ShadowsConfig(
@@ -353,6 +355,10 @@ class ShadowEstimator(Estimator):
             execution_time_seconds=execution_time,
         )
 
+        metadata = {}
+        if self._backend_descriptor:
+            metadata["backend_descriptor"] = self._backend_descriptor
+
         # Create manifest
         manifest_schema = ManifestSchema(
             experiment_id=experiment_id,
@@ -364,6 +370,7 @@ class ShadowEstimator(Estimator):
             shot_data_path=str(shot_data_path.resolve()),
             results_summary=estimates,
             resource_usage=resource_usage,
+            metadata=metadata,
             random_seed=self.shadow_config.random_seed,
             quartumse_version=__version__,
             qiskit_version=qiskit.__version__,

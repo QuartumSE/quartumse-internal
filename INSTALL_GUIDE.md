@@ -211,7 +211,7 @@ quartumse/
 │   ├── shadows/            # Classical shadows implementations
 │   ├── reporting/          # Manifests + shot data persistence
 │   ├── mitigation/         # Error mitigation (placeholders)
-│   └── connectors/         # Backend connectors (TODO)
+│   └── connectors/         # Backend connectors (IBM Runtime ready)
 ├── tests/                  # Test suite
 │   └── unit/
 │       ├── test_shadows_v0.py      (6/6 passing ✓)
@@ -244,8 +244,24 @@ quartumse/
 - Noise-aware shadows v1
 - Measurement error mitigation (MEM/M3)
 - Zero-noise extrapolation (ZNE)
-- IBM backend connector
 - C/O/B/M experiment suites
+
+## Configuring IBM Quantum access
+
+QuartumSE now ships with an IBM Quantum connector that authenticates through Qiskit Runtime.
+Follow these steps before targeting managed IBM backends:
+
+1. **Create an API token** in the IBM Quantum dashboard and export one of
+   `QISKIT_IBM_TOKEN` or `QISKIT_RUNTIME_API_TOKEN`.
+2. *(Optional)* Set `QISKIT_IBM_CHANNEL` and `QISKIT_IBM_INSTANCE` if you need to
+   pin execution to a specific hub/group/project.
+3. Run `quartumse run --config <config.yaml>` to validate credentials and preview
+   the calibration snapshot that will be embedded in your manifest.
+4. Use `python experiments/shadows/S_T01_ghz_baseline.py --backend ibm:ibmq_qasm_simulator`
+   to execute the GHZ baseline with the connector-enabled backend descriptor.
+
+If credentials are missing, the connector transparently falls back to the local Aer
+simulator while still emitting a provenance snapshot for reproducibility.
 
 ---
 

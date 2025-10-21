@@ -67,7 +67,7 @@ class TestShadowEstimatorPersistence:
         """Test that estimate() saves shot data to Parquet."""
         with tempfile.TemporaryDirectory() as tmpdir:
             # Setup
-            backend = AerSimulator()
+            backend = "ibm:aer_simulator"
             shadow_config = ShadowConfig(shadow_size=50, random_seed=42)
             estimator = ShadowEstimator(
                 backend=backend, shadow_config=shadow_config, data_dir=tmpdir

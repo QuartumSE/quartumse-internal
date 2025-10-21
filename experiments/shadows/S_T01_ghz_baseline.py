@@ -1,18 +1,6 @@
-"""
+"""S-T01/S-T02 GHZ validation experiments for classical shadows."""
 
 import argparse
-
-S-T01: Classical Shadows on GHZ States (Baseline v0)
-
-Experiment Overview:
-- Prepare GHZ states with 3, 4, 5 qubits
-- Estimate observables: ⟨Z_i⟩, ⟨Z_i Z_j⟩, purity
-- Compare classical shadows vs direct measurement
-- Target: SSR ≥ 1.2 on simulator, CI coverage ≥ 0.9
-
-This validates the baseline classical shadows implementation.
-"""
-
 import sys
 import time
 import yaml
@@ -28,7 +16,9 @@ from qiskit import QuantumCircuit
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
 from quartumse import ShadowEstimator
+from quartumse.reporting.manifest import MitigationConfig
 from quartumse.shadows import ShadowConfig
+from quartumse.shadows.config import ShadowVersion
 from quartumse.shadows.core import Observable
 from quartumse.utils.metrics import compute_ssr
 
@@ -128,13 +118,37 @@ def direct_measurement_baseline(
     }
 
 
+def ghz_expectation_value(observable: Observable) -> float:
+    """Analytical expectation value for GHZ state observables."""
+
+    if any(p not in {"I", "Z"} for p in observable.pauli_string):
+        return 0.0
+
+    num_z = observable.pauli_string.count("Z")
+    if num_z == 0:
+        return observable.coefficient
+
+    if num_z % 2 == 0:
+        return observable.coefficient
+
+    return 0.0
+
+
 def run_experiment(
     config_path: Optional[Union[str, Path]] = None,
     backend_override: Optional[str] = None,
+    variant: str = "st01",
 ) -> None:
-    """Run S-T01 experiment."""
+    """Run GHZ benchmarks for classical shadows variants."""
+
+    variant = variant.lower()
+    variant_title = {
+        "st01": "S-T01: Classical Shadows on GHZ States (Baseline v0)",
+        "st02": "S-T02: Noise-aware GHZ Shadows with MEM (v1)",
+    }.get(variant, "S-T01: Classical Shadows on GHZ States (Baseline v0)")
+
     print("=" * 80)
-    print("S-T01: Classical Shadows on GHZ States (Baseline v0)")
+    print(variant_title)
     print("=" * 80)
 
     config = _load_experiment_config(config_path)
@@ -146,6 +160,9 @@ def run_experiment(
     shadow_size = config.get("shadow_size", 500)
     baseline_shots = config.get("baseline_shots", 1000)
     random_seed = config.get("random_seed", 42)
+    mem_shots = config.get("mem_shots", 2048)
+
+    use_noise_aware = variant == "st02"
 
     results = []
 
@@ -187,11 +204,23 @@ def run_experiment(
             shadow_size=shadow_size,
             random_seed=random_seed,
             confidence_level=0.95,
+            version=(
+                ShadowVersion.V1_NOISE_AWARE if use_noise_aware else ShadowVersion.V0_BASELINE
+            ),
+            apply_inverse_channel=use_noise_aware,
         )
+
+        mitigation_config = None
+        if use_noise_aware:
+            mitigation_config = MitigationConfig(
+                techniques=["MEM"],
+                parameters={"mem_shots": mem_shots},
+            )
 
         estimator = ShadowEstimator(
             backend=backend_descriptor,
             shadow_config=shadow_config,
+            mitigation_config=mitigation_config,
         )
 
         execution_backend = estimator.backend
@@ -235,11 +264,15 @@ def run_experiment(
         print("COMPARISON")
         print(f"{'*' * 40}")
 
-        print(f"\n{'Observable':<20} {'Shadows':<15} {'Baseline':<15} {'CI Width':<15}")
-        print("-" * 65)
+        print(
+            f"\n{'Observable':<20} {'Shadows':<15} {'Expected':<15} "
+            f"{'Baseline':<15} {'CI Width':<12} {'SSR':<8} {'Coverage'}"
+        )
+        print("-" * 95)
 
         ci_coverage_count = 0
         total_observables = len(observables)
+        ssr_values = []
 
         for obs in observables:
             obs_str = str(obs)
@@ -247,32 +280,30 @@ def run_experiment(
             shadow_ci = shadow_result.observables[obs_str]["ci_95"]
             shadow_width = shadow_result.observables[obs_str]["ci_width"]
             baseline_val = baseline_results[obs_str]["expectation"]
+            expected_val = ghz_expectation_value(obs)
 
-            # Check if baseline is within CI (proxy for coverage since we don't have ground truth)
-            in_ci = shadow_ci[0] <= baseline_val <= shadow_ci[1]
+            in_ci = shadow_ci[0] <= expected_val <= shadow_ci[1]
             ci_coverage_count += int(in_ci)
 
+            baseline_error = max(abs(baseline_val - expected_val), 1e-9)
+            shadow_error = max(abs(shadow_val - expected_val), 1e-9)
+            obs_ssr = compute_ssr(
+                baseline_shots,
+                shadow_size,
+                baseline_precision=baseline_error,
+                quartumse_precision=shadow_error,
+            )
+            ssr_values.append(obs_ssr)
+
             print(
-                f"{obs_str:<20} {shadow_val:>7.4f}      {baseline_val:>7.4f}      "
-                f"{shadow_width:>7.4f}  {'✓' if in_ci else '✗'}"
+                f"{obs_str:<20} {shadow_val:>7.4f}      {expected_val:>7.4f}      "
+                f"{baseline_val:>7.4f}      {shadow_width:>7.4f}  {obs_ssr:>6.2f}  "
+                f"{'✓' if in_ci else '✗'}"
             )
 
         # Compute metrics
         ci_coverage = ci_coverage_count / total_observables
-        avg_baseline_variance = np.mean(
-            [r["variance"] for r in baseline_results.values()]
-        )
-        avg_shadow_variance = np.mean(
-            [r["variance"] for r in shadow_result.observables.values()]
-        )
-
-        # SSR approximation (variance-based)
-        ssr = compute_ssr(
-            baseline_shots,
-            shadow_size,
-            baseline_precision=np.sqrt(avg_baseline_variance),
-            quartumse_precision=np.sqrt(avg_shadow_variance),
-        )
+        ssr = float(np.mean(ssr_values)) if ssr_values else float("nan")
 
         print(f"\n{'=' * 60}")
         print(f"METRICS for GHZ({num_qubits})")
@@ -316,9 +347,9 @@ def run_experiment(
 
     print(f"\n{'=' * 80}")
     if all_passed:
-        print("✓ S-T01 EXPERIMENT PASSED - Phase 1 exit criteria met!")
+        print("✓ EXPERIMENT PASSED - Phase 1 exit criteria met!")
     else:
-        print("✗ S-T01 EXPERIMENT FAILED - Review results and tune parameters")
+        print("✗ EXPERIMENT FAILED - Review results and tune parameters")
     print(f"{'=' * 80}")
 
     return results
@@ -338,5 +369,12 @@ if __name__ == "__main__":
         default=None,
         help="Override backend descriptor (e.g., ibm:ibmq_qasm_simulator)",
     )
+    parser.add_argument(
+        "--variant",
+        type=str,
+        default="st01",
+        choices=["st01", "st02"],
+        help="Experiment variant (st01=baseline, st02=noise-aware with MEM)",
+    )
     args = parser.parse_args()
-    run_experiment(config_path=args.config, backend_override=args.backend)
+    run_experiment(config_path=args.config, backend_override=args.backend, variant=args.variant)

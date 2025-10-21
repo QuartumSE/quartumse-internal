@@ -175,13 +175,25 @@ One API, multiple backends:
 
 ## R&D Notebooks
 
-Use the notebooks below to reproduce Phase 1 experiments, iterate on mitigation ideas, and benchmark updates:
+### Start Here: Comprehensive Test Suite
 
-- `notebooks/s_t01_ghz_classical_shadows.ipynb` – End-to-end S‑T01 pipeline on Aer, including SSR/CI diagnostics and manifest replay.
-- `notebooks/noise_aware_shadows_demo.ipynb` – Explore MEM-enhanced classical shadows (S‑T02 prototype).
-- `notebooks/quickstart_shot_persistence.ipynb` – Demonstrates shot data persistence and replay utilities.
+**`notebooks/comprehensive_test_suite.ipynb`** — Complete end-to-end testing covering all QuartumSE features:
+- Section 1: Quick Start (Bell state with v0 shadows)
+- Section 2: Shot Persistence & Replay ("measure once, ask later")
+- Section 3: Noise-Aware Shadows (v1 + MEM)
+- Section 4: IBM Quantum Connector
+- Section 5: End-to-End Workflow (simulator → hardware → replay)
+- Section 6: Diagnostics & Provenance Inspection
 
-Each notebook saves data into a local `notebook_artifacts/` directory so you can inspect manifests without touching the main `data/` tree.
+**Runtime:** ~5 minutes on simulator, ~15 minutes with IBM hardware
+
+### Additional Notebooks
+
+- `notebooks/s_t01_ghz_classical_shadows.ipynb` – S‑T01 experiment workflow with SSR metrics
+- `notebooks/noise_aware_shadows_demo.ipynb` – MEM-enhanced classical shadows (v0 vs v1 comparison)
+- `notebooks/quickstart_shot_persistence.ipynb` – Shot data persistence basics
+
+All notebooks save data into local directories (`demo_data/` or `notebook_artifacts/`) for easy inspection without touching the main `data/` tree.
 
 ---
 

@@ -1,4 +1,7 @@
 """
+
+import argparse
+
 S-T01: Classical Shadows on GHZ States (Baseline v0)
 
 Experiment Overview:
@@ -12,13 +15,14 @@ This validates the baseline classical shadows implementation.
 
 import sys
 import time
+import yaml
 from pathlib import Path
+from typing import Any, Dict, Optional, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from qiskit import QuantumCircuit
-from qiskit_aer import AerSimulator
 
 # Add src to path for development
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
@@ -27,6 +31,45 @@ from quartumse import ShadowEstimator
 from quartumse.shadows import ShadowConfig
 from quartumse.shadows.core import Observable
 from quartumse.utils.metrics import compute_ssr
+
+
+def _load_experiment_config(config_path: Optional[Union[str, Path]]) -> Dict[str, Any]:
+    """Load YAML configuration if present."""
+
+    if not config_path:
+        return {}
+
+    path = Path(config_path)
+    if not path.exists():
+        raise FileNotFoundError(f"Config file not found: {path}")
+
+    with path.open("r", encoding="utf-8") as handle:
+        data = yaml.safe_load(handle) or {}
+
+    if not isinstance(data, dict):
+        raise ValueError("Experiment config must be a mapping at the top level")
+
+    return data
+
+
+def _resolve_backend_descriptor(config: Dict[str, Any], override: Optional[str]) -> str:
+    """Determine the backend descriptor from config and overrides."""
+
+    if override:
+        return override
+
+    backend_cfg = config.get("backend") if config else None
+    if isinstance(backend_cfg, str):
+        return backend_cfg
+    if isinstance(backend_cfg, dict):
+        provider = backend_cfg.get("provider", "local")
+        name = backend_cfg.get("name")
+        if name and provider and provider.lower() != "local":
+            return f"{provider}:{name}"
+        if name:
+            return name
+
+    return "aer_simulator"
 
 
 def create_ghz_circuit(num_qubits: int) -> QuantumCircuit:
@@ -85,18 +128,24 @@ def direct_measurement_baseline(
     }
 
 
-def run_experiment():
+def run_experiment(
+    config_path: Optional[Union[str, Path]] = None,
+    backend_override: Optional[str] = None,
+) -> None:
     """Run S-T01 experiment."""
     print("=" * 80)
     print("S-T01: Classical Shadows on GHZ States (Baseline v0)")
     print("=" * 80)
 
+    config = _load_experiment_config(config_path)
+    backend_descriptor = _resolve_backend_descriptor(config, backend_override)
+    print(f"Backend descriptor: {backend_descriptor}")
+
     # Configuration
-    backend = AerSimulator()
-    num_qubits_list = [3, 4, 5]
-    shadow_size = 500
-    baseline_shots = 1000
-    random_seed = 42
+    num_qubits_list = config.get("num_qubits", [3, 4, 5])
+    shadow_size = config.get("shadow_size", 500)
+    baseline_shots = config.get("baseline_shots", 1000)
+    random_seed = config.get("random_seed", 42)
 
     results = []
 
@@ -141,9 +190,18 @@ def run_experiment():
         )
 
         estimator = ShadowEstimator(
-            backend=backend,
+            backend=backend_descriptor,
             shadow_config=shadow_config,
         )
+
+        execution_backend = estimator.backend
+        snapshot = getattr(estimator, '_backend_snapshot', None)
+        if snapshot is not None:
+            print(
+                f"Calibration timestamp: {snapshot.calibration_timestamp.isoformat()} (hash={snapshot.properties_hash[:8] if snapshot.properties_hash else 'n/a'})"
+            )
+        else:
+            print('Calibration snapshot will be captured during estimation.')
 
         start_time = time.time()
         shadow_result = estimator.estimate(
@@ -167,7 +225,7 @@ def run_experiment():
         baseline_results = {}
         for obs in observables:
             baseline_results[str(obs)] = direct_measurement_baseline(
-                ghz_circuit, obs, baseline_shots, backend
+                ghz_circuit, obs, baseline_shots, execution_backend
             )
 
         # ============================================================
@@ -267,4 +325,18 @@ def run_experiment():
 
 
 if __name__ == "__main__":
-    results = run_experiment()
+    parser = argparse.ArgumentParser(description="Run the S-T01 GHZ baseline experiment.")
+    parser.add_argument(
+        "--config",
+        type=str,
+        default=None,
+        help="Path to YAML configuration file (backend, shot counts, etc.)",
+    )
+    parser.add_argument(
+        "--backend",
+        type=str,
+        default=None,
+        help="Override backend descriptor (e.g., ibm:ibmq_qasm_simulator)",
+    )
+    args = parser.parse_args()
+    run_experiment(config_path=args.config, backend_override=args.backend)

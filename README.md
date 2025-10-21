@@ -88,6 +88,38 @@ Provenance manifest saved: data/manifests/a3f2b...json
 Shot data saved: data/shots/a3f2b...parquet
 ```
 
+#### IBM Quantum connector quick start
+
+QuartumSE ships with an IBM Quantum connector that authenticates against Qiskit Runtime
+and records the calibration snapshot used for each experiment. Configure credentials via
+`QISKIT_IBM_TOKEN` (or `QISKIT_RUNTIME_API_TOKEN`) and optionally
+`QISKIT_IBM_CHANNEL`/`QISKIT_IBM_INSTANCE` to target a specific hub/group/project.
+
+Example experiment configuration (`config.yaml`):
+
+```yaml
+backend:
+  provider: ibm
+  name: ibmq_qasm_simulator
+shadow_size: 512
+baseline_shots: 1000
+```
+
+Validate the configuration and preview calibration data with the CLI:
+
+```bash
+quartumse run --config config.yaml
+```
+
+Experiment scripts also accept inline overrides:
+
+```bash
+python experiments/shadows/S_T01_ghz_baseline.py --backend ibm:aer_simulator
+```
+
+If credentials are unavailable, QuartumSE automatically falls back to a local Aer simulator
+while still emitting a provenance snapshot.
+
 ---
 
 ## Core Features
@@ -155,7 +187,7 @@ One API, multiple backends:
 - [ ] Full S-T01 validation (SSR ≥ 1.2×, CI coverage ≥ 90%)
 - [ ] Starter experiments for C, O, B, M workstreams
 - [ ] MEM + ZNE integration
-- [ ] IBM Quantum connector
+- [x] IBM Quantum connector
 
 **Exit Criteria:**
 - SSR ≥ 1.2× on simulator, ≥ 1.1× on IBM hardware
@@ -205,6 +237,8 @@ python experiments/benchmarking/B_T01_rb_starter.py
 # M-T01: GHZ phase sensing (starter)
 python experiments/metrology/M_T01_ghz_phase_starter.py
 ```
+
+The GHZ baseline script now accepts `--config` and `--backend` flags so you can point it at IBM Quantum backends (for example, `python experiments/shadows/S_T01_ghz_baseline.py --backend ibm:ibmq_qasm_simulator`).
 
 All experiments generate manifests in `data/manifests/` and reports in `data/reports/`.
 

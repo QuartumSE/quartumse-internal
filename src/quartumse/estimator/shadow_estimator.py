@@ -16,6 +16,7 @@ from quartumse.connectors import create_backend_snapshot, resolve_backend
 
 from quartumse import __version__
 from quartumse.estimator.base import Estimator, EstimationResult
+from quartumse.mitigation import MeasurementErrorMitigation
 from quartumse.reporting.manifest import (
     BackendSnapshot,
     CircuitFingerprint,
@@ -29,6 +30,7 @@ from quartumse.reporting.shot_data import ShotDataWriter
 from quartumse.shadows.config import ShadowConfig, ShadowVersion
 from quartumse.shadows.core import Observable
 from quartumse.shadows.v0_baseline import RandomLocalCliffordShadows
+from quartumse.shadows.v1_noise_aware import NoiseAwareRandomLocalCliffordShadows
 
 
 class ShadowEstimator(Estimator):
@@ -84,6 +86,15 @@ class ShadowEstimator(Estimator):
         self.data_dir = Path(data_dir) if data_dir else Path("./data")
         self.data_dir.mkdir(parents=True, exist_ok=True)
 
+        self.measurement_error_mitigation: Optional[MeasurementErrorMitigation] = None
+        self._mem_required = (
+            self.shadow_config.version == ShadowVersion.V1_NOISE_AWARE
+            or self.shadow_config.apply_inverse_channel
+            or ("MEM" in self.mitigation_config.techniques)
+        )
+        if self._mem_required:
+            self.measurement_error_mitigation = MeasurementErrorMitigation(self.backend)
+
         # Initialize shadow implementation based on version
         self.shadow_impl = self._create_shadow_implementation()
         
@@ -97,8 +108,11 @@ class ShadowEstimator(Estimator):
         if version == ShadowVersion.V0_BASELINE:
             return RandomLocalCliffordShadows(self.shadow_config)
         elif version == ShadowVersion.V1_NOISE_AWARE:
-            # TODO: Implement v1
-            raise NotImplementedError("Shadows v1 (noise-aware) not yet implemented")
+            if self.measurement_error_mitigation is None:
+                self.measurement_error_mitigation = MeasurementErrorMitigation(self.backend)
+            return NoiseAwareRandomLocalCliffordShadows(
+                self.shadow_config, self.measurement_error_mitigation
+            )
         elif version == ShadowVersion.V2_FERMIONIC:
             # TODO: Implement v2
             raise NotImplementedError("Shadows v2 (fermionic) not yet implemented")
@@ -147,6 +161,19 @@ class ShadowEstimator(Estimator):
 
         # Generate shadow measurement circuits
         shadow_circuits = self.shadow_impl.generate_measurement_circuits(circuit, shadow_size)
+
+        # Calibrate measurement error mitigation if required
+        if isinstance(self.shadow_impl, NoiseAwareRandomLocalCliffordShadows):
+            mem_shots = int(self.mitigation_config.parameters.get("mem_shots", 4096))
+            run_options = self.mitigation_config.parameters.get("mem_run_options", {})
+            self.shadow_impl.mem.calibrate(
+                list(range(circuit.num_qubits)),
+                shots=mem_shots,
+                run_options=run_options,
+            )
+            if "MEM" not in self.mitigation_config.techniques:
+                self.mitigation_config.techniques.append("MEM")
+            self.mitigation_config.parameters.setdefault("mem_qubits", circuit.num_qubits)
 
         # Transpile for backend
         transpiled_circuits = transpile(shadow_circuits, backend=self.backend)

@@ -1,14 +1,11 @@
-"""
-Measurement Error Mitigation (MEM) - M3 method.
+"""Measurement Error Mitigation (MEM) utilities."""
 
-Calibrates readout confusion matrix and applies inverse to mitigate
-measurement errors.
-"""
+from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Dict, Optional, Sequence
 
 import numpy as np
-from qiskit import QuantumCircuit
+from qiskit import QuantumCircuit, transpile
 from qiskit.providers import Backend
 
 
@@ -22,8 +19,14 @@ class MeasurementErrorMitigation:
     def __init__(self, backend: Backend):
         self.backend = backend
         self.confusion_matrix: Optional[np.ndarray] = None
+        self._calibrated_qubits: Optional[tuple[int, ...]] = None
 
-    def calibrate(self, qubits: list[int]) -> np.ndarray:
+    def calibrate(
+        self,
+        qubits: Sequence[int],
+        shots: int = 4096,
+        run_options: Optional[Dict[str, object]] = None,
+    ) -> np.ndarray:
         """
         Calibrate confusion matrix by preparing and measuring basis states.
 
@@ -31,12 +34,50 @@ class MeasurementErrorMitigation:
             qubits: List of qubit indices to calibrate
 
         Returns:
-            Confusion matrix C where C[i,j] = P(measure i | prepared j)
+            Confusion matrix ``C`` with entries ``P(measure i | prepared j)``.
         """
-        # TODO: Implement full calibration
-        # For now, return identity (no mitigation)
-        n = len(qubits)
-        self.confusion_matrix = np.eye(2**n)
+
+        if not qubits:
+            raise ValueError("At least one qubit must be provided for calibration")
+
+        run_options = dict(run_options or {})
+
+        num_qubits = len(qubits)
+        num_states = 2**num_qubits
+
+        calibration_circuits: list[QuantumCircuit] = []
+        for prepared_index in range(num_states):
+            qc = QuantumCircuit(num_qubits, num_qubits)
+
+            for qubit_idx in range(num_qubits):
+                if (prepared_index >> qubit_idx) & 1:
+                    qc.x(qubit_idx)
+
+            qc.measure(range(num_qubits), range(num_qubits))
+            calibration_circuits.append(qc)
+
+        transpiled_circuits = transpile(
+            calibration_circuits,
+            backend=self.backend,
+            initial_layout=list(qubits),
+        )
+
+        job = self.backend.run(transpiled_circuits, shots=shots, **run_options)
+        result = job.result()
+
+        confusion = np.zeros((num_states, num_states), dtype=float)
+        for prepared_index in range(num_states):
+            counts = result.get_counts(prepared_index)
+            total = sum(counts.values())
+            if total == 0:
+                continue
+
+            for bitstring, count in counts.items():
+                measured_index = self._bitstring_to_index(bitstring)
+                confusion[measured_index, prepared_index] = count / total
+
+        self.confusion_matrix = confusion
+        self._calibrated_qubits = tuple(qubits)
         return self.confusion_matrix
 
     def apply(self, counts: Dict[str, int]) -> Dict[str, float]:
@@ -52,6 +93,55 @@ class MeasurementErrorMitigation:
         if self.confusion_matrix is None:
             raise ValueError("Must calibrate before applying mitigation")
 
-        # TODO: Implement mitigation
-        # For now, return counts unchanged
-        return {k: float(v) for k, v in counts.items()}
+        num_states = self.confusion_matrix.shape[0]
+        num_qubits = int(np.log2(num_states))
+
+        counts_vector = np.zeros(num_states, dtype=float)
+        for bitstring, count in counts.items():
+            state_index = self._bitstring_to_index(bitstring)
+            counts_vector[state_index] += count
+
+        total_counts = counts_vector.sum()
+        if total_counts == 0:
+            return {}
+
+        measured_probabilities = counts_vector / total_counts
+
+        try:
+            inverse_confusion = np.linalg.inv(self.confusion_matrix)
+        except np.linalg.LinAlgError:
+            inverse_confusion = np.linalg.pinv(self.confusion_matrix)
+
+        corrected_probabilities = inverse_confusion @ measured_probabilities
+        corrected_probabilities = np.clip(corrected_probabilities, 0.0, None)
+
+        probability_sum = corrected_probabilities.sum()
+        if probability_sum > 0:
+            corrected_probabilities = corrected_probabilities / probability_sum
+
+        mitigated_counts = corrected_probabilities * total_counts
+
+        mitigated_dict: Dict[str, float] = {}
+        for state_index, value in enumerate(mitigated_counts):
+            if value <= 1e-12:
+                continue
+            bitstring = self._index_to_bitstring(state_index, num_qubits)
+            mitigated_dict[bitstring] = float(value)
+
+        return mitigated_dict
+
+    @staticmethod
+    def _bitstring_to_index(bitstring: str) -> int:
+        """Map a Qiskit-style bitstring to integer index (little-endian)."""
+
+        index = 0
+        for qubit_idx, bit in enumerate(reversed(bitstring)):
+            if bit == "1":
+                index |= 1 << qubit_idx
+        return index
+
+    @staticmethod
+    def _index_to_bitstring(index: int, num_qubits: int) -> str:
+        """Convert an index to Qiskit-style bitstring ordering."""
+
+        return format(index, f"0{num_qubits}b")

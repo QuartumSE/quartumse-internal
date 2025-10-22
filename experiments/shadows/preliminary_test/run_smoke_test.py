@@ -3,6 +3,7 @@ import os, time, json
 from pathlib import Path
 import numpy as np
 from qiskit import QuantumCircuit, transpile
+from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2 as Sampler
 from quartumse.connectors import resolve_backend
 from quartumse.shadows.core import Observable
 from quartumse import ShadowEstimator
@@ -42,22 +43,34 @@ def run():
     token = os.environ.get("QISKIT_IBM_TOKEN")
     if not token:
         print("Error: QISKIT_IBM_TOKEN not set"); return 1
-    backend, snapshot = resolve_backend("ibm:ibm_torino")
+
+    # Initialize service and backend
+    service = QiskitRuntimeService(token=token)
+    backend = service.backend("ibm_torino")
     print("Connected to:", backend.name)
     Path("validation_data").mkdir(exist_ok=True)
     qc = bell_circuit()
 
     observables = [Observable("ZZ", 1.0), Observable("XX", 1.0)]
 
-    # --- Direct ---
+    # --- Direct measurement using Sampler primitive ---
     direct_shots = [250, 250]
     res_direct = {}
+    sampler = Sampler(mode=backend)
+
     for obs, shots in zip(observables, direct_shots):
         c = measure_in_basis(qc, obs.pauli_string)
         tc = transpile(c, backend)
-        job = backend.run(tc, shots=shots)
-        counts = job.result().get_counts()
-        exp = parity_from_counts(counts, obs.pauli_string, shots)
+
+        # Use Sampler primitive
+        job = sampler.run([tc], shots=shots)
+        result = job.result()
+
+        # Extract counts from SamplerV2 result
+        pub_result = result[0]
+        counts_array = pub_result.data.meas.get_counts()
+
+        exp = parity_from_counts(counts_array, obs.pauli_string, shots)
         res_direct[str(obs)] = {"expectation": float(exp), "shots": shots}
         print(f"[Direct] {obs}: {exp:.3f} (shots={shots})")
 

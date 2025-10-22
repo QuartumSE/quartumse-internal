@@ -195,7 +195,12 @@ class ShadowEstimator(Estimator):
             max_experiments = int(max_experiments)
 
         if not isinstance(max_experiments, int) or max_experiments <= 0:
-            max_experiments = len(transpiled_circuits) if transpiled_circuits else 1
+            # Use safe default batch size for IBM backends to avoid submission failures
+            max_experiments = 500
+            print(
+                f"Warning: Backend max_experiments unavailable or invalid. "
+                f"Using safe default batch size: {max_experiments}"
+            )
 
         measurement_outcomes: List[np.ndarray] = []
 

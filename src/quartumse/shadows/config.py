@@ -3,7 +3,7 @@
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ShadowVersion(str, Enum):
@@ -85,6 +85,8 @@ class ShadowConfig(BaseModel):
         default_factory=dict, description="Version-specific custom parameters"
     )
 
+    model_config = ConfigDict(use_enum_values=False)
+
     def validate_version_compatibility(self) -> None:
         """Validate that enabled features match the selected version."""
         version_requirements = {
@@ -98,6 +100,3 @@ class ShadowConfig(BaseModel):
         # Warning: simplified validation
         # In production, this would check feature availability
         pass
-
-    class Config:
-        use_enum_values = False

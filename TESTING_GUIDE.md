@@ -153,7 +153,7 @@ python experiments/shadows/S_T01_ghz_baseline.py
 python experiments/shadows/S_T01_ghz_baseline.py --variant st02
 
 # Run with IBM backend (requires credentials)
-export QISKIT_IBM_TOKEN="your_token_here"
+export QISKIT_IBM_TOKEN=<YOUR_TOKEN>  # or source a local .env file
 python experiments/shadows/S_T01_ghz_baseline.py --backend ibm:ibm_kyoto
 
 # Run with YAML configuration
@@ -254,7 +254,8 @@ MEM technique: ✓ Applied
 
 ```bash
 # 1. Get IBM Quantum token from https://quantum.ibm.com
-export QISKIT_IBM_TOKEN="your_token_here"
+export QISKIT_IBM_TOKEN=<YOUR_TOKEN>
+# Optionally keep it in .env (gitignored): echo "QISKIT_IBM_TOKEN=<YOUR_TOKEN>" >> .env
 
 # 2. Run S-T02 on IBM hardware
 python experiments/shadows/S_T01_ghz_baseline.py \
@@ -356,7 +357,8 @@ All up-to-date and pushed:
 
 3. **Test on IBM Hardware:**
    ```bash
-   export QISKIT_IBM_TOKEN="..."
+   export QISKIT_IBM_TOKEN=<YOUR_TOKEN>
+   # Or load from .env: source .env
    python experiments/shadows/S_T01_ghz_baseline.py --backend ibm:ibm_kyoto --variant st02
    # Validate MEM reduces error on real noise
    ```

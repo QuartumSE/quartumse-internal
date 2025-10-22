@@ -251,8 +251,16 @@ quartumse/
 QuartumSE now ships with an IBM Quantum connector that authenticates through Qiskit Runtime.
 Follow these steps before targeting managed IBM backends:
 
-1. **Create an API token** in the IBM Quantum dashboard and export one of
-   `QISKIT_IBM_TOKEN` or `QISKIT_RUNTIME_API_TOKEN`.
+1. **Create an API token** in the IBM Quantum dashboard and expose it to QuartumSE:
+
+   ```bash
+   export QISKIT_IBM_TOKEN=<YOUR_TOKEN>
+   # Optional: echo "QISKIT_IBM_TOKEN=<YOUR_TOKEN>" >> .env  # .env stays local
+   # Load later with: source .env  # or python -m dotenv run -- <command>
+   ```
+
+   If you prefer the runtime credential, set `QISKIT_RUNTIME_API_TOKEN` instead
+   using the same pattern.
 2. *(Optional)* Set `QISKIT_IBM_CHANNEL` and `QISKIT_IBM_INSTANCE` if you need to
    pin execution to a specific hub/group/project.
 3. Run `quartumse run --config <config.yaml>` to validate credentials and preview

@@ -172,11 +172,15 @@ When you're ready to run on real IBM hardware:
 2. **Save your API token:**
 
 ```bash
-# Create .env file
-echo "IBM_QUANTUM_TOKEN=your_token_here" > .env
+# Export the token in your active shell session
+export QISKIT_IBM_TOKEN=<YOUR_TOKEN>
 
-# Never commit .env to git (it's in .gitignore)
+# Optionally persist it locally in a .env file (gitignored)
+echo "QISKIT_IBM_TOKEN=<YOUR_TOKEN>" >> .env
+# Load later with: source .env  # or python -m dotenv run -- <command>
 ```
+
+> `.env` is already listed in `.gitignore`, so your credentials stay local.
 
 3. **Update experiments to use IBM backend:**
 

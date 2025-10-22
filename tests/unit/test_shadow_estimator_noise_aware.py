@@ -48,6 +48,11 @@ def test_shadow_estimator_noise_aware_runs_mem_pipeline(tmp_path):
 
     assert "MEM" in estimator.mitigation_config.techniques
 
+    assert result.experiment_id is not None
+    assert result.manifest_path is not None
+    assert result.shot_data_path is not None
+    assert Path(result.shot_data_path).exists()
+
     manifest_path = Path(result.manifest_path)
     manifest = ProvenanceManifest.from_json(manifest_path)
     assert "MEM" in manifest.schema.mitigation.techniques

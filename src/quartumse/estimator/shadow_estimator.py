@@ -242,7 +242,9 @@ class ShadowEstimator(Estimator):
             shots_used=shadow_size,
             execution_time=execution_time,
             backend_name=self.backend.name,
+            experiment_id=experiment_id,
             manifest_path=str(manifest_path) if manifest_path else None,
+            shot_data_path=str(shot_data_path.resolve()),
         )
 
     def estimate_shots_needed(
@@ -334,7 +336,9 @@ class ShadowEstimator(Estimator):
             shots_used=manifest.schema.shadows.shadow_size,
             execution_time=0.0,  # No execution time for replay
             backend_name=manifest.schema.backend.backend_name,
+            experiment_id=experiment_id,
             manifest_path=str(manifest_path),
+            shot_data_path=manifest.schema.shot_data_path,
         )
 
     def _create_manifest(

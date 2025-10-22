@@ -17,19 +17,25 @@ class EstimationResult:
         shots_used: int,
         execution_time: float,
         backend_name: str,
+        *,
+        experiment_id: Optional[str] = None,
         manifest_path: Optional[str] = None,
+        shot_data_path: Optional[str] = None,
     ):
         self.observables = observables
         self.shots_used = shots_used
         self.execution_time = execution_time
         self.backend_name = backend_name
+        self.experiment_id = experiment_id
         self.manifest_path = manifest_path
+        self.shot_data_path = shot_data_path
 
     def __repr__(self) -> str:
         return (
             f"EstimationResult(observables={len(self.observables)}, "
             f"shots={self.shots_used}, "
-            f"backend={self.backend_name})"
+            f"backend={self.backend_name}, "
+            f"experiment_id={self.experiment_id})"
         )
 
 

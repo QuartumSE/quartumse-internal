@@ -22,7 +22,7 @@ from quartumse.shadows import ShadowConfig
 from quartumse.shadows.config import ShadowVersion
 from quartumse.shadows.core import Observable
 from quartumse.reporting.manifest import MitigationConfig
-from quartumse.connectors import resolve_backend
+from quartumse.connectors import resolve_backend, is_ibm_runtime_backend, create_runtime_sampler
 
 # ---------- Generic helpers ----------
 
@@ -39,11 +39,22 @@ def run_baseline_direct(circuits: List[Tuple[str, QuantumCircuit, List[Observabl
     circuit already includes measurement in the appropriate basis for those observables.
     """
     results = {}
+    sampler = None
+    if is_ibm_runtime_backend(backend):
+        sampler = create_runtime_sampler(backend)
+
     for (label, qc, obs_list), shots in zip(circuits, shots_per_circuit):
         tqc = transpile(qc, backend)
-        job = backend.run(tqc, shots=shots)
-        result = job.result()
-        counts = result.get_counts()
+
+        if sampler is not None:
+            job = sampler.run([tqc], shots=shots)
+            result = job.result()
+            counts = result[0].data.meas.get_counts()
+        else:
+            job = backend.run(tqc, shots=shots)
+            result = job.result()
+            counts = result.get_counts()
+
         # Compute expectations for the obs_list
         for obs in obs_list:
             exp = estimate_expectation_from_counts(counts, obs, shots)

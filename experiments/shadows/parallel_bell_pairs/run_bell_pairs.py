@@ -2,7 +2,7 @@
 import os
 from pathlib import Path
 from qiskit import QuantumCircuit, transpile
-from quartumse.connectors import resolve_backend
+from quartumse.connectors import resolve_backend, is_ibm_runtime_backend, create_runtime_sampler
 from quartumse.shadows.core import Observable
 from quartumse import ShadowEstimator
 from quartumse.shadows import ShadowConfig
@@ -50,11 +50,22 @@ def main():
     ]
 
     # Direct: measure ZZ and XX separately
+    sampler = None
+    if is_ibm_runtime_backend(backend):
+        sampler = create_runtime_sampler(backend)
+
     for basis, sels, shots in [("Z", ["ZZII","IIZZ"], 600), ("X", ["XXII","IIXX"], 600)]:
         circ = rot(qc, basis*4)
         tc = transpile(circ, backend)
-        result = backend.run(tc, shots=shots).result()
-        counts = result.get_counts()
+
+        if sampler is not None:
+            job = sampler.run([tc], shots=shots)
+            result = job.result()
+            counts = result[0].data.meas.get_counts()
+        else:
+            result = backend.run(tc, shots=shots).result()
+            counts = result.get_counts()
+
         for o in obs:
             s = o.pauli_string
             if s in sels:

@@ -27,7 +27,7 @@ from quartumse.shadows import ShadowConfig
 from quartumse.shadows.config import ShadowVersion
 from quartumse.shadows.core import Observable
 from quartumse.reporting.manifest import MitigationConfig
-from quartumse.connectors import resolve_backend
+from quartumse.connectors import resolve_backend, is_ibm_runtime_backend, create_runtime_sampler
 from quartumse.utils.metrics import compute_ssr
 
 
@@ -169,6 +169,10 @@ def run_baseline_measurement(
     observed_backend_normalized: Optional[str] = None
     observed_backend_label: Optional[str] = None
 
+    sampler = None
+    if is_ibm_runtime_backend(backend):
+        sampler = create_runtime_sampler(backend)
+
     for obs in observables:
         # Create measurement circuit for this Pauli string
         measure_circuit = circuit.copy()
@@ -188,10 +192,19 @@ def run_baseline_measurement(
 
         # Transpile and execute on the resolved backend
         transpiled = transpile(measure_circuit, backend)
-        job = backend.run(transpiled, shots=shots)
-        job_backend_name = _extract_job_backend_name(job)
-        result = job.result()
-        result_backend_name = _extract_backend_name(result)
+
+        if sampler is not None:
+            job = sampler.run([transpiled], shots=shots)
+            job_backend_name = _extract_job_backend_name(job)
+            result = job.result()
+            counts = result[0].data.meas.get_counts()
+            result_backend_name = _extract_backend_name(result)
+        else:
+            job = backend.run(transpiled, shots=shots)
+            job_backend_name = _extract_job_backend_name(job)
+            result = job.result()
+            counts = result.get_counts()
+            result_backend_name = _extract_backend_name(result)
         submission_backend_name = (
             job_backend_name
             or result_backend_name
@@ -226,8 +239,6 @@ def run_baseline_measurement(
                     "Baseline measurement backend changed mid-run: "
                     f"'{observed_backend_label}' → '{submission_backend_name}'."
                 )
-
-        counts = result.get_counts()
 
         # Compute expectation value
         expectation = 0.0

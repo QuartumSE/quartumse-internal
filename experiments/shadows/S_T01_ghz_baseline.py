@@ -19,6 +19,7 @@ from quartumse.shadows import ShadowConfig
 from quartumse.shadows.config import ShadowVersion
 from quartumse.shadows.core import Observable
 from quartumse.utils.metrics import compute_ssr
+from quartumse.connectors import is_ibm_runtime_backend, create_runtime_sampler
 
 
 def _load_experiment_config(config_path: Optional[Union[str, Path]]) -> Dict[str, Any]:
@@ -90,8 +91,19 @@ def direct_measurement_baseline(
     qc = circuit.copy()
     qc.measure_all()
 
-    job = backend.run(qc, shots=shots)
-    counts = job.result().get_counts()
+    sampler = None
+    if is_ibm_runtime_backend(backend):
+        sampler = create_runtime_sampler(backend)
+
+    if sampler is not None:
+        from qiskit import transpile
+        transpiled = transpile(qc, backend)
+        job = sampler.run([transpiled], shots=shots)
+        result = job.result()
+        counts = result[0].data.meas.get_counts()
+    else:
+        job = backend.run(qc, shots=shots)
+        counts = job.result().get_counts()
 
     # Compute expectation value
     total = sum(counts.values())

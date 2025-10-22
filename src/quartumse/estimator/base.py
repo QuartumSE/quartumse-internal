@@ -21,6 +21,7 @@ class EstimationResult:
         experiment_id: Optional[str] = None,
         manifest_path: Optional[str] = None,
         shot_data_path: Optional[str] = None,
+        mitigation_confusion_matrix_path: Optional[str] = None,
     ):
         self.observables = observables
         self.shots_used = shots_used
@@ -29,6 +30,7 @@ class EstimationResult:
         self.experiment_id = experiment_id
         self.manifest_path = manifest_path
         self.shot_data_path = shot_data_path
+        self.mitigation_confusion_matrix_path = mitigation_confusion_matrix_path
 
     def __repr__(self) -> str:
         return (

@@ -366,6 +366,11 @@ class ShadowEstimator(Estimator):
             self.shot_data_writer.load_shadow_measurements(experiment_id)
         )
 
+        if manifest.schema.shadows is None:
+            raise ValueError(
+                "Manifest does not contain classical shadows configuration information."
+            )
+
         # Reconstruct shadows with loaded data
         # Create temporary shadow implementation if needed
         shadow_config = ShadowConfig(
@@ -373,13 +378,58 @@ class ShadowEstimator(Estimator):
             shadow_size=manifest.schema.shadows.shadow_size,
             random_seed=manifest.schema.random_seed,
         )
+
+        resolved_confusion_matrix_path: Optional[str] = (
+            manifest.schema.mitigation.confusion_matrix_path
+        )
+
         if shadow_config.version == ShadowVersion.V0_BASELINE:
             shadow_impl = RandomLocalCliffordShadows(shadow_config)
         elif shadow_config.version == ShadowVersion.V1_NOISE_AWARE:
-            raise NotImplementedError(
-                "Replaying noise-aware classical shadows (v1) is not yet supported because "
-                "loading calibrated confusion matrices from manifests has not been implemented."
-            )
+            confusion_matrix_path_str = manifest.schema.mitigation.confusion_matrix_path
+
+            if not confusion_matrix_path_str:
+                raise FileNotFoundError(
+                    "Noise-aware manifest does not include a persisted confusion matrix path. "
+                    "Re-run estimation or provide the saved calibration artifact before replaying."
+                )
+
+            raw_confusion_path = Path(confusion_matrix_path_str)
+            candidate_paths = [raw_confusion_path]
+
+            if not raw_confusion_path.is_absolute():
+                candidate_paths.append((manifest_path.parent / raw_confusion_path).resolve())
+                candidate_paths.append((self.data_dir / raw_confusion_path).resolve())
+
+            candidate_paths.append((self.data_dir / "mem" / raw_confusion_path.name).resolve())
+            candidate_paths.append((manifest_path.parent / "mem" / raw_confusion_path.name).resolve())
+
+            confusion_matrix_path: Optional[Path] = None
+            for candidate in candidate_paths:
+                if candidate and candidate.exists():
+                    confusion_matrix_path = candidate
+                    break
+
+            if confusion_matrix_path is None:
+                raise FileNotFoundError(
+                    "Unable to locate the persisted confusion matrix required for noise-aware replay. "
+                    f"Looked for {raw_confusion_path} and related paths."
+                )
+
+            with np.load(confusion_matrix_path, allow_pickle=False) as archive:
+                if "confusion_matrix" not in archive:
+                    raise ValueError(
+                        "Confusion matrix archive is missing the 'confusion_matrix' dataset."
+                    )
+                confusion_matrix = archive["confusion_matrix"]
+
+            mem = MeasurementErrorMitigation(self.backend)
+            mem.confusion_matrix = confusion_matrix
+            mem.confusion_matrix_path = confusion_matrix_path.resolve()
+            mem._calibrated_qubits = tuple(range(num_qubits))
+
+            shadow_impl = NoiseAwareRandomLocalCliffordShadows(shadow_config, mem)
+            resolved_confusion_matrix_path = str(confusion_matrix_path.resolve())
         else:
             raise NotImplementedError(
                 f"Replay for shadow version {shadow_config.version.value} is not implemented"
@@ -413,7 +463,7 @@ class ShadowEstimator(Estimator):
             experiment_id=experiment_id,
             manifest_path=str(manifest_path),
             shot_data_path=manifest.schema.shot_data_path,
-            mitigation_confusion_matrix_path=manifest.schema.mitigation.confusion_matrix_path,
+            mitigation_confusion_matrix_path=resolved_confusion_matrix_path,
         )
 
     def _create_manifest(

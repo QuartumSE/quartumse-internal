@@ -60,6 +60,44 @@ class TestShotDataWriter:
             with pytest.raises(FileNotFoundError):
                 writer.load_shadow_measurements("nonexistent-id")
 
+    def test_save_shadow_measurements_appends_chunks(self):
+        """Chunked writes should merge under a single experiment file."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            writer = ShotDataWriter(Path(tmpdir))
+
+            experiment_id = "chunked-experiment"
+            num_qubits = 2
+
+            bases_chunk_1 = np.array([[0, 1], [2, 0]])
+            outcomes_chunk_1 = np.array([[0, 1], [1, 0]])
+
+            bases_chunk_2 = np.array([[1, 1]])
+            outcomes_chunk_2 = np.array([[1, 1]])
+
+            writer.save_shadow_measurements(
+                experiment_id, bases_chunk_1, outcomes_chunk_1, num_qubits
+            )
+            writer.save_shadow_measurements(
+                experiment_id, bases_chunk_2, outcomes_chunk_2, num_qubits
+            )
+
+            loaded_bases, loaded_outcomes, loaded_qubits = writer.load_shadow_measurements(
+                experiment_id
+            )
+
+            assert loaded_qubits == num_qubits
+            assert loaded_bases.shape == (3, 2)
+            assert loaded_outcomes.shape == (3, 2)
+
+            np.testing.assert_array_equal(
+                loaded_bases,
+                np.vstack([bases_chunk_1, bases_chunk_2]),
+            )
+            np.testing.assert_array_equal(
+                loaded_outcomes,
+                np.vstack([outcomes_chunk_1, outcomes_chunk_2]),
+            )
+
 
 class TestShadowEstimatorPersistence:
     """Test ShadowEstimator shot data persistence."""

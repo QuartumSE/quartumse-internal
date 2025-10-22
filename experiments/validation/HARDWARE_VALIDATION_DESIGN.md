@@ -28,6 +28,12 @@ This experiment validates QuartumSE's core claims on real IBM quantum hardware u
 - Baseline measurements log the backend name for every submission and raise if a job executes on a different backend mid-run.
 - These safeguards ensure all measurements in a run share identical hardware provenance, matching the manifest entry and documented backend descriptor.
 
+### Execution Batching Safeguard
+
+- QuartumSE now interrogates `backend.configuration().max_experiments` before dispatching classical-shadow circuits.
+- If the device advertises a cap, circuits are automatically chunked into compliant batches while defaulting to a single submission when the field is absent.
+- Results from all batches merge under one experiment identifier: the manifest still references a single Parquet file and the shot-data writer appends each chunk so downstream analysis sees a unified dataset.
+
 ---
 
 ## Shot Budget Overview

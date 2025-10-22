@@ -680,7 +680,8 @@ if __name__ == "__main__":
     # Load IBM token from environment
     if not os.environ.get('QISKIT_IBM_TOKEN'):
         print("Error: QISKIT_IBM_TOKEN not set")
-        print("Set with: export QISKIT_IBM_TOKEN='your_token_here'")
+        print("Set with: export QISKIT_IBM_TOKEN=<YOUR_TOKEN>")
+        print("(You can also keep it in a local .env file and run: source .env)")
         exit(1)
 
     main()

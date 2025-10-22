@@ -62,6 +62,19 @@ All code contributions will require:
 3. **Code quality:** Passing black, ruff, mypy checks
 4. **License:** All contributions under Apache 2.0
 
+### Handling IBM Quantum credentials locally
+
+When validation tasks require IBM Quantum access, keep credentials local and
+out of version control:
+
+- Export the token in your shell with `export QISKIT_IBM_TOKEN=<YOUR_TOKEN>`
+  before running scripts.
+- Optionally store the line `QISKIT_IBM_TOKEN=<YOUR_TOKEN>` in a personal
+  `.env` file (already gitignored) and load it with `source .env` or
+  `python -m dotenv run -- <command>`.
+- Never paste real tokens into notebooks, commits, or issue comments—use the
+  `<YOUR_TOKEN>` placeholder when documenting steps.
+
 ### Experiment Contributions
 
 If you run QuartumSE experiments and want to share results:

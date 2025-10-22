@@ -29,3 +29,11 @@ repos:
       - id: mypy
         additional_dependencies: [types-all]
         exclude: ^(tests/|experiments/)
+
+  - repo: local
+    hooks:
+      - id: detect-ibm-token
+        name: Detect IBM Quantum tokens
+        entry: python tools/precommit_detect_ibm_token.py
+        language: python
+        types: [text]

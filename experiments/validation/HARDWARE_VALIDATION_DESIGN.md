@@ -379,8 +379,8 @@ MAE = (1/N) × Σ |estimated - analytical|
 
 2. **Environment Setup**
    ```bash
-   # Credentials already in .env
-   export QISKIT_IBM_TOKEN="<your_ibm_quantum_token>"
+   # Credentials already in .env (gitignored)
+   export QISKIT_IBM_TOKEN=<YOUR_TOKEN>  # or run: source .env
 
    # Working directory
    cd experiments/validation
@@ -398,7 +398,7 @@ MAE = (1/N) × Σ |estimated - analytical|
 #### Option 1: Interactive (Recommended)
 
 ```bash
-export QISKIT_IBM_TOKEN="<your_ibm_quantum_token>"
+export QISKIT_IBM_TOKEN=<YOUR_TOKEN>
 python hardware_validation.py
 ```
 
@@ -425,7 +425,7 @@ python hardware_validation.py
 #### Option 2: Background (Walk Away)
 
 ```bash
-export QISKIT_IBM_TOKEN="<your_ibm_quantum_token>"
+export QISKIT_IBM_TOKEN=<YOUR_TOKEN>
 nohup python hardware_validation.py > validation_log.txt 2>&1 &
 
 # Monitor progress

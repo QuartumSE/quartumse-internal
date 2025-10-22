@@ -55,6 +55,17 @@ coverage.xml
 # QuartumSE specific
 data/
 !data/.gitkeep
+!data/README.md
+validation_data/
+!validation_data/.gitkeep
+!validation_data/README.md
+!validation_data/*/.gitkeep
+demo_data/
+!demo_data/.gitkeep
+!demo_data/README.md
+notebook_data/
+!notebook_data/.gitkeep
+!notebook_data/README.md
 *.parquet
 *.duckdb
 *.db
@@ -65,6 +76,11 @@ data/reports/*.html
 data/reports/*.pdf
 data/shots/*.parquet
 data/calibrations/*.json
+validation_data/manifests/*.json
+validation_data/reports/*.html
+validation_data/reports/*.pdf
+validation_data/shots/*.parquet
+validation_data/calibrations/*.json
 
 # Secrets and credentials
 .env

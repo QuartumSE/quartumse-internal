@@ -565,27 +565,49 @@ def main():
 
     # Summary
     def format_ci(value: Optional[float]) -> str:
-        return "N/A".rjust(13) if value is None else f"{value:>13.1%}"
+        return "N/A" if value is None else f"{value:.1%}"
 
     def format_ssr(value: Optional[float]) -> str:
-        return "N/A".rjust(11) if value is None else f"{value:>11.2f}×"
+        return "N/A" if value is None else f"{value:.2f}×"
+
+    def format_shots(value: Optional[int]) -> str:
+        return "N/A" if value is None else f"{value:,}"
 
     print("\n" + "="*80)
     print("VALIDATION SUMMARY")
     print("="*80)
     print()
-    print(f"{'Approach':<25} {'CI Coverage':<15} {'MAE':<12} {'SSR':<12} {'Status'}")
-    print("-"*80)
+    print(f"{'Approach':<25} {'Total Shots':>12} {'CI Coverage':>15} {'MAE':>12} {'SSR':>12} {'Status'}")
+    print("-"*92)
 
-    baseline_ci = format_ci(None)
-    baseline_row = f"{'Baseline (Direct)':<25} {baseline_ci} {baseline_mae:>11.4f} {'1.00×':>11} ✓ PASS"
-    print(baseline_row)
+    print(
+        f"{'Baseline (Direct)':<25} "
+        f"{format_shots(baseline_total_shots):>12} "
+        f"{format_ci(None):>15} "
+        f"{baseline_mae:>12.4f} "
+        f"{'1.00×':>12} "
+        f"{'✓ PASS'}"
+    )
 
     v0_status = "✓ PASS" if (v0_metrics['ssr_average'] or 0) >= 1.1 else "✗ FAIL"
     v1_status = "✓ PASS" if (v1_metrics['ssr_average'] or 0) >= 1.1 else "✗ FAIL"
 
-    print(f"{'Shadows v0 (Baseline)':<25} {format_ci(v0_metrics['ci_coverage'])} {v0_metrics['mean_absolute_error']:>11.4f} {format_ssr(v0_metrics['ssr_average'])} {v0_status}")
-    print(f"{'Shadows v1 (+ MEM)':<25} {format_ci(v1_metrics['ci_coverage'])} {v1_metrics['mean_absolute_error']:>11.4f} {format_ssr(v1_metrics['ssr_average'])} {v1_status}")
+    print(
+        f"{'Shadows v0 (Baseline)':<25} "
+        f"{format_shots(v0_metrics.get('total_shots')):>12} "
+        f"{format_ci(v0_metrics['ci_coverage']):>15} "
+        f"{v0_metrics['mean_absolute_error']:>12.4f} "
+        f"{format_ssr(v0_metrics['ssr_average']):>12} "
+        f"{v0_status}"
+    )
+    print(
+        f"{'Shadows v1 (+ MEM)':<25} "
+        f"{format_shots(v1_metrics.get('total_shots')):>12} "
+        f"{format_ci(v1_metrics['ci_coverage']):>15} "
+        f"{v1_metrics['mean_absolute_error']:>12.4f} "
+        f"{format_ssr(v1_metrics['ssr_average']):>12} "
+        f"{v1_status}"
+    )
     print()
 
     print("MEM Effectiveness:")
@@ -621,6 +643,7 @@ def main():
 
     validation_results['summary'] = {
         'baseline_mae': baseline_mae,
+        'baseline_total_shots': baseline_total_shots,
         'shadows_v0_metrics': v0_metrics,
         'shadows_v1_metrics': v1_metrics,
         'mae_by_approach': mae_by_approach,

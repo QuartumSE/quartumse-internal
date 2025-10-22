@@ -211,6 +211,16 @@ SSR = (baseline_error / approach_error)
 **Why Simplified?**
 All three workflows consume the same 5,000-shot budget, so the shot-ratio term collapses to 1.0.
 
+**Worked Example (including calibration overhead):**
+- Baseline: 5,000 direct-measurement shots → MAE = 0.035.
+- Shadows v1 + MEM: 904 measurement shots + 4,096 calibration shots = 5,000 total → MAE = 0.008.
+
+```
+SSR_v1 = (5,000 / (904 + 4,096)) × (0.035 / 0.008) ≈ 4.4×
+```
+
+Counting the calibration shots keeps the denominator at 5,000, producing a fair 4.4× comparison. Ignoring MEM overhead (using only 904 shots) would incorrectly inflate the SSR to ≈24× and mask the real cost of mitigation.
+
 **Per-Observable SSR:**
 Each of 6 observables gets its own SSR, then averaged
 

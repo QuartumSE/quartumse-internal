@@ -72,3 +72,50 @@ def test_run_baseline_measurement_detects_backend_switch(monkeypatch):
             shot_allocation,
             expected_backend_name="ibm_fake",
         )
+
+
+def test_compute_metrics_accounts_for_calibration_shots():
+    baseline_total_shots = 5_000
+    measurement_shots = 1_200
+    calibration_shots = 600
+    approach_total_shots = measurement_shots + calibration_shots
+
+    baseline_results = {
+        "ZII": {"expectation": 0.2},
+        "ZZI": {"expectation": 0.7},
+    }
+
+    shadows_results = {
+        "ZII": {
+            "expectation": 0.05,
+            "expected": 0.0,
+            "error": abs(0.05 - 0.0),
+            "in_ci": True,
+        },
+        "ZZI": {
+            "expectation": 0.5,
+            "expected": 1.0,
+            "error": abs(0.5 - 1.0),
+            "in_ci": False,
+        },
+    }
+
+    metrics = hardware_validation.compute_metrics(
+        baseline_results,
+        shadows_results,
+        baseline_total_shots,
+        approach_total_shots,
+    )
+
+    shot_ratio = baseline_total_shots / approach_total_shots
+    expected_ssrs = [
+        shot_ratio * (abs(0.2 - 0.0) / max(abs(0.05 - 0.0), 1e-9)),
+        shot_ratio * (abs(0.7 - 1.0) / max(abs(0.5 - 1.0), 1e-9)),
+    ]
+    expected_mae = (abs(0.05 - 0.0) + abs(0.5 - 1.0)) / 2
+
+    assert metrics["total_shots"] == approach_total_shots
+    assert metrics["ci_coverage"] == pytest.approx(0.5)
+    assert metrics["mean_absolute_error"] == pytest.approx(expected_mae)
+    assert metrics["ssr_per_observable"] == pytest.approx(expected_ssrs)
+    assert metrics["ssr_average"] == pytest.approx(sum(expected_ssrs) / len(expected_ssrs))

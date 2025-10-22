@@ -31,6 +31,62 @@ from quartumse.connectors import resolve_backend
 from quartumse.utils.metrics import compute_ssr
 
 
+def _extract_backend_name(candidate) -> Optional[str]:
+    """Best-effort helper to coerce a backend-like object into a name string."""
+
+    if candidate is None:
+        return None
+
+    if isinstance(candidate, str):
+        return candidate.strip()
+
+    direct_name = getattr(candidate, "backend_name", None)
+    if isinstance(direct_name, str):
+        return direct_name.strip()
+
+    name_attr = getattr(candidate, "name", None)
+    extracted_name = None
+    if callable(name_attr):
+        try:
+            extracted_name = name_attr()
+        except TypeError:
+            extracted_name = None
+    elif name_attr is not None:
+        extracted_name = name_attr
+
+    if isinstance(extracted_name, str):
+        return extracted_name.strip()
+
+    return None
+
+
+def _extract_job_backend_name(job) -> Optional[str]:
+    """Return the backend name associated with an IBM Runtime job, if available."""
+
+    if job is None:
+        return None
+
+    backend_candidate = getattr(job, "backend", None)
+    backend_obj = None
+    if callable(backend_candidate):
+        try:
+            backend_obj = backend_candidate()
+        except TypeError:
+            backend_obj = None
+    elif backend_candidate is not None:
+        backend_obj = backend_candidate
+
+    backend_name = _extract_backend_name(backend_obj)
+    if backend_name:
+        return backend_name
+
+    direct_backend_name = getattr(job, "backend_name", None)
+    if isinstance(direct_backend_name, str):
+        return direct_backend_name.strip()
+
+    return None
+
+
 def create_ghz_circuit(num_qubits: int = 3) -> QuantumCircuit:
     """Create GHZ state: (|000...⟩ + |111...⟩) / √2"""
     qc = QuantumCircuit(num_qubits)
@@ -85,6 +141,8 @@ def run_baseline_measurement(
     observables: List[Observable],
     backend,
     shot_allocation: Dict[str, int],
+    *,
+    expected_backend_name: Optional[str] = None,
 ) -> Dict[str, Dict[str, float]]:
     """Run baseline direct Pauli measurement (ground truth)."""
     print("\n" + "="*60)
@@ -98,8 +156,18 @@ def run_baseline_measurement(
     print(f"Total shots: {total_shots}")
     print()
 
+    target_backend_name = expected_backend_name or _extract_backend_name(backend)
+    target_backend_normalized = (
+        target_backend_name.lower().strip() if target_backend_name else None
+    )
+
+    if target_backend_name:
+        print(f"Target IBM backend for baseline: {target_backend_name}")
+
     results: Dict[str, Dict[str, float]] = {}
     start_time = time.time()
+    observed_backend_normalized: Optional[str] = None
+    observed_backend_label: Optional[str] = None
 
     for obs in observables:
         # Create measurement circuit for this Pauli string
@@ -121,7 +189,44 @@ def run_baseline_measurement(
         # Transpile and execute on the resolved backend
         transpiled = transpile(measure_circuit, backend)
         job = backend.run(transpiled, shots=shots)
+        job_backend_name = _extract_job_backend_name(job)
         result = job.result()
+        result_backend_name = _extract_backend_name(result)
+        submission_backend_name = (
+            job_backend_name
+            or result_backend_name
+            or target_backend_name
+        )
+
+        if submission_backend_name:
+            print(
+                f"Submitting {str(obs):<10} on backend '{submission_backend_name}' ({shots} shots)"
+            )
+        else:
+            print(
+                f"Submitting {str(obs):<10} on backend <unknown> ({shots} shots)"
+            )
+
+        if submission_backend_name:
+            normalized_submission = submission_backend_name.strip().lower()
+            if (
+                target_backend_normalized is not None
+                and normalized_submission != target_backend_normalized
+            ):
+                raise RuntimeError(
+                    "Baseline measurement observed execution on backend "
+                    f"'{submission_backend_name}', but expected '{target_backend_name}'."
+                )
+
+            if observed_backend_normalized is None:
+                observed_backend_normalized = normalized_submission
+                observed_backend_label = submission_backend_name
+            elif normalized_submission != observed_backend_normalized:
+                raise RuntimeError(
+                    "Baseline measurement backend changed mid-run: "
+                    f"'{observed_backend_label}' → '{submission_backend_name}'."
+                )
+
         counts = result.get_counts()
 
         # Compute expectation value
@@ -368,7 +473,28 @@ def main():
     # Connect to backend
     print(f"Connecting to backend: {backend_descriptor}...")
     backend, snapshot = resolve_backend(backend_descriptor)
-    print(f"✓ Connected to: {backend.name}")
+
+    _, _, requested_backend_name = backend_descriptor.partition(":")
+    requested_backend_name = requested_backend_name.strip()
+    resolved_backend_name = _extract_backend_name(backend)
+
+    if not requested_backend_name:
+        raise ValueError(
+            f"Backend descriptor '{backend_descriptor}' is missing an IBM backend name."
+        )
+
+    if not resolved_backend_name:
+        raise RuntimeError(
+            "Resolved backend did not expose a name. An IBM Runtime backend is required for hardware validation."
+        )
+
+    if resolved_backend_name.strip().lower() != requested_backend_name.lower():
+        raise RuntimeError(
+            "Resolved backend does not match requested IBM Runtime target: "
+            f"expected '{requested_backend_name}', got '{resolved_backend_name}'."
+        )
+
+    print(f"✓ Connected to: {resolved_backend_name}")
     print(f"  Qubits: {snapshot.num_qubits}")
     print(f"  Calibration: {snapshot.calibration_timestamp}")
     if snapshot.readout_errors:
@@ -380,7 +506,7 @@ def main():
     validation_results = {
         'experiment_info': {
             'date': datetime.now().isoformat(),
-            'backend': backend.name,
+            'backend': resolved_backend_name,
             'circuit': 'GHZ-3',
             'num_qubits': num_qubits,
             'total_shot_budget': total_shots_budget,
@@ -394,7 +520,11 @@ def main():
 
     # 1. Baseline
     baseline_results = run_baseline_measurement(
-        circuit, observables, backend, baseline_allocation
+        circuit,
+        observables,
+        backend,
+        baseline_allocation,
+        expected_backend_name=resolved_backend_name,
     )
     baseline_total_shots = sum(baseline_allocation.values())
     baseline_mae = float(np.mean([data['error'] for data in baseline_results.values()])) if baseline_results else 0.0

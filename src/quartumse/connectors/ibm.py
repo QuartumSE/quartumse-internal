@@ -1,9 +1,11 @@
 """IBM Quantum connector utilities.
 
 This module provides a small abstraction layer for interacting with IBM Quantum
-resources via Qiskit Runtime.  It is designed to provide a consistent backend
-interface (``Backend.run``) regardless of whether the execution is performed on
-managed IBM hardware or via a local Aer simulator fallback.
+resources via Qiskit Runtime.  It focuses on supplying ready-to-use backend
+objects together with helper utilities for the Runtime Primitives interface
+used throughout QuartumSE.  When a managed IBM backend is resolved, a
+``SamplerV2`` instance can be constructed to submit circuits using the new
+primitive API.  Local Aer simulators are still supported as fallbacks.
 
 The connector performs three primary tasks:
 
@@ -29,6 +31,11 @@ from typing import Any, Dict, Optional
 from qiskit.providers.backend import Backend
 from qiskit_aer import AerSimulator
 from qiskit_ibm_runtime import QiskitRuntimeService
+
+try:  # Runtime primitive import is optional during documentation builds/tests
+    from qiskit_ibm_runtime import SamplerV2
+except Exception:  # pragma: no cover - fallback when primitive class unavailable
+    SamplerV2 = None  # type: ignore
 
 try:  # Runtime import is optional during documentation builds/tests
     from qiskit_ibm_runtime.exceptions import IBMRuntimeError
@@ -56,6 +63,30 @@ class IBMBackendHandle:
     backend: Backend
     snapshot: BackendSnapshot
     service: Optional[QiskitRuntimeService] = None
+
+
+def is_ibm_runtime_backend(backend: Backend) -> bool:
+    """Return ``True`` when ``backend`` originates from IBM Runtime."""
+
+    module_name = getattr(type(backend), "__module__", "")
+    return "qiskit_ibm_runtime" in module_name
+
+
+def create_runtime_sampler(backend: Backend):
+    """Instantiate ``SamplerV2`` for ``backend`` when supported."""
+
+    if SamplerV2 is None or not is_ibm_runtime_backend(backend):
+        return None
+
+    try:
+        return SamplerV2(mode=backend)
+    except Exception as exc:  # pragma: no cover - requires remote service
+        LOGGER.warning(
+            "Unable to initialise SamplerV2 for backend %s (%s)",
+            getattr(backend, "name", backend),
+            exc,
+        )
+        return None
 
 
 def _read_first_env(*keys: str) -> Optional[str]:
@@ -289,5 +320,7 @@ __all__ = [
     "IBMBackendConnector",
     "IBMBackendHandle",
     "create_backend_snapshot",
+    "create_runtime_sampler",
+    "is_ibm_runtime_backend",
     "resolve_backend_descriptor",
 ]

@@ -12,7 +12,12 @@ from qiskit import QuantumCircuit, qasm3, transpile
 from qiskit.providers import Backend
 from qiskit_aer import AerSimulator
 
-from quartumse.connectors import create_backend_snapshot, resolve_backend
+from quartumse.connectors import (
+    create_backend_snapshot,
+    create_runtime_sampler,
+    is_ibm_runtime_backend,
+    resolve_backend,
+)
 
 from quartumse import __version__
 from quartumse.estimator.base import Estimator, EstimationResult
@@ -81,6 +86,10 @@ class ShadowEstimator(Estimator):
 
         super().__init__(backend, shadow_config)
 
+        self._runtime_sampler = None
+        self._runtime_sampler_checked = False
+        self._use_runtime_sampler = is_ibm_runtime_backend(self.backend)
+
         self.shadow_config = shadow_config or ShadowConfig()
         self.mitigation_config = mitigation_config or MitigationConfig()
         self.data_dir = Path(data_dir) if data_dir else Path("./data")
@@ -97,9 +106,21 @@ class ShadowEstimator(Estimator):
 
         # Initialize shadow implementation based on version
         self.shadow_impl = self._create_shadow_implementation()
-        
+
         # Initialize shot data writer
         self.shot_data_writer = ShotDataWriter(self.data_dir)
+
+    def _get_runtime_sampler(self):
+        """Initialise (if necessary) and return the IBM Runtime sampler."""
+
+        if not self._use_runtime_sampler:
+            return None
+
+        if not self._runtime_sampler_checked:
+            self._runtime_sampler = create_runtime_sampler(self.backend)
+            self._runtime_sampler_checked = True
+
+        return self._runtime_sampler
 
     def _create_shadow_implementation(self):
         """Factory for shadow implementations."""
@@ -204,17 +225,28 @@ class ShadowEstimator(Estimator):
 
         measurement_outcomes: List[np.ndarray] = []
 
+        sampler = self._get_runtime_sampler()
+
         for start_idx in range(0, len(transpiled_circuits), max_experiments):
             circuit_batch = transpiled_circuits[start_idx : start_idx + max_experiments]
-            job = self.backend.run(circuit_batch, shots=1)  # Each circuit is one shadow
-            result = job.result()
+            if sampler is not None:
+                job = sampler.run(list(circuit_batch), shots=1)
+                result = job.result()
 
-            for batch_idx, _ in enumerate(circuit_batch):
-                counts = result.get_counts(batch_idx)
-                # Get the single outcome (since shots=1)
-                bitstring = list(counts.keys())[0].replace(" ", "")
-                outcomes = np.array([int(b) for b in bitstring[::-1]])  # Reverse for qubit ordering
-                measurement_outcomes.append(outcomes)
+                for batch_idx, _ in enumerate(circuit_batch):
+                    counts = result[batch_idx].data.meas.get_counts()
+                    bitstring = list(counts.keys())[0].replace(" ", "")
+                    outcomes = np.array([int(b) for b in bitstring[::-1]])
+                    measurement_outcomes.append(outcomes)
+            else:
+                job = self.backend.run(circuit_batch, shots=1)  # Each circuit is one shadow
+                result = job.result()
+
+                for batch_idx, _ in enumerate(circuit_batch):
+                    counts = result.get_counts(batch_idx)
+                    bitstring = list(counts.keys())[0].replace(" ", "")
+                    outcomes = np.array([int(b) for b in bitstring[::-1]])
+                    measurement_outcomes.append(outcomes)
 
         if len(measurement_outcomes) != shadow_size:
             raise RuntimeError(

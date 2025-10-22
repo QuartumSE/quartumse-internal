@@ -2,11 +2,17 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Dict, Optional, Sequence
 
 import numpy as np
 from qiskit import QuantumCircuit, transpile
 from qiskit.providers import Backend
+
+from quartumse.connectors import create_runtime_sampler, is_ibm_runtime_backend
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class MeasurementErrorMitigation:
@@ -20,6 +26,21 @@ class MeasurementErrorMitigation:
         self.backend = backend
         self.confusion_matrix: Optional[np.ndarray] = None
         self._calibrated_qubits: Optional[tuple[int, ...]] = None
+        self._runtime_sampler = None
+        self._runtime_sampler_checked = False
+        self._use_runtime_sampler = is_ibm_runtime_backend(backend)
+
+    def _get_runtime_sampler(self):
+        """Initialise (if necessary) and return an IBM Runtime sampler."""
+
+        if not self._use_runtime_sampler:
+            return None
+
+        if not self._runtime_sampler_checked:
+            self._runtime_sampler = create_runtime_sampler(self.backend)
+            self._runtime_sampler_checked = True
+
+        return self._runtime_sampler
 
     def calibrate(
         self,
@@ -62,12 +83,32 @@ class MeasurementErrorMitigation:
             initial_layout=list(qubits),
         )
 
-        job = self.backend.run(transpiled_circuits, shots=shots, **run_options)
-        result = job.result()
+        sampler = self._get_runtime_sampler()
+        if sampler is not None:
+            try:
+                job = sampler.run(list(transpiled_circuits), shots=shots, **run_options)
+            except TypeError:
+                if run_options:
+                    LOGGER.warning(
+                        "SamplerV2.run does not accept run options %s; submitting without them.",
+                        run_options,
+                    )
+                job = sampler.run(list(transpiled_circuits), shots=shots)
+            result = job.result()
+
+            def _get_counts(batch_index: int):
+                return result[batch_index].data.meas.get_counts()
+
+        else:
+            job = self.backend.run(transpiled_circuits, shots=shots, **run_options)
+            result = job.result()
+
+            def _get_counts(batch_index: int):
+                return result.get_counts(batch_index)
 
         confusion = np.zeros((num_states, num_states), dtype=float)
         for prepared_index in range(num_states):
-            counts = result.get_counts(prepared_index)
+            counts = _get_counts(prepared_index)
             total = sum(counts.values())
             if total == 0:
                 continue

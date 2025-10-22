@@ -58,7 +58,7 @@ class ShotDataWriter:
         num_qubits: int,
     ) -> Path:
         """
-        Save shadow measurement data to Parquet.
+        Save shadow measurement data to Parquet, appending if the experiment already exists.
 
         Args:
             experiment_id: Unique experiment identifier
@@ -71,22 +71,38 @@ class ShotDataWriter:
         """
         shadow_size = len(measurement_outcomes)
 
-        # Build dataframe
+        output_path = self.shots_dir / f"{experiment_id}.parquet"
+
+        existing_df = None
+        start_index = 0
+        if output_path.exists():
+            existing_df = pd.read_parquet(output_path, engine="pyarrow")
+            if not existing_df.empty:
+                existing_num_qubits = int(existing_df["num_qubits"].iloc[0])
+                if existing_num_qubits != num_qubits:
+                    raise ValueError(
+                        "Existing shot data has a different number of qubits than the new chunk."
+                    )
+                start_index = int(existing_df["shadow_index"].max()) + 1
+
+        # Build dataframe for the new chunk
         records = []
-        for shadow_idx in range(shadow_size):
+        for offset in range(shadow_size):
+            global_index = start_index + offset
+
             # Encode measurement bases as string (e.g., "XYZ")
             basis_map = {0: "Z", 1: "X", 2: "Y"}  # Common Clifford basis convention
             bases_str = "".join(
-                basis_map.get(int(b), str(b)) for b in measurement_bases[shadow_idx]
+                basis_map.get(int(b), str(b)) for b in measurement_bases[offset]
             )
 
             # Encode outcomes as bitstring
-            outcomes_str = "".join(str(int(o)) for o in measurement_outcomes[shadow_idx])
+            outcomes_str = "".join(str(int(o)) for o in measurement_outcomes[offset])
 
             records.append(
                 {
                     "experiment_id": experiment_id,
-                    "shadow_index": shadow_idx,
+                    "shadow_index": global_index,
                     "num_qubits": num_qubits,
                     "measurement_bases": bases_str,
                     "measurement_outcomes": outcomes_str,
@@ -94,10 +110,15 @@ class ShotDataWriter:
                 }
             )
 
-        df = pd.DataFrame(records)
+        new_df = pd.DataFrame(records)
 
-        # Write to Parquet
-        output_path = self.shots_dir / f"{experiment_id}.parquet"
+        if existing_df is not None and not existing_df.empty:
+            df = pd.concat([existing_df, new_df], ignore_index=True)
+        else:
+            df = new_df
+
+        df = df.sort_values("shadow_index").reset_index(drop=True)
+
         df.to_parquet(output_path, engine="pyarrow", compression="snappy", index=False)
 
         return output_path

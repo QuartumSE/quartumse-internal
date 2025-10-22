@@ -179,18 +179,42 @@ class ShadowEstimator(Estimator):
         # Transpile for backend
         transpiled_circuits = transpile(shadow_circuits, backend=self.backend)
 
-        # Execute
-        job = self.backend.run(transpiled_circuits, shots=1)  # Each circuit is one shadow
-        result = job.result()
+        # Respect backend batching limits
+        max_experiments = None
+        backend_config = None
+        if hasattr(self.backend, "configuration"):
+            try:
+                backend_config = self.backend.configuration()
+            except Exception:
+                backend_config = None
 
-        # Extract measurement outcomes
-        measurement_outcomes = []
-        for i in range(shadow_size):
-            counts = result.get_counts(i)
-            # Get the single outcome (since shots=1)
-            bitstring = list(counts.keys())[0]
-            outcomes = np.array([int(b) for b in bitstring[::-1]])  # Reverse for qubit ordering
-            measurement_outcomes.append(outcomes)
+        if backend_config is not None:
+            max_experiments = getattr(backend_config, "max_experiments", None)
+
+        if isinstance(max_experiments, np.integer):
+            max_experiments = int(max_experiments)
+
+        if not isinstance(max_experiments, int) or max_experiments <= 0:
+            max_experiments = len(transpiled_circuits) if transpiled_circuits else 1
+
+        measurement_outcomes: List[np.ndarray] = []
+
+        for start_idx in range(0, len(transpiled_circuits), max_experiments):
+            circuit_batch = transpiled_circuits[start_idx : start_idx + max_experiments]
+            job = self.backend.run(circuit_batch, shots=1)  # Each circuit is one shadow
+            result = job.result()
+
+            for batch_idx, _ in enumerate(circuit_batch):
+                counts = result.get_counts(batch_idx)
+                # Get the single outcome (since shots=1)
+                bitstring = list(counts.keys())[0].replace(" ", "")
+                outcomes = np.array([int(b) for b in bitstring[::-1]])  # Reverse for qubit ordering
+                measurement_outcomes.append(outcomes)
+
+        if len(measurement_outcomes) != shadow_size:
+            raise RuntimeError(
+                "Collected measurement outcomes do not match the requested shadow size."
+            )
 
         measurement_outcomes = np.array(measurement_outcomes)
 

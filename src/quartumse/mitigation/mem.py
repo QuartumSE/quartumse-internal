@@ -108,7 +108,20 @@ class MeasurementErrorMitigation:
             result = job.result()
 
             def _get_counts(batch_index: int):
-                return result[batch_index].data.meas.get_counts()
+                pub_result = result[batch_index]
+                data_bin = pub_result.data
+
+                # SamplerV2 DataBin: try common measurement key names
+                for key in ['meas', 'c', 'measure']:
+                    if hasattr(data_bin, key):
+                        return getattr(data_bin, key).get_counts()
+
+                # Fallback: get first measurement attribute
+                data_attrs = [attr for attr in dir(data_bin) if not attr.startswith('_')]
+                if data_attrs:
+                    return getattr(data_bin, data_attrs[0]).get_counts()
+
+                raise AttributeError(f"Could not find measurement data in DataBin. Available attributes: {data_attrs}")
 
         else:
             job = self.backend.run(transpiled_circuits, shots=shots, **run_options)

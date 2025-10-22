@@ -4,6 +4,7 @@ QuartumSE CLI.
 Command-line interface for running experiments, generating reports, etc.
 """
 
+import json
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -11,6 +12,7 @@ import typer
 import yaml
 from pydantic import BaseModel, Field, ValidationError, model_validator
 from rich.console import Console
+from rich.table import Table
 
 app = typer.Typer(name="quartumse", help="Quantum measurement optimization toolkit")
 console = Console()
@@ -153,6 +155,147 @@ def benchmark(
     """Run benchmark suite."""
     console.print(f"[yellow]Running benchmark suite: {suite}[/yellow]")
     console.print("[red]Not implemented yet![/red]")
+
+
+@app.command("runtime-status")
+def runtime_status(
+    backend: str = typer.Option(
+        "ibm:ibmq_qasm_simulator",
+        "--backend",
+        "-b",
+        help="Backend descriptor to query (e.g., ibm:ibm_brisbane)",
+    ),
+    instance: Optional[str] = typer.Option(
+        None,
+        "--instance",
+        help="IBM Quantum hub/group/project instance override",
+        envvar="QISKIT_IBM_INSTANCE",
+    ),
+    channel: Optional[str] = typer.Option(
+        None,
+        "--channel",
+        help="IBM Quantum channel override",
+        envvar="QISKIT_IBM_CHANNEL",
+    ),
+    token: Optional[str] = typer.Option(
+        None,
+        "--token",
+        help="IBM Quantum API token override",
+        envvar="QISKIT_IBM_TOKEN",
+    ),
+    output_json: bool = typer.Option(
+        False,
+        "--json",
+        help="Emit machine-readable JSON instead of a formatted table.",
+    ),
+    slack_webhook: Optional[str] = typer.Option(
+        None,
+        "--slack-webhook",
+        help="Optional Slack-compatible webhook URL (env: QUARTUMSE_SLACK_WEBHOOK).",
+        envvar="QUARTUMSE_SLACK_WEBHOOK",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Skip webhook delivery while still printing the notification payload.",
+    ),
+):
+    """Report IBM queue depth and runtime quota usage."""
+
+    from quartumse.utils.runtime_monitor import (
+        build_notification_message,
+        collect_runtime_status,
+        post_to_webhook,
+        report_to_dict,
+        seconds_to_pretty,
+    )
+
+    provider, sep, backend_name = backend.partition(":")
+    if sep:
+        provider = provider.lower()
+        if provider != "ibm":
+            console.print(
+                f"[red]Unsupported provider '{provider}'. Only 'ibm' descriptors are supported.[/red]"
+            )
+            raise typer.Exit(code=1)
+        if not backend_name:
+            console.print("[red]Backend descriptor must include a backend name.[/red]")
+            raise typer.Exit(code=1)
+    else:
+        backend_name = provider
+
+    service_kwargs: Dict[str, str] = {}
+    if instance:
+        service_kwargs["instance"] = instance
+    if channel:
+        service_kwargs["channel"] = channel
+    if token:
+        service_kwargs["token"] = token
+
+    try:
+        report = collect_runtime_status(backend_name, service_kwargs=service_kwargs)
+    except ImportError as exc:
+        console.print(
+            "[red]qiskit-ibm-runtime is not installed. Install it via `pip install qiskit-ibm-runtime` or ``quartumse[aws]`` extras.[/red]"
+        )
+        raise typer.Exit(code=1) from exc
+    except Exception as exc:  # pylint: disable=broad-except
+        console.print(f"[red]Failed to query runtime status: {exc}[/red]")
+        raise typer.Exit(code=1) from exc
+
+    if output_json:
+        console.print(json.dumps(report_to_dict(report), indent=2))
+    else:
+        table = Table(title="IBM Runtime Status", show_header=False)
+        table.add_column("Metric", style="cyan", justify="left")
+        table.add_column("Value", style="white", justify="left")
+
+        table.add_row("Backend", report.queue.backend_name)
+        queue_value = "unknown" if report.queue.pending_jobs is None else str(report.queue.pending_jobs)
+        if report.queue.operational is not None:
+            queue_value += f" (operational={report.queue.operational})"
+        table.add_row("Queue depth", queue_value)
+        if report.queue.status_msg:
+            table.add_row("Status message", report.queue.status_msg)
+
+        usage_parts = []
+        if report.quota.consumed_seconds is not None:
+            usage_parts.append(f"used {seconds_to_pretty(report.quota.consumed_seconds)}")
+        if report.quota.limit_seconds is not None:
+            usage_parts.append(f"limit {seconds_to_pretty(report.quota.limit_seconds)}")
+        if report.quota.remaining_seconds is not None:
+            usage_parts.append(f"remaining {seconds_to_pretty(report.quota.remaining_seconds)}")
+        usage_value = ", ".join(usage_parts) if usage_parts else "unknown"
+        table.add_row("Runtime quota", usage_value)
+
+        if report.quota.plan:
+            table.add_row("Plan", report.quota.plan)
+        if report.quota.max_pending_jobs is not None:
+            current = report.quota.current_pending_jobs
+            table.add_row(
+                "Pending job cap",
+                f"{current if current is not None else '?'} / {report.quota.max_pending_jobs}",
+            )
+        if report.quota.refresh_date is not None:
+            table.add_row("Refresh date", report.quota.refresh_date.isoformat())
+
+        table.add_row("Captured", report.collected_at.isoformat())
+        console.print(table)
+
+    if slack_webhook:
+        message = build_notification_message(report)
+        console.print("[cyan]Webhook payload:[/cyan]")
+        console.print(message)
+        try:
+            post_to_webhook(slack_webhook, message, dry_run=dry_run)
+        except Exception as exc:  # pylint: disable=broad-except
+            console.print(f"[red]Failed to deliver webhook notification: {exc}[/red]")
+            raise typer.Exit(code=1) from exc
+        else:
+            if dry_run:
+                console.print("[yellow]Dry-run enabled: webhook delivery skipped.[/yellow]")
+            else:
+                console.print("[green]Notification delivered successfully.[/green]")
 
 
 if __name__ == "__main__":

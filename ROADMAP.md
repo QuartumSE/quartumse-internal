@@ -29,6 +29,11 @@ This roadmap folds in: (i) a **sophisticated classical shadows** program, (ii) c
 
 Each phase below enumerates **Experiments & Tests** with IDs that recur across phases for iteration & scaling.
 
+## Operational cadence checkpoints
+
+- **Monthly (first business day):** Run `quartumse runtime-status --json --backend ibm:ibmq_brisbane --instance ibm-q/open/main` and log runtime minutes, queue caps, and fallback readiness in `OPS_RUNTIME_RUNBOOK.md`. Schedule a recurring calendar reminder for the ops lead.
+- **Weekly (Mondays):** Trigger the runtime status CLI with Slack webhook enabled to post queue depth/quota snapshots into the project notifications channel. Use the summary to reprioritise hardware jobs if the queue is saturated.
+
 ---
 
 ## Phase 1 — Foundation & R&D Sprints (Now → Nov 2025)

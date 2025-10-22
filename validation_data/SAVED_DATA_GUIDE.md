@@ -149,10 +149,15 @@ estimator = ShadowEstimator(backend='...', data_dir='validation_data')
 new_observables = [Observable('YY', 1.0), Observable('ZX', 1.0)]
 
 # No hardware re-execution!
-result = estimator.replay_from_manifest(
-    'validation_data/manifests/{id}.json',
-    observables=new_observables
-)
+try:
+    result = estimator.replay_from_manifest(
+        'validation_data/manifests/{id}.json',
+        observables=new_observables
+    )
+except FileNotFoundError as exc:
+    print(f"Missing calibration artifact: {exc}")
+else:
+    print(result.observables['YY']['expectation_value'])
 ```
 
 ---
@@ -326,12 +331,19 @@ from quartumse.shadows.core import Observable
 
 estimator = ShadowEstimator(backend='...', data_dir='validation_data')
 
-# Compute new observables from saved shots
-new_result = estimator.replay_from_manifest(
-    'validation_data/manifests/{id}.json',
-    observables=[Observable('YY'), Observable('XZ')]
-)
+# Compute new observables from saved shots (v0 + v1 noise-aware)
+try:
+    new_result = estimator.replay_from_manifest(
+        'validation_data/manifests/{id}.json',
+        observables=[Observable('YY'), Observable('XZ')]
+    )
+except FileNotFoundError as exc:
+    print(f"Missing calibration artifact: {exc}")
+else:
+    print(new_result.observables['YY']['expectation_value'])
 ```
+
+> ℹ️ Noise-aware manifests rely on the saved confusion matrix in `validation_data/mem/{experiment_id}.npz`. Keep this file with the manifest and shot data to enable replay.
 
 ---
 
@@ -348,7 +360,7 @@ new_result = estimator.replay_from_manifest(
 ## What You CANNOT Do Later
 
 ❌ **Change shadow size** - Would need to re-run on hardware
-❌ **Apply different MEM** - Calibration is baked into results
+❌ **Apply different MEM** - Replay reuses the saved confusion matrix; new calibrations require a fresh experiment
 ❌ **Modify circuit** - Would need new experiment
 ❌ **Use different backend** - Hardware state was captured
 

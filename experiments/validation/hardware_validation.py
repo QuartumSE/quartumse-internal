@@ -323,10 +323,10 @@ def run_shadows_experiment(
     elapsed = time.time() - start_time
 
     print(f"Execution time: {elapsed:.2f}s")
-    manifest_path = getattr(result, "manifest_path", None)
+    manifest_path = result.manifest_path
     if manifest_path:
         print(f"Manifest saved: {manifest_path}")
-    shot_data_path = getattr(result, "shot_data_path", None)
+    shot_data_path = result.shot_data_path
     if shot_data_path:
         print(f"Shot data saved: {shot_data_path}")
 
@@ -370,7 +370,7 @@ def run_shadows_experiment(
     return shadows_results, {
         'manifest_path': manifest_path,
         'shot_data_path': shot_data_path,
-        'experiment_id': getattr(result, 'experiment_id', None),
+        'experiment_id': result.experiment_id,
         'backend_name': estimator.backend.name,
         'backend_snapshot': estimator._backend_snapshot,
         'measurement_shots': shadow_size,

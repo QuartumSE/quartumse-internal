@@ -9,6 +9,7 @@ from qiskit import QuantumCircuit
 from qiskit_aer import AerSimulator
 
 from quartumse import ShadowEstimator
+from quartumse.reporting.manifest import ProvenanceManifest
 from quartumse.reporting.shot_data import ShotDataDiagnostics, ShotDataWriter
 from quartumse.shadows import ShadowConfig
 from quartumse.shadows.core import Observable
@@ -84,6 +85,13 @@ class TestShadowEstimatorPersistence:
             # Run estimation
             result = estimator.estimate(circuit, observables, save_manifest=True)
 
+            # Result should expose metadata regardless of consumer
+            assert result.experiment_id is not None
+            assert isinstance(result.experiment_id, str)
+            assert result.manifest_path is not None
+            assert result.shot_data_path is not None
+            assert Path(result.shot_data_path).exists()
+
             # Check that shot data was saved
             shots_dir = Path(tmpdir) / "shots"
             assert shots_dir.exists()
@@ -92,15 +100,16 @@ class TestShadowEstimatorPersistence:
             assert len(parquet_files) == 1
 
             # Verify manifest references the correct shot file
-            from quartumse.reporting.manifest import ProvenanceManifest
-
             manifest_path = Path(result.manifest_path)
             manifest = ProvenanceManifest.from_json(manifest_path)
             experiment_id = manifest.schema.experiment_id
 
+            assert result.experiment_id == experiment_id
+            assert result.manifest_path == str(manifest_path)
             shot_path = Path(manifest.schema.shot_data_path)
             assert shot_path.exists()
             assert shot_path == estimator.shot_data_writer.shots_dir / f"{experiment_id}.parquet"
+            assert result.shot_data_path == manifest.schema.shot_data_path
 
             loaded_bases, loaded_outcomes, loaded_num_qubits = (
                 estimator.shot_data_writer.load_shadow_measurements(experiment_id)
@@ -122,6 +131,29 @@ class TestShadowEstimatorPersistence:
             shot_path.unlink()
             with pytest.raises(FileNotFoundError):
                 manifest.validate()
+
+    def test_estimate_metadata_without_manifest(self):
+        """Result metadata should be available even when manifests are skipped."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            estimator = ShadowEstimator(
+                backend=AerSimulator(),
+                shadow_config=ShadowConfig(shadow_size=8, random_seed=7),
+                data_dir=tmpdir,
+            )
+
+            circuit = QuantumCircuit(1)
+            circuit.h(0)
+
+            result = estimator.estimate(circuit, [Observable("Z")], save_manifest=False)
+
+            assert result.manifest_path is None
+            assert result.experiment_id is not None
+            assert isinstance(result.experiment_id, str)
+            assert result.shot_data_path is not None
+
+            shot_path = Path(result.shot_data_path)
+            assert shot_path.exists()
+            assert shot_path.stem == result.experiment_id
 
     def test_replay_from_manifest(self):
         """Test replaying an experiment from saved manifest and shot data."""
@@ -147,11 +179,17 @@ class TestShadowEstimatorPersistence:
                 circuit, original_observables, save_manifest=True
             )
 
+            manifest = ProvenanceManifest.from_json(Path(original_result.manifest_path))
+
             # Replay from manifest with same observables
             replayed_result = estimator.replay_from_manifest(
                 manifest_path=original_result.manifest_path,
                 observables=original_observables,
             )
+
+            assert replayed_result.experiment_id == manifest.schema.experiment_id
+            assert replayed_result.manifest_path == original_result.manifest_path
+            assert replayed_result.shot_data_path == manifest.schema.shot_data_path
 
             # Results should match (same shot data, same observables)
             for obs in original_observables:
@@ -188,9 +226,15 @@ class TestShadowEstimatorPersistence:
             # Replay with different observable (leveraging classical shadows' reusability)
             new_observables = [Observable("XX"), Observable("YY")]
 
+            manifest = ProvenanceManifest.from_json(Path(original_result.manifest_path))
+
             replayed_result = estimator.replay_from_manifest(
                 manifest_path=original_result.manifest_path, observables=new_observables
             )
+
+            assert replayed_result.experiment_id == manifest.schema.experiment_id
+            assert replayed_result.manifest_path == original_result.manifest_path
+            assert replayed_result.shot_data_path == manifest.schema.shot_data_path
 
             # Should have estimates for new observables
             assert str(Observable("XX")) in replayed_result.observables

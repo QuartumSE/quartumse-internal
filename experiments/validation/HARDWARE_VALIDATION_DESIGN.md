@@ -22,6 +22,12 @@ This experiment validates QuartumSE's core claims on real IBM quantum hardware u
 
 **Why 5,000 shots?** Free-tier access to `ibm_torino` grants 10 runtime minutes per month. With shallow 3-qubit circuits and ≤500 shots per batch, 5,000 total shots complete in ≈6–8 minutes, leaving buffer for retries while staying under the allocation.
 
+### Backend Consistency Guarantee
+
+- Hardware validation now aborts immediately if the resolved backend is not the requested IBM Runtime device (descriptor mismatch or simulator fallback).
+- Baseline measurements log the backend name for every submission and raise if a job executes on a different backend mid-run.
+- These safeguards ensure all measurements in a run share identical hardware provenance, matching the manifest entry and documented backend descriptor.
+
 ---
 
 ## Shot Budget Overview

@@ -25,7 +25,7 @@ import json
 import logging
 import os
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, UTC
 from typing import Any, Dict, Optional
 
 from qiskit.providers.backend import Backend
@@ -143,7 +143,7 @@ def create_backend_snapshot(backend: Backend) -> BackendSnapshot:
             or 0
         )
 
-    calibration_timestamp = datetime.utcnow()
+    calibration_timestamp = datetime.now(UTC)
     t1_times: Dict[int, float] = {}
     t2_times: Dict[int, float] = {}
     readout_errors: Dict[int, float] = {}

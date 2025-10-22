@@ -2,7 +2,7 @@
 
 import json
 import tempfile
-from datetime import datetime
+from datetime import datetime, UTC
 from pathlib import Path
 
 import pytest
@@ -72,7 +72,7 @@ class TestManifestSchema:
             backend_version="0.13.0",
             num_qubits=5,
             basis_gates=["id", "rz", "sx", "cx"],
-            calibration_timestamp=datetime.utcnow(),
+            calibration_timestamp=datetime.now(UTC),
             properties_hash="test_hash",
         )
 
@@ -110,7 +110,7 @@ class TestManifestSchema:
             backend_version="1.0",
             num_qubits=5,
             basis_gates=["h", "cx"],
-            calibration_timestamp=datetime.utcnow(),
+            calibration_timestamp=datetime.now(UTC),
             properties_hash="hash",
         )
 
@@ -153,7 +153,7 @@ class TestProvenanceManifest:
             backend_version="0.13.0",
             num_qubits=5,
             basis_gates=["h", "cx"],
-            calibration_timestamp=datetime.utcnow(),
+            calibration_timestamp=datetime.now(UTC),
             properties_hash="test",
         )
 
@@ -192,7 +192,7 @@ class TestProvenanceManifest:
             backend_version="1.0",
             num_qubits=5,
             basis_gates=[],
-            calibration_timestamp=datetime.utcnow(),
+            calibration_timestamp=datetime.now(UTC),
             properties_hash="",
         )
 

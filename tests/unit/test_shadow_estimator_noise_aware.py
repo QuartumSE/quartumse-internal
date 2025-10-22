@@ -48,11 +48,20 @@ def test_shadow_estimator_noise_aware_runs_mem_pipeline(tmp_path):
 
     assert "MEM" in estimator.mitigation_config.techniques
 
+    confusion_path_str = estimator.mitigation_config.confusion_matrix_path
+    assert confusion_path_str is not None
+    confusion_path = Path(confusion_path_str)
+    assert confusion_path.exists()
+    assert confusion_path.suffix == ".npz"
+    assert estimator.measurement_error_mitigation.confusion_matrix_path == confusion_path
+
     assert result.experiment_id is not None
     assert result.manifest_path is not None
     assert result.shot_data_path is not None
     assert Path(result.shot_data_path).exists()
+    assert result.mitigation_confusion_matrix_path == confusion_path_str
 
     manifest_path = Path(result.manifest_path)
     manifest = ProvenanceManifest.from_json(manifest_path)
     assert "MEM" in manifest.schema.mitigation.techniques
+    assert manifest.schema.mitigation.confusion_matrix_path == confusion_path_str

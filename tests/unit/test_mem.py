@@ -9,16 +9,30 @@ from qiskit_aer import AerSimulator
 from quartumse.mitigation import MeasurementErrorMitigation
 
 
-def test_mem_calibration_returns_confusion_matrix_identity_close():
+def test_mem_calibration_returns_confusion_matrix_identity_close(tmp_path):
     backend = AerSimulator(seed_simulator=123)
     mem = MeasurementErrorMitigation(backend)
 
-    confusion = mem.calibrate(
-        qubits=[0, 1], shots=4096, run_options={"seed_simulator": 123}
+    output_path = tmp_path / "confusion" / "matrix.npz"
+    saved_path = mem.calibrate(
+        qubits=[0, 1],
+        shots=4096,
+        run_options={"seed_simulator": 123},
+        output_path=output_path,
     )
 
-    assert confusion.shape == (4, 4)
-    assert np.allclose(confusion, np.eye(4), atol=0.05)
+    assert saved_path is not None
+    assert saved_path.exists()
+    assert saved_path.suffix == ".npz"
+    assert mem.confusion_matrix_path == saved_path
+    assert mem.confusion_matrix is not None
+    assert mem.confusion_matrix.shape == (4, 4)
+
+    with np.load(saved_path) as data:
+        persisted = data["confusion_matrix"]
+
+    assert np.allclose(mem.confusion_matrix, persisted)
+    assert np.allclose(mem.confusion_matrix, np.eye(4), atol=0.05)
 
 
 def test_mem_apply_inverts_confusion_matrix():

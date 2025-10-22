@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import logging
-from typing import Dict, Optional, Sequence
+from pathlib import Path
+from typing import Dict, Optional, Sequence, Union
 
 import numpy as np
 from qiskit import QuantumCircuit, transpile
@@ -29,6 +30,7 @@ class MeasurementErrorMitigation:
         self._runtime_sampler = None
         self._runtime_sampler_checked = False
         self._use_runtime_sampler = is_ibm_runtime_backend(backend)
+        self.confusion_matrix_path: Optional[Path] = None
 
     def _get_runtime_sampler(self):
         """Initialise (if necessary) and return an IBM Runtime sampler."""
@@ -47,15 +49,24 @@ class MeasurementErrorMitigation:
         qubits: Sequence[int],
         shots: int = 4096,
         run_options: Optional[Dict[str, object]] = None,
-    ) -> np.ndarray:
+        *,
+        output_path: Optional[Union[str, Path]] = None,
+    ) -> Optional[Path]:
         """
         Calibrate confusion matrix by preparing and measuring basis states.
 
         Args:
             qubits: List of qubit indices to calibrate
+            shots: Number of calibration shots per basis state
+            run_options: Backend execution options
+            output_path: Optional path where the confusion matrix should be
+                persisted. If provided the directory is created automatically
+                and the matrix is saved as a compressed ``.npz`` archive.
 
         Returns:
-            Confusion matrix ``C`` with entries ``P(measure i | prepared j)``.
+            Path to the persisted confusion matrix if ``output_path`` is provided.
+            The calibrated confusion matrix is stored on the instance as
+            :attr:`confusion_matrix`.
         """
 
         if not qubits:
@@ -119,7 +130,15 @@ class MeasurementErrorMitigation:
 
         self.confusion_matrix = confusion
         self._calibrated_qubits = tuple(qubits)
-        return self.confusion_matrix
+
+        self.confusion_matrix_path = None
+        if output_path is not None:
+            path = Path(output_path)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            np.savez_compressed(path, confusion_matrix=confusion)
+            self.confusion_matrix_path = path.resolve()
+
+        return self.confusion_matrix_path
 
     def apply(self, counts: Dict[str, int]) -> Dict[str, float]:
         """

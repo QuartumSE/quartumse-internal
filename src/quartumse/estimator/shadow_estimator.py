@@ -188,14 +188,26 @@ class ShadowEstimator(Estimator):
         if isinstance(self.shadow_impl, NoiseAwareRandomLocalCliffordShadows):
             mem_shots = int(self.mitigation_config.parameters.get("mem_shots", 4096))
             run_options = self.mitigation_config.parameters.get("mem_run_options", {})
-            self.shadow_impl.mem.calibrate(
+            mem_dir = self.data_dir / "mem"
+            mem_dir.mkdir(parents=True, exist_ok=True)
+            confusion_matrix_path = mem_dir / f"{experiment_id}.npz"
+            saved_confusion_path = self.shadow_impl.mem.calibrate(
                 list(range(circuit.num_qubits)),
                 shots=mem_shots,
                 run_options=run_options,
+                output_path=confusion_matrix_path,
             )
             if "MEM" not in self.mitigation_config.techniques:
                 self.mitigation_config.techniques.append("MEM")
             self.mitigation_config.parameters.setdefault("mem_qubits", circuit.num_qubits)
+            if saved_confusion_path is not None:
+                self.mitigation_config.confusion_matrix_path = str(
+                    saved_confusion_path.resolve()
+                )
+            else:
+                self.mitigation_config.confusion_matrix_path = str(
+                    confusion_matrix_path.resolve()
+                )
 
         # Transpile for backend
         transpiled_circuits = transpile(shadow_circuits, backend=self.backend)
@@ -306,6 +318,7 @@ class ShadowEstimator(Estimator):
             experiment_id=experiment_id,
             manifest_path=str(manifest_path) if manifest_path else None,
             shot_data_path=str(shot_data_path.resolve()),
+            mitigation_confusion_matrix_path=self.mitigation_config.confusion_matrix_path,
         )
 
     def estimate_shots_needed(
@@ -364,8 +377,8 @@ class ShadowEstimator(Estimator):
             shadow_impl = RandomLocalCliffordShadows(shadow_config)
         elif shadow_config.version == ShadowVersion.V1_NOISE_AWARE:
             raise NotImplementedError(
-                "Replaying noise-aware classical shadows (v1) is not yet supported because"
-                " calibrated confusion matrices are not stored in manifests."
+                "Replaying noise-aware classical shadows (v1) is not yet supported because "
+                "loading calibrated confusion matrices from manifests has not been implemented."
             )
         else:
             raise NotImplementedError(
@@ -400,6 +413,7 @@ class ShadowEstimator(Estimator):
             experiment_id=experiment_id,
             manifest_path=str(manifest_path),
             shot_data_path=manifest.schema.shot_data_path,
+            mitigation_confusion_matrix_path=manifest.schema.mitigation.confusion_matrix_path,
         )
 
     def _create_manifest(

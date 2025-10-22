@@ -10,6 +10,8 @@ from .ibm import (
     IBMBackendConnector,
     IBMBackendHandle,
     create_backend_snapshot,
+    create_runtime_sampler,
+    is_ibm_runtime_backend,
     resolve_backend_descriptor,
 )
 
@@ -29,6 +31,8 @@ __all__ = [
     "IBMBackendConnector",
     "IBMBackendHandle",
     "create_backend_snapshot",
+    "create_runtime_sampler",
+    "is_ibm_runtime_backend",
     "resolve_backend",
     "resolve_backend_descriptor",
 ]

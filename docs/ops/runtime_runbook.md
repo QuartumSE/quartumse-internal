@@ -22,6 +22,8 @@ This runbook tracks IBM Quantum free-tier runtime usage and provides quick recov
 quartumse runtime-status --backend ibm:ibmq_brisbane --instance ibm-q/open/main
 ```
 
+> **Dependency:** Ensure `qiskit-ibm-runtime` is installed (`pip install qiskit-ibm-runtime`).
+
 Key behaviours:
 
 - The command queries queue depth, quota consumption, and refresh date using the IBM Runtime API. 【F:src/quartumse/utils/runtime_monitor.py†L44-L193】

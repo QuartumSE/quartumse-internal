@@ -22,10 +22,10 @@ Tests use `pytest` markers so you can opt into the heavier scenarios as needed.
 # Core unit tests (quick feedback)
 pytest tests/unit -v
 
-# Include integration scenarios (simulator only)
-pytest tests -m "not hardware" -v
+# Fast integration matrix (skip slow + hardware markers)
+pytest tests -m "not slow and not hardware" -v
 
-# Full matrix including slow checks
+# Include slow scenarios (still skip hardware)
 pytest tests -m "not hardware" -v --durations=20
 
 # Hardware runs (requires QISKIT_IBM_TOKEN, see docs/ops/runtime_runbook.md)
@@ -71,8 +71,9 @@ runs automatically persist manifests and shot data under `data/`.
 Before running the `hardware` test marker or the CLI against real backends:
 
 1. Export `QISKIT_IBM_TOKEN` (and optional instance overrides).
-2. Confirm remaining quota via `quartumse runtime-status`.
-3. Schedule runs inside the free-tier 10 minute window.  See
+2. Ensure `qiskit-ibm-runtime` is installed (`pip install qiskit-ibm-runtime` or `pip install quartumse[mitigation]`).
+3. Confirm remaining quota via `quartumse runtime-status`.
+4. Schedule runs inside the free-tier 10 minute window.  See
    [`docs/ops/runtime_runbook.md`](../ops/runtime_runbook.md) for quota guidance
    and webhook notifications.
 

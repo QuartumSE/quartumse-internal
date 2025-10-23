@@ -497,7 +497,7 @@ Phase 1 Exit Criterion:
 - ✅ MEM reduces error by ≈33%
 - ✅ Phase 1 exit criterion MET
 
-**Next Steps:** Document results, update STATUS_REPORT.md, proceed to Phase 2
+**Next Steps:** Document results, update ../../docs/archive/status_report_20251022.md, proceed to Phase 2
 
 ---
 
@@ -627,7 +627,7 @@ After running `hardware_validation.py`:
 - [ ] Check backend snapshot for calibration data
 - [ ] Confirm confusion matrix captured in v1 manifest
 - [ ] Compare v0 vs v1 MAE (expect 30-70% reduction)
-- [ ] Update STATUS_REPORT.md with hardware validation results
+- [ ] Update ../../docs/archive/status_report_20251022.md with hardware validation results
 - [ ] Commit results to repository (git add validation_data/)
 - [ ] Document Phase 1 completion if criteria met
 
@@ -638,12 +638,12 @@ After running `hardware_validation.py`:
 ### If Phase 1 Complete (SSR ≥ 1.1×, CI ≥ 80%)
 
 1. **Document Results:**
-   - Update STATUS_REPORT.md with hardware metrics
+   - Update ../../docs/archive/status_report_20251022.md with hardware metrics
    - Create PHASE_1_COMPLETION_REPORT.md
    - Add hardware_validation_results.json to repository
 
 2. **Patent Theme Documentation:**
-   - Create PATENT_THEMES.md with 3 themes identified in STRATEGIC_ANALYSIS.md
+   - Create PATENT_THEMES.md with 3 themes identified in ../../docs/archive/strategic_analysis_20251021.md
    - Theme 1: Variance-aware adaptive classical shadows (VACS)
    - Theme 2: MEM + classical shadows integration
    - Theme 3: Provenance manifest schema

@@ -44,7 +44,7 @@ Each experiment folder contains:
    - Runtime: ~3-4 minutes
 
 5. **`h2_energy/`** - H₂ molecule ground state
-   - Quantum chemistry Hamiltonian (10-15 Pauli terms)
+   - Quantum chemistry Hamiltonian (10-15 Pauli terms; update coefficients for your target geometry)
    - Shot efficiency for VQE-like workflows
    - Runtime: ~4 minutes
 
@@ -67,6 +67,20 @@ python random_clifford/run_random_clifford.py
 python ising_trotter/run_ising_chain.py
 python h2_energy/run_h2_energy.py
 ```
+
+### Requirements
+
+- Install QuartumSE with mitigation extras to enable MEM calibrations:
+  `pip install -e ".[dev,mitigation]"`.
+- Hardware runs require `qiskit-ibm-runtime` and an active IBM Quantum account.
+- Execute the scripts from the repository root (or ensure `quartumse` is installed in your environment).
+
+### Output locations
+
+- Scripts default to saving manifests and shot data under `./data/` unless
+  you update the `ShadowEstimator` configuration.
+- Use `validation_data/` when capturing Phase 1 evidence (see
+  [`docs/guides/data_storage.md`](../../docs/guides/data_storage.md)).
 
 ## Documentation
 

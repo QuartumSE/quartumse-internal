@@ -1,6 +1,8 @@
 # QuartumSE Data Storage Conventions
 
 This document explains the data directory structure and when to use each directory.
+By default, `ShadowEstimator` writes manifests and Parquet files under `./data`
+unless you override `data_dir`.
 
 ## Directory Overview
 
@@ -41,12 +43,12 @@ estimator = ShadowEstimator(backend="ibm:ibm_torino", data_dir="data")
 - Phase 1 exit criteria validation
 - Shadow experiment scripts (`experiments/shadows/*/run_*.py`)
 
-**Scripts that use this:**
+**Scripts/notebooks that use this:**
 - `experiments/shadows/preliminary_test/run_smoke_test.py`
 - `experiments/validation/hardware_validation.py`
 - `experiments/shadows/extended_ghz/run_ghz_extended.py`
 - `experiments/shadows/parallel_bell_pairs/run_bell_pairs.py`
-- `notebooks/preliminary_smoke_test.ipynb`
+- Hardware sections of `notebooks/comprehensive_test_suite.ipynb`
 
 **Examples:**
 ```python
@@ -115,7 +117,7 @@ All data directories follow the same subdirectory structure:
     └── {experiment_id}_confusion.json
 ```
 
-See [`data/README.md`](data/README.md) for detailed schema documentation.
+See [`data/README.md`](../../data/README.md) for detailed schema documentation.
 
 ---
 

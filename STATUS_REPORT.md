@@ -231,4 +231,4 @@ Validation runs of S-T01/S-T02 experiments revealed a **CRITICAL BUG** in the cl
 
 ---
 
-**Last updated:** October 21, 2025 (after critical bug fix validation)
+**Last updated:** October 22, 2025 (after hardware smoke test completion)

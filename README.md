@@ -225,7 +225,7 @@ All notebooks save data into local directories (`demo_data/` or `notebook_artifa
 - ⏳ SSR ≥ 1.1× on IBM hardware (smoke test complete, extended validation pending)
 - ⏳ Patent themes identified (in progress)
 
-**Latest:** Preliminary smoke test successfully executed on IBM ibm_torino (Oct 22). All quality checks passed. Classical Shadows v0/v1 + MEM validated on real hardware. See [STATUS_REPORT.md](STATUS_REPORT.md) for detailed results and [validation_data/smoke_test_results_20251022_223630.json](validation_data/smoke_test_results_20251022_223630.json) for complete provenance.
+**Latest:** Preliminary smoke test successfully executed on IBM ibm_torino (Oct 22). All quality checks passed. Classical Shadows v0/v1 + MEM validated on real hardware. See [STATUS_REPORT.md](STATUS_REPORT.md) for detailed results and analysis.
 
 See [ROADMAP.md](ROADMAP.md) for full timeline through Phase 5 (Public Beta, Sep 2026).
 

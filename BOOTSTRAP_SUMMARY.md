@@ -1,4 +1,8 @@
-# QuartumSE Bootstrap Summary
+# QuartumSE Bootstrap Summary [HISTORICAL]
+
+> **⚠️ HISTORICAL DOCUMENT**
+> This document captures the initial repository bootstrap from October 20, 2025.
+> For current project status, see [STATUS_REPORT.md](STATUS_REPORT.md) and [README.md](README.md).
 
 **Generated:** October 20, 2025
 **Status:** ✅ Option A Full Bootstrap Complete

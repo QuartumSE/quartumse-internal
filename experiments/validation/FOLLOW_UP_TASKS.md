@@ -1,8 +1,13 @@
 # Hardware Validation Follow-up Task Board
 
-These tasks decompose the open follow-up work identified after the fixed-shot hardware validation refactor. Each task is framed so an assignee can execute it without revisiting the prior review context.
+> **Updated:** October 22, 2025 (After hardware smoke test completion)
 
-## Task 1 — Bind Baseline Runs to the Resolved Backend
+These tasks decompose the open follow-up work identified after the fixed-shot hardware validation refactor.
+
+**STATUS UPDATE:** Hardware smoke test completed successfully on IBM ibm_torino (Oct 22, 2025). Many tasks below are now complete.
+
+## Task 1 — Bind Baseline Runs to the Resolved Backend ✅ COMPLETE
+- **Status:** ✅ COMPLETE (Validated in smoke test Oct 22, 2025)
 - **Objective:** Guarantee the baseline direct-measurement workflow always executes on the same IBM backend resolved for the experiment, preserving hardware noise effects.
 - **Deliverables:**
   - Unit/integration test (or dry-run harness) demonstrating baseline circuits submit via the resolved backend handle.
@@ -13,7 +18,8 @@ These tasks decompose the open follow-up work identified after the fixed-shot ha
   3. Backfill tests or script outputs verifying the backend name in baseline execution logs.
 - **Dependencies:** Access to IBM runtime primitives (can be mocked if hardware access is unavailable).
 
-## Task 2 — Expose Estimator Metadata on `EstimationResult`
+## Task 2 — Expose Estimator Metadata on `EstimationResult` ✅ COMPLETE
+- **Status:** ✅ COMPLETE (EstimationResult includes experiment_id, manifest_path, shot_data_path)
 - **Objective:** Provide experiment metadata (experiment IDs, manifest paths, shot data URIs) directly on `EstimationResult` so downstream scripts avoid fragile attribute checks.
 - **Deliverables:**
   - Extended dataclass or return schema within `ShadowEstimator` that includes `experiment_id`, `manifest_path`, and `shot_data_path` fields.
@@ -24,7 +30,8 @@ These tasks decompose the open follow-up work identified after the fixed-shot ha
   3. Refactor consumers (e.g., `hardware_validation.py`) to rely on the explicit attributes without `getattr` fallbacks.
 - **Dependencies:** Awareness of existing estimator interfaces and downstream usage in the repository.
 
-## Task 3 — Keep SSR Metrics Shot-Budget Accurate
+## Task 3 — Keep SSR Metrics Shot-Budget Accurate ⏳ IN PROGRESS
+- **Status:** ⏳ IN PROGRESS (Metrics implemented, regression tests needed)
 - **Objective:** Ensure Shot Savings Ratio (SSR) calculations consistently incorporate calibration overhead so comparisons remain fair under the fixed 5,000-shot budget.
 - **Deliverables:**
   - Regression tests covering SSR calculations with and without calibration overhead.
@@ -35,7 +42,8 @@ These tasks decompose the open follow-up work identified after the fixed-shot ha
   3. Update the experiment design document with explicit SSR computation examples using total shots.
 - **Dependencies:** Metric utilities in `src/quartumse/utils/metrics.py` and test infrastructure.
 
-## Task 4 — Enforce Backend Circuit-Batch Limits for Shadows
+## Task 4 — Enforce Backend Circuit-Batch Limits for Shadows ✅ COMPLETE
+- **Status:** ✅ COMPLETE (Batching implemented in shadow_estimator.py)
 - **Objective:** Prevent classical shadow submissions from exceeding backend experiment limits by chunking large shadow batches when necessary.
 - **Deliverables:**
   - Logic in `run_shadows_experiment` (or underlying estimator) that queries `backend.configuration().max_experiments` (or runtime equivalent) and batches shadow circuits accordingly.
@@ -47,7 +55,8 @@ These tasks decompose the open follow-up work identified after the fixed-shot ha
   3. Validate that metrics aggregation still uses the full 5,000-shot dataset post-batching.
 - **Dependencies:** Access to backend configuration APIs and estimator batching capabilities.
 
-## Task 5 — Protect IBM Credentials in Documentation
+## Task 5 — Protect IBM Credentials in Documentation ✅ COMPLETE
+- **Status:** ✅ COMPLETE (.env file support, environment variables documented in notebooks)
 - **Objective:** Remove any hard-coded IBM Quantum tokens from shared artifacts and codify the process for handling credentials safely.
 - **Deliverables:**
   - Sanitised documentation with placeholders where tokens previously appeared.
@@ -59,7 +68,8 @@ These tasks decompose the open follow-up work identified after the fixed-shot ha
   3. Document the credential handling policy and optionally enforce it via tooling.
 - **Dependencies:** Coordination with security/compliance stakeholders if formal policies exist.
 
-## Task 6 — Monitor Backend Queue and Access Assumptions
+## Task 6 — Monitor Backend Queue and Access Assumptions ⏳ IN PROGRESS
+- **Status:** ⏳ IN PROGRESS (Queue lessons learned documented in STATUS_REPORT, ongoing monitoring needed)
 - **Objective:** Keep operational assumptions (free-tier runtime minutes, queue strategy, backend availability) current so the validation plan remains executable.
 - **Deliverables:**
   - Living checklist or operational runbook capturing queue monitoring steps and fallback plans.

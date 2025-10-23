@@ -1,4 +1,13 @@
-# QuartumSE Strategic Analysis & Next Steps
+# QuartumSE Strategic Analysis & Next Steps [HISTORICAL]
+
+> **⚠️ HISTORICAL DOCUMENT**
+> This analysis was conducted on October 21, 2025, before hardware validation.
+> For current status, see [STATUS_REPORT.md](STATUS_REPORT.md).
+>
+> **UPDATE (Oct 22):** Hardware smoke test completed successfully. Several gaps identified below have been resolved:
+> - ✅ v1 replay working (MEM calibration now persisted)
+> - ✅ Hardware validation data obtained (ibm_torino)
+> - ✅ Phase 1 completion now 71% (5/7 exit criteria met)
 
 **Date:** October 21, 2025
 **Analysis Scope:** Complete codebase review against PROJECT_BIBLE.md and ROADMAP.md
@@ -7,7 +16,7 @@
 
 ## 📊 Executive Summary
 
-**Current Phase 1 Completion: 67%** (6/9 deliverables)
+**Current Phase 1 Completion: 67%** (6/9 deliverables) [AS OF OCT 21]
 
 **Key Achievements:**
 - ✅ Classical Shadows v0 + v1 with MEM (Priorities #1 and #2 COMPLETE)
@@ -16,12 +25,12 @@
 - ✅ Full provenance tracking with manifests
 - ✅ 24/24 tests passing, 76% code coverage
 
-**Critical Gaps:**
-- ❌ C/O/B/M experiments (only scaffolds exist)
-- ❌ v1 replay broken (MEM calibration not persisted)
-- ⚠️ ZNE not integrated into estimator pipeline
-- ⚠️ CLI doesn't execute experiments
-- ❌ No SSR/RMSE@$ validation data yet
+**Critical Gaps [AS OF OCT 21]:**
+- ❌ C/O/B/M experiments (only scaffolds exist) [STILL PENDING]
+- ~~❌ v1 replay broken (MEM calibration not persisted)~~ ✅ **FIXED OCT 22**
+- ⚠️ ZNE not integrated into estimator pipeline [STILL PENDING]
+- ⚠️ CLI doesn't execute experiments [STILL PENDING]
+- ~~❌ No SSR/RMSE@$ validation data yet~~ ⏳ **IN PROGRESS (smoke test complete)**
 
 **Strategic Recommendation:** Focus on **Phase 1 exit criteria validation** before adding new features.
 

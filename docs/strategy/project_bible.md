@@ -42,7 +42,7 @@ QuartumSE would bridge a gap that vendor SDKs and point solutions leave open:
 No other tool combines **cross‑provider measurement optimization**, **multi‑observable reuse**, and **auditable cost‑for‑accuracy** tracking in one open framework.
 
 ## Long-Term Roadmap Highlights  
-(See detailed milestones in `ROADMAP.md`)
+(See detailed milestones in [`roadmap.md`](roadmap.md))
 
 | Year | Focus | Key Goals |
 |------|--------|-----------|

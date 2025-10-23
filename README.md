@@ -189,9 +189,9 @@ One API, multiple backends:
 
 ### Additional Notebooks
 
-- `notebooks/s_t01_ghz_classical_shadows.ipynb` – S‑T01 experiment workflow with SSR metrics
 - `notebooks/noise_aware_shadows_demo.ipynb` – MEM-enhanced classical shadows (v0 vs v1 comparison)
-- `notebooks/quickstart_shot_persistence.ipynb` – Shot data persistence basics
+- `notebooks/quickstart_shot_persistence.ipynb` – Shot data persistence basics with replay
+- `notebooks/archive/` – Historical smoke-test walkthroughs retained for reference
 
 All notebooks save data into local directories (`demo_data/` or `notebook_artifacts/`) for easy inspection without touching the main `data/` tree.
 
@@ -225,9 +225,9 @@ All notebooks save data into local directories (`demo_data/` or `notebook_artifa
 - ⏳ SSR ≥ 1.1× on IBM hardware (smoke test complete, extended validation pending)
 - ⏳ Patent themes identified (in progress)
 
-**Latest:** Preliminary smoke test successfully executed on IBM ibm_torino (Oct 22). All quality checks passed. Classical Shadows v0/v1 + MEM validated on real hardware. See [STATUS_REPORT.md](STATUS_REPORT.md) for detailed results and analysis.
+**Latest:** Preliminary smoke test successfully executed on IBM ibm_torino (Oct 22). All quality checks passed. Classical Shadows v0/v1 + MEM validated on real hardware. See [docs/archive/status_report_20251022.md](docs/archive/status_report_20251022.md) for detailed results and analysis.
 
-See [ROADMAP.md](ROADMAP.md) for full timeline through Phase 5 (Public Beta, Sep 2026).
+See [docs/strategy/roadmap.md](docs/strategy/roadmap.md) for full timeline through Phase 5 (Public Beta, Sep 2026).
 
 ---
 
@@ -252,28 +252,26 @@ quartumse/
 
 ## Experiments
 
-QuartumSE development is experiment-driven. Run Phase 1 experiments:
+QuartumSE development is experiment-driven. The maintained scripts live in
+`experiments/shadows/` and `experiments/validation/`:
 
 ```bash
 # S-T01: Classical shadows on GHZ states
-python experiments/shadows/S_T01_ghz_baseline.py
+python experiments/shadows/S_T01_ghz_baseline.py --backend aer_simulator
 
-# C-T01: Shadow-VQE for H₂ (starter)
-python experiments/chemistry/C_T01_h2_vqe_starter.py
-
-# O-T01: QAOA for MAX-CUT (starter)
-python experiments/optimization/O_T01_maxcut_starter.py
-
-# B-T01: Randomized benchmarking (starter)
-python experiments/benchmarking/B_T01_rb_starter.py
-
-# M-T01: GHZ phase sensing (starter)
-python experiments/metrology/M_T01_ghz_phase_starter.py
+# Hardware validation harness
+python experiments/validation/hardware_validation.py
 ```
 
-The GHZ baseline script now accepts `--config` and `--backend` flags so you can point it at IBM Quantum backends (for example, `python experiments/shadows/S_T01_ghz_baseline.py --backend ibm:ibmq_qasm_simulator`).
+Prototype scaffolds for chemistry, optimization, metrology, and benchmarking
+have been relocated to `experiments/archive/` until they are fully implemented.
 
-All experiments generate manifests in `data/manifests/` and reports in `data/reports/`.
+The GHZ baseline script accepts `--config` and `--backend` flags so you can
+target IBM Quantum backends (for example,
+`python experiments/shadows/S_T01_ghz_baseline.py --backend ibm:ibmq_qasm_simulator`).
+
+All experiments generate manifests in `data/manifests/` and reports in
+`data/reports/`.
 
 ---
 
@@ -319,8 +317,7 @@ pre-commit run --all-files
 
 ## Documentation
 
-- [Project Bible](PROJECT_BIBLE.md) — Vision, architecture, competitive landscape
-- [Roadmap](ROADMAP.md) — Detailed R&D plan (2025-2026)
+- [docs/README.md](docs/README.md) — Index of setup guides, ops notes, and strategy docs
 - [Research/](Research/) — Classical shadows papers and references
 
 ---
@@ -335,7 +332,7 @@ pre-commit run --all-files
 | **P4** | Early Access | 2-3 partners + AWS Braket | **Jun 2026** |
 | **P5** | Public Beta | v1.0 + pilots | **Sep 2026** |
 
-Full details: [ROADMAP.md](ROADMAP.md)
+Full details: [docs/strategy/roadmap.md](docs/strategy/roadmap.md)
 
 ---
 

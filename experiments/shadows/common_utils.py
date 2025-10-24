@@ -13,7 +13,7 @@ import time
 import json
 from datetime import timedelta
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional
+from typing import Any, Dict, List, Tuple, Optional
 
 import numpy as np
 from qiskit import QuantumCircuit, transpile
@@ -35,6 +35,87 @@ def allocate_shots(total_shots: int, n: int) -> List[int]:
     base = total_shots // n
     rem = total_shots % n
     return [base + (1 if i < rem else 0) for i in range(n)]
+
+
+def load_budgeting_summary(
+    runtime_payload: Dict[str, Any],
+    experiments: List[str],
+    *,
+    log_fn: Optional[Any] = None,
+) -> Dict[str, Any]:
+    """Normalise CLI budgeting hints and derive per-experiment shot envelopes.
+
+    Args:
+        runtime_payload: Parsed JSON from ``quartumse runtime-status --json``.
+        experiments: Ordered list of experiment labels to allocate measurement shots across.
+        log_fn: Optional callable (e.g., ``logger.info``) used to emit a shared
+            budgeting summary. When omitted, the summary is not logged.
+
+    Returns:
+        Dictionary containing measurement and calibration shot counts as well as
+        the per-experiment allocation map.
+    """
+
+    budgeting = runtime_payload.get("budgeting")
+    if not isinstance(budgeting, dict):
+        raise ValueError("Runtime payload is missing 'budgeting' hints; rerun the CLI with budgeting support enabled")
+
+    shot_capacity = budgeting.get("shot_capacity") or {}
+    measurement_shots = shot_capacity.get("measurement_shots_available")
+    if measurement_shots is None:
+        raise ValueError("Budgeting payload does not include 'measurement_shots_available'")
+
+    calibration_shots = shot_capacity.get("calibration_shots") or 0
+    total_measurement_shots = int(measurement_shots)
+    total_calibration_shots = int(calibration_shots)
+    total_batch_shots = total_measurement_shots + total_calibration_shots
+
+    allocation: Dict[str, int] = {}
+    if experiments:
+        shot_splits = allocate_shots(total_measurement_shots, len(experiments))
+        allocation = {name: shots for name, shots in zip(experiments, shot_splits)}
+
+    summary = {
+        "backend": runtime_payload.get("queue", {}).get("backend_name"),
+        "collected_at": runtime_payload.get("collected_at"),
+        "total_measurement_shots": total_measurement_shots,
+        "total_calibration_shots": total_calibration_shots,
+        "total_batch_shots": total_batch_shots,
+        "measurement_shots_per_experiment": allocation,
+        "assumptions": budgeting.get("assumptions", {}),
+        "timing": budgeting.get("timing", {}),
+        "fallbacks": budgeting.get("fallbacks", []),
+    }
+
+    if log_fn is not None:
+        lines = [
+            "Runtime budgeting summary:",
+            f"  Backend: {summary['backend']} (captured {summary['collected_at']})",
+            f"  Measurement shots available: {total_measurement_shots}",
+            f"  Calibration shots reserved: {total_calibration_shots}",
+        ]
+
+        usable_seconds = summary["timing"].get("usable_batch_seconds") if isinstance(summary["timing"], dict) else None
+        if usable_seconds is not None:
+            lines.append(f"  Usable batch seconds: {usable_seconds}")
+
+        if allocation:
+            lines.append("  Shots per experiment:")
+            for name, shots in allocation.items():
+                lines.append(f"    - {name}: {shots}")
+
+        fallbacks = summary.get("fallbacks")
+        if fallbacks:
+            lines.append("  Fallback hints:")
+            for item in fallbacks:
+                condition = item.get("condition")
+                action = item.get("action")
+                lines.append(f"    - {condition}: {action}")
+
+        for line in lines:
+            log_fn(line)
+
+    return summary
 
 def run_baseline_direct(circuits: List[Tuple[str, QuantumCircuit, List[Observable]]],
                         backend,

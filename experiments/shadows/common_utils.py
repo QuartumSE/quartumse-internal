@@ -25,6 +25,11 @@ from quartumse.shadows.core import Observable
 from quartumse.reporting.manifest import MitigationConfig
 from quartumse.connectors import resolve_backend, is_ibm_runtime_backend, create_runtime_sampler
 from quartumse.mitigation import ReadoutCalibrationManager
+from quartumse.utils.metrics import (
+    MetricsSummary,
+    build_observable_comparison,
+    summarise_observable_comparisons,
+)
 
 
 _CALIBRATION_MANAGER = ReadoutCalibrationManager()
@@ -265,26 +270,28 @@ def run_shadows(
         )
     return out, meta
 
-def compute_metrics(observables: List[Observable],
-                    baseline: Dict[str, Dict],
-                    approach: Dict[str, Dict],
-                    baseline_total_shots: int,
-                    approach_total_shots: int) -> Dict:
-    # CI coverage if present
-    in_ci_flags = []
-    errors = []
+def compute_metrics(
+    observables: List[Observable],
+    baseline: Dict[str, Dict],
+    approach: Dict[str, Dict],
+    baseline_total_shots: int,
+    approach_total_shots: int,
+) -> MetricsSummary:
+    """Compute SSR, variance reduction and CI coverage for an experiment run."""
+
+    comparisons = []
     for obs in observables:
         key = str(obs)
-        b = baseline.get(key, {})
-        a = approach.get(key, {})
-        exp_true = 0.0  # Placeholder unless provided by caller
-        # If caller provided expected values, they can recompute MAE later
-        # Here, compute relative improvement based on baseline vs approach estimates if needed
-        if a.get("ci"):
-            lo, hi = a["ci"]
-            in_ci_flags.append(lo <= exp_true <= hi)
-        # If expected is unknown here, errors list will be filled by caller.
-        pass
-    coverage = (np.mean(in_ci_flags) if in_ci_flags else None)
-    # SSR left to caller who knows expected values
-    return {"ci_coverage": coverage}
+        baseline_payload = baseline.get(key, {})
+        approach_payload = approach.get(key, {})
+
+        comparison = build_observable_comparison(
+            key,
+            baseline_payload,
+            approach_payload,
+            baseline_total_shots=baseline_total_shots,
+            approach_total_shots=approach_total_shots,
+        )
+        comparisons.append(comparison)
+
+    return summarise_observable_comparisons(comparisons)

@@ -5,6 +5,7 @@ import json
 import logging
 from dataclasses import dataclass, field, asdict
 from datetime import datetime, timezone
+from math import floor
 from typing import Any, Dict, Iterable, Mapping, Optional
 
 LOGGER = logging.getLogger(__name__)
@@ -317,12 +318,111 @@ def _sanitize_jsonable(value: Any) -> Any:
         return value
 
 
+def compute_budgeting_hints(
+    report: RuntimeStatusReport,
+    *,
+    shots_per_second: float,
+    batch_seconds: int = 600,
+    calibration_shots: int = 0,
+) -> Dict[str, Any]:
+    """Derive budgeting hints from a :class:`RuntimeStatusReport`.
+
+    Args:
+        report: Runtime status payload from :func:`collect_runtime_status`.
+        shots_per_second: Estimated measurement throughput (shots per second).
+        batch_seconds: Target wall-clock window for a single runtime batch.
+        calibration_shots: Reserved shots for calibration activities per batch.
+
+    Returns:
+        A dictionary describing measurement capacity, allocation guidance, and
+        fallback suggestions. The structure is intentionally JSON-friendly so it
+        can be persisted or consumed by orchestration tooling.
+    """
+
+    if shots_per_second <= 0:
+        raise ValueError("shots_per_second must be positive")
+    if batch_seconds <= 0:
+        raise ValueError("batch_seconds must be positive")
+    if calibration_shots < 0:
+        raise ValueError("calibration_shots cannot be negative")
+
+    remaining_seconds = report.quota.remaining_seconds
+    usable_seconds: Optional[int] = None
+    if remaining_seconds is not None:
+        usable_seconds = max(min(remaining_seconds, batch_seconds), 0)
+
+    estimated_total_shots: Optional[int] = None
+    estimated_batch_shots: Optional[int] = None
+    if remaining_seconds is not None:
+        estimated_total_shots = max(floor(remaining_seconds * shots_per_second), 0)
+    if usable_seconds is not None:
+        estimated_batch_shots = max(floor(usable_seconds * shots_per_second), 0)
+
+    measurement_shots_available: Optional[int] = None
+    if estimated_batch_shots is not None:
+        measurement_shots_available = max(estimated_batch_shots - calibration_shots, 0)
+
+    estimated_batches: Optional[int] = None
+    if remaining_seconds is not None:
+        estimated_batches = max(floor(remaining_seconds / batch_seconds), 0)
+
+    fallbacks = []
+    if measurement_shots_available is not None and measurement_shots_available == 0:
+        fallbacks.append(
+            {
+                "condition": "measurement_shots_available == 0",
+                "action": "Trim calibration shots or increase throughput assumption",
+            }
+        )
+    if remaining_seconds is not None and remaining_seconds < batch_seconds:
+        fallbacks.append(
+            {
+                "condition": "remaining_seconds < batch_seconds",
+                "action": "Plan a shorter batch or split experiments across multiple windows",
+            }
+        )
+    if report.queue.pending_jobs is not None and report.quota.max_pending_jobs is not None:
+        if report.queue.pending_jobs >= report.quota.max_pending_jobs:
+            fallbacks.append(
+                {
+                    "condition": "queue.pending_jobs >= quota.max_pending_jobs",
+                    "action": "Queue is saturated; postpone runs or request higher pending job limit",
+                }
+            )
+
+    return {
+        "assumptions": {
+            "shots_per_second": shots_per_second,
+            "batch_seconds": batch_seconds,
+            "calibration_shots": calibration_shots,
+        },
+        "timing": {
+            "remaining_seconds": remaining_seconds,
+            "usable_batch_seconds": usable_seconds,
+            "estimated_batches": estimated_batches,
+        },
+        "shot_capacity": {
+            "estimated_total_shots": estimated_total_shots,
+            "estimated_batch_shots": estimated_batch_shots,
+            "calibration_shots": calibration_shots,
+            "measurement_shots_available": measurement_shots_available,
+            "allocation_hint": {
+                "function": "experiments.shadows.common_utils.allocate_shots",
+                "total_shots_parameter": "shot_capacity.measurement_shots_available",
+                "n_parameter": "<experiments>",
+            },
+        },
+        "fallbacks": fallbacks,
+    }
+
+
 __all__ = [
     "QueueStatus",
     "QuotaStatus",
     "RuntimeStatusReport",
     "build_notification_message",
     "collect_runtime_status",
+    "compute_budgeting_hints",
     "post_to_webhook",
     "report_to_dict",
     "seconds_to_pretty",

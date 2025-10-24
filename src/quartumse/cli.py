@@ -18,6 +18,8 @@ from rich.table import Table
 app = typer.Typer(name="quartumse", help="Quantum measurement optimization toolkit")
 console = Console()
 
+DEFAULT_SHOTS_PER_SECOND = 5000 / 600  # ~5,000 shots in a 10-minute quota window
+
 
 class BackendConfig(BaseModel):
     """Backend configuration parsed from YAML or CLI overrides."""
@@ -278,12 +280,31 @@ def runtime_status(
         "--dry-run",
         help="Skip webhook delivery while still printing the notification payload.",
     ),
+    shots_per_second: float = typer.Option(
+        DEFAULT_SHOTS_PER_SECOND,
+        "--shots-per-second",
+        min=0.0,
+        help="Estimated measurement throughput (shots/sec) for budgeting hints.",
+    ),
+    batch_seconds: int = typer.Option(
+        600,
+        "--batch-seconds",
+        min=60,
+        help="Target runtime window (seconds) when deriving shot envelopes.",
+    ),
+    calibration_shots: int = typer.Option(
+        1024,
+        "--calibration-shots",
+        min=0,
+        help="Reserved calibration shots deducted from each batch budget.",
+    ),
 ):
     """Report IBM queue depth and runtime quota usage."""
 
     from quartumse.utils.runtime_monitor import (
         build_notification_message,
         collect_runtime_status,
+        compute_budgeting_hints,
         post_to_webhook,
         report_to_dict,
         seconds_to_pretty,
@@ -322,8 +343,22 @@ def runtime_status(
         console.print(f"[red]Failed to query runtime status: {exc}[/red]")
         raise typer.Exit(code=1) from exc
 
+    try:
+        budgeting = compute_budgeting_hints(
+            report,
+            shots_per_second=shots_per_second,
+            batch_seconds=batch_seconds,
+            calibration_shots=calibration_shots,
+        )
+    except ValueError as exc:
+        console.print(f"[red]{exc}[/red]")
+        raise typer.Exit(code=1) from exc
+
+    payload = report_to_dict(report)
+    payload["budgeting"] = budgeting
+
     if output_json:
-        console.print(json.dumps(report_to_dict(report), indent=2))
+        console.print(json.dumps(payload, indent=2))
     else:
         table = Table(title="IBM Runtime Status", show_header=False)
         table.add_column("Metric", style="cyan", justify="left")
@@ -359,6 +394,27 @@ def runtime_status(
             table.add_row("Refresh date", report.quota.refresh_date.isoformat())
 
         table.add_row("Captured", report.collected_at.isoformat())
+        table.add_row("Batch window", f"{batch_seconds}s")
+        table.add_row("Throughput assumption", f"{shots_per_second:.2f} shots/s")
+
+        batch_shots = budgeting["shot_capacity"].get("estimated_batch_shots")
+        if batch_shots is not None:
+            table.add_row("Batch shots", str(batch_shots))
+
+        measurement_shots = budgeting["shot_capacity"].get("measurement_shots_available")
+        if measurement_shots is not None:
+            table.add_row("Measurement shots", str(measurement_shots))
+
+        table.add_row("Calibration shots", str(calibration_shots))
+
+        if budgeting["fallbacks"]:
+            table.add_row(
+                "Fallbacks",
+                "; ".join(
+                    f"{item['condition']}: {item['action']}" for item in budgeting["fallbacks"]
+                ),
+            )
+
         console.print(table)
 
     if slack_webhook:

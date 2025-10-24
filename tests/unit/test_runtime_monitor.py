@@ -7,6 +7,7 @@ import pytest
 from quartumse.utils.runtime_monitor import (
     build_notification_message,
     collect_runtime_status,
+    compute_budgeting_hints,
     post_to_webhook,
     report_to_dict,
     seconds_to_pretty,
@@ -109,3 +110,26 @@ def test_build_notification_message_contains_key_fields() -> None:
 def test_post_to_webhook_dry_run() -> None:
     # Should not raise when dry_run=True even with invalid URL.
     post_to_webhook("https://example.com/webhook", "payload", dry_run=True)
+
+
+def test_compute_budgeting_hints_uses_remaining_seconds() -> None:
+    report = collect_runtime_status("ibmq_fake", service=_FakeService())
+    hints = compute_budgeting_hints(report, shots_per_second=10.0, batch_seconds=600, calibration_shots=100)
+
+    assert hints["assumptions"]["shots_per_second"] == 10.0
+    assert hints["shot_capacity"]["estimated_total_shots"] == 4800
+    assert hints["shot_capacity"]["estimated_batch_shots"] == 4800
+    assert hints["shot_capacity"]["measurement_shots_available"] == 4700
+    assert hints["shot_capacity"]["calibration_shots"] == 100
+    assert isinstance(hints["fallbacks"], list)
+
+
+def test_compute_budgeting_hints_rejects_invalid_settings() -> None:
+    report = collect_runtime_status("ibmq_fake", service=_FakeService())
+
+    with pytest.raises(ValueError):
+        compute_budgeting_hints(report, shots_per_second=0.0)
+    with pytest.raises(ValueError):
+        compute_budgeting_hints(report, shots_per_second=1.0, batch_seconds=0)
+    with pytest.raises(ValueError):
+        compute_budgeting_hints(report, shots_per_second=1.0, calibration_shots=-1)

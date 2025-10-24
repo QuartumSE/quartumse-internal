@@ -8,10 +8,13 @@ from datetime import datetime, UTC
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
+import math
+
 from jinja2 import Template
 
 from quartumse.reporting.manifest import ProvenanceManifest
 from quartumse.reporting.shot_data import ShotDataDiagnostics, ShotDataWriter
+from quartumse.utils.metrics import MetricsSummary
 
 
 HTML_TEMPLATE = """
@@ -152,10 +155,52 @@ HTML_TEMPLATE = """
         <table>
             <tr><th>Observable</th><th>Value</th></tr>
             {% for key, value in manifest.results_summary.items() %}
+            {% if key != "metrics" %}
             <tr><td>{{ key }}</td><td>{{ value }}</td></tr>
+            {% endif %}
             {% endfor %}
         </table>
     </div>
+
+    {% if metrics %}
+    <div class="section">
+        <h2>Performance Metrics</h2>
+        {% if metrics.summary %}
+        <div class="metadata">
+            {% for item in metrics.summary %}
+            <div class="metric">
+                <div class="metric-label">{{ item.label }}</div>
+                <div class="metric-value">{{ item.value }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if metrics.per_observable %}
+        <h3>Observable Breakdown</h3>
+        <table>
+            <tr>
+                <th>Observable</th>
+                <th>Baseline ⟨O⟩</th>
+                <th>Approach ⟨O⟩</th>
+                <th>Variance Ratio</th>
+                <th>SSR</th>
+                <th>CI</th>
+            </tr>
+            {% for row in metrics.per_observable %}
+            <tr>
+                <td>{{ row.name }}</td>
+                <td>{{ row.baseline_expectation }}</td>
+                <td>{{ row.approach_expectation }}</td>
+                <td>{{ row.variance_ratio }}</td>
+                <td>{{ row.ssr }}</td>
+                <td>{{ row.ci_flag }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+    </div>
+    {% endif %}
 
     {% if shot_diagnostics %}
     <div class="section">
@@ -220,6 +265,86 @@ HTML_TEMPLATE = """
 """
 
 
+def _format_number(value: Optional[float], *, precision: int = 2, suffix: str = "", percentage: bool = False) -> str:
+    if value is None:
+        return "–"
+    if percentage:
+        return f"{value * 100:.{precision}f}%"
+    if isinstance(value, float) and not math.isfinite(value):
+        return "–"
+    return f"{value:.{precision}f}{suffix}"
+
+
+def normalise_metrics_for_report(
+    metrics: Optional[Union[MetricsSummary, Dict[str, Any]]]
+) -> Optional[Dict[str, Any]]:
+    """Normalise metrics summaries for templating."""
+
+    if metrics is None:
+        return None
+
+    if isinstance(metrics, MetricsSummary):
+        metrics_dict = metrics.to_dict()
+    elif isinstance(metrics, dict):
+        metrics_dict = metrics
+    else:
+        raise TypeError("Unsupported metrics payload; expected MetricsSummary or mapping")
+
+    summary_items: List[Dict[str, str]] = []
+    ssr_avg = metrics_dict.get("ssr_average")
+    if ssr_avg is not None:
+        summary_items.append({"label": "Average SSR", "value": _format_number(ssr_avg, suffix="×")})
+    coverage = metrics_dict.get("ci_coverage")
+    if coverage is not None:
+        summary_items.append({"label": "CI Coverage", "value": _format_number(coverage, precision=1, percentage=True)})
+    variance_ratio = metrics_dict.get("variance_ratio_average")
+    if variance_ratio is not None:
+        summary_items.append({"label": "Variance Ratio", "value": _format_number(variance_ratio, suffix="×")})
+    total = metrics_dict.get("total_observables")
+    if total is not None:
+        summary_items.append({"label": "Observables", "value": str(total)})
+
+    per_observable_rows: List[Dict[str, str]] = []
+    observables = metrics_dict.get("observables", {}) or {}
+    for name, payload in observables.items():
+        baseline_data = payload.get("baseline", {}) or {}
+        approach_data = payload.get("approach", {}) or {}
+        variance_ratio_value = payload.get("variance_ratio")
+        ssr_value = payload.get("ssr")
+        ci_data = approach_data.get("confidence_interval")
+        in_ci = payload.get("in_ci")
+        ci_text = "–"
+        if isinstance(ci_data, dict) and {"lower", "upper"}.issubset(ci_data):
+            bounds = f"[{ci_data['lower']:.3f}, {ci_data['upper']:.3f}]"
+            if in_ci is True:
+                ci_text = f"✔ {bounds}"
+            elif in_ci is False:
+                ci_text = f"✖ {bounds}"
+            else:
+                ci_text = bounds
+        elif in_ci is True:
+            ci_text = "✔"
+        elif in_ci is False:
+            ci_text = "✖"
+
+        per_observable_rows.append(
+            {
+                "name": name,
+                "baseline_expectation": _format_number(baseline_data.get("expectation"), precision=3),
+                "approach_expectation": _format_number(approach_data.get("expectation"), precision=3),
+                "variance_ratio": _format_number(variance_ratio_value, suffix="×"),
+                "ssr": _format_number(ssr_value, suffix="×"),
+                "ci_flag": ci_text,
+            }
+        )
+
+    return {
+        "summary": summary_items,
+        "per_observable": per_observable_rows,
+        "raw": metrics_dict,
+    }
+
+
 class Report:
     """Container for experiment report data."""
 
@@ -236,10 +361,16 @@ class Report:
     def to_html(self, output_path: Optional[Union[str, Path]] = None) -> str:
         """Generate HTML report."""
         template = Template(HTML_TEMPLATE)
+        metrics_context = normalise_metrics_for_report(
+            self.manifest.schema.results_summary.get("metrics")
+            if isinstance(self.manifest.schema.results_summary, dict)
+            else None
+        )
         html = template.render(
             manifest=self.manifest.schema,
             now=datetime.now(UTC).isoformat(),
             shot_diagnostics=self.shot_diagnostics.to_dict() if self.shot_diagnostics else None,
+            metrics=metrics_context,
         )
 
         if output_path:

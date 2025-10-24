@@ -15,10 +15,10 @@
 
 QuartumSE is building the **default measurement and observability layer** for quantum computing. We provide:
 
-- **Shot-efficient observable estimation** using classical shadows (v0→v4)
-- **Confidence interval estimation** via normal approximations today (bootstrap/Bayesian upgrades are on the roadmap)
+- **Shot-efficient observable estimation** using classical shadows (v0 and v1 available now; v2–v4 on the roadmap)
+- **Confidence interval estimation** via normal approximations today (bootstrap/Bayesian upgrades are planned)
 - **Full provenance tracking** for reproducible quantum experiments
-- **Vendor-neutral platform** supporting IBM Quantum, AWS Braket, and more
+- **Vendor-neutral platform** with IBM Quantum + Aer support today and AWS Braket on the near-term roadmap
 - **Cost-for-accuracy metrics** (SSR, RMSE@$) to quantify efficiency gains
 
 **Goal:** Reduce quantum experiment costs by 2× while maintaining accuracy, with auditable results you can cite in papers.
@@ -150,11 +150,11 @@ Every experiment generates:
 # Replay from saved manifest to compute new observables
 from quartumse import ShadowEstimator
 
-estimator = ShadowEstimator()
+estimator = ShadowEstimator(backend="aer_simulator")
 new_observables = [Observable("XXX", coefficient=1.0)]
 result = estimator.replay_from_manifest(
     "data/manifests/a3f2b...json",
-    observables=new_observables
+    observables=new_observables,
 )
 ```
 
@@ -193,7 +193,7 @@ One API, multiple backends:
 - `notebooks/quickstart_shot_persistence.ipynb` – Shot data persistence basics with replay
 - `notebooks/archive/` – Historical smoke-test walkthroughs retained for reference
 
-All notebooks save data into local directories (`demo_data/` or `notebook_artifacts/`) for easy inspection without touching the main `data/` tree.
+All notebooks save data into local directories (`demo_data/` or `notebook_data/`) for easy inspection without touching the main `data/` tree.
 
 ---
 
@@ -237,22 +237,28 @@ See [docs/strategy/roadmap.md](docs/strategy/roadmap.md) for full timeline throu
 quartumse/
 ├── src/quartumse/
 │   ├── estimator/          # High-level estimation API
-│   ├── shadows/            # Classical shadows implementations (v0-v4)
-│   ├── mitigation/         # Error mitigation (MEM, ZNE, PEC, RC)
-│   ├── connectors/         # Backend adapters (IBM, AWS, etc.)
+│   ├── shadows/            # Classical shadows implementations (v0 & v1 today)
+│   ├── mitigation/         # Error mitigation (MEM, ZNE scaffolding)
+│   ├── connectors/         # Backend adapters (IBM Runtime + Aer helpers)
 │   ├── reporting/          # Provenance manifests & report generation
 │   └── utils/              # Metrics (SSR, RMSE@$), helpers
-├── experiments/            # Research experiments (S-T01, C-T01, etc.)
+├── experiments/            # Research experiments (shadows + validation harness)
+├── notebooks/              # Guided demos and validation walkthroughs
+├── docs/                   # Guides, runbooks, roadmap
 ├── tests/                  # pytest test suite
-├── benchmarks/             # Performance benchmarks
-└── docs/                   # Documentation
+├── tools/                  # Dev scripts (lint, release helpers)
+├── data*/                  # Default output directory (gitignored)
+├── validation_data*/       # Phase 1 validation artifacts (gitignored)
+└── demo_data*/             # Notebook/demo artifacts (gitignored)
+
+*Gitignored working directories that are created on demand.
 ```
 
 ---
 
 ## Experiments
 
-QuartumSE development is experiment-driven. The maintained scripts live in
+QuartumSE development is experiment-driven. Maintained scripts live in
 `experiments/shadows/` and `experiments/validation/`:
 
 ```bash
@@ -264,14 +270,15 @@ python experiments/validation/hardware_validation.py
 ```
 
 Prototype scaffolds for chemistry, optimization, metrology, and benchmarking
-have been relocated to `experiments/archive/` until they are fully implemented.
+reside under `experiments/shadows/*` with dedicated run scripts.
+Historical or superseded prototypes have been relocated to `experiments/archive/`.
 
 The GHZ baseline script accepts `--config` and `--backend` flags so you can
 target IBM Quantum backends (for example,
 `python experiments/shadows/S_T01_ghz_baseline.py --backend ibm:ibmq_qasm_simulator`).
 
-All experiments generate manifests in `data/manifests/` and reports in
-`data/reports/`.
+All experiments generate manifests in `data/manifests/` (or your configured data directory)
+and reports in `data/reports/`.
 
 ---
 

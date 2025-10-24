@@ -1,6 +1,19 @@
 
 # QuartumSE R&D‑Centric Roadmap (Updated, 2025–2026)
 
+_Last updated: 2025-10-24_
+
+### Phase snapshot (Oct 2025)
+
+- ✅ Phase 1 scaffolding, provenance pipeline, and CI harness are live.
+- ✅ S‑T01 GHZ baseline + S‑T02 noise-aware runs validated on IBM `ibm_torino` (smoke test Oct 22, 2025).
+- ✅ IBM Runtime CLI (`quartumse runtime-status`) operational with webhook notifications.
+- ⚠️ Extended IBM hardware validation (target SSR ≥ 1.1 across repeated runs) scheduled for Nov 2025.
+- ⚠️ Cross-workstream starter experiments (C/O/B/M) need first data drops before Phase 1 closes.
+- 📝 Patent theme shortlist drafting in progress ahead of the Phase 2 gate review.
+- 📋 See [`phase1_task_checklist.md`](phase1_task_checklist.md) for the consolidated execution checklist that enumerates every
+  outstanding task before the Phase 1 gate review.
+
 > **Principle:** Front‑load **research & hardware iteration**. Build on IBM Quantum free‑tier devices until we have an **attractive, validated, and patentable** measurement stack. Only then open **Early Access** for design partners.
 
 This roadmap folds in: (i) a **sophisticated classical shadows** program, (ii) concrete **experiments & tests** mapped to each phase, and (iii) clear **publication/patent gates** before external onboarding.
@@ -48,7 +61,7 @@ Each phase below enumerates **Experiments & Tests** with IDs that recur across p
 
 ### Deliverables
 - SDK modules: `Estimator`, `Shadows`, `Report`; **Provenance Manifest v1**; quickstart notebook.
-- Mitigation core: **MEM (M3)**, **ZNE**, plugin hooks for **PEC/RC**.
+- Mitigation core: **MEM (M3)** (production) and **ZNE** scaffolding; PEC/RC hooks planned post-Phase 1.
 - **Shadows v0–v1** reference implementation with CI. 
 - Test harness: datasets, seeds, fixtures; storage: Parquet/DuckDB; PDF/HTML report.
 - **Internal whiteboard spec** for patent themes (see Phase 2 gate).

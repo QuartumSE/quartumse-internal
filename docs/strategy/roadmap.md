@@ -11,6 +11,8 @@ _Last updated: 2025-10-24_
 - ⚠️ Extended IBM hardware validation (target SSR ≥ 1.1 across repeated runs) scheduled for Nov 2025.
 - ⚠️ Cross-workstream starter experiments (C/O/B/M) need first data drops before Phase 1 closes.
 - 📝 Patent theme shortlist drafting in progress ahead of the Phase 2 gate review.
+- 📋 See [`phase1_task_checklist.md`](phase1_task_checklist.md) for the consolidated execution checklist that enumerates every
+  outstanding task before the Phase 1 gate review.
 
 > **Principle:** Front‑load **research & hardware iteration**. Build on IBM Quantum free‑tier devices until we have an **attractive, validated, and patentable** measurement stack. Only then open **Early Access** for design partners.
 

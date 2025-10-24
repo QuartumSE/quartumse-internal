@@ -3,10 +3,10 @@
 This checklist aggregates the outstanding Phase 1 tasks called out across the roadmap, experiment plans, and validation guides so the execution team can run them without cross-referencing multiple documents. Use it alongside the detailed procedures in `experiments/shadows` and the runtime runbook when scheduling IBM Quantum jobs.
 
 ## Shared infrastructure & preparation
-- [ ] Establish a reusable **readout calibration workflow** (circuit templates, manifest storage, reuse cadence) that precedes every hardware run.
-- [ ] Draft the **runtime budgeting checklist** (shot counts, batching, queue timing) to stay within the 10-minute IBM Quantum free-tier window.
-- [ ] Implement shared **analysis utilities** for shot-saving ratio (SSR), confidence-interval (CI) coverage, and variance tracking so experiments share the same metrics code.
-- [ ] Document how to generate and store **high-statistics reference datasets** (simulators or large-shot baselines) whenever analytical ground truth is unavailable.
+- [x] Establish a reusable **readout calibration workflow** (circuit templates, manifest storage, reuse cadence) that precedes every hardware run.
+- [x] Draft the **runtime budgeting checklist** (shot counts, batching, queue timing) to stay within the 10-minute IBM Quantum free-tier window.
+- [x] Implement shared **analysis utilities** for shot-saving ratio (SSR), confidence-interval (CI) coverage, and variance tracking so experiments share the same metrics code.
+- [x] Document how to generate and store **high-statistics reference datasets** (simulators or large-shot baselines) whenever analytical ground truth is unavailable.
 
 ### Readout calibration cadence and artifacts
 - Invoke `quartumse calibrate-readout --backend <provider:name> --qubit <i> ...` before each hardware session to refresh confusion matrices. The CLI will reuse an existing archive unless `--force` is set or `--max-age-hours` expires.

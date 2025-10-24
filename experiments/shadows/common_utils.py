@@ -17,13 +17,20 @@ from typing import Any, Dict, List, Tuple, Optional
 
 import numpy as np
 from qiskit import QuantumCircuit, transpile
+from qiskit_aer import AerSimulator
 
 from quartumse import ShadowEstimator
 from quartumse.shadows import ShadowConfig
 from quartumse.shadows.config import ShadowVersion
 from quartumse.shadows.core import Observable
 from quartumse.reporting.manifest import MitigationConfig
-from quartumse.connectors import resolve_backend, is_ibm_runtime_backend, create_runtime_sampler
+from quartumse.reporting.reference_registry import ReferenceDatasetRegistry
+from quartumse.connectors import (
+    resolve_backend,
+    is_ibm_runtime_backend,
+    create_runtime_sampler,
+    create_backend_snapshot,
+)
 from quartumse.mitigation import ReadoutCalibrationManager
 from quartumse.utils.metrics import (
     MetricsSummary,
@@ -179,6 +186,10 @@ def run_shadows(
     *,
     calibration_max_age_hours: Optional[float] = None,
     force_new_calibration: bool = False,
+    reference_slug: Optional[str] = None,
+    reference_tags: Optional[List[str]] = None,
+    reference_metadata: Optional[Dict[str, Any]] = None,
+    allow_reuse: bool = True,
 ) -> Tuple[Dict, Dict]:
     use_mem = (variant.lower() == "v1")
 
@@ -190,7 +201,17 @@ def run_shadows(
     )
     mitigation_config = None
 
-    backend, backend_snapshot = resolve_backend(backend_descriptor)
+    if backend_descriptor == "aer_simulator":
+        backend = AerSimulator()
+        backend_snapshot = create_backend_snapshot(backend)
+    else:
+        backend, backend_snapshot = resolve_backend(backend_descriptor)
+
+    registry = ReferenceDatasetRegistry(data_dir) if reference_slug else None
+    dataset_manifest: Optional[Path] = None
+    manifest_obj = None
+    dataset_meta: Dict[str, Any] = {}
+    reference_reused = False
 
     calibration_shots = 0
     calibration_manifest_path: Optional[Path] = None
@@ -198,7 +219,30 @@ def run_shadows(
     calibration_reused = False
     calibration_created_at: Optional[str] = None
 
-    if use_mem:
+    if registry and reference_slug and allow_reuse:
+        existing_manifest = registry.lookup(reference_slug)
+        if existing_manifest and existing_manifest.exists():
+            estimator = ShadowEstimator(
+                backend=backend,
+                shadow_config=shadow_config,
+                mitigation_config=mitigation_config,
+                data_dir=data_dir,
+            )
+            if backend_snapshot is not None:
+                estimator._backend_snapshot = backend_snapshot
+            res = estimator.replay_from_manifest(existing_manifest, observables=observables)
+            reference_reused = True
+            dataset_manifest = existing_manifest
+            manifest_obj = registry.load_manifest(existing_manifest)
+            dataset_meta = manifest_obj.schema.metadata.get("reference_dataset", {}) if manifest_obj else {}
+            calibration_shots = int(dataset_meta.get("calibration_shots", 0) or 0)
+            registry.mark_used(reference_slug, existing_manifest)
+        else:
+            res = None
+    else:
+        res = None
+
+    if not reference_reused and use_mem:
         base_config = MitigationConfig()
         max_age = (
             timedelta(hours=calibration_max_age_hours)
@@ -226,17 +270,30 @@ def run_shadows(
 
     total_shots = shadow_size + calibration_shots
 
-    estimator = ShadowEstimator(
-        backend=backend,
-        shadow_config=shadow_config,
-        mitigation_config=mitigation_config,
-        data_dir=data_dir
-    )
-    if backend_snapshot is not None:
-        estimator._backend_snapshot = backend_snapshot
-    start = time.time()
-    res = estimator.estimate(circuit=circuit, observables=observables, save_manifest=True)
-    elapsed = time.time() - start
+    if not reference_reused:
+        estimator = ShadowEstimator(
+            backend=backend,
+            shadow_config=shadow_config,
+            mitigation_config=mitigation_config,
+            data_dir=data_dir
+        )
+        if backend_snapshot is not None:
+            estimator._backend_snapshot = backend_snapshot
+        start = time.time()
+        res = estimator.estimate(circuit=circuit, observables=observables, save_manifest=True)
+        elapsed = time.time() - start
+        dataset_manifest = Path(res.manifest_path) if getattr(res, "manifest_path", None) else None
+        dataset_meta = manifest_obj.schema.metadata.get("reference_dataset", {}) if manifest_obj else {}
+    else:
+        elapsed = 0.0
+
+    if res is None:
+        raise RuntimeError("Shadow estimation failed to produce a result")
+
+    if reference_reused and manifest_obj is None and dataset_manifest is not None:
+        # Ensure manifest object is loaded for metadata if it wasn't already
+        manifest_obj = registry.load_manifest(dataset_manifest) if registry else None
+        dataset_meta = manifest_obj.schema.metadata.get("reference_dataset", {}) if manifest_obj else {}
 
     out = {}
     for obs_str, data in res.observables.items():
@@ -249,15 +306,32 @@ def run_shadows(
             "ci_width": float(ci_width) if ci_width is not None else None
         }
 
+    measurement_shots = int(res.shots_used)
+    total_shots = measurement_shots + int(calibration_shots)
+
+    manifest_path_str = getattr(res, "manifest_path", None)
+    if reference_reused and dataset_manifest is not None:
+        manifest_path_str = str(dataset_manifest)
+
+    shot_data_path = getattr(res, "shot_data_path", None)
+    if reference_reused and manifest_obj is not None:
+        shot_data_path = manifest_obj.schema.shot_data_path
+
     meta = {
-        "backend_name": estimator.backend.name,
+        "backend_name": (
+            manifest_obj.schema.backend.backend_name
+            if manifest_obj is not None
+            else backend.name if hasattr(backend, "name") else backend_descriptor
+        ),
         "experiment_id": getattr(res, "experiment_id", None),
-        "manifest_path": getattr(res, "manifest_path", None),
-        "shot_data_path": getattr(res, "shot_data_path", None),
-        "measurement_shots": int(shadow_size),
+        "manifest_path": manifest_path_str,
+        "shot_data_path": shot_data_path,
+        "measurement_shots": measurement_shots,
         "calibration_shots": int(calibration_shots),
         "total_shots": int(total_shots),
         "elapsed_sec": float(elapsed),
+        "reference_slug": reference_slug,
+        "reference_reused": reference_reused,
     }
     if use_mem and calibration_confusion_path is not None:
         meta.update(
@@ -268,6 +342,51 @@ def run_shadows(
                 "calibration_created_at": calibration_created_at,
             }
         )
+    elif use_mem and dataset_meta:
+        meta.update(
+            {
+                "calibration_confusion_matrix": dataset_meta.get("calibration_confusion_matrix"),
+                "calibration_manifest": dataset_meta.get("calibration_manifest"),
+                "calibration_reused": dataset_meta.get("calibration_reused", False),
+                "calibration_created_at": dataset_meta.get("calibration_created_at"),
+            }
+        )
+
+    if registry and reference_slug and dataset_manifest and not reference_reused:
+        tags = list(reference_tags or [])
+        if not tags:
+            tags = [variant]
+        metadata_payload = {
+            "variant": variant,
+            "backend_descriptor": backend_descriptor,
+            "shadow_size": shadow_size,
+            "num_qubits": circuit.num_qubits,
+            "observable_count": len(observables),
+        }
+        if reference_metadata:
+            metadata_payload.update(reference_metadata)
+        if use_mem:
+            metadata_payload.update(
+                {
+                    "calibration_confusion_matrix": str(calibration_confusion_path) if calibration_confusion_path else None,
+                    "calibration_manifest": str(calibration_manifest_path) if calibration_manifest_path else None,
+                    "calibration_reused": calibration_reused,
+                    "calibration_created_at": calibration_created_at,
+                }
+            )
+        manifest_obj = registry.register_reference(
+            reference_slug,
+            dataset_manifest,
+            tags=tags,
+            metadata=metadata_payload,
+            calibration_shots=calibration_shots,
+        )
+        dataset_meta = manifest_obj.schema.metadata.get("reference_dataset", {})
+
+    if dataset_meta:
+        meta["reference_dataset"] = dataset_meta
+        meta.setdefault("reference_tags", dataset_meta.get("tags"))
+
     return out, meta
 
 def compute_metrics(

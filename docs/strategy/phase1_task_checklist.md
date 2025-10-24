@@ -8,6 +8,12 @@ This checklist aggregates the outstanding Phase 1 tasks called out across the ro
 - [ ] Implement shared **analysis utilities** for shot-saving ratio (SSR), confidence-interval (CI) coverage, and variance tracking so experiments share the same metrics code.
 - [ ] Document how to generate and store **high-statistics reference datasets** (simulators or large-shot baselines) whenever analytical ground truth is unavailable.
 
+### Readout calibration cadence and artifacts
+- Invoke `quartumse calibrate-readout --backend <provider:name> --qubit <i> ...` before each hardware session to refresh confusion matrices. The CLI will reuse an existing archive unless `--force` is set or `--max-age-hours` expires.
+- Calibrations live under `validation_data/calibrations/<backend>/q<indices>/confusion_matrix.npz` with a sibling `.manifest.json` capturing metadata (`backend_descriptor`, `shots_per_state`, reuse flag, etc.). The manager in `experiments/shadows/common_utils.py` uses the same layout so GHZ, Bell, Clifford, Ising, and H₂ scripts automatically share matrices.
+- Surface the cached path in manifests via `MitigationConfig.confusion_matrix_path`; the CLI output and experiment metadata record this location directly for provenance linking.
+- Recommended cadence: refresh for new backend calibrations, topology changes, or when the cached artifact exceeds its `--max-age-hours` threshold (default is unlimited reuse). Force a regeneration whenever qubit mappings change or significant readout drift is observed.
+
 ## Shadows workstream (S)
 ### Extended GHZ (S-T01/S-T02 bridge)
 - [ ] Simulate connectivity-aware GHZ(4–5) preparation circuits for target backends.

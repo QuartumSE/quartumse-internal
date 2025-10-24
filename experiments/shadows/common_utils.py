@@ -11,6 +11,7 @@ Requires QuartumSE package with:
 import os
 import time
 import json
+from datetime import timedelta
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional
 
@@ -23,6 +24,10 @@ from quartumse.shadows.config import ShadowVersion
 from quartumse.shadows.core import Observable
 from quartumse.reporting.manifest import MitigationConfig
 from quartumse.connectors import resolve_backend, is_ibm_runtime_backend, create_runtime_sampler
+from quartumse.mitigation import ReadoutCalibrationManager
+
+
+_CALIBRATION_MANAGER = ReadoutCalibrationManager()
 
 # ---------- Generic helpers ----------
 
@@ -77,16 +82,19 @@ def estimate_expectation_from_counts(counts, obs: Observable, shots: int) -> flo
         total += p * parity
     return obs.coefficient * total
 
-def run_shadows(circuit: QuantumCircuit,
-                observables: List[Observable],
-                backend_descriptor: str,
-                variant: str,
-                shadow_size: int,
-                mem_shots: int = 512,
-                data_dir: str = "./validation_data") -> Tuple[Dict, Dict]:
+def run_shadows(
+    circuit: QuantumCircuit,
+    observables: List[Observable],
+    backend_descriptor: str,
+    variant: str,
+    shadow_size: int,
+    mem_shots: int = 512,
+    data_dir: str = "./validation_data",
+    *,
+    calibration_max_age_hours: Optional[float] = None,
+    force_new_calibration: bool = False,
+) -> Tuple[Dict, Dict]:
     use_mem = (variant.lower() == "v1")
-    calibration_shots = (2 ** circuit.num_qubits) * mem_shots if use_mem else 0
-    total_shots = shadow_size + calibration_shots
 
     shadow_config = ShadowConfig(
         version=ShadowVersion.V1_NOISE_AWARE if use_mem else ShadowVersion.V0_BASELINE,
@@ -95,16 +103,51 @@ def run_shadows(circuit: QuantumCircuit,
         apply_inverse_channel=use_mem,
     )
     mitigation_config = None
+
+    backend, backend_snapshot = resolve_backend(backend_descriptor)
+
+    calibration_shots = 0
+    calibration_manifest_path: Optional[Path] = None
+    calibration_confusion_path: Optional[Path] = None
+    calibration_reused = False
+    calibration_created_at: Optional[str] = None
+
     if use_mem:
-        mitigation_config = MitigationConfig(
-            techniques=[], parameters={"mem_shots": mem_shots}
+        base_config = MitigationConfig()
+        max_age = (
+            timedelta(hours=calibration_max_age_hours)
+            if calibration_max_age_hours is not None
+            else None
         )
+        calibration_record = _CALIBRATION_MANAGER.ensure_calibration(
+            backend,
+            qubits=list(range(circuit.num_qubits)),
+            shots=mem_shots,
+            max_age=max_age,
+            force=force_new_calibration,
+        )
+        mitigation_config = calibration_record.to_mitigation_config(base_config)
+        mitigation_config.parameters["mem_shots"] = calibration_record.shots_per_state
+        mitigation_config.parameters["mem_qubits"] = list(calibration_record.qubits)
+        calibration_confusion_path = calibration_record.path
+        calibration_manifest_path = calibration_confusion_path.with_suffix(".manifest.json")
+        calibration_reused = calibration_record.reused
+        calibration_created_at = calibration_record.created_at.isoformat()
+        if not calibration_record.reused:
+            calibration_shots = calibration_record.total_shots
+        else:
+            calibration_shots = 0
+
+    total_shots = shadow_size + calibration_shots
+
     estimator = ShadowEstimator(
-        backend=backend_descriptor,
+        backend=backend,
         shadow_config=shadow_config,
         mitigation_config=mitigation_config,
         data_dir=data_dir
     )
+    if backend_snapshot is not None:
+        estimator._backend_snapshot = backend_snapshot
     start = time.time()
     res = estimator.estimate(circuit=circuit, observables=observables, save_manifest=True)
     elapsed = time.time() - start
@@ -130,6 +173,15 @@ def run_shadows(circuit: QuantumCircuit,
         "total_shots": int(total_shots),
         "elapsed_sec": float(elapsed),
     }
+    if use_mem and calibration_confusion_path is not None:
+        meta.update(
+            {
+                "calibration_confusion_matrix": str(calibration_confusion_path),
+                "calibration_manifest": str(calibration_manifest_path) if calibration_manifest_path else None,
+                "calibration_reused": calibration_reused,
+                "calibration_created_at": calibration_created_at,
+            }
+        )
     return out, meta
 
 def compute_metrics(observables: List[Observable],

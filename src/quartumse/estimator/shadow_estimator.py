@@ -1,6 +1,7 @@
 """Shadow-based estimator implementation."""
 
 import hashlib
+import logging
 import time
 import uuid
 from pathlib import Path
@@ -36,6 +37,9 @@ from quartumse.shadows.config import ShadowConfig, ShadowVersion
 from quartumse.shadows.core import Observable
 from quartumse.shadows.v0_baseline import RandomLocalCliffordShadows
 from quartumse.shadows.v1_noise_aware import NoiseAwareRandomLocalCliffordShadows
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 class ShadowEstimator(Estimator):
@@ -186,28 +190,60 @@ class ShadowEstimator(Estimator):
 
         # Calibrate measurement error mitigation if required
         if isinstance(self.shadow_impl, NoiseAwareRandomLocalCliffordShadows):
-            mem_shots = int(self.mitigation_config.parameters.get("mem_shots", 4096))
-            run_options = self.mitigation_config.parameters.get("mem_run_options", {})
-            mem_dir = self.data_dir / "mem"
-            mem_dir.mkdir(parents=True, exist_ok=True)
-            confusion_matrix_path = mem_dir / f"{experiment_id}.npz"
-            saved_confusion_path = self.shadow_impl.mem.calibrate(
-                list(range(circuit.num_qubits)),
-                shots=mem_shots,
-                run_options=run_options,
-                output_path=confusion_matrix_path,
-            )
+            mem_params = self.mitigation_config.parameters
+            mem_shots = int(mem_params.get("mem_shots", 4096))
+            mem_qubits_param = mem_params.get("mem_qubits")
+            if mem_qubits_param is None:
+                mem_qubits = list(range(circuit.num_qubits))
+            elif isinstance(mem_qubits_param, (list, tuple)):
+                mem_qubits = [int(q) for q in mem_qubits_param]
+            else:
+                mem_qubits = [int(mem_qubits_param)]
+
+            mem_force = bool(mem_params.get("mem_force_calibration", False))
+            run_options = mem_params.get("mem_run_options", {})
+            mem_confusion_path_str = self.mitigation_config.confusion_matrix_path
+
+            if mem_confusion_path_str and not mem_force:
+                try:
+                    self.shadow_impl.mem.load_confusion_matrix(mem_confusion_path_str)
+                    metadata = self.shadow_impl.mem.get_confusion_metadata()
+                    if isinstance(metadata.get("shots_per_state"), (int, float)):
+                        mem_shots = int(metadata["shots_per_state"])
+                        mem_params["mem_shots"] = mem_shots
+                    if isinstance(metadata.get("qubits"), (list, tuple)):
+                        mem_qubits = [int(q) for q in metadata["qubits"]]
+                        mem_params["mem_qubits"] = mem_qubits
+                except FileNotFoundError:
+                    LOGGER.warning(
+                        "Configured confusion matrix %s not found; recalibrating.",
+                        mem_confusion_path_str,
+                    )
+                    mem_confusion_path_str = None
+
+            if self.shadow_impl.mem.confusion_matrix is None or mem_force or not mem_confusion_path_str:
+                mem_dir = self.data_dir / "mem"
+                mem_dir.mkdir(parents=True, exist_ok=True)
+                confusion_matrix_path = mem_dir / f"{experiment_id}.npz"
+                saved_confusion_path = self.shadow_impl.mem.calibrate(
+                    mem_qubits,
+                    shots=mem_shots,
+                    run_options=run_options,
+                    output_path=confusion_matrix_path,
+                )
+                mem_confusion_path = (
+                    saved_confusion_path if saved_confusion_path is not None else confusion_matrix_path
+                )
+                self.mitigation_config.confusion_matrix_path = str(mem_confusion_path.resolve())
+                mem_confusion_path_str = self.mitigation_config.confusion_matrix_path
+                self.shadow_impl.mem.confusion_matrix_path = Path(mem_confusion_path_str)
+            else:
+                self.mitigation_config.confusion_matrix_path = mem_confusion_path_str
+
             if "MEM" not in self.mitigation_config.techniques:
                 self.mitigation_config.techniques.append("MEM")
-            self.mitigation_config.parameters.setdefault("mem_qubits", circuit.num_qubits)
-            if saved_confusion_path is not None:
-                self.mitigation_config.confusion_matrix_path = str(
-                    saved_confusion_path.resolve()
-                )
-            else:
-                self.mitigation_config.confusion_matrix_path = str(
-                    confusion_matrix_path.resolve()
-                )
+            mem_params["mem_qubits"] = mem_qubits
+            mem_params["mem_shots"] = mem_shots
 
         # Transpile for backend
         transpiled_circuits = transpile(shadow_circuits, backend=self.backend)

@@ -5,8 +5,9 @@ Command-line interface for running experiments, generating reports, etc.
 """
 
 import json
+from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 import typer
 import yaml
@@ -131,6 +132,84 @@ def run(
     console.print(
         "[yellow]Experiment execution via CLI is under development. "
         "Use experiments/shadows/S_T01_ghz_baseline.py or notebooks to run circuits.[/yellow]"
+    )
+
+
+@app.command("calibrate-readout")
+def calibrate_readout(
+    backend: str = typer.Option(
+        ..., "--backend", "-b", help="Backend descriptor (e.g., ibm:ibm_brisbane)"
+    ),
+    qubit: List[int] = typer.Option(
+        ..., "--qubit", "-q", help="Qubit index to include; repeat for multiple qubits"
+    ),
+    shots: int = typer.Option(4096, help="Shots per computational basis state"),
+    output_dir: Path = typer.Option(
+        Path("validation_data/calibrations"),
+        "--output-dir",
+        "-o",
+        help="Directory for calibration artifacts",
+    ),
+    force: bool = typer.Option(
+        False, "--force", help="Force recalibration even if a cached artifact exists"
+    ),
+    max_age_hours: Optional[float] = typer.Option(
+        None,
+        "--max-age-hours",
+        help="Refresh calibration if the cached artifact is older than this many hours",
+    ),
+):
+    """Calibrate readout confusion matrices and persist metadata."""
+
+    if not qubit:
+        raise typer.BadParameter("At least one --qubit index must be provided")
+    if shots <= 0:
+        raise typer.BadParameter("--shots must be a positive integer")
+
+    from quartumse.connectors import resolve_backend
+    from quartumse.mitigation import ReadoutCalibrationManager
+
+    backend_instance, _ = resolve_backend(backend)
+    manager = ReadoutCalibrationManager(base_dir=output_dir)
+    max_age = timedelta(hours=max_age_hours) if max_age_hours is not None else None
+
+    record = manager.ensure_calibration(
+        backend_instance,
+        qubit,
+        shots=shots,
+        force=force,
+        max_age=max_age,
+    )
+
+    mitigation_config = record.to_mitigation_config()
+    manifest_payload = {
+        "generated_at": datetime.utcnow().isoformat(),
+        "backend_descriptor": backend,
+        "backend_name": record.backend_name,
+        "backend_version": record.backend_version,
+        "qubits": list(record.qubits),
+        "shots_per_state": record.shots_per_state,
+        "total_shots": record.total_shots,
+        "reused": record.reused,
+        "calibration_created_at": record.created_at.isoformat(),
+        "confusion_matrix_path": str(record.path),
+        "mitigation": mitigation_config.model_dump(),
+    }
+
+    manifest_path = record.path.with_suffix(".manifest.json")
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    with manifest_path.open("w", encoding="utf-8") as handle:
+        json.dump(manifest_payload, handle, indent=2)
+        handle.write("\n")
+
+    status = "reused" if record.reused else "generated"
+    console.print(
+        f"[green]Calibration {status} for backend {record.backend_name} on qubits {list(record.qubits)}.[/green]"
+    )
+    console.print(f"[cyan]Confusion matrix:[/cyan] {record.path}")
+    console.print(f"[cyan]Manifest snippet:[/cyan] {manifest_path}")
+    console.print(
+        "[yellow]Reference this path via MitigationConfig.confusion_matrix_path in manifests.[/yellow]"
     )
 
 

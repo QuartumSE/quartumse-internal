@@ -50,11 +50,12 @@ This checklist aggregates the outstanding Phase 1 tasks called out across the ro
 - [ ] Verify validation CI coverage ≥ 80% and document Phase 1 completion once criteria are met.
 
 ## Cross-workstream starters (C/O/B/M)
-- [ ] Deliver the starter experiments for Chemistry (C), Optimization (O), Benchmarking (B), and Metrology (M) workstreams so Phase 1 closure criteria are satisfied.
+- [ ] Execute C/O/B/M starter experiments on simulator and generate first data drops (manifests + shot data for Phase 1 closure).
 - [ ] Confirm patent theme shortlist drafting continues ahead of the Phase 2 gate review.
 
-## Shadows roadmap follow-ons
-- [ ] Implement remaining Shadows roadmap milestones: **v2 (Fermionic)**, **v3 (Adaptive)**, and **v4 (Robust)** feature sets.
+---
+
+**Note:** Advanced shadow variants (v2 Fermionic, v3 Adaptive, v4 Robust) are Phase 2+ scope and intentionally excluded from this checklist to keep Phase 1 focused on v0/v1 hardware validation.
 
 ---
 

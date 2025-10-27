@@ -32,11 +32,14 @@ pytest tests -m "not hardware" -v --durations=20
 pytest tests -m hardware -v
 ```
 
-Enable coverage reporting when preparing releases:
+Enable coverage reporting (mirrors the CI configuration) when preparing releases:
 
 ```bash
-pytest --cov=quartumse --cov-report=term-missing
+pytest --cov --cov-report=term-missing --cov-report=xml --cov-report=html
 ```
+
+This writes `coverage.xml` for Codecov uploads and an `htmlcov/` directory for
+annotated source review.
 
 ## Manual validation notebooks
 

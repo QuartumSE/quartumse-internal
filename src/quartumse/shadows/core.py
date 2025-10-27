@@ -129,6 +129,14 @@ class ClassicalShadows(ABC):
         """
         pass
 
+    @abstractmethod
+    def estimate_shadow_size_needed(
+        self, observable: Observable, target_precision: float
+    ) -> int:
+        """Estimate the number of shadows required for a desired precision."""
+
+        raise NotImplementedError
+
     def estimate_multiple_observables(
         self, observables: List[Observable]
     ) -> Dict[str, ShadowEstimate]:
@@ -156,7 +164,7 @@ class ClassicalShadows(ABC):
         # Default implementation (subclasses can override)
         # For random local Clifford: Var ≤ 4^k / M, where k = support size
         support_size = sum(1 for p in observable.pauli_string if p != "I")
-        return 4**support_size / shadow_size
+        return float(4**support_size) / float(shadow_size)
 
     def compute_confidence_interval(
         self, mean: float, variance: float, n_samples: int, confidence: float = 0.95
@@ -165,7 +173,7 @@ class ClassicalShadows(ABC):
         from scipy import stats
 
         std_error = np.sqrt(variance / n_samples)
-        z_score = stats.norm.ppf((1 + confidence) / 2)
+        z_score = float(stats.norm.ppf((1 + confidence) / 2))
 
         ci_lower = mean - z_score * std_error
         ci_upper = mean + z_score * std_error

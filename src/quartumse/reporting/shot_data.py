@@ -6,7 +6,7 @@ import time
 from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, List, Union
 
 import numpy as np
 import pandas as pd
@@ -148,24 +148,24 @@ class ShotDataWriter:
 
         # Decode bases
         basis_map_inv = {"Z": 0, "X": 1, "Y": 2}
-        measurement_bases = []
+        measurement_bases_list: List[List[int]] = []
         for bases_str in df["measurement_bases"]:
             bases = [basis_map_inv[b] for b in bases_str]
-            measurement_bases.append(bases)
+            measurement_bases_list.append(bases)
 
-        measurement_bases = np.array(measurement_bases)
+        measurement_bases_array = np.asarray(measurement_bases_list, dtype=int)
 
         # Decode outcomes
-        measurement_outcomes = []
+        measurement_outcomes_list: List[List[int]] = []
         for outcomes_str in df["measurement_outcomes"]:
             outcomes = [int(o) for o in outcomes_str]
-            measurement_outcomes.append(outcomes)
+            measurement_outcomes_list.append(outcomes)
 
-        measurement_outcomes = np.array(measurement_outcomes)
+        measurement_outcomes_array = np.asarray(measurement_outcomes_list, dtype=int)
 
         num_qubits = int(df["num_qubits"].iloc[0])
 
-        return measurement_bases, measurement_outcomes, num_qubits
+        return measurement_bases_array, measurement_outcomes_array, num_qubits
 
     def summarize_shadow_measurements(
         self, experiment_id: str, *, top_bitstrings: int = 10

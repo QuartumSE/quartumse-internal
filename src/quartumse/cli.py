@@ -7,7 +7,7 @@ Command-line interface for running experiments, generating reports, etc.
 import json
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 import typer
 import yaml
@@ -35,7 +35,9 @@ class BackendConfig(BaseModel):
             if sep:
                 return {"provider": provider or "local", "name": name}
             return {"provider": "local", "name": value}
-        return value
+        if isinstance(value, dict):
+            return cast(Dict[str, Any], value)
+        raise TypeError("Backend descriptor must be a string or mapping")
 
     @property
     def descriptor(self) -> str:
@@ -63,12 +65,17 @@ def _load_yaml_config(path: Path) -> Dict[str, Any]:
         raise typer.BadParameter(f"Config file not found: {path}")
 
     with path.open("r", encoding="utf-8") as handle:
-        data = yaml.safe_load(handle) or {}
+        raw_data = yaml.safe_load(handle)
 
-    if not isinstance(data, dict):
+    empty_config: Dict[str, Any] = {}
+    if raw_data is None:
+        return empty_config
+    if not isinstance(raw_data, dict):
         raise typer.BadParameter("Experiment config must be a mapping at the top level")
 
-    return data
+    typed_data = cast(Dict[str, Any], raw_data)
+    normalized: Dict[str, Any] = {str(key): value for key, value in typed_data.items()}
+    return normalized
 
 
 def _parse_experiment_config(data: Dict[str, Any]) -> ExperimentConfig:
@@ -83,7 +90,7 @@ def _parse_experiment_config(data: Dict[str, Any]) -> ExperimentConfig:
 
 
 @app.command()
-def version():
+def version() -> None:
     """Show QuartumSE version."""
     from quartumse import __version__
 
@@ -97,7 +104,7 @@ def run(
         None,
         help="Override backend descriptor (e.g., ibm:ibmq_qasm_simulator)",
     ),
-):
+) -> None:
     """Validate configuration and resolve experiment backend."""
 
     config_path = Path(config)
@@ -160,7 +167,7 @@ def calibrate_readout(
         "--max-age-hours",
         help="Refresh calibration if the cached artifact is older than this many hours",
     ),
-):
+) -> None:
     """Calibrate readout confusion matrices and persist metadata."""
 
     if not qubit:
@@ -219,7 +226,7 @@ def calibrate_readout(
 def report(
     manifest: str = typer.Argument(..., help="Path to manifest JSON"),
     output: str = typer.Option("report.html", help="Output path"),
-):
+) -> None:
     """Generate report from manifest."""
     from quartumse.reporting import ReportGenerator
 
@@ -232,7 +239,7 @@ def report(
 @app.command()
 def benchmark(
     suite: str = typer.Option("all", help="Benchmark suite to run"),
-):
+) -> None:
     """Run benchmark suite."""
     console.print(f"[yellow]Running benchmark suite: {suite}[/yellow]")
     console.print("[red]Not implemented yet![/red]")
@@ -298,7 +305,7 @@ def runtime_status(
         min=0,
         help="Reserved calibration shots deducted from each batch budget.",
     ),
-):
+) -> None:
     """Report IBM queue depth and runtime quota usage."""
 
     from quartumse.utils.runtime_monitor import (

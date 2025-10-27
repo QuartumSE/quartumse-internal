@@ -25,22 +25,27 @@ import json
 import logging
 import os
 from dataclasses import dataclass
-from datetime import datetime, UTC
-from typing import Any, Dict, Optional
+from datetime import datetime, timezone
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from qiskit.providers.backend import Backend
 from qiskit_aer import AerSimulator
 from qiskit_ibm_runtime import QiskitRuntimeService
 
+if TYPE_CHECKING:  # pragma: no cover - imported for type checking only
+    from qiskit_ibm_runtime import SamplerV2 as SamplerPrimitive
+else:  # pragma: no cover - alias used when type checking is disabled
+    SamplerPrimitive = Any
+
 try:  # Runtime primitive import is optional during documentation builds/tests
     from qiskit_ibm_runtime import SamplerV2
 except Exception:  # pragma: no cover - fallback when primitive class unavailable
-    SamplerV2 = None  # type: ignore
+    SamplerV2 = None
 
 try:  # Runtime import is optional during documentation builds/tests
     from qiskit_ibm_runtime.exceptions import IBMRuntimeError
 except Exception:  # pragma: no cover - fallback when exception class unavailable
-    IBMRuntimeError = Exception  # type: ignore
+    IBMRuntimeError = Exception
 
 from quartumse.reporting.manifest import BackendSnapshot
 
@@ -72,7 +77,7 @@ def is_ibm_runtime_backend(backend: Backend) -> bool:
     return "qiskit_ibm_runtime" in module_name
 
 
-def create_runtime_sampler(backend: Backend):
+def create_runtime_sampler(backend: Backend) -> Optional[SamplerPrimitive]:
     """Instantiate ``SamplerV2`` for ``backend`` when supported."""
 
     if SamplerV2 is None or not is_ibm_runtime_backend(backend):
@@ -143,7 +148,7 @@ def create_backend_snapshot(backend: Backend) -> BackendSnapshot:
             or 0
         )
 
-    calibration_timestamp = datetime.now(UTC)
+    calibration_timestamp = datetime.now(timezone.utc)
     t1_times: Dict[int, float] = {}
     t2_times: Dict[int, float] = {}
     readout_errors: Dict[int, float] = {}
@@ -323,4 +328,5 @@ __all__ = [
     "create_runtime_sampler",
     "is_ibm_runtime_backend",
     "resolve_backend_descriptor",
+    "SamplerPrimitive",
 ]

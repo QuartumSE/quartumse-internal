@@ -39,7 +39,6 @@ jobs:
     - name: Type check with mypy
       run: |
         mypy src/quartumse
-      continue-on-error: true  # Initial development
 
     - name: Run tests
       run: |

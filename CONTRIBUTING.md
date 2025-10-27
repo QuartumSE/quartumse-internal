@@ -59,7 +59,10 @@ All code contributions will require:
 
 1. **Tests:** Unit tests for new features, integration tests for workflows
 2. **Documentation:** Docstrings, README updates, example notebooks
-3. **Code quality:** Passing black, ruff, mypy checks
+3. **Code quality:** Passing black, ruff, mypy checks. The mypy configuration
+   enables `disallow_untyped_defs = true`, so new functions and methods must
+   be fully annotated with types and should include descriptive docstrings
+   where behaviour is non-obvious.
 4. **License:** All contributions under Apache 2.0
 
 ### Handling IBM Quantum credentials locally

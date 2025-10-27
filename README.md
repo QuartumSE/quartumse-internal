@@ -76,6 +76,23 @@ QuartumSE is building the **default measurement and observability layer** for qu
 - [Security policy](SECURITY.md)
 - [Changelog](CHANGELOG.md)
 
+## Testing & Coverage
+
+We rely on `pytest` with `pytest-cov` for consistent coverage reporting across
+local development and CI. The badge above reflects the latest `main` branch
+results uploaded to Codecov.
+
+```bash
+pip install -e ".[dev]"
+pytest -m "not slow and not hardware" -v
+
+# Generate coverage artifacts (terminal, XML for Codecov, and HTML summary)
+pytest --cov --cov-report=term-missing --cov-report=xml --cov-report=html
+```
+
+Open `htmlcov/index.html` in a browser to inspect annotated source files. CI
+publishes the `coverage.xml` artifact to Codecov on Ubuntu Python 3.11 runs.
+
 #### IBM Quantum connector quick start
 
 QuartumSE ships with an IBM Quantum connector that authenticates against Qiskit Runtime

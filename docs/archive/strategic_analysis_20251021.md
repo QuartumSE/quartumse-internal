@@ -23,7 +23,7 @@
 - ✅ IBM Quantum connector with calibration snapshots
 - ✅ Shot data persistence with Parquet storage
 - ✅ Full provenance tracking with manifests
-- ✅ 24/24 tests passing, 76% code coverage
+- ✅ 24/24 tests passing, Codecov (main) 76% coverage (snapshot Oct 21)
 
 **Critical Gaps [AS OF OCT 21]:**
 - ❌ C/O/B/M experiments (only scaffolds exist) [STILL PENDING]
@@ -87,7 +87,7 @@
 |-----------|--------|---------|--------|
 | SSR on simulator | ≥ 1.2× | **Unknown** (not measured) | ❌ FAIL |
 | SSR on IBM hardware | ≥ 1.1× | **Unknown** (not measured) | ❌ FAIL |
-| CI coverage | ≥ 80% | 76% (code), **0%** (experiment results) | ❌ FAIL |
+| CI coverage | ≥ 80% | Codecov (main) 76% (code), **0%** (experiment results) | ❌ FAIL |
 | Patent themes | Top 3 identified | **None documented** | ❌ FAIL |
 | Reproducibility | Seeds + manifests working | ✅ Working | ✅ PASS |
 
@@ -356,7 +356,7 @@ import json
 
 ### What You Have (Strengths)
 - ✅ **Solid technical foundation:** Shadows v0/v1, MEM, IBM connector all working
-- ✅ **Production-quality code:** 76% coverage, 24/24 tests, CI-ready
+- ✅ **Production-quality code:** Codecov (main) 76% coverage, 24/24 tests, CI-ready
 - ✅ **Clear vision:** Bible and roadmap are excellent strategic documents
 - ✅ **Provenance-first:** Manifests + shot persistence operational
 

@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: If you use QuartumSE, please cite it by referencing the metadata in this file.
+title: QuartumSE
+abstract: >-
+  Vendor-neutral quantum measurement optimization with classical shadows and
+  provenance tracking for reproducible experiments.
+authors:
+  - name: QuartumSE Team
+    affiliation: QuartumSE Labs
+    email: contact@quartumse.dev
+version: 0.1.0
+doi: 10.0000/zenodo.placeholder-doi
+date-released: 2025-01-01
+repository-code: https://github.com/quartumse/quartumse
+license: Apache-2.0
+keywords:
+  - quantum computing
+  - classical shadows
+  - error mitigation
+  - provenance

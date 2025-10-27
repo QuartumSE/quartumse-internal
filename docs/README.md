@@ -38,6 +38,13 @@ this archive only when the historical context is required.
 If you add new documentation, prefer placing it under `docs/` (either as a new
 guide or alongside the strategic/ops material) to keep the repository root tidy.
 
+## Citing QuartumSE
+
+When preparing publications, pull citation metadata from the repository's
+[`CITATION.cff`](../CITATION.cff) file via GitHub's **Cite this repository**
+button. This ensures the version number and release date stay aligned with the
+latest tagged release.
+
 ## Building the API documentation
 
 The API reference under `docs/api/` is generated with [Sphinx](https://www.sphinx-doc.org/)

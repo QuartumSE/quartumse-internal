@@ -386,6 +386,13 @@ If you use QuartumSE in your research (after Phase 3 when validated), please cit
 - **Issues:** [GitHub Issues](https://github.com/quartumse/quartumse/issues)
 - **Email:** contact@quartumse.dev (placeholder)
 
+## Security
+
+Please review our [Security Policy](SECURITY.md) for the latest list of supported
+versions and detailed vulnerability reporting instructions. To protect users,
+kindly avoid filing public GitHub issues for security-related reports—email
+security@quartumse.dev instead so we can coordinate a private fix.
+
 ---
 
 **QuartumSE** — Building trust and efficiency in quantum computing, one measurement at a time.

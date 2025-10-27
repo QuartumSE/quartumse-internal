@@ -5,6 +5,7 @@
 [![CI](https://github.com/quartumse/quartumse/workflows/CI/badge.svg)](https://github.com/quartumse/quartumse/actions)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Changelog](https://img.shields.io/badge/changelog-Keep%20a%20Changelog-1F6FEB.svg)](CHANGELOG.md)
 
 > ⚠️ **EARLY R&D - NOT READY FOR PRODUCTION USE**
 > QuartumSE is in active Phase 1 development. APIs are unstable and will change.

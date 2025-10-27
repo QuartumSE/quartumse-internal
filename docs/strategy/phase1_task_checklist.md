@@ -69,5 +69,6 @@ This checklist aggregates the outstanding Phase 1 tasks called out across the ro
 1. Copy relevant tasks into your sprint tracker, linking back to their detailed procedure files (design docs in `experiments/shadows/**/` and the hardware validation design note).
 2. Before each IBM Quantum run, execute `quartumse runtime-status --json --backend <backend>` and record queue depth/runtime budget in the runbook.
 3. After completing an experiment, attach manifests, calibration data, and summary notebooks to the appropriate `results/` and `discussion/` folders and check the corresponding box here.
+4. When preparing a public release or milestone summary, update [`CHANGELOG.md`](../../CHANGELOG.md) with the scope of work that shipped before tagging.
 
 Update this document whenever a task is completed or a new Phase 1 dependency is identified.

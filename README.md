@@ -369,7 +369,9 @@ Apache 2.0 — See [LICENSE](LICENSE)
 
 ## Citation
 
-If you use QuartumSE in your research (after Phase 3 when validated), please cite:
+If you use QuartumSE in your research (after Phase 3 when validated), export the
+preferred format from GitHub's **Cite this repository** button, which is backed
+by [`CITATION.cff`](CITATION.cff). Manual BibTeX entry:
 
 ```bibtex
 @software{quartumse2025,

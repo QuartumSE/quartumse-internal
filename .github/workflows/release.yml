@@ -1,0 +1,86 @@
+name: Release Automation
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to sync (defaults to release event tag)"
+        required: false
+
+jobs:
+  sync-citation:
+    name: Sync citation metadata
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Determine release metadata
+        id: release
+        run: |
+          if [ -n "${{ github.event.release.tag_name }}" ]; then
+            tag="${{ github.event.release.tag_name }}"
+          elif [ -n "${{ github.event.inputs.tag }}" ]; then
+            tag="${{ github.event.inputs.tag }}"
+          else
+            echo "::error::No release tag provided. Provide one when dispatching manually." >&2
+            exit 1
+          fi
+
+          version="${tag#v}"
+
+          if [ -n "${{ github.event.release.published_at }}" ]; then
+            # Strip the time portion (e.g. 2025-02-01T12:34:56Z -> 2025-02-01)
+            date="${{ github.event.release.published_at }}"
+            date="${date%%T*}"
+          else
+            date="$(date -u +%Y-%m-%d)"
+          fi
+
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "date=$date" >> "$GITHUB_OUTPUT"
+
+      - name: Install tooling
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install PyYAML
+
+      - name: Update CITATION.cff
+        run: |
+          python - <<'PY'
+import pathlib
+import sys
+import yaml
+
+citation_path = pathlib.Path("CITATION.cff")
+if not citation_path.exists():
+    sys.stderr.write("CITATION.cff not found at repository root\n")
+    sys.exit(1)
+
+data = yaml.safe_load(citation_path.read_text())
+if not isinstance(data, dict):
+    sys.stderr.write("Unexpected CITATION.cff format\n")
+    sys.exit(1)
+
+data["version"] = "${{ steps.release.outputs.version }}"
+data["date-released"] = "${{ steps.release.outputs.date }}"
+
+citation_path.write_text(
+    yaml.safe_dump(data, sort_keys=False, width=80)
+)
+PY
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore: sync citation metadata for ${{ steps.release.outputs.tag }}"
+          title: "chore: sync citation metadata for ${{ steps.release.outputs.tag }}"
+          body: |
+            Updates `CITATION.cff` to reflect release `${{ steps.release.outputs.tag }}`
+            and its publication date.
+          branch: automation/sync-citation-${{ steps.release.outputs.version }}
+          delete-branch: true

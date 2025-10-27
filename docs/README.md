@@ -37,3 +37,27 @@ this archive only when the historical context is required.
 
 If you add new documentation, prefer placing it under `docs/` (either as a new
 guide or alongside the strategic/ops material) to keep the repository root tidy.
+
+## Building the API documentation
+
+The API reference under `docs/api/` is generated with [Sphinx](https://www.sphinx-doc.org/)
+and pulls docstrings directly from the Python package in `src/quartumse`.
+
+### Prerequisites
+
+Install the optional documentation dependencies:
+
+```bash
+pip install -e .[docs]
+```
+
+### Build steps
+
+Use [tox](https://tox.wiki/) to build the docs and fail on warnings:
+
+```bash
+tox -e docs
+```
+
+This command runs `sphinx-build` with the `-W` and `--keep-going` flags, ensuring the
+documentation remains warning-free.  The generated HTML lives in `docs/_build/html`.

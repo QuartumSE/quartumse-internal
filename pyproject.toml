@@ -69,6 +69,12 @@ dev = [
     "nbconvert>=7.0.0",
 ]
 
+docs = [
+    "sphinx>=7.2.0",
+    "myst-parser>=2.0.0",
+    "sphinx-autodoc-typehints>=1.24.0",
+]
+
 # Phase 2+ optional dependencies (Python <3.13 required)
 mitigation = [
     "mitiq>=0.25.0; python_version<'3.13'",

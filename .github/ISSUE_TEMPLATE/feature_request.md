@@ -6,6 +6,8 @@ labels: enhancement
 assignees: ''
 ---
 
+> Please review our [Code of Conduct](../../CODE_OF_CONDUCT.md) before submitting.
+
 ## Problem Statement
 What problem does this feature solve? Who is impacted?
 

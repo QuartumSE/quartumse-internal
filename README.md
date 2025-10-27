@@ -350,6 +350,8 @@ QuartumSE is in **closed R&D** until Phase 3 (Q1 2026).
 
 We are not accepting external contributions at this time. After Phase 3 patent filings and journal submissions, we will open Early Access for design partners.
 
+Even during this closed phase, we expect all community interactions to follow our [Code of Conduct](CODE_OF_CONDUCT.md). Please read it alongside the [contribution guidelines](CONTRIBUTING.md) so you're ready when contributions open.
+
 ---
 
 ## License

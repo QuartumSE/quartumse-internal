@@ -54,11 +54,11 @@ class ReferenceDatasetRegistry:
             index.pop(slug, None)
             self._save_index(index)
 
-        manifest_path = self._scan_manifests_for_slug(slug)
-        if manifest_path:
-            index[slug] = str(manifest_path.resolve())
+        scanned_path = self._scan_manifests_for_slug(slug)
+        if scanned_path:
+            index[slug] = str(scanned_path.resolve())
             self._save_index(index)
-            return manifest_path
+            return scanned_path
 
         return None
 
@@ -117,18 +117,21 @@ class ReferenceDatasetRegistry:
     def mark_used(self, slug: str, manifest_path: Optional[Union[str, Path]] = None) -> None:
         """Update ``last_used_at`` for the manifest associated with ``slug``."""
 
+        resolved_path: Optional[Path]
         if manifest_path is None:
-            manifest_path = self.lookup(slug)
-        if manifest_path is None:
+            resolved_path = self.lookup(slug)
+        else:
+            resolved_path = Path(manifest_path)
+
+        if resolved_path is None:
             return
 
-        manifest_path = Path(manifest_path)
-        manifest = ProvenanceManifest.from_json(manifest_path)
+        manifest = ProvenanceManifest.from_json(resolved_path)
         dataset_meta = dict(manifest.schema.metadata.get("reference_dataset", {}))
         dataset_meta.setdefault("slug", slug)
         dataset_meta["last_used_at"] = datetime.utcnow().isoformat()
         manifest.schema.metadata["reference_dataset"] = dataset_meta
-        manifest.to_json(manifest_path)
+        manifest.to_json(resolved_path)
 
     def load_manifest(self, manifest_path: Union[str, Path]) -> ProvenanceManifest:
         """Load a manifest from disk."""

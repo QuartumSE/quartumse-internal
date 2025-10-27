@@ -18,6 +18,7 @@ from quartumse.connectors import (
     create_runtime_sampler,
     is_ibm_runtime_backend,
     resolve_backend,
+    SamplerPrimitive,
 )
 
 from quartumse import __version__
@@ -34,7 +35,7 @@ from quartumse.reporting.manifest import (
 )
 from quartumse.reporting.shot_data import ShotDataWriter
 from quartumse.shadows.config import ShadowConfig, ShadowVersion
-from quartumse.shadows.core import Observable
+from quartumse.shadows.core import ClassicalShadows, Observable
 from quartumse.shadows.v0_baseline import RandomLocalCliffordShadows
 from quartumse.shadows.v1_noise_aware import NoiseAwareRandomLocalCliffordShadows
 
@@ -90,11 +91,11 @@ class ShadowEstimator(Estimator):
 
         super().__init__(backend, shadow_config)
 
-        self._runtime_sampler = None
+        self._runtime_sampler: Optional[SamplerPrimitive] = None
         self._runtime_sampler_checked = False
         self._use_runtime_sampler = is_ibm_runtime_backend(self.backend)
 
-        self.shadow_config = shadow_config or ShadowConfig()
+        self.shadow_config = shadow_config or ShadowConfig.model_validate({})
         self.mitigation_config = mitigation_config or MitigationConfig()
         self.data_dir = Path(data_dir) if data_dir else Path("./data")
         self.data_dir.mkdir(parents=True, exist_ok=True)
@@ -109,12 +110,12 @@ class ShadowEstimator(Estimator):
             self.measurement_error_mitigation = MeasurementErrorMitigation(self.backend)
 
         # Initialize shadow implementation based on version
-        self.shadow_impl = self._create_shadow_implementation()
+        self.shadow_impl: ClassicalShadows = self._create_shadow_implementation()
 
         # Initialize shot data writer
         self.shot_data_writer = ShotDataWriter(self.data_dir)
 
-    def _get_runtime_sampler(self):
+    def _get_runtime_sampler(self) -> Optional[SamplerPrimitive]:
         """Initialise (if necessary) and return the IBM Runtime sampler."""
 
         if not self._use_runtime_sampler:
@@ -126,7 +127,7 @@ class ShadowEstimator(Estimator):
 
         return self._runtime_sampler
 
-    def _create_shadow_implementation(self):
+    def _create_shadow_implementation(self) -> ClassicalShadows:
         """Factory for shadow implementations."""
         version = self.shadow_config.version
 
@@ -271,7 +272,7 @@ class ShadowEstimator(Estimator):
                 f"Using safe default batch size: {max_experiments}"
             )
 
-        measurement_outcomes: List[np.ndarray] = []
+        measurement_outcomes_list: List[np.ndarray] = []
 
         sampler = self._get_runtime_sampler()
 
@@ -284,8 +285,8 @@ class ShadowEstimator(Estimator):
                 for batch_idx, _ in enumerate(circuit_batch):
                     counts = result[batch_idx].data.meas.get_counts()
                     bitstring = list(counts.keys())[0].replace(" ", "")
-                    outcomes = np.array([int(b) for b in bitstring[::-1]])
-                    measurement_outcomes.append(outcomes)
+                    outcomes = np.array([int(b) for b in bitstring[::-1]], dtype=int)
+                    measurement_outcomes_list.append(outcomes)
             else:
                 job = self.backend.run(circuit_batch, shots=1)  # Each circuit is one shadow
                 result = job.result()
@@ -293,31 +294,37 @@ class ShadowEstimator(Estimator):
                 for batch_idx, _ in enumerate(circuit_batch):
                     counts = result.get_counts(batch_idx)
                     bitstring = list(counts.keys())[0].replace(" ", "")
-                    outcomes = np.array([int(b) for b in bitstring[::-1]])
-                    measurement_outcomes.append(outcomes)
+                    outcomes = np.array([int(b) for b in bitstring[::-1]], dtype=int)
+                    measurement_outcomes_list.append(outcomes)
 
-        if len(measurement_outcomes) != shadow_size:
+        if len(measurement_outcomes_list) != shadow_size:
             raise RuntimeError(
                 "Collected measurement outcomes do not match the requested shadow size."
             )
 
-        measurement_outcomes = np.array(measurement_outcomes)
+        measurement_outcomes = np.asarray(measurement_outcomes_list, dtype=int)
+
+        measurement_bases = self.shadow_impl.measurement_bases
+        if measurement_bases is None:
+            raise ValueError("Shadow implementation did not record measurement bases.")
+        measurement_bases = np.asarray(measurement_bases, dtype=int)
+        self.shadow_impl.measurement_bases = measurement_bases
 
         # Save shot data to Parquet
         shot_data_path = self.shot_data_writer.save_shadow_measurements(
             experiment_id=experiment_id,
-            measurement_bases=self.shadow_impl.measurement_bases,
+            measurement_bases=measurement_bases,
             measurement_outcomes=measurement_outcomes,
             num_qubits=circuit.num_qubits,
         )
 
         # Reconstruct shadows
         self.shadow_impl.reconstruct_classical_shadow(
-            measurement_outcomes, self.shadow_impl.measurement_bases
+            measurement_outcomes, measurement_bases
         )
 
         # Estimate all observables
-        estimates = {}
+        estimates: Dict[str, Dict[str, object]] = {}
         for obs in observables:
             estimate = self.shadow_impl.estimate_observable(obs)
             estimates[str(obs)] = {
@@ -409,11 +416,9 @@ class ShadowEstimator(Estimator):
 
         # Reconstruct shadows with loaded data
         # Create temporary shadow implementation if needed
-        shadow_config = ShadowConfig(
-            version=ShadowVersion(manifest.schema.shadows.version),
-            shadow_size=manifest.schema.shadows.shadow_size,
-            random_seed=manifest.schema.random_seed,
-        )
+        shadow_payload = manifest.schema.shadows.model_dump()
+        shadow_payload["random_seed"] = manifest.schema.random_seed
+        shadow_config = ShadowConfig.model_validate(shadow_payload)
 
         resolved_confusion_matrix_path: Optional[str] = (
             manifest.schema.mitigation.confusion_matrix_path
@@ -481,7 +486,7 @@ class ShadowEstimator(Estimator):
             ]
 
         # Estimate all observables
-        estimates = {}
+        estimates: Dict[str, Dict[str, object]] = {}
         for obs in observables:
             estimate = shadow_impl.estimate_observable(obs)
             estimates[str(obs)] = {
@@ -507,7 +512,7 @@ class ShadowEstimator(Estimator):
         experiment_id: str,
         circuit: QuantumCircuit,
         observables: List[Observable],
-        estimates: Dict,
+        estimates: Dict[str, Dict[str, object]],
         shadow_size: int,
         execution_time: float,
         shot_data_path: Path,
@@ -524,7 +529,7 @@ class ShadowEstimator(Estimator):
         except:
             qasm_str = circuit.qasm()
 
-        gate_counts = {}
+        gate_counts: Dict[str, int] = {}
         for instruction in circuit.data:
             gate_name = instruction.operation.name
             gate_counts[gate_name] = gate_counts.get(gate_name, 0) + 1
@@ -543,19 +548,32 @@ class ShadowEstimator(Estimator):
         backend_snapshot = self._backend_snapshot or create_backend_snapshot(self.backend)
 
         # Shadows config
-        shadows_config = ShadowsConfig(
-            version=self.shadow_config.version.value,
-            shadow_size=shadow_size,
-            measurement_ensemble=self.shadow_config.measurement_ensemble.value,
-            inverse_channel_applied=self.shadow_config.apply_inverse_channel,
-            adaptive=self.shadow_config.adaptive,
-            bayesian_inference=self.shadow_config.bayesian_inference,
+        shadows_config = ShadowsConfig.model_validate(
+            {
+                "version": self.shadow_config.version.value,
+                "shadow_size": shadow_size,
+                "measurement_ensemble": self.shadow_config.measurement_ensemble.value,
+                "noise_model_path": self.shadow_config.noise_model_path,
+                "inverse_channel_applied": self.shadow_config.apply_inverse_channel,
+                "fermionic_mode": self.shadow_config.fermionic_mode,
+                "rdm_order": self.shadow_config.rdm_order,
+                "adaptive": self.shadow_config.adaptive,
+                "target_observables": self.shadow_config.target_observables,
+                "bayesian_inference": self.shadow_config.bayesian_inference,
+                "bootstrap_samples": self.shadow_config.bootstrap_samples,
+            }
         )
 
         # Resource usage
-        resource_usage = ResourceUsage(
-            total_shots=shadow_size,
-            execution_time_seconds=execution_time,
+        resource_usage = ResourceUsage.model_validate(
+            {
+                "total_shots": shadow_size,
+                "execution_time_seconds": execution_time,
+                "queue_time_seconds": None,
+                "estimated_cost_usd": None,
+                "credits_used": None,
+                "classical_compute_seconds": None,
+            }
         )
 
         metadata = {}
@@ -565,6 +583,7 @@ class ShadowEstimator(Estimator):
         # Create manifest
         manifest_schema = ManifestSchema(
             experiment_id=experiment_id,
+            experiment_name=None,
             circuit=circuit_fp,
             observables=[{"pauli": obs.pauli_string, "coefficient": obs.coefficient} for obs in observables],
             backend=backend_snapshot,

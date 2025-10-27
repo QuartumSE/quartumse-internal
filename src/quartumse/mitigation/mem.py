@@ -7,13 +7,16 @@ import logging
 from pathlib import Path
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-from typing import Any, Dict, Optional, Sequence, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Sequence, Tuple, Union
 
 import numpy as np
 from qiskit import QuantumCircuit, transpile
 from qiskit.providers import Backend
 
-from quartumse.connectors import create_runtime_sampler, is_ibm_runtime_backend
+from quartumse.connectors import SamplerPrimitive, create_runtime_sampler, is_ibm_runtime_backend
+
+if TYPE_CHECKING:
+    from quartumse.reporting.manifest import MitigationConfig
 
 
 LOGGER = logging.getLogger(__name__)
@@ -36,13 +39,13 @@ class MeasurementErrorMitigation:
         self.backend = backend
         self.confusion_matrix: Optional[np.ndarray] = None
         self._calibrated_qubits: Optional[tuple[int, ...]] = None
-        self._runtime_sampler = None
+        self._runtime_sampler: Optional[SamplerPrimitive] = None
         self._runtime_sampler_checked = False
         self._use_runtime_sampler = is_ibm_runtime_backend(backend)
         self.confusion_matrix_path: Optional[Path] = None
         self._confusion_metadata: Dict[str, Any] = {}
 
-    def _get_runtime_sampler(self):
+    def _get_runtime_sampler(self) -> Optional[SamplerPrimitive]:
         """Initialise (if necessary) and return an IBM Runtime sampler."""
 
         if not self._use_runtime_sampler:
@@ -118,28 +121,34 @@ class MeasurementErrorMitigation:
                 job = sampler.run(list(transpiled_circuits), shots=shots)
             result = job.result()
 
-            def _get_counts(batch_index: int):
+            def _get_counts(batch_index: int) -> Dict[str, int]:
                 pub_result = result[batch_index]
                 data_bin = pub_result.data
 
                 # SamplerV2 DataBin: try common measurement key names
-                for key in ['meas', 'c', 'measure']:
+                for key in ["meas", "c", "measure"]:
                     if hasattr(data_bin, key):
-                        return getattr(data_bin, key).get_counts()
+                        counts = getattr(data_bin, key).get_counts()
+                        return {str(bitstring): int(count) for bitstring, count in dict(counts).items()}
 
                 # Fallback: get first measurement attribute
-                data_attrs = [attr for attr in dir(data_bin) if not attr.startswith('_')]
+                data_attrs = [attr for attr in dir(data_bin) if not attr.startswith("_")]
                 if data_attrs:
-                    return getattr(data_bin, data_attrs[0]).get_counts()
+                    counts = getattr(data_bin, data_attrs[0]).get_counts()
+                    return {str(bitstring): int(count) for bitstring, count in dict(counts).items()}
 
-                raise AttributeError(f"Could not find measurement data in DataBin. Available attributes: {data_attrs}")
+                raise AttributeError(
+                    "Could not find measurement data in DataBin. Available attributes: "
+                    f"{data_attrs}"
+                )
 
         else:
             job = self.backend.run(transpiled_circuits, shots=shots, **run_options)
             result = job.result()
 
-            def _get_counts(batch_index: int):
-                return result.get_counts(batch_index)
+            def _get_counts(batch_index: int) -> Dict[str, int]:
+                counts = result.get_counts(batch_index)
+                return {str(bitstring): int(count) for bitstring, count in dict(counts).items()}
 
         confusion = np.zeros((num_states, num_states), dtype=float)
         for prepared_index in range(num_states):
@@ -315,7 +324,9 @@ class CalibrationRecord:
     metadata: Dict[str, Any] = field(default_factory=dict)
     reused: bool = False
 
-    def to_mitigation_config(self, base_config: Optional["MitigationConfig"] = None):
+    def to_mitigation_config(
+        self, base_config: Optional["MitigationConfig"] = None
+    ) -> "MitigationConfig":
         """Build a :class:`MitigationConfig` bound to this calibration."""
 
         from quartumse.reporting.manifest import MitigationConfig

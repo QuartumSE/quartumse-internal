@@ -13,6 +13,7 @@ from .ibm import (
     create_runtime_sampler,
     is_ibm_runtime_backend,
     resolve_backend_descriptor,
+    SamplerPrimitive,
 )
 
 
@@ -35,4 +36,5 @@ __all__ = [
     "is_ibm_runtime_backend",
     "resolve_backend",
     "resolve_backend_descriptor",
+    "SamplerPrimitive",
 ]

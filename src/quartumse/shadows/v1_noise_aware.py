@@ -57,6 +57,9 @@ class NoiseAwareRandomLocalCliffordShadows(RandomLocalCliffordShadows):
     ) -> float:
         """Compute Pauli expectation using MEM-corrected distributions."""
 
+        if self.measurement_bases is None:
+            raise ValueError("No measurement bases recorded; cannot compute expectation.")
+
         if (
             self.noise_corrected_distributions is None
             or shadow_idx >= len(self.noise_corrected_distributions)
@@ -80,7 +83,7 @@ class NoiseAwareRandomLocalCliffordShadows(RandomLocalCliffordShadows):
             if required_basis is None:
                 return 0.0
 
-            measured_basis = self.measurement_bases[shadow_idx, qubit_idx]
+            measured_basis = int(self.measurement_bases[shadow_idx, qubit_idx])
             if measured_basis != required_basis:
                 return 0.0
 
@@ -103,7 +106,7 @@ class NoiseAwareRandomLocalCliffordShadows(RandomLocalCliffordShadows):
 
         # Apply 3^k scaling factor for classical shadows inverse channel
         scaling_factor = 3 ** support_size
-        return scaling_factor * expectation * observable.coefficient
+        return float(scaling_factor * expectation * observable.coefficient)
 
     @staticmethod
     def _bitstring_to_index(bitstring: str) -> int:

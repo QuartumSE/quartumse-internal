@@ -45,7 +45,7 @@ class ZeroNoiseExtrapolation:
         if self.extrapolator == "linear":
             # Linear fit
             coeffs = np.polyfit(noise_levels, expectation_values, 1)
-            return np.polyval(coeffs, 0)  # Evaluate at noise=0
+            return float(np.polyval(coeffs, 0))  # Evaluate at noise=0
         else:
             # TODO: Implement other extrapolators
             raise NotImplementedError(f"Extrapolator {self.extrapolator} not implemented")

@@ -1,5 +1,6 @@
 """Base estimator interface."""
 
+from dataclasses import dataclass
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional
 
@@ -8,29 +9,18 @@ from qiskit import QuantumCircuit
 from quartumse.shadows.core import Observable
 
 
+@dataclass(slots=True)
 class EstimationResult:
     """Result container for observable estimation."""
 
-    def __init__(
-        self,
-        observables: Dict[str, Any],
-        shots_used: int,
-        execution_time: float,
-        backend_name: str,
-        *,
-        experiment_id: Optional[str] = None,
-        manifest_path: Optional[str] = None,
-        shot_data_path: Optional[str] = None,
-        mitigation_confusion_matrix_path: Optional[str] = None,
-    ):
-        self.observables = observables
-        self.shots_used = shots_used
-        self.execution_time = execution_time
-        self.backend_name = backend_name
-        self.experiment_id = experiment_id
-        self.manifest_path = manifest_path
-        self.shot_data_path = shot_data_path
-        self.mitigation_confusion_matrix_path = mitigation_confusion_matrix_path
+    observables: Dict[str, Any]
+    shots_used: int
+    execution_time: float
+    backend_name: str
+    experiment_id: Optional[str] = None
+    manifest_path: Optional[str] = None
+    shot_data_path: Optional[str] = None
+    mitigation_confusion_matrix_path: Optional[str] = None
 
     def __repr__(self) -> str:
         return (
@@ -51,7 +41,7 @@ class Estimator(ABC):
     - Grouped Pauli measurement
     """
 
-    def __init__(self, backend: Any, config: Optional[Any] = None):
+    def __init__(self, backend: Any, config: Optional[Any] = None) -> None:
         self.backend = backend
         self.config = config
 
@@ -73,7 +63,7 @@ class Estimator(ABC):
         Returns:
             Estimation results with confidence intervals
         """
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def estimate_shots_needed(
@@ -84,4 +74,4 @@ class Estimator(ABC):
 
         Used for cost estimation and shot allocation.
         """
-        pass
+        raise NotImplementedError

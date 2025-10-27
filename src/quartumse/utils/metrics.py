@@ -217,7 +217,11 @@ def compute_ssr(
         ci_level=quartumse_ci_level,
     )
 
-    if baseline_variance is None or quartumse_variance in {None, 0}:
+    if (
+        baseline_variance is None
+        or quartumse_variance is None
+        or quartumse_variance == 0
+    ):
         return base_ratio
 
     return base_ratio * (baseline_variance / quartumse_variance)
@@ -353,7 +357,7 @@ def bootstrap_summary(
     if statistic is None:
 
         def statistic(resampled: np.ndarray) -> np.ndarray:
-            return np.mean(resampled, axis=-1)
+            return np.asarray(np.mean(resampled, axis=-1))
 
     resampled = generator.choice(samples, size=(n_resamples, samples.size), replace=True, p=probs)
     stat_values = statistic(resampled)
@@ -451,7 +455,11 @@ def build_observable_comparison(
     baseline_variance = baseline_estimate.effective_variance()
     approach_variance = approach_estimate.effective_variance()
     variance_ratio = None
-    if baseline_variance is not None and approach_variance not in (None, 0):
+    if (
+        baseline_variance is not None
+        and approach_variance is not None
+        and approach_variance != 0
+    ):
         variance_ratio = float(baseline_variance / approach_variance)
 
     baseline_precision = baseline_estimate.standard_error()

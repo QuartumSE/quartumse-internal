@@ -4,7 +4,7 @@ Report generation for quantum experiments.
 Generates human-readable HTML and PDF reports from provenance manifests.
 """
 
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
@@ -368,7 +368,7 @@ class Report:
         )
         html = template.render(
             manifest=self.manifest.schema,
-            now=datetime.now(UTC).isoformat(),
+            now=datetime.now(timezone.utc).isoformat(),
             shot_diagnostics=self.shot_diagnostics.to_dict() if self.shot_diagnostics else None,
             metrics=metrics_context,
         )

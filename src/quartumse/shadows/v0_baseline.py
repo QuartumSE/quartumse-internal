@@ -139,6 +139,12 @@ class RandomLocalCliffordShadows(ClassicalShadows):
         expectation = 1.0
         support_size = 0  # Count non-identity Paulis
 
+        if self.measurement_bases is None or self.measurement_outcomes is None:
+            raise ValueError("No measurement data available for expectation estimation.")
+
+        measurement_bases = self.measurement_bases
+        measurement_outcomes = self.measurement_outcomes
+
         for qubit_idx in range(num_qubits):
             pauli = pauli_string[qubit_idx]
             if pauli == "I":
@@ -150,8 +156,8 @@ class RandomLocalCliffordShadows(ClassicalShadows):
             pauli_to_basis = {"X": 1, "Y": 2, "Z": 0}
             required_basis = pauli_to_basis.get(pauli)
 
-            measured_basis = self.measurement_bases[shadow_idx, qubit_idx]
-            outcome = self.measurement_outcomes[shadow_idx, qubit_idx]
+            measured_basis = int(measurement_bases[shadow_idx, qubit_idx])
+            outcome = int(measurement_outcomes[shadow_idx, qubit_idx])
 
             if measured_basis == required_basis:
                 # Compatible measurement: use outcome (0 -> +1, 1 -> -1)
@@ -163,7 +169,7 @@ class RandomLocalCliffordShadows(ClassicalShadows):
 
         # Apply 3^k scaling factor from inverse channel
         scaling_factor = 3 ** support_size
-        return scaling_factor * expectation * observable.coefficient
+        return float(scaling_factor * expectation * observable.coefficient)
 
     def estimate_observable(
         self, observable: Observable, shadow_data: Optional[np.ndarray] = None
@@ -225,7 +231,7 @@ class RandomLocalCliffordShadows(ClassicalShadows):
         where M is the shadow size.
         """
         support_size = sum(1 for p in observable.pauli_string if p != "I")
-        return 4**support_size / shadow_size
+        return float(4**support_size) / float(shadow_size)
 
     def estimate_shadow_size_needed(
         self, observable: Observable, target_precision: float, confidence: float = 0.95
@@ -245,4 +251,4 @@ class RandomLocalCliffordShadows(ClassicalShadows):
         # M ≥ variance_bound_coeff / (ε² * δ)
         shadow_size = int(np.ceil(variance_bound_coeff / (target_precision**2 * delta)))
 
-        return shadow_size
+        return max(shadow_size, 1)

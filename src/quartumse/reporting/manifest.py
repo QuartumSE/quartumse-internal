@@ -15,7 +15,14 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    ValidationInfo,
+    field_validator,
+    model_validator,
+)
 
 
 class CircuitFingerprint(BaseModel):
@@ -29,7 +36,7 @@ class CircuitFingerprint(BaseModel):
 
     @field_validator("circuit_hash", mode="before")
     @classmethod
-    def compute_hash(cls, v: Optional[str], info) -> str:
+    def compute_hash(cls, v: Optional[str], info: ValidationInfo) -> str:
         """Compute SHA256 hash if not provided."""
         if v is None:
             qasm = info.data.get("qasm3", "")
@@ -190,7 +197,7 @@ class ProvenanceManifest:
         experiment_id: str,
         circuit_fingerprint: CircuitFingerprint,
         backend_snapshot: BackendSnapshot,
-        **kwargs,
+        **kwargs: Any,
     ) -> "ProvenanceManifest":
         """Create a new manifest with required fields."""
         schema = ManifestSchema(

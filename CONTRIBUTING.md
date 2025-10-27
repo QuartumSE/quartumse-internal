@@ -2,7 +2,7 @@
 
 ## Current Status: Closed R&D Phase
 
-QuartumSE is currently in **Phase 1 (Foundation & R&D)** and is not yet accepting external contributions.
+QuartumSE is currently in **Phase 1 (Foundation & R&D)** and is not yet accepting external contributions. All community interactions, even during closed development, are governed by our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ### Timeline for External Contributions
 

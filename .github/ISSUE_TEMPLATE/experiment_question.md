@@ -6,6 +6,8 @@ labels: question
 assignees: ''
 ---
 
+> Please review our [Code of Conduct](../../CODE_OF_CONDUCT.md) before submitting.
+
 ## Experiment Context
 Provide a summary of the experiment, including relevant project, dataset, or notebook links.
 

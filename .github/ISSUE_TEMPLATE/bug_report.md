@@ -6,6 +6,8 @@ labels: bug
 assignees: ''
 ---
 
+> Please review our [Code of Conduct](../../CODE_OF_CONDUCT.md) before submitting.
+
 ## Summary
 A brief description of the issue and the impacted workflow.
 

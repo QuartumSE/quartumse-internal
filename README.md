@@ -3,6 +3,8 @@
 **Vendor-neutral quantum measurement optimization with classical shadows and provenance tracking**
 
 [![CI](https://github.com/quartumse/quartumse/workflows/CI/badge.svg)](https://github.com/quartumse/quartumse/actions)
+[![Coverage](https://codecov.io/gh/quartumse/quartumse/branch/main/graph/badge.svg)](https://codecov.io/gh/quartumse/quartumse)
+[![Docs](https://github.com/quartumse/quartumse/actions/workflows/ci.yml/badge.svg?branch=main&job=docs)](https://github.com/quartumse/quartumse/actions/workflows/ci.yml?query=branch%3Amain+workflow%3ACI+job%3Adocs)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Changelog](https://img.shields.io/badge/changelog-Keep%20a%20Changelog-1F6FEB.svg)](CHANGELOG.md)
@@ -24,70 +26,55 @@ QuartumSE is building the **default measurement and observability layer** for qu
 
 **Goal:** Reduce quantum experiment costs by 2× while maintaining accuracy, with auditable results you can cite in papers.
 
+
 ---
 
-## Quick Start
+## Getting Started in 5 Minutes
 
-### Installation
+1. **Install QuartumSE**
 
-```bash
-# Clone the repository
-git clone https://github.com/quartumse/quartumse.git
-cd quartumse
+   ```bash
+   git clone https://github.com/quartumse/quartumse.git
+   cd quartumse
+   python -m venv .venv && source .venv/bin/activate
+   pip install -e .
+   ```
 
-# Install in development mode
-pip install -e ".[dev]"
+2. **Run your first estimator**
 
-# (Optional) Set up pre-commit hooks
-pre-commit install
-```
+   ```python
+   from qiskit import QuantumCircuit
+   from qiskit_aer import AerSimulator
 
-### Hello World: Classical Shadows on GHZ State
+   from quartumse import ShadowEstimator
+   from quartumse.shadows import ShadowConfig
+   from quartumse.shadows.core import Observable
 
-```python
-from qiskit import QuantumCircuit
-from qiskit_aer import AerSimulator
+   circuit = QuantumCircuit(3)
+   circuit.h(0)
+   circuit.cx(0, 1)
+   circuit.cx(0, 2)
 
-from quartumse import ShadowEstimator
-from quartumse.shadows import ShadowConfig
-from quartumse.shadows.core import Observable
+   observables = [Observable("ZII"), Observable("ZZI"), Observable("ZZZ")]
+   config = ShadowConfig(shadow_size=256, random_seed=42)
+   estimator = ShadowEstimator(backend=AerSimulator(), shadow_config=config)
 
-# Create a 3-qubit GHZ state
-qc = QuantumCircuit(3)
-qc.h(0)
-qc.cx(0, 1)
-qc.cx(0, 2)
+   result = estimator.estimate(circuit=circuit, observables=observables)
 
-# Define observables to estimate
-observables = [
-    Observable("ZII", coefficient=1.0),  # ⟨Z_0⟩
-    Observable("ZZI", coefficient=1.0),  # ⟨Z_0 Z_1⟩
-    Observable("ZZZ", coefficient=1.0),  # ⟨Z_0 Z_1 Z_2⟩
-]
+   for obs, data in result.observables.items():
+       print(f"{obs}: {data['expectation_value']:.3f} ± {data['ci_width']/2:.3f}")
+   ```
 
-# Configure classical shadows estimator
-config = ShadowConfig(shadow_size=500, random_seed=42)
-estimator = ShadowEstimator(backend=AerSimulator(), shadow_config=config)
+   The manifest and shot data produced by the estimator land in `data/` for replay and auditing.
 
-# Estimate observables with automatic provenance tracking
-result = estimator.estimate(circuit=qc, observables=observables)
+---
 
-# View results
-for obs_str, data in result.observables.items():
-    print(f"{obs_str}: {data['expectation_value']:.4f} ± {data['ci_width']/2:.4f}")
+## Project Resources
 
-print(f"\nProvenance manifest saved: {result.manifest_path}")
-```
-
-Output:
-```
-1.0*ZII: 0.0000 ± 0.0521
-1.0*ZZI: 1.0000 ± 0.0421
-1.0*ZZZ: 1.0000 ± 0.0398
-
-Provenance manifest saved: data/manifests/a3f2b...json
-Shot data saved: data/shots/a3f2b...parquet
-```
+- [API reference](https://quartumse.github.io/quartumse/api/)
+- [Examples gallery](https://quartumse.github.io/quartumse/examples/)
+- [Security policy](SECURITY.md)
+- [Changelog](CHANGELOG.md)
 
 #### IBM Quantum connector quick start
 

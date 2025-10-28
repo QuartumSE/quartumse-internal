@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ metadata.experiment }} — Phase-1 Report</title>
+    <style>
+        :root {
+            color-scheme: light;
+        }
+        body {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f3f4f6;
+            color: #111827;
+        }
+        header {
+            background: linear-gradient(135deg, #4338CA, #6366F1);
+            color: white;
+            padding: 48px 64px;
+        }
+        main {
+            padding: 40px 64px 96px;
+        }
+        h1 {
+            margin: 0 0 8px;
+            font-size: 2.5rem;
+        }
+        h2 {
+            margin-top: 48px;
+            font-size: 1.8rem;
+            color: #1f2937;
+        }
+        h3 {
+            font-size: 1.3rem;
+            margin-top: 32px;
+            color: #1f2937;
+        }
+        p {
+            line-height: 1.6;
+        }
+        ul {
+            line-height: 1.6;
+        }
+        section {
+            margin-bottom: 32px;
+        }
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+        .meta-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+        }
+        .meta-card h4 {
+            margin: 0 0 12px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.08em;
+            color: #6b7280;
+        }
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+        .status-tile {
+            border-radius: 12px;
+            padding: 20px;
+            background: white;
+            border-left: 6px solid transparent;
+            box-shadow: 0 10px 18px rgba(15, 23, 42, 0.07);
+        }
+        .status-tile.success {
+            border-color: #10B981;
+        }
+        .status-tile.failure {
+            border-color: #EF4444;
+        }
+        .status-label {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            color: #6b7280;
+        }
+        .status-value {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        .status-target {
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: #374151;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
+        }
+        th, td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+        th {
+            background: #EEF2FF;
+            font-weight: 600;
+            color: #312e81;
+        }
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        code {
+            background: #e0e7ff;
+            padding: 4px 6px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #1e3a8a;
+        }
+        pre {
+            background: #0f172a;
+            color: #f9fafb;
+            padding: 16px;
+            border-radius: 12px;
+            overflow-x: auto;
+        }
+        figure {
+            margin: 24px 0;
+        }
+        figcaption {
+            font-size: 0.9rem;
+            color: #4b5563;
+            margin-top: 8px;
+        }
+        .figures {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+        }
+        footer {
+            padding: 24px 64px;
+            background: #111827;
+            color: #d1d5db;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>{{ metadata.experiment }}</h1>
+    <p>{{ metadata.context }}</p>
+    <div class="meta-grid">
+        <div class="meta-card">
+            <h4>Device</h4>
+            <div class="metric-value">{{ metadata.device }}</div>
+        </div>
+        <div class="meta-card">
+            <h4>Total Shots</h4>
+            <div class="metric-value">{{ metadata.budget.total_shots | number }}</div>
+        </div>
+        <div class="meta-card">
+            <h4>Generated</h4>
+            <div>{{ generated }}</div>
+        </div>
+        <div class="meta-card">
+            <h4>Result Hash</h4>
+            <div>{{ artifacts.result_hash or "N/A" }}</div>
+        </div>
+    </div>
+</header>
+<main>
+    <section id="executive-summary">
+        <h2>Executive Summary</h2>
+        <p>{{ executive_summary }}</p>
+        <div class="status-grid">
+            {% for tile in status_tiles %}
+            <div class="status-tile {{ 'success' if tile.passed else 'failure' }}" data-metric="{{ tile.metric }}">
+                <div class="status-label">{{ tile.label }}</div>
+                <div class="status-value">{{ tile.value_display }}</div>
+                <div class="status-target">Target ≥ {{ tile.target_display }}</div>
+                <div class="status-footnote">Outcome: {{ 'Met' if tile.passed else 'Not Met' }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section id="context">
+        <h2>Context and Literature</h2>
+        <p>{{ metadata.context }}</p>
+    </section>
+
+    <section id="aims">
+        <h2>Aims</h2>
+        <ul>
+            {% for aim in metadata.aims %}
+            <li>{{ aim }}</li>
+            {% endfor %}
+        </ul>
+        <h3>Success Criteria</h3>
+        <ul>
+            {% for criterion in metadata.success_criteria %}
+            <li>{{ criterion }}</li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <section id="methods">
+        <h2>Methods</h2>
+        <ul>
+            {% for method in metadata.methods %}
+            <li>{{ method }}</li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <section id="results">
+        <h2>Results</h2>
+        <div class="meta-grid">
+            {% for metric in key_metrics %}
+            <div class="meta-card">
+                <h4>{{ metric.label }}</h4>
+                <div class="metric-value">{{ metric.value }}</div>
+                {% if metric.detail %}<div>{{ metric.detail }}</div>{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% if per_observable %}
+        <h3>Observable Comparisons (v1 vs Baseline)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Observable</th>
+                    <th>Baseline ⟨O⟩</th>
+                    <th>v1 ⟨O⟩</th>
+                    <th>SSR</th>
+                    <th>CI Coverage</th>
+                    <th>Variance Ratio</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in per_observable %}
+                <tr>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.baseline }}</td>
+                    <td>{{ row.approach }}</td>
+                    <td>{{ row.ssr }}</td>
+                    <td>{{ row.in_ci }}</td>
+                    <td>{{ row.variance_ratio }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+
+        {% if figures %}
+        <div class="figures">
+            {% for figure in figures %}
+            <figure>
+                <img src="{{ figure.path }}" alt="{{ figure.caption }}" style="width:100%; border-radius: 12px;">
+                <figcaption>{{ figure.caption }}</figcaption>
+            </figure>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </section>
+
+    <section id="discussion">
+        <h2>Discussion</h2>
+        <p>{{ discussion }}</p>
+    </section>
+
+    <section id="reproducibility">
+        <h2>Reproducibility Appendix</h2>
+        <h3>Verification Summary</h3>
+        <table>
+            <tbody>
+                {% for item in verification_table %}
+                <tr>
+                    <th>{{ item.label }}</th>
+                    <td>{{ item.value }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <h3>Replay Command</h3>
+        <pre><code>quartumse replay --manifest "{{ verification.manifest_path }}"</code></pre>
+    </section>
+
+    <section id="references">
+        <h2>References</h2>
+        {% if references %}
+        <ol>
+            {% for ref in references %}
+            <li>{{ ref }}</li>
+            {% endfor %}
+        </ol>
+        {% else %}
+        <p>No references provided.</p>
+        {% endif %}
+    </section>
+</main>
+<footer>
+    Generated by QuartumSE reporter. Build info: {{ build_info }}.
+</footer>
+</body>
+</html>

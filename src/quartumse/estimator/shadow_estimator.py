@@ -32,6 +32,7 @@ from quartumse.reporting.manifest import (
     ProvenanceManifest,
     ResourceUsage,
     ShadowsConfig,
+    compute_file_checksum,
 )
 from quartumse.reporting.shot_data import ShotDataWriter
 from quartumse.shadows.config import ShadowConfig, ShadowVersion
@@ -581,15 +582,25 @@ class ShadowEstimator(Estimator):
             metadata["backend_descriptor"] = self._backend_descriptor
 
         # Create manifest
+        shot_checksum = compute_file_checksum(shot_data_path)
+
+        mitigation_config = self.mitigation_config.model_copy(deep=True)
+        confusion_path = mitigation_config.confusion_matrix_path
+        if confusion_path:
+            mitigation_config.confusion_matrix_checksum = compute_file_checksum(
+                confusion_path
+            )
+
         manifest_schema = ManifestSchema(
             experiment_id=experiment_id,
             experiment_name=None,
             circuit=circuit_fp,
             observables=[{"pauli": obs.pauli_string, "coefficient": obs.coefficient} for obs in observables],
             backend=backend_snapshot,
-            mitigation=self.mitigation_config,
+            mitigation=mitigation_config,
             shadows=shadows_config,
             shot_data_path=str(shot_data_path.resolve()),
+            shot_data_checksum=shot_checksum,
             results_summary=estimates,
             resource_usage=resource_usage,
             metadata=metadata,

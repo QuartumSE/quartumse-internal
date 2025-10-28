@@ -62,6 +62,7 @@ def test_analyze_experiment_aer(tmp_path: Path, example_metadata: ExperimentMeta
         manifest_v1=manifest_v1,
         manifest_baseline=manifest_baseline,
         ground_truth=ground_truth,
+        targets={"ssr_average": 1.5, "ci_coverage": 0.9},
     )
 
     assert "per_observable" in analysis
@@ -156,3 +157,5 @@ def test_analyze_experiment_aer(tmp_path: Path, example_metadata: ExperimentMeta
     stabilizer_values = [v1_results[name]["expectation_value"] for name in truth_map]
     fidelity_expected = (1.0 + mean(stabilizer_values)) / 2.0
     assert fidelity == pytest.approx(fidelity_expected, rel=1e-6)
+
+    assert analysis["targets"] == {"ssr_average": 1.5, "ci_coverage": 0.9}

@@ -329,7 +329,7 @@ class CalibrationRecord:
     ) -> "MitigationConfig":
         """Build a :class:`MitigationConfig` bound to this calibration."""
 
-        from quartumse.reporting.manifest import MitigationConfig
+        from quartumse.reporting.manifest import MitigationConfig, compute_file_checksum
 
         config = base_config.model_copy(deep=True) if base_config is not None else MitigationConfig()
         if "MEM" not in config.techniques:
@@ -339,6 +339,7 @@ class CalibrationRecord:
         config.parameters.setdefault("mem_qubits", mem_qubits)
         config.parameters.setdefault("mem_shots", self.shots_per_state)
         config.confusion_matrix_path = str(self.path.resolve())
+        config.confusion_matrix_checksum = compute_file_checksum(self.path)
         return config
 
 

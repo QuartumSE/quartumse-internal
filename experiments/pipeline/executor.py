@@ -25,6 +25,7 @@ from quartumse.reporting.manifest import (
     MitigationConfig,
     ProvenanceManifest,
     ResourceUsage,
+    compute_file_checksum,
 )
 from quartumse.shadows import ShadowConfig
 from quartumse.shadows.config import ShadowVersion
@@ -129,6 +130,8 @@ def _baseline_manifest(
         execution_time_seconds=execution_time,
     )
 
+    shot_checksum = compute_file_checksum(shot_path)
+
     manifest_schema = ManifestSchema(
         experiment_id=experiment_id,
         experiment_name=metadata.experiment,
@@ -140,6 +143,7 @@ def _baseline_manifest(
         mitigation=MitigationConfig(),
         shadows=None,
         shot_data_path=str(shot_path.resolve()),
+        shot_data_checksum=shot_checksum,
         results_summary=results,
         resource_usage=resource_usage,
         metadata={
@@ -187,7 +191,15 @@ def execute_experiment(
 
     backend_instance, backend_snapshot = _resolve_backend(backend_descriptor)
 
-    num_qubits = _infer_num_qubits(metadata)
+    inferred_qubits = _infer_num_qubits(metadata)
+    if metadata.num_qubits is not None:
+        num_qubits = metadata.num_qubits
+        if num_qubits != inferred_qubits:
+            raise ValueError(
+                "Explicit num_qubits override does not match calibration budget inference"
+            )
+    else:
+        num_qubits = inferred_qubits
 
     total_shots = metadata.budget.total_shots
     v0_shots = metadata.budget.v0_shadow_size

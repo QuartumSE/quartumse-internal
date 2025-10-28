@@ -52,6 +52,7 @@ docs/_build/
 .ipynb_checkpoints/
 *.ipynb
 !notebooks/*.ipynb
+!experiments/templates/*.ipynb
 
 # QuartumSE specific
 data/

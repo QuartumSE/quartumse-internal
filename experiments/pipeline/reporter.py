@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, Iterable, Mapping, Optional
+from typing import Any, Dict, Iterable, Mapping, Optional, Sequence
 
 import math
 
@@ -16,6 +17,84 @@ from experiments.pipeline.metadata_schema import ExperimentMetadata
 
 _TEMPLATE_NAME = "report_template.html.jinja2"
 _TEMPLATE_DIR = Path(__file__).resolve().parents[2] / "templates"
+_REDACTED_PLACEHOLDER = "[redacted]"
+_SENSITIVE_ENV_MARKERS = ("TOKEN", "SECRET", "PASSWORD", "KEY")
+
+
+def _is_sensitive_env_name(name: str) -> bool:
+    upper = name.upper()
+    return any(marker in upper for marker in _SENSITIVE_ENV_MARKERS)
+
+
+def _collect_sensitive_env_values(min_length: int = 6) -> tuple[str, ...]:
+    values: set[str] = set()
+    for key, value in os.environ.items():
+        if not value:
+            continue
+        if len(value) < min_length:
+            continue
+        if _is_sensitive_env_name(key):
+            values.add(value)
+    return tuple(sorted(values, key=len, reverse=True))
+
+
+def _normalise_path(value: Path, *, output_dir: Path) -> str:
+    value_path = Path(value)
+    try:
+        resolved_value = value_path.resolve()
+    except (OSError, RuntimeError):
+        resolved_value = value_path
+
+    resolved_output = output_dir.resolve()
+    try:
+        relative = resolved_value.relative_to(resolved_output)
+        return relative.as_posix()
+    except ValueError:
+        repo_root = Path(__file__).resolve().parents[2]
+        try:
+            relative = resolved_value.relative_to(repo_root)
+            return relative.as_posix()
+        except ValueError:
+            try:
+                rel_str = os.path.relpath(resolved_value, resolved_output)
+            except (OSError, ValueError):
+                return resolved_value.name
+            rel_path = Path(rel_str)
+            return rel_path.as_posix()
+
+
+def _sanitize_text(value: str, *, output_dir: Path, secrets: Sequence[str]) -> str:
+    sanitised = value
+
+    home_dir = str(Path.home())
+    if home_dir and home_dir in sanitised:
+        sanitised = sanitised.replace(home_dir, "~")
+
+    for secret in secrets:
+        if secret and secret in sanitised:
+            sanitised = sanitised.replace(secret, _REDACTED_PLACEHOLDER)
+
+    stripped = sanitised.strip()
+    if stripped == sanitised and stripped:
+        path_candidate = Path(stripped)
+        if path_candidate.is_absolute():
+            return _normalise_path(path_candidate, output_dir=output_dir)
+
+    return sanitised
+
+
+def _sanitize_structure(value: Any, *, output_dir: Path, secrets: Sequence[str]) -> Any:
+    if isinstance(value, Mapping):
+        return {key: _sanitize_structure(item, output_dir=output_dir, secrets=secrets) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_sanitize_structure(item, output_dir=output_dir, secrets=secrets) for item in value]
+    if isinstance(value, tuple):
+        return tuple(_sanitize_structure(item, output_dir=output_dir, secrets=secrets) for item in value)
+    if isinstance(value, Path):
+        return _normalise_path(value, output_dir=output_dir)
+    if isinstance(value, str):
+        return _sanitize_text(value, output_dir=output_dir, secrets=secrets)
+    return value
 
 
 @dataclass
@@ -280,10 +359,10 @@ def generate_report(
     """Render the HTML (and optional PDF) report to ``output_path``."""
 
     metadata_model = _normalise_metadata(metadata)
-    normalized_artifacts = _normalise_artifacts(dict(artifacts))
     summary_metrics: Mapping[str, Any] = analysis.get("summary_metrics", {}) if analysis else {}
 
     output_path, output_dir = _ensure_output_path(output_path)
+    normalized_artifacts = _normalise_artifacts(dict(artifacts))
     figures_dir = output_dir / "figures"
     figures = _generate_figures(analysis or {}, figures_dir)
 
@@ -304,21 +383,25 @@ def generate_report(
     discussion = _resolve_discussion(metadata_model, summary_metrics, analysis or {})
     verification_table = _build_verification_table(verification)
 
-    rendered = template.render(
-        metadata=metadata_model.model_dump(),
-        artifacts=normalized_artifacts,
-        generated=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%SZ"),
-        executive_summary=discussion or "Key performance metrics are summarised below.",
-        status_tiles=[tile.__dict__ for tile in status_tiles],
-        key_metrics=key_metrics,
-        per_observable=per_observable,
-        figures=figures,
-        discussion=discussion,
-        verification=verification,
-        verification_table=verification_table,
-        references=analysis.get("references", []) if analysis else [],
-        build_info="QuartumSE pipeline reporter",
-    )
+    secrets = _collect_sensitive_env_values()
+    context = {
+        "metadata": metadata_model.model_dump(),
+        "artifacts": normalized_artifacts,
+        "generated": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%SZ"),
+        "executive_summary": discussion or "Key performance metrics are summarised below.",
+        "status_tiles": [tile.__dict__ for tile in status_tiles],
+        "key_metrics": key_metrics,
+        "per_observable": per_observable,
+        "figures": figures,
+        "discussion": discussion,
+        "verification": verification,
+        "verification_table": verification_table,
+        "references": analysis.get("references", []) if analysis else [],
+        "build_info": "QuartumSE pipeline reporter",
+    }
+    sanitized_context = _sanitize_structure(context, output_dir=output_dir, secrets=secrets)
+
+    rendered = template.render(**sanitized_context)
 
     output_path.write_text(rendered, encoding="utf-8")
 

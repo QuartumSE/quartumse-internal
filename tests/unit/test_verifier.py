@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -46,6 +47,7 @@ class TestVerifyExperiment:
         assert report["manifest_exists"]
         assert report["manifest_valid"]
         assert report["shot_data_exists"]
+        assert report["shot_data_checksum_matches"]
         assert report["replay_matches"]
         assert report["max_abs_diff"] is not None
         assert report["max_abs_diff"] < 1e-12
@@ -62,6 +64,7 @@ class TestVerifyExperiment:
 
         assert not report["shot_data_exists"]
         assert not report["replay_matches"]
+        assert report["shot_data_checksum_matches"] is False
         assert any("Shot data" in err for err in report["errors"])
 
     def test_detects_modified_expectations(self, tmp_path: Path) -> None:
@@ -79,4 +82,45 @@ class TestVerifyExperiment:
         assert report["max_abs_diff"] is not None
         assert report["max_abs_diff"] >= 0.05 - 1e-12
         assert any("Replay expectation values" in err for err in report["errors"])
+        assert report["shot_data_checksum_matches"]
+
+    def test_detects_shot_checksum_mismatch(self, tmp_path: Path) -> None:
+        manifest_path = _create_manifest(tmp_path)
+
+        manifest_data = json.loads(manifest_path.read_text())
+        manifest_data["shot_data_checksum"] = "0" * 64
+        manifest_path.write_text(json.dumps(manifest_data, indent=2))
+
+        report = verify_experiment(manifest_path)
+
+        assert report["shot_data_exists"]
+        assert report["shot_data_checksum_matches"] is False
+        assert any("checksum" in err.lower() for err in report["errors"])
+
+    def test_detects_mem_checksum_mismatch(self, tmp_path: Path) -> None:
+        manifest_path = _create_manifest(tmp_path)
+
+        manifest_data = json.loads(manifest_path.read_text())
+        mem_path = tmp_path / "confusion.json"
+        mem_path.write_text(json.dumps({"confusion_matrix": [[1.0, 0.0], [0.0, 1.0]]}), encoding="utf-8")
+
+        mitigation = manifest_data.setdefault("mitigation", {})
+        mitigation.setdefault("techniques", []).append("MEM")
+        mitigation["confusion_matrix_path"] = str(mem_path)
+        mitigation["confusion_matrix_checksum"] = hashlib.sha256(mem_path.read_bytes()).hexdigest()
+        manifest_path.write_text(json.dumps(manifest_data, indent=2))
+
+        report_ok = verify_experiment(manifest_path)
+        assert report_ok["mem_confusion_matrix_exists"] is True
+        assert report_ok["mem_confusion_matrix_checksum_matches"] is True
+
+        mem_path.write_text(
+            json.dumps({"confusion_matrix": [[0.9, 0.1], [0.2, 0.8]]}),
+            encoding="utf-8",
+        )
+
+        report_bad = verify_experiment(manifest_path)
+        assert report_bad["mem_confusion_matrix_exists"] is True
+        assert report_bad["mem_confusion_matrix_checksum_matches"] is False
+        assert any("checksum" in err.lower() for err in report_bad["errors"])
 

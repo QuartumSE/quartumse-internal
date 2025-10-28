@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -25,7 +26,7 @@ def example_metadata() -> ExperimentMetadata:
         payload = yaml.safe_load(handle)
 
     metadata = ExperimentMetadata.model_validate(payload)
-    return metadata.model_copy(update={"device": "aer_simulator"})
+    return metadata.model_copy(update={"device": "aer_simulator", "num_qubits": 4})
 
 
 def test_execute_experiment_aer(tmp_path: Path, example_metadata: ExperimentMetadata) -> None:
@@ -43,6 +44,11 @@ def test_execute_experiment_aer(tmp_path: Path, example_metadata: ExperimentMeta
     assert baseline_shot_path.exists()
     baseline_df = pd.read_parquet(baseline_shot_path, engine="pyarrow")
     assert baseline_df["shots"].sum() == example_metadata.budget.total_shots
+    assert len(baseline_manifest.get("shot_data_checksum", "")) == 64
+    assert (
+        baseline_manifest["shot_data_checksum"]
+        == hashlib.sha256(baseline_shot_path.read_bytes()).hexdigest()
+    )
 
     assert baseline_manifest["resource_usage"]["total_shots"] == example_metadata.budget.total_shots
     assert baseline_manifest["metadata"]["approach"] == "baseline_direct_pauli"
@@ -51,6 +57,12 @@ def test_execute_experiment_aer(tmp_path: Path, example_metadata: ExperimentMeta
     with manifest_v0_path.open("r", encoding="utf-8") as handle:
         manifest_v0 = json.load(handle)
     assert manifest_v0["resource_usage"]["total_shots"] == example_metadata.budget.v0_shadow_size
+    assert len(manifest_v0.get("shot_data_checksum", "")) == 64
+    v0_shot_path = Path(manifest_v0["shot_data_path"])
+    assert (
+        manifest_v0["shot_data_checksum"]
+        == hashlib.sha256(v0_shot_path.read_bytes()).hexdigest()
+    )
 
     manifest_v1_path = outputs["manifest_v1"]
     with manifest_v1_path.open("r", encoding="utf-8") as handle:
@@ -59,6 +71,17 @@ def test_execute_experiment_aer(tmp_path: Path, example_metadata: ExperimentMeta
     assert manifest_v1["resource_usage"]["total_shots"] == example_metadata.budget.v1_shadow_size
     confusion_path = Path(manifest_v1["mitigation"]["confusion_matrix_path"])
     assert confusion_path.exists()
+    assert len(manifest_v1.get("shot_data_checksum", "")) == 64
+    assert len(manifest_v1["mitigation"].get("confusion_matrix_checksum", "")) == 64
+    assert (
+        manifest_v1["mitigation"]["confusion_matrix_checksum"]
+        == hashlib.sha256(confusion_path.read_bytes()).hexdigest()
+    )
+    v1_shot_path = Path(manifest_v1["shot_data_path"])
+    assert (
+        manifest_v1["shot_data_checksum"]
+        == hashlib.sha256(v1_shot_path.read_bytes()).hexdigest()
+    )
     assert manifest_v1["mitigation"]["parameters"]["mem_shots"] == example_metadata.budget.calibration.shots_per_state
     assert (
         manifest_v1["resource_usage"]["total_shots"]

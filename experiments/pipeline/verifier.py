@@ -11,7 +11,11 @@ from qiskit_aer import AerSimulator
 
 from quartumse import __version__ as QUARTUMSE_VERSION
 from quartumse.estimator import ShadowEstimator
-from quartumse.reporting.manifest import MitigationConfig, ProvenanceManifest
+from quartumse.reporting.manifest import (
+    MitigationConfig,
+    ProvenanceManifest,
+    compute_file_checksum,
+)
 from quartumse.shadows import ShadowConfig
 
 
@@ -101,8 +105,10 @@ def verify_experiment(manifest_path: Path) -> Dict[str, Any]:
         "manifest_valid": False,
         "shot_data_exists": False,
         "shot_data_path": None,
+        "shot_data_checksum_matches": None,
         "mem_confusion_matrix_exists": None,
         "mem_confusion_matrix_path": None,
+        "mem_confusion_matrix_checksum_matches": None,
         "replay_matches": False,
         "max_abs_diff": None,
         "software_versions": {
@@ -141,11 +147,22 @@ def verify_experiment(manifest_path: Path) -> Dict[str, Any]:
             data_dir = resolved_shot_path.parent.parent
         else:
             data_dir = resolved_shot_path.parent
+        recorded_checksum = manifest.schema.shot_data_checksum
+        if recorded_checksum:
+            actual_checksum = compute_file_checksum(resolved_shot_path)
+            matches = actual_checksum == recorded_checksum
+            verification["shot_data_checksum_matches"] = matches
+            if not matches:
+                verification["errors"].append(
+                    "Shot data checksum mismatch detected"
+                )
     else:
         verification["errors"].append(
             f"Shot data referenced by manifest is missing: {raw_shot_path}"
         )
         verification["shot_data_path"] = str(resolved_shot_path) if resolved_shot_path else raw_shot_path
+        if manifest.schema.shot_data_checksum:
+            verification["shot_data_checksum_matches"] = False
 
     confusion_matrix_path = manifest.schema.mitigation.confusion_matrix_path
     resolved_confusion = _resolve_artifact_path(
@@ -166,6 +183,18 @@ def verify_experiment(manifest_path: Path) -> Dict[str, Any]:
                 "Measurement error mitigation confusion matrix referenced in manifest "
                 f"is missing: {confusion_matrix_path}"
             )
+            if manifest.schema.mitigation.confusion_matrix_checksum:
+                verification["mem_confusion_matrix_checksum_matches"] = False
+        else:
+            recorded_conf_checksum = manifest.schema.mitigation.confusion_matrix_checksum
+            if recorded_conf_checksum:
+                actual_conf_checksum = compute_file_checksum(resolved_confusion)
+                matches = actual_conf_checksum == recorded_conf_checksum
+                verification["mem_confusion_matrix_checksum_matches"] = matches
+                if not matches:
+                    verification["errors"].append(
+                        "MEM confusion matrix checksum mismatch detected"
+                    )
 
     if not verification["shot_data_exists"]:
         return verification

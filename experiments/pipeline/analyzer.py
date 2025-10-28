@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any, Dict, Iterable, Mapping, Optional, Tuple
 
 import numpy as np
 
 from quartumse.reporting.manifest import ManifestSchema, ProvenanceManifest
+from quartumse.reporting.manifest_io import extract_observable_table, load_manifest
 from quartumse.utils.metrics import (
     build_observable_comparison,
     compute_ci_coverage,
@@ -19,15 +21,25 @@ from quartumse.utils.metrics import (
 Number = float | int
 
 
-def _load_manifest(manifest: Any) -> ProvenanceManifest:
-    """Normalise ``manifest`` into a :class:`ProvenanceManifest` instance."""
+def _load_manifest(manifest: Any) -> tuple[ProvenanceManifest, Mapping[str, Any]]:
+    """Normalise ``manifest`` into schema and raw dictionary payload."""
 
     if isinstance(manifest, ProvenanceManifest):
-        return manifest
-    if isinstance(manifest, Mapping):
-        schema = ManifestSchema.model_validate(manifest)
-        return ProvenanceManifest(schema)
-    raise TypeError("Manifest payload must be a mapping or ProvenanceManifest")
+        schema = manifest
+        payload = manifest.schema.model_dump()
+        return schema, payload
+
+    if isinstance(manifest, (str, Path)):
+        manifest_dict = load_manifest(manifest)
+    elif isinstance(manifest, Mapping):
+        manifest_dict = dict(manifest)
+    else:
+        raise TypeError(
+            "Manifest payload must be a path, mapping, or ProvenanceManifest instance"
+        )
+
+    schema = ManifestSchema.model_validate(manifest_dict)
+    return ProvenanceManifest(schema), manifest_dict
 
 
 def _canonical_name(name: str) -> str:
@@ -44,12 +56,38 @@ def _canonical_name(name: str) -> str:
     return f"{coefficient}*{pauli.strip()}"
 
 
-def _extract_observable_payloads(manifest: ProvenanceManifest) -> Dict[str, Dict[str, Any]]:
+def _extract_observable_payloads(
+    manifest: ProvenanceManifest, manifest_payload: Mapping[str, Any]
+) -> Dict[str, Dict[str, Any]]:
     """Return manifest result payloads keyed by canonical observable names."""
 
     results: Dict[str, Dict[str, Any]] = {}
-    for name, payload in manifest.schema.results_summary.items():
-        results[_canonical_name(name)] = dict(payload)
+
+    summary = manifest.schema.results_summary or {}
+    for name, payload in summary.items():
+        canonical = _canonical_name(name)
+        if isinstance(payload, Mapping):
+            results[canonical] = dict(payload)
+        else:
+            results[canonical] = {"expectation_value": payload}
+
+    normalized_table = extract_observable_table(manifest_payload)
+    for name, stats in normalized_table.items():
+        canonical = _canonical_name(name)
+        payload = results.setdefault(canonical, {})
+        expectation = stats.get("expectation")
+        if expectation is not None and "expectation_value" not in payload:
+            payload["expectation_value"] = float(expectation)
+        if expectation is not None and "expectation" not in payload:
+            payload["expectation"] = float(expectation)
+        variance = stats.get("variance")
+        if variance is not None and "variance" not in payload:
+            payload["variance"] = float(variance)
+        lower = stats.get("ci_lower")
+        upper = stats.get("ci_upper")
+        if (lower is not None or upper is not None) and "ci_95" not in payload:
+            payload["ci_95"] = (lower, upper)
+
     return results
 
 
@@ -242,16 +280,17 @@ def analyze_experiment(
     manifest_v1: Any,
     manifest_baseline: Any,
     ground_truth: Optional[Dict[str, Any]] = None,
+    targets: Optional[Mapping[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Aggregate Phase-1 metrics from experiment manifests."""
 
-    baseline_manifest = _load_manifest(manifest_baseline)
-    v0_manifest = _load_manifest(manifest_v0)
-    v1_manifest = _load_manifest(manifest_v1)
+    baseline_manifest, baseline_payload = _load_manifest(manifest_baseline)
+    v0_manifest, v0_payload = _load_manifest(manifest_v0)
+    v1_manifest, v1_payload = _load_manifest(manifest_v1)
 
-    baseline_obs = _extract_observable_payloads(baseline_manifest)
-    v0_obs = _extract_observable_payloads(v0_manifest)
-    v1_obs = _extract_observable_payloads(v1_manifest)
+    baseline_obs = _extract_observable_payloads(baseline_manifest, baseline_payload)
+    v0_obs = _extract_observable_payloads(v0_manifest, v0_payload)
+    v1_obs = _extract_observable_payloads(v1_manifest, v1_payload)
 
     truth_map, stabilizers = _normalise_ground_truth(ground_truth)
 
@@ -284,6 +323,16 @@ def analyze_experiment(
 
     if fidelity is not None:
         result["stabilizer_fidelity_lower_bound"] = fidelity
+
+    if targets:
+        normalised_targets: Dict[str, float] = {}
+        for key, value in targets.items():
+            try:
+                normalised_targets[key] = float(value)
+            except (TypeError, ValueError):
+                continue
+        if normalised_targets:
+            result["targets"] = normalised_targets
 
     return result
 

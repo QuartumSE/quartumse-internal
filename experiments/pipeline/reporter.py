@@ -247,7 +247,12 @@ def _build_verification_table(verification: Mapping[str, Any]) -> list[Dict[str,
         ("manifest_exists", "Manifest present"),
         ("manifest_valid", "Manifest valid"),
         ("shot_data_exists", "Shot data available"),
+        ("shot_data_checksum_matches", "Shot data checksum"),
         ("mem_confusion_matrix_exists", "MEM confusion matrix"),
+        (
+            "mem_confusion_matrix_checksum_matches",
+            "MEM checksum",
+        ),
         ("replay_matches", "Estimator replay"),
     ):
         value = verification.get(key)

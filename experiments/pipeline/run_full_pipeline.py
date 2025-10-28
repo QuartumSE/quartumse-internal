@@ -127,19 +127,18 @@ def run_pipeline(metadata_path: Path, output_dir: Path, backend: str | None = No
         execution_result["manifest_baseline"].read_text(encoding="utf-8")
     )
 
+    targets = _normalise_targets(metadata)
     analysis = analyze_experiment(
         manifest_v0,
         manifest_v1,
         manifest_baseline,
         ground_truth=metadata.ground_truth,
+        targets=targets if targets else None,
     )
 
-    targets = _normalise_targets(metadata)
-    if targets:
-        analysis["targets"] = targets
-
     summary_metrics = analysis.get("summary_metrics", {})
-    target_results = _evaluate_targets(summary_metrics, targets)
+    analysis_targets = analysis.get("targets", targets)
+    target_results = _evaluate_targets(summary_metrics, analysis_targets)
 
     analysis_path = output_dir / f"analysis_{digest}.json"
     _write_json(analysis_path, dict(analysis))
@@ -166,7 +165,7 @@ def run_pipeline(metadata_path: Path, output_dir: Path, backend: str | None = No
         if unmet:
             print("Targets not met:")
             for metric in unmet:
-                threshold = targets.get(metric)
+                threshold = analysis_targets.get(metric)
                 actual = summary_metrics.get(metric)
                 print(f" - {metric}: {_format_metric(actual)} (target ≥ {threshold})")
             exit_code = 2

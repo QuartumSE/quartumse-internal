@@ -71,6 +71,34 @@ class BackendSnapshot(BaseModel):
     properties_hash: str = Field(description="Hash of full properties JSON")
 
 
+def compute_file_checksum(
+    path: Union[str, Path],
+    *,
+    algorithm: str = "sha256",
+    chunk_size: int = 64 * 1024,
+) -> Optional[str]:
+    """Compute a checksum for ``path`` using ``algorithm``.
+
+    Args:
+        path: File path to hash.
+        algorithm: Hash algorithm to use (default: ``sha256``).
+        chunk_size: Chunk size used when streaming the file.
+
+    Returns:
+        Hex digest string if the file exists, otherwise ``None``.
+    """
+
+    file_path = Path(path)
+    if not file_path.exists() or not file_path.is_file():
+        return None
+
+    digest = hashlib.new(algorithm)
+    with file_path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(chunk_size), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 class MitigationConfig(BaseModel):
     """Error mitigation techniques applied."""
 
@@ -83,6 +111,9 @@ class MitigationConfig(BaseModel):
 
     # For MEM
     confusion_matrix_path: Optional[str] = None
+    confusion_matrix_checksum: Optional[str] = Field(
+        default=None, description="Checksum of the MEM confusion matrix file"
+    )
 
     # For ZNE
     zne_scale_factors: Optional[List[float]] = None
@@ -161,6 +192,9 @@ class ManifestSchema(BaseModel):
 
     # Results & data
     shot_data_path: str = Field(description="Path to Parquet file with shot results")
+    shot_data_checksum: Optional[str] = Field(
+        default=None, description="Checksum of the shot data file"
+    )
     results_summary: Dict[str, Any] = Field(
         description="High-level results (expectation values, CIs, etc.)"
     )

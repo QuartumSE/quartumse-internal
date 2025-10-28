@@ -38,6 +38,7 @@ class ExperimentMetadata(BaseModel):
     budget: PhaseOneBudget
     device: str
     discussion_template: str
+    num_qubits: Optional[int] = None
     targets: Optional[Dict[str, float]] = None
     ground_truth: Optional[Dict[str, Any]] = None
 

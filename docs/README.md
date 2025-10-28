@@ -12,6 +12,8 @@ when exploring the project.
   and hardware readiness checks.
 - [`guides/data_storage.md`](guides/data_storage.md) – manifest, Parquet, and
   report artefact formats.
+- [`guides/pipeline.md`](guides/pipeline.md) – Phase-1 automated experiment
+  pipeline usage, calibration reuse, and replay workflow.
 
 ## Operations & strategy
 

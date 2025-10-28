@@ -49,3 +49,34 @@ jobs:
         name: nightly-experiment-reports
         path: data/reports/*.html
         retention-days: 90
+
+  pipeline-sim:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[dev]"
+
+    - name: Run simulator pipeline
+      run: |
+        mkdir -p validation_data/pipeline_smoke
+        python experiments/pipeline/run_full_pipeline.py \
+          --metadata experiments/shadows/examples/extended_ghz/experiment_metadata.yaml \
+          --backend aer_simulator \
+          --output validation_data/pipeline_smoke/
+
+    - name: Upload pipeline artifacts
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: pipeline-simulator-artifacts
+        path: validation_data/pipeline_smoke/

@@ -81,7 +81,8 @@ def test_generate_report_smoke(tmp_path: Path) -> None:
     assert "Context and Literature" in html
     assert "Reproducibility Appendix" in html
     assert "quartumse replay --manifest" in html
-    assert str(manifest_path) in html
+    assert str(manifest_path) not in html
+    assert "manifest.json" in html
 
     # Status tiles
     assert 'data-metric="ci_coverage"' in html

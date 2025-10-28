@@ -12,12 +12,149 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field, asdict
 from statistics import NormalDist
-from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, Sequence, Union
+from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple, Union
 
 import numpy as np
 
 
 Number = Union[int, float, np.ndarray]
+
+
+@dataclass(frozen=True)
+class _ObservableRecord:
+    """Normalised representation of an observable result payload."""
+
+    expectation: Optional[float]
+    ground_truth: Optional[float]
+    ci: Optional[Tuple[float, float]]
+    ci_width: Optional[float]
+    error: Optional[float]
+
+
+def _as_float(value: Optional[Number]) -> Optional[float]:
+    if value is None:
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+    if isinstance(value, np.generic):
+        return float(value)
+    if isinstance(value, np.ndarray):
+        if value.size != 1:
+            raise ValueError("Numeric arrays must contain a single element")
+        return float(value.item())
+    raise TypeError(f"Unsupported numeric type: {type(value)!r}")
+
+
+def _normalise_ci(
+    raw_ci: Any,
+    expectation: Optional[float],
+    ci_width: Optional[float],
+) -> Optional[Tuple[float, float]]:
+    if raw_ci is None:
+        if expectation is not None and ci_width is not None:
+            half_width = float(ci_width) / 2.0
+            return (expectation - half_width, expectation + half_width)
+        return None
+    if isinstance(raw_ci, ConfidenceInterval):
+        return (float(raw_ci.lower), float(raw_ci.upper))
+    if isinstance(raw_ci, Mapping):
+        lower = raw_ci.get("lower")
+        upper = raw_ci.get("upper")
+        if lower is None or upper is None:
+            return None
+        return (float(lower), float(upper))
+    if isinstance(raw_ci, Sequence) and len(raw_ci) >= 2:
+        lower, upper = raw_ci[0], raw_ci[1]
+        if lower is None or upper is None:
+            return None
+        return (float(lower), float(upper))
+    raise TypeError("Confidence interval must be a sequence, mapping or ConfidenceInterval")
+
+
+def _normalise_observable_entry(
+    payload: Any,
+    *,
+    treat_as_truth: bool,
+) -> _ObservableRecord:
+    if isinstance(payload, _ObservableRecord):
+        return payload
+
+    expectation: Optional[float] = None
+    ground_truth: Optional[float] = None
+    ci: Optional[Tuple[float, float]] = None
+    ci_width: Optional[float] = None
+    error: Optional[float] = None
+
+    if isinstance(payload, Mapping):
+        expectation_keys = ("expectation_value", "expectation", "value", "estimate")
+        for key in expectation_keys:
+            if key in payload and payload[key] is not None:
+                expectation = _as_float(payload[key])
+                break
+        ground_truth_keys = ("ground_truth", "expected", "truth", "target")
+        for key in ground_truth_keys:
+            if key in payload and payload[key] is not None:
+                ground_truth = _as_float(payload[key])
+                break
+        if "ci_width" in payload and payload["ci_width"] is not None:
+            ci_width = _as_float(payload["ci_width"])
+        raw_ci = None
+        for key in ("ci_95", "ci", "confidence_interval"):
+            if key in payload and payload[key] is not None:
+                raw_ci = payload[key]
+                break
+        ci = _normalise_ci(raw_ci, expectation, ci_width)
+        if ci is not None and ci_width is None:
+            ci_width = float(ci[1] - ci[0])
+        if "error" in payload and payload["error"] is not None:
+            error = abs(_as_float(payload["error"]))
+    elif isinstance(payload, (int, float, np.ndarray)):
+        expectation = _as_float(payload)
+    elif isinstance(payload, ConfidenceInterval):
+        ci = (float(payload.lower), float(payload.upper))
+    elif payload is None:
+        pass
+    else:
+        raise TypeError(f"Unsupported observable payload type: {type(payload)!r}")
+
+    if treat_as_truth and ground_truth is None and expectation is not None:
+        ground_truth = expectation
+    if ci is not None and ci_width is None:
+        ci_width = float(ci[1] - ci[0])
+    if expectation is not None and ground_truth is None and treat_as_truth:
+        ground_truth = expectation
+    if error is None and expectation is not None and ground_truth is not None:
+        error = abs(expectation - ground_truth)
+
+    return _ObservableRecord(
+        expectation=expectation,
+        ground_truth=ground_truth,
+        ci=ci,
+        ci_width=ci_width,
+        error=error,
+    )
+
+
+def _normalise_observables(
+    observables: Mapping[Any, Any],
+    *,
+    treat_as_truth: bool,
+) -> Dict[str, _ObservableRecord]:
+    if not isinstance(observables, Mapping):
+        raise TypeError("Observable collections must be mapping types")
+    return {
+        str(name): _normalise_observable_entry(payload, treat_as_truth=treat_as_truth)
+        for name, payload in observables.items()
+    }
+
+
+def _resolve_truth(record: _ObservableRecord) -> Optional[float]:
+    if record.ground_truth is not None:
+        return record.ground_truth
+    return record.expectation
+
+
+SSR_EQUAL_BUDGET_EPSILON = 1e-12
 
 
 @dataclass(frozen=True)
@@ -279,20 +416,102 @@ def weighted_variance(values: Sequence[Number], weights: Optional[Sequence[Numbe
     return float(variance)
 
 
+def compute_mae(
+    observable_results: Mapping[Any, Any],
+    ground_truth: Mapping[Any, Any],
+) -> float:
+    """Compute the mean absolute error across shared observables.
+
+    The helper understands the QuartumSE result schema where expectation values
+    are stored under ``expectation_value`` and ground-truth values use
+    ``expected``/``ground_truth``.  Only the intersection of observables present
+    in both inputs contributes to the returned average which corresponds to the
+    equal-budget assumption used during Phase-1 validation.
+    """
+
+    results = _normalise_observables(observable_results, treat_as_truth=False)
+    truths = _normalise_observables(ground_truth, treat_as_truth=True)
+
+    errors = []
+    for name in results.keys() & truths.keys():
+        estimate = results[name].expectation
+        truth = _resolve_truth(truths[name])
+        if estimate is None or truth is None:
+            continue
+        errors.append(abs(estimate - truth))
+
+    if not errors:
+        raise ValueError("No overlapping observables with well-defined expectation values")
+
+    return float(np.mean(errors))
+
+
 def compute_ci_coverage(
-    intervals: Sequence[ConfidenceInterval],
-    truths: Sequence[float],
-    weights: Optional[Sequence[Number]] = None,
-) -> Optional[float]:
-    """Compute CI coverage given intervals and the ground-truth values."""
+    observable_results: Mapping[Any, Any],
+    ground_truth: Mapping[Any, Any],
+) -> float:
+    """Return the fraction of ground-truth values covered by reported 95% CIs.
 
-    if not intervals:
-        return None
-    if len(intervals) != len(truths):
-        raise ValueError("Intervals and truths must have the same length")
+    Observables without a reported confidence interval (``ci_95`` or
+    ``ci_width``) are ignored.  The function assumes an equal-budget setting
+    where each observable comparison is weighted uniformly and uses the
+    intersection of observable keys between ``observable_results`` and
+    ``ground_truth``.
+    """
 
-    flags = [1.0 if interval.contains(truth) else 0.0 for interval, truth in zip(intervals, truths)]
-    return weighted_mean(flags, weights)
+    results = _normalise_observables(observable_results, treat_as_truth=False)
+    truths = _normalise_observables(ground_truth, treat_as_truth=True)
+
+    flags: List[float] = []
+    for name in results.keys() & truths.keys():
+        ci = results[name].ci
+        truth = _resolve_truth(truths[name])
+        if ci is None or truth is None:
+            continue
+        lower, upper = ci
+        flags.append(1.0 if lower <= truth <= upper else 0.0)
+
+    if not flags:
+        return float("nan")
+
+    return float(np.mean(flags))
+
+
+def compute_ssr_equal_budget(
+    baseline_errors: Mapping[Any, Any],
+    approach_errors: Mapping[Any, Any],
+    *,
+    epsilon: float = SSR_EQUAL_BUDGET_EPSILON,
+) -> float:
+    """Compute the equal-budget shot-savings ratio.
+
+    Under the Phase-1 equal-budget assumption both the baseline and QuartumSE
+    approach spend identical resources per observable.  The SSR therefore
+    reduces to the ratio of absolute errors for each observable:
+
+    ``SSR(obs) = baseline_error / approach_error``.
+
+    The function safeguards against division-by-zero by clamping the approach
+    error with ``epsilon`` and returns the arithmetic mean over the intersection
+    of observable names.
+    """
+
+    baseline = _normalise_observables(baseline_errors, treat_as_truth=False)
+    approach = _normalise_observables(approach_errors, treat_as_truth=False)
+
+    ratios: List[float] = []
+    for name in baseline.keys() & approach.keys():
+        baseline_error = baseline[name].error
+        approach_error = approach[name].error
+        if baseline_error is None or approach_error is None:
+            continue
+        denom = epsilon if abs(approach_error) < epsilon else abs(approach_error)
+        ratios.append(abs(baseline_error) / denom)
+
+    if not ratios:
+        raise ValueError("No overlapping observables with error estimates to compare")
+
+    return float(np.mean(ratios))
 
 
 @dataclass(frozen=True)

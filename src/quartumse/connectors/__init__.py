@@ -15,6 +15,7 @@ from .ibm import (
     resolve_backend_descriptor,
     SamplerPrimitive,
 )
+from .topology import get_linear_chain
 
 
 def resolve_backend(
@@ -33,6 +34,7 @@ __all__ = [
     "IBMBackendHandle",
     "create_backend_snapshot",
     "create_runtime_sampler",
+    "get_linear_chain",
     "is_ibm_runtime_backend",
     "resolve_backend",
     "resolve_backend_descriptor",

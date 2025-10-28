@@ -31,6 +31,7 @@ from quartumse.shadows import ShadowConfig
 from quartumse.shadows.config import ShadowVersion
 from quartumse.shadows.core import Observable
 
+from ._observables import metadata_defined_observables
 from ._runners import run_direct_pauli
 from .metadata_schema import ExperimentMetadata
 
@@ -89,6 +90,18 @@ def _ghz_observables(num_qubits: int) -> List[Observable]:
 
     observables.append(Observable("Z" * num_qubits))
     return observables
+
+
+def _metadata_observables(metadata: ExperimentMetadata) -> List[Observable]:
+    """Return additional observables requested via metadata."""
+
+    extras = metadata_defined_observables(metadata)
+    unique: Dict[str, Observable] = {}
+    for observable in extras:
+        pauli = observable.pauli_string
+        if pauli not in unique:
+            unique[pauli] = observable
+    return list(unique.values())
 
 
 def _circuit_fingerprint(circuit: QuantumCircuit) -> CircuitFingerprint:
@@ -218,6 +231,13 @@ def execute_experiment(
 
     circuit = _ghz_circuit(num_qubits)
     observables = _ghz_observables(num_qubits)
+    extra_observables = _metadata_observables(metadata)
+    if extra_observables:
+        existing = {obs.pauli_string: obs for obs in observables}
+        for observable in extra_observables:
+            if observable.pauli_string in existing:
+                continue
+            observables.append(observable)
 
     # Baseline direct Pauli run
     baseline_start = time.time()

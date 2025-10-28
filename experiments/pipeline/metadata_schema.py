@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import List
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict
 
@@ -38,5 +38,7 @@ class ExperimentMetadata(BaseModel):
     budget: PhaseOneBudget
     device: str
     discussion_template: str
+    targets: Optional[Dict[str, float]] = None
+    ground_truth: Optional[Dict[str, Any]] = None
 
     model_config = ConfigDict(extra="forbid")

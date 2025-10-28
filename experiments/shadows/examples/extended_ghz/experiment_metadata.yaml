@@ -1,0 +1,23 @@
+experiment: "GHZ-4 Phase-1 Benchmark"
+context: >-
+  Characterisation run for the 4-qubit GHZ state preparation on the phase-1
+  hardware baseline.
+aims:
+  - Validate calibration stability ahead of Phase-2 scaling experiments.
+  - Benchmark v0 and v1 classical shadows estimators against calibration.
+success_criteria:
+  - Achieve fidelity estimates within 5% of reference simulations.
+  - Maintain calibration drift below specified thresholds during the run.
+methods:
+  - Prepare and measure GHZ-4 circuits across calibration and shadow ensembles.
+  - Compare v0 and v1 estimators using matched shadow sizes.
+budget:
+  total_shots: 5000
+  calibration:
+    shots_per_state: 256
+    total: 4096
+  v0_shadow_size: 5000
+  v1_shadow_size: 904
+device: "ibm_kyoto_phase1"
+discussion_template: >-
+  Summarise calibration outcomes, estimator comparisons, and resource usage.

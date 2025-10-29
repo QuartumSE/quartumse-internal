@@ -60,7 +60,7 @@ These tasks decompose the open follow-up work identified after the fixed-shot ha
 - **Objective:** Remove any hard-coded IBM Quantum tokens from shared artifacts and codify the process for handling credentials safely.
 - **Deliverables:**
   - Sanitised documentation with placeholders where tokens previously appeared.
-  - Contributor guidance (e.g., in `CONTRIBUTING.md` or `docs/guides/getting_started.md`) describing secure credential storage.
+  - Contributor guidance (e.g., in `CONTRIBUTING.md` or `docs/how-to/`) describing secure credential storage.
   - Optional: add lint or pre-commit checks for patterns resembling IBM tokens.
 - **Key Steps:**
   1. Audit repository history and current docs for accidental token exposure.

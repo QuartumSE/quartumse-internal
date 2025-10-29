@@ -314,7 +314,7 @@ target IBM Quantum backends (for example,
 All experiments generate manifests in `data/manifests/` (or your configured data directory)
 and reports in `data/reports/`.
 
-For Phase-1 automation, the [Automated Experiment Pipeline guide](docs/guides/pipeline.md)
+For Phase-1 automation, the [Automated Experiment Pipeline guide](docs/how-to/run-automated-pipeline.md)
 covers metadata, equal-budget rules, calibration reuse, and CLI commands for simulator
 and IBM Quantum hardware runs.
 

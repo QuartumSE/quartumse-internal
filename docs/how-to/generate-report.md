@@ -226,7 +226,7 @@ Table with columns:
 
 ### Default Behavior
 
-When using the experiment API (`estimator.estimate(save_manifest=True)`), no report is auto-generated. Use the CLI or Python API to generate reports from saved manifests.
+When using the experiment API (`estimator.estimate(save_manifest=True)`), no report is auto-generated. Use the CLI or Python API to generate reports from saved manifests. If you ran experiments with a custom `--data-dir`, substitute that path for the default `data/` directory referenced below.
 
 ### Recommended Structure
 

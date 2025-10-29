@@ -21,6 +21,13 @@ if str(SRC_PATH) not in sys.path:
 
 from experiments.shadows.common_utils import run_shadows
 from quartumse.shadows.core import Observable
+from quartumse.utils.args import (
+    DEFAULT_DATA_DIR,
+    add_backend_option,
+    add_data_dir_option,
+    add_seed_option,
+    add_shadow_size_option,
+)
 
 
 DEFAULT_CONFIG: Dict[str, Any] = {
@@ -60,29 +67,21 @@ def parse_args() -> argparse.Namespace:
         description="Run Phase 1 reference simulations and reuse cached datasets",
     )
     parser.add_argument("--config", type=Path, help="Path to YAML/JSON configuration override")
-    parser.add_argument("--backend", help="Override backend descriptor for all runs")
+    add_backend_option(parser)
     parser.add_argument(
         "--variant",
         choices=["v0", "v1"],
         help="Override the classical shadows variant (per-run config still allowed)",
     )
-    parser.add_argument(
-        "--shadow-size",
-        type=int,
-        help="Override the number of measurement shots per run",
-    )
+    add_shadow_size_option(parser)
     parser.add_argument(
         "--mem-shots",
         type=int,
         default=512,
         help="Default MEM shots per basis state when variant=v1",
     )
-    parser.add_argument(
-        "--data-dir",
-        type=Path,
-        default=Path("data"),
-        help="Directory used for manifests and shot archives",
-    )
+    add_seed_option(parser)
+    add_data_dir_option(parser)
     parser.add_argument(
         "--force",
         action="store_true",
@@ -196,7 +195,7 @@ def main() -> int:
     args = parse_args()
     config = load_config(args.config)
 
-    data_dir = args.data_dir
+    data_dir = args.data_dir or Path(config.get("data_dir", DEFAULT_DATA_DIR))
     data_dir.mkdir(parents=True, exist_ok=True)
 
     runs = config.get("runs") or []
@@ -213,7 +212,9 @@ def main() -> int:
         slug = derive_slug(run_cfg, phase)
         backend_descriptor = args.backend or run_cfg.get("backend", "aer_simulator")
         variant = args.variant or run_cfg.get("variant", "v0")
-        shadow_size = args.shadow_size or int(run_cfg.get("shadow_size", 4096))
+        shadow_size = int(args.shadow_size or run_cfg.get("shadow_size", 4096))
+        random_seed = args.seed or run_cfg.get("random_seed")
+        random_seed = int(random_seed) if random_seed is not None else None
         mem_shots = int(run_cfg.get("mem_shots", args.mem_shots))
         calibration_max_age = (
             args.calibration_max_age_hours
@@ -240,6 +241,8 @@ def main() -> int:
         print(f"Backend: {backend_descriptor}")
         print(f"Variant: {variant.upper()}")
         print(f"Shadow size: {shadow_size}")
+        if random_seed is not None:
+            print(f"Random seed: {random_seed}")
         if variant.lower() == "v1":
             print(f"MEM shots per basis: {mem_shots}")
         print(f"Circuit: {circuit.name} ({circuit.num_qubits} qubits)")
@@ -253,6 +256,7 @@ def main() -> int:
             shadow_size=shadow_size,
             mem_shots=mem_shots,
             data_dir=str(data_dir),
+            random_seed=random_seed,
             reference_slug=slug,
             reference_tags=tags,
             reference_metadata=metadata,

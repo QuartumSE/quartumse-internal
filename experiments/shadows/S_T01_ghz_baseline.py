@@ -18,6 +18,13 @@ from quartumse.reporting.manifest import MitigationConfig
 from quartumse.shadows import ShadowConfig
 from quartumse.shadows.config import ShadowVersion
 from quartumse.shadows.core import Observable
+from quartumse.utils.args import (
+    DEFAULT_DATA_DIR,
+    add_backend_option,
+    add_data_dir_option,
+    add_seed_option,
+    add_shadow_size_option,
+)
 from quartumse.utils.metrics import compute_ssr
 from quartumse.connectors import is_ibm_runtime_backend, create_runtime_sampler
 
@@ -59,6 +66,21 @@ def _resolve_backend_descriptor(config: Dict[str, Any], override: Optional[str])
             return name
 
     return "aer_simulator"
+
+
+def _resolve_data_dir(
+    config: Dict[str, Any], override: Optional[Union[str, Path]]
+) -> Path:
+    """Resolve the data directory used for manifests and shot archives."""
+
+    if override is not None:
+        return Path(override)
+
+    candidate = config.get("data_dir") if config else None
+    if candidate:
+        return Path(candidate)
+
+    return DEFAULT_DATA_DIR
 
 
 def create_ghz_circuit(num_qubits: int) -> QuantumCircuit:
@@ -148,6 +170,10 @@ def run_experiment(
     config_path: Optional[Union[str, Path]] = None,
     backend_override: Optional[str] = None,
     variant: str = "st01",
+    *,
+    data_dir: Optional[Union[str, Path]] = None,
+    random_seed_override: Optional[int] = None,
+    shadow_size_override: Optional[int] = None,
 ) -> None:
     """Run GHZ benchmarks for classical shadows variants."""
 
@@ -167,10 +193,19 @@ def run_experiment(
 
     # Configuration
     num_qubits_list = config.get("num_qubits", [3, 4, 5])
-    shadow_size = config.get("shadow_size", 500)
-    baseline_shots = config.get("baseline_shots", 1000)
-    random_seed = config.get("random_seed", 42)
-    mem_shots = config.get("mem_shots", 2048)
+    shadow_size = int(shadow_size_override or config.get("shadow_size", 500))
+    baseline_shots = int(config.get("baseline_shots", 1000))
+    random_seed = (
+        random_seed_override
+        if random_seed_override is not None
+        else config.get("random_seed", 42)
+    )
+    if random_seed is not None:
+        random_seed = int(random_seed)
+    mem_shots = int(config.get("mem_shots", 2048))
+    resolved_data_dir = _resolve_data_dir(config, data_dir)
+    resolved_data_dir.mkdir(parents=True, exist_ok=True)
+    print(f"Data directory: {resolved_data_dir.resolve()}")
 
     use_noise_aware = variant == "st02"
 
@@ -231,6 +266,7 @@ def run_experiment(
             backend=backend_descriptor,
             shadow_config=shadow_config,
             mitigation_config=mitigation_config,
+            data_dir=resolved_data_dir,
         )
 
         execution_backend = estimator.backend
@@ -373,12 +409,10 @@ if __name__ == "__main__":
         default=None,
         help="Path to YAML configuration file (backend, shot counts, etc.)",
     )
-    parser.add_argument(
-        "--backend",
-        type=str,
-        default=None,
-        help="Override backend descriptor (e.g., ibm:ibmq_qasm_simulator)",
-    )
+    add_backend_option(parser)
+    add_shadow_size_option(parser)
+    add_seed_option(parser)
+    add_data_dir_option(parser)
     parser.add_argument(
         "--variant",
         type=str,
@@ -387,4 +421,11 @@ if __name__ == "__main__":
         help="Experiment variant (st01=baseline, st02=noise-aware with MEM)",
     )
     args = parser.parse_args()
-    run_experiment(config_path=args.config, backend_override=args.backend, variant=args.variant)
+    run_experiment(
+        config_path=args.config,
+        backend_override=args.backend,
+        variant=args.variant,
+        data_dir=args.data_dir,
+        random_seed_override=args.seed,
+        shadow_size_override=args.shadow_size,
+    )

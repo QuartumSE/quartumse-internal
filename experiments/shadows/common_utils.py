@@ -184,6 +184,7 @@ def run_shadows(
     mem_shots: int = 512,
     data_dir: str = "./validation_data",
     *,
+    random_seed: Optional[int] = None,
     calibration_max_age_hours: Optional[float] = None,
     force_new_calibration: bool = False,
     reference_slug: Optional[str] = None,
@@ -193,10 +194,11 @@ def run_shadows(
 ) -> Tuple[Dict, Dict]:
     use_mem = (variant.lower() == "v1")
 
+    seed_value = 42 if random_seed is None else int(random_seed)
     shadow_config = ShadowConfig(
         version=ShadowVersion.V1_NOISE_AWARE if use_mem else ShadowVersion.V0_BASELINE,
         shadow_size=shadow_size,
-        random_seed=42,
+        random_seed=seed_value,
         apply_inverse_channel=use_mem,
     )
     mitigation_config = None

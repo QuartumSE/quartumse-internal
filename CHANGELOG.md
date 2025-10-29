@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Nothing yet. Add new entries here before cutting the next release.
+- Automated documentation workflow that validates MkDocs builds on pull requests and publishes updates to GitHub Pages on master merges.
 
 ## [0.1.0] - 2024-05-01
 ### Added

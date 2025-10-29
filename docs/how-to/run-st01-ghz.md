@@ -75,6 +75,7 @@ Qubits     CI Coverage    SSR        Status
 **Artifacts saved:**
 - Manifests: `data/manifests/<experiment_id>.json`
 - Shot data: `data/shots/<experiment_id>.parquet`
+- Change the base directory with `--data-dir` (see [Common flags](#common-flags))
 
 ---
 
@@ -298,3 +299,18 @@ For GHZ states:
 - [MEM v1 Guide](run-mem-v1.md) - Details on measurement error mitigation
 - [Testing Guide](run-tests.md) - Automated test suite and markers
 - [Phase 1 Task Checklist](../strategy/phase1_task_checklist.md) - Exit criteria
+
+## Common flags
+
+The experiment script now shares the same CLI surface as other QuartumSE runs:
+
+| Flag | Purpose | Default |
+|------|---------|---------|
+| `--backend` | Override the backend descriptor (`aer_simulator`, `ibm:ibm_brisbane`, etc.) | `aer_simulator` |
+| `--shadow-size` | Number of classical shadow shots per GHZ size | `500` (configurable via YAML) |
+| `--seed` | Random seed used when sampling classical shadows | `42` |
+| `--data-dir` | Base directory for manifests, shot archives, and MEM data | `data/` |
+
+All parameters can also be provided through the optional YAML config file. CLI
+flags always win over configuration values, making it easy to experiment with
+different shot budgets or output locations ad-hoc.

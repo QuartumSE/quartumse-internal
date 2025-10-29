@@ -15,6 +15,9 @@ QuartumSE's "measure once, ask later" capability lets you compute new observable
 - MEM confusion matrices (for v1 noise-aware shadows)
 - Backend calibration snapshots
 - Circuit fingerprints and random seeds
+- Output directory is configurable; if you ran experiments with
+  `--data-dir=/path/to/artifacts` the manifest and shot data live underneath
+  that directory instead of the default `data/` tree.
 
 ---
 

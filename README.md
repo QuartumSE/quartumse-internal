@@ -70,6 +70,8 @@ QuartumSE delivers a measurement layer that is **shot-efficient, auditable,** an
    )
    ```
 
+   > **New to Pauli strings?** See the [Observable Notation Reference](docs/reference/observable-notation.md) for an explanation of `"XXX"`, `"ZZZ"`, and other observable syntax, plus expected values for common quantum states.
+
 Ready for hardware? Follow the [hardware quickstart](docs/tutorials/hardware_quickstart.md) to configure IBM Runtime credentials and run the same script on managed backends.
 
 ---
@@ -146,6 +148,9 @@ python experiments/validation/hardware_validation.py
 - **Hardware setup:** [docs/tutorials/hardware_quickstart.md](docs/tutorials/hardware_quickstart.md)
 - **Automation guides:** [`docs/how-to/`](docs/how-to)
 - **Architecture & theory:** [`docs/explanation/`](docs/explanation)
+- **Reference:**
+  - [Observable Notation](docs/reference/observable-notation.md) - Pauli string syntax and expected values
+  - [CLI Commands](docs/reference/cli.md) - Command-line interface reference
 - **Operations:** [`docs/ops/`](docs/ops)
 - **Roadmap & strategy:** [`docs/strategy/`](docs/strategy)
 

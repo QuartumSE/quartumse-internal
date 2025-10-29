@@ -8,6 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Automated documentation workflow that validates MkDocs builds on pull requests and publishes updates to GitHub Pages on master merges.
+- `src/quartumse/utils/args.py` with reusable argparse helpers (`add_backend_option`, `add_data_dir_option`, `add_seed_option`, `add_shadow_size_option`) for standardized experiment CLI arguments.
+- `SUPPORT.md` with community support policy and contact information.
+- Guided learning path table in README (Step 1-5 progression from quickstart to automation).
+- Repository tour with ASCII directory tree structure in README.
+- Configurable `--data-dir`, `--seed`, and `--shadow-size` flags to `S_T01_ghz_baseline.py`.
+
+### Changed
+- Streamlined README.md from ~500 lines to ~180 lines with clearer vision, 10-minute quickstart, and documentation index.
+- Updated documentation navigation structure (removed archive section, moved Phase 1 Checklist to Strategy).
+- Refactored `experiments/shadows/S_T01_ghz_baseline.py` to use standardized CLI argument helpers and improved config resolution logic.
+- Updated `docs/README.md` with comprehensive how-to guide listing and clearer section organization.
+- Simplified `docs/index.md` to 13-line narrative with navigation pointers.
+
+### Removed
+- Archive directories (`docs/archive/`, `experiments/archive/`, `notebooks/archive/`) containing:
+  - Historical bootstrap documentation (bootstrap_summary, status_report, strategic_analysis)
+  - Superseded experiment starter scripts (B_T01_rb, C_T01_h2_vqe, M_T01_ghz_phase, O_T01_maxcut)
+  - Outdated notebooks (preliminary_smoke_test, review_smoke_test_results, s_t01_ghz_classical_shadows)
+  - Total reduction: ~3,285 lines of stale content
+  - Files remain accessible in Git history for reference.
 
 ## [0.1.0] - 2024-05-01
 ### Added

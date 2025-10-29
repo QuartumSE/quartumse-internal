@@ -10,8 +10,8 @@ directly from the docstrings that live alongside the implementation in
    :caption: Guides & Strategy
 
    ../README
-   ../guides/getting_started
-   ../guides/testing
+   ../tutorials/quickstart
+   ../how-to/run-tests
    ../strategy/roadmap
 
 .. toctree::

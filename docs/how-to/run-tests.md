@@ -1,4 +1,4 @@
-# Testing QuartumSE
+# Run QuartumSE Tests
 
 This guide explains how to exercise the automated test suites, when to run
 hardware checks, and which notebooks provide manual validation coverage.  It
@@ -29,7 +29,7 @@ pytest tests -m "not slow and not hardware" -v
 # Include slow scenarios (still skip hardware)
 pytest tests -m "not hardware" -v --durations=20
 
-# Hardware runs (requires QISKIT_IBM_TOKEN, see docs/ops/runtime_runbook.md)
+# Hardware runs (requires QISKIT_IBM_TOKEN, see ../ops/runtime_runbook.md)
 pytest tests -m hardware -v
 ```
 
@@ -44,7 +44,7 @@ pytest tests -m "not slow and not hardware" -v
 # Include slow scenarios (still skip hardware)
 pytest tests -m "not hardware" -v --durations=20
 
-# Hardware runs (requires QISKIT_IBM_TOKEN, see docs/ops/runtime_runbook.md)
+# Hardware runs (requires QISKIT_IBM_TOKEN, see ../ops/runtime_runbook.md)
 pytest tests -m hardware -v
 ```
 
@@ -104,9 +104,9 @@ Before running the `hardware` test marker or the CLI against real backends:
 1. Export `QISKIT_IBM_TOKEN` (and optional instance overrides).
 2. Ensure `qiskit-ibm-runtime` is installed (`pip install qiskit-ibm-runtime` or `pip install quartumse[mitigation]`).
 3. Confirm remaining quota via `quartumse runtime-status`.
-4. Schedule runs inside the free-tier 10 minute window.  See
-   [`docs/ops/runtime_runbook.md`](../ops/runtime_runbook.md) for quota guidance
-   and webhook notifications.
+4. Schedule runs inside the free-tier 10 minute window.  See the
+   [IBM Runtime runbook](../ops/runtime_runbook.md) for quota guidance and
+   webhook notifications.
 
 ## Troubleshooting tips
 
@@ -119,5 +119,5 @@ Before running the `hardware` test marker or the CLI against real backends:
   `ShadowEstimator`.
 
 For a broader program view, pair this document with the updated
-[`docs/strategy/project_bible.md`](../strategy/project_bible.md) and
-[`docs/strategy/roadmap.md`](../strategy/roadmap.md).
+[Project Bible](../strategy/project_bible.md) and
+[Roadmap](../strategy/roadmap.md).

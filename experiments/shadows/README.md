@@ -80,7 +80,7 @@ python h2_energy/run_h2_energy.py
 - Scripts default to saving manifests and shot data under `./data/` unless
   you update the `ShadowEstimator` configuration.
 - Use `validation_data/` when capturing Phase 1 evidence (see
-  [`docs/guides/data_storage.md`](../../docs/guides/data_storage.md)).
+  [`docs/explanation/manifest-schema.md`](../../docs/explanation/manifest-schema.md)).
 
 ## Documentation
 

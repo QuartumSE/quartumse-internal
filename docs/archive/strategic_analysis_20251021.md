@@ -2,7 +2,7 @@
 
 > **⚠️ HISTORICAL DOCUMENT**
 > This analysis was conducted on October 21, 2025, before hardware validation.
-> For current status, see [STATUS_REPORT.md](STATUS_REPORT.md).
+> For current status, see [status_report_20251022.md](status_report_20251022.md).
 >
 > **UPDATE (Oct 22):** Hardware smoke test completed successfully. Several gaps identified below have been resolved:
 > - ✅ v1 replay working (MEM calibration now persisted)

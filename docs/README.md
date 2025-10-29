@@ -1,64 +1,49 @@
 # QuartumSE Documentation Map
 
-The documentation has been reorganised to keep the root directory lean and to
-highlight the most up-to-date sources of truth.  Start with the sections below
-when exploring the project.
+The documentation library is organised to guide you from local setup through automated experiment campaigns. Start here and then drill into the section that matches your task.
 
 ## Tutorials
 
-- [`tutorials/quickstart.md`](tutorials/quickstart.md) – environment setup,
-  installation options, and first experiments.
-- [`tutorials/hardware_quickstart.md`](tutorials/hardware_quickstart.md) –
-  minimum hardware configuration steps for IBM Quantum backends.
+- [`tutorials/quickstart.md`](tutorials/quickstart.md) – install the SDK, validate the environment, and run the S‑T01 baseline.
+- [`tutorials/hardware_quickstart.md`](tutorials/hardware_quickstart.md) – configure IBM Runtime credentials and queue managed experiments.
 
-## How-to
+## How-to guides
 
-- [`how-to/run-tests.md`](how-to/run-tests.md) – pytest markers, notebook
-  validation, and hardware readiness checks.
-- **Pipeline guide** – Phase-1 automated experiment pipeline usage, calibration
-  reuse, and replay workflow (legacy location under *Guides → Pipeline*).
+Practical walkthroughs for day-to-day operations:
+
+- [`how-to/run-tests.md`](how-to/run-tests.md) – pytest markers, notebook validation, and hardware readiness checks.
+- [`how-to/run-st01-ghz.md`](how-to/run-st01-ghz.md) – canonical GHZ baseline run with configuration tips.
+- [`how-to/run-mem-v1.md`](how-to/run-mem-v1.md) – enable noise-aware shadows with MEM calibration.
+- [`how-to/replay-from-manifest.md`](how-to/replay-from-manifest.md) – compute new observables from stored shot data.
+- [`how-to/generate-report.md`](how-to/generate-report.md) – build HTML/PDF experiment summaries.
+- [`how-to/run-automated-pipeline.md`](how-to/run-automated-pipeline.md) – orchestrate scheduled simulator + hardware runs with reporting automation.
 
 ## Explanation
 
-- [`explanation/manifest-schema.md`](explanation/manifest-schema.md) – manifest,
-  Parquet, and report artefact formats.
+Deep dives into the design and theory underpinning QuartumSE:
+
+- [`explanation/architecture.md`](explanation/architecture.md) – component-level architecture of the estimator, connectors, and reporting stack.
+- [`explanation/manifest-schema.md`](explanation/manifest-schema.md) – manifest, Parquet, and report artefact formats.
+- [`explanation/shadows-theory.md`](explanation/shadows-theory.md) – theoretical background for classical shadows and mitigation strategies.
 
 ## Operations & strategy
 
-- [`ops/runtime_runbook.md`](ops/runtime_runbook.md) – monitoring IBM Runtime
-  quota usage and posting Slack alerts.
-- [`strategy/project_bible.md`](strategy/project_bible.md) – long-term vision and
-  positioning.
-- [`strategy/roadmap.md`](strategy/roadmap.md) – phased delivery milestones.
-
-## Archives
-
-Historical planning artefacts remain available for reference but are no longer
-considered active documentation:
-
-- [`archive/bootstrap_summary_20251020.md`](archive/bootstrap_summary_20251020.md)
-- [`archive/status_report_20251022.md`](archive/status_report_20251022.md)
-- [`archive/strategic_analysis_20251021.md`](archive/strategic_analysis_20251021.md)
-
-These files capture the October 2025 bootstrap and validation updates.  Link to
-this archive only when the historical context is required.
+- [`ops/runtime_runbook.md`](ops/runtime_runbook.md) – monitor IBM Runtime quota usage and coordinate on-call response.
+- [`strategy/project_bible.md`](strategy/project_bible.md) – mission, positioning, and product principles.
+- [`strategy/roadmap.md`](strategy/roadmap.md) – phased delivery milestones and exit criteria.
+- [`strategy/phase1_task_checklist.md`](strategy/phase1_task_checklist.md) – current R&D checklist for the Phase 1 programme.
 
 ---
 
-If you add new documentation, prefer placing it under `docs/` (either as a new
-guide or alongside the strategic/ops material) to keep the repository root tidy.
+If you add new documentation, prefer placing it under `docs/` (either as a tutorial, how-to guide, or explanatory note) to keep the repository root tidy and the navigation coherent.
 
 ## Citing QuartumSE
 
-When preparing publications, pull citation metadata from the repository's
-[`CITATION.cff`](../CITATION.cff) file via GitHub's **Cite this repository**
-button. This ensures the version number and release date stay aligned with the
-latest tagged release.
+When preparing publications, pull citation metadata from the repository's [`CITATION.cff`](../CITATION.cff) file via GitHub's **Cite this repository** button. This ensures the version number and release date stay aligned with the latest tagged release.
 
 ## Building the API documentation
 
-The API reference under `docs/api/` is generated with [Sphinx](https://www.sphinx-doc.org/)
-and pulls docstrings directly from the Python package in `src/quartumse`.
+The API reference under `docs/api/` is generated with [Sphinx](https://www.sphinx-doc.org/) and pulls docstrings directly from the Python package in `src/quartumse`.
 
 ### Prerequisites
 
@@ -88,5 +73,4 @@ tox -e docs
 tox -e docs
 ```
 
-This command runs `sphinx-build` with the `-W` and `--keep-going` flags, ensuring the
-documentation remains warning-free.  The generated HTML lives in `docs/_build/html`.
+This command runs `sphinx-build` with the `-W` and `--keep-going` flags, ensuring the documentation remains warning-free. The generated HTML lives in `docs/_build/html`.

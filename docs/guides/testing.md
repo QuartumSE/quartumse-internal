@@ -18,7 +18,23 @@ Tests use `pytest` markers so you can opt into the heavier scenarios as needed.
 
 ## Running the suites
 
+**Unix/macOS:**
 ```bash
+# Core unit tests (quick feedback)
+pytest tests/unit -v
+
+# Fast integration matrix (skip slow + hardware markers)
+pytest tests -m "not slow and not hardware" -v
+
+# Include slow scenarios (still skip hardware)
+pytest tests -m "not hardware" -v --durations=20
+
+# Hardware runs (requires QISKIT_IBM_TOKEN, see docs/ops/runtime_runbook.md)
+pytest tests -m hardware -v
+```
+
+**Windows:**
+```powershell
 # Core unit tests (quick feedback)
 pytest tests/unit -v
 
@@ -34,7 +50,13 @@ pytest tests -m hardware -v
 
 Enable coverage reporting (mirrors the CI configuration) when preparing releases:
 
+**Unix/macOS:**
 ```bash
+pytest --cov --cov-report=term-missing --cov-report=xml --cov-report=html
+```
+
+**Windows:**
+```powershell
 pytest --cov --cov-report=term-missing --cov-report=xml --cov-report=html
 ```
 
@@ -62,7 +84,13 @@ The active experiment scripts are under `experiments/shadows/` and
 and metrology have been moved to `experiments/archive/` until they are fully
 implemented.  The S‑T01 GHZ baseline remains the canonical CLI example:
 
+**Unix/macOS:**
 ```bash
+python experiments/shadows/S_T01_ghz_baseline.py --backend aer_simulator
+```
+
+**Windows:**
+```powershell
 python experiments/shadows/S_T01_ghz_baseline.py --backend aer_simulator
 ```
 

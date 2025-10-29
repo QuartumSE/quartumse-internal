@@ -33,10 +33,29 @@ QuartumSE is building the **default measurement and observability layer** for qu
 
 1. **Install QuartumSE**
 
+   **Unix/macOS (bash/zsh):**
    ```bash
    git clone https://github.com/quartumse/quartumse.git
    cd quartumse
    python -m venv .venv && source .venv/bin/activate
+   pip install -e .
+   ```
+
+   **Windows (PowerShell):**
+   ```powershell
+   git clone https://github.com/quartumse/quartumse.git
+   cd quartumse
+   python -m venv .venv
+   .venv\Scripts\activate
+   pip install -e .
+   ```
+
+   **Windows (Command Prompt):**
+   ```cmd
+   git clone https://github.com/quartumse/quartumse.git
+   cd quartumse
+   python -m venv .venv
+   .venv\Scripts\activate.bat
    pip install -e .
    ```
 
@@ -82,7 +101,17 @@ We rely on `pytest` with `pytest-cov` for consistent coverage reporting across
 local development and CI. The badge above reflects the latest `main` branch
 results uploaded to Codecov.
 
+**Unix/macOS:**
 ```bash
+pip install -e ".[dev]"
+pytest -m "not slow and not hardware" -v
+
+# Generate coverage artifacts (terminal, XML for Codecov, and HTML summary)
+pytest --cov --cov-report=term-missing --cov-report=xml --cov-report=html
+```
+
+**Windows:**
+```powershell
 pip install -e ".[dev]"
 pytest -m "not slow and not hardware" -v
 
@@ -295,7 +324,23 @@ and IBM Quantum hardware runs.
 
 ### Running Tests
 
+**Unix/macOS:**
 ```bash
+# All tests (fast)
+pytest tests/ -m "not slow and not hardware"
+
+# Unit tests only
+pytest tests/unit/
+
+# Integration tests
+pytest tests/integration/
+
+# With coverage
+pytest --cov=quartumse --cov-report=html
+```
+
+**Windows:**
+```powershell
 # All tests (fast)
 pytest tests/ -m "not slow and not hardware"
 
@@ -311,7 +356,20 @@ pytest --cov=quartumse --cov-report=html
 
 ### Code Quality
 
+**Unix/macOS:**
 ```bash
+# Format code
+black src/ tests/
+
+# Lint
+ruff check src/ tests/
+
+# Type check
+mypy src/quartumse
+```
+
+**Windows:**
+```powershell
 # Format code
 black src/ tests/
 
@@ -324,7 +382,14 @@ mypy src/quartumse
 
 ### Pre-commit Hooks
 
+**Unix/macOS:**
 ```bash
+pre-commit install
+pre-commit run --all-files
+```
+
+**Windows:**
+```powershell
 pre-commit install
 pre-commit run --all-files
 ```

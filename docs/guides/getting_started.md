@@ -13,6 +13,7 @@ previous `INSTALL_GUIDE.md` and `SETUP.md` content into a single reference.
 
 ## 1. Clone the repository & create an environment
 
+**Unix/macOS:**
 ```bash
 # Clone repository
 git clone https://github.com/quartumse/quartumse.git
@@ -22,10 +23,33 @@ cd quartumse
 python -m venv .venv
 
 # Activate the environment
-# On macOS/Linux
 source .venv/bin/activate
-# On Windows PowerShell
-.\.venv\Scripts\Activate.ps1
+```
+
+**Windows (PowerShell):**
+```powershell
+# Clone repository
+git clone https://github.com/quartumse/quartumse.git
+cd quartumse
+
+# Create virtual environment
+python -m venv .venv
+
+# Activate the environment
+.venv\Scripts\activate
+```
+
+**Windows (Command Prompt):**
+```cmd
+rem Clone repository
+git clone https://github.com/quartumse/quartumse.git
+cd quartumse
+
+rem Create virtual environment
+python -m venv .venv
+
+rem Activate the environment
+.venv\Scripts\activate.bat
 ```
 
 If you use Conda or another environment manager, create an equivalent
@@ -35,7 +59,20 @@ environment targeting Python 3.10–3.12.
 
 Choose the extra set that matches your workflow:
 
+**Unix/macOS:**
 ```bash
+# Core SDK only
+pip install -e .
+
+# Core SDK + development tooling (pytest, black, ruff, mypy, jupyter)
+pip install -e ".[dev]"
+
+# With optional mitigation / chemistry dependencies (Python < 3.13)
+pip install -e ".[dev,mitigation,chemistry]"
+```
+
+**Windows:**
+```powershell
 # Core SDK only
 pip install -e .
 
@@ -48,7 +85,13 @@ pip install -e ".[dev,mitigation,chemistry]"
 
 Upgrading `pip` before installation often avoids wheel build issues:
 
+**Unix/macOS:**
 ```bash
+python -m pip install --upgrade pip
+```
+
+**Windows:**
+```powershell
 python -m pip install --upgrade pip
 ```
 
@@ -57,7 +100,20 @@ python -m pip install --upgrade pip
 Run the basic smoke checks to make sure the package imports and the test suite
 passes on simulators:
 
+**Unix/macOS:**
 ```bash
+# Confirm the CLI can be invoked
+quartumse --help
+
+# Quick import verification
+python -c "from quartumse import ShadowEstimator; print('QuartumSE ready')"
+
+# Run unit tests (skipping slow hardware checks)
+pytest tests -m "not slow and not hardware" -v
+```
+
+**Windows:**
+```powershell
 # Confirm the CLI can be invoked
 quartumse --help
 
@@ -70,13 +126,31 @@ pytest tests -m "not slow and not hardware" -v
 
 Install `pre-commit` hooks to keep formatting and linting consistent:
 
+**Unix/macOS:**
 ```bash
+pre-commit install
+```
+
+**Windows:**
+```powershell
 pre-commit install
 ```
 
 ## 4. Launch the quickstart notebook (optional)
 
+**Unix/macOS:**
 ```bash
+# Ensure Jupyter is installed (included in the [dev] extras)
+pip install jupyter
+
+# Start Jupyter Notebook or Lab
+jupyter notebook
+# or
+jupyter lab
+```
+
+**Windows:**
+```powershell
 # Ensure Jupyter is installed (included in the [dev] extras)
 pip install jupyter
 
@@ -108,7 +182,13 @@ Troubleshooting tips:
 The CLI script demonstrates the same workflow outside notebooks and produces
 provenance artifacts in `data/`:
 
+**Unix/macOS:**
 ```bash
+python experiments/shadows/S_T01_ghz_baseline.py --backend aer_simulator
+```
+
+**Windows:**
+```powershell
 python experiments/shadows/S_T01_ghz_baseline.py --backend aer_simulator
 ```
 

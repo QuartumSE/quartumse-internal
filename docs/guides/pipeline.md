@@ -57,6 +57,7 @@ metadata and runner defaults aligned when you extend the pipeline.
 The pipeline and CLI share the `ReadoutCalibrationManager` so that measurement error
 mitigation (MEM) snapshots are only regenerated when required:
 
+**Unix/macOS:**
 ```bash
 # Reuse cached confusion matrices unless forced or stale
 quartumse calibrate-readout \
@@ -64,6 +65,17 @@ quartumse calibrate-readout \
   --qubit 0 --qubit 1 --qubit 2 --qubit 3 \
   --shots 256 \
   --output-dir validation_data/calibrations \
+  --max-age-hours 6
+```
+
+**Windows:**
+```powershell
+# Reuse cached confusion matrices unless forced or stale
+quartumse calibrate-readout `
+  --backend ibm:ibm_brisbane `
+  --qubit 0 --qubit 1 --qubit 2 --qubit 3 `
+  --shots 256 `
+  --output-dir validation_data/calibrations `
   --max-age-hours 6
 ```
 
@@ -88,10 +100,19 @@ artefacts, and render a report.
 
 ### Simulator (Aer)
 
+**Unix/macOS:**
 ```bash
 python -m experiments.pipeline.run_full_pipeline \
   --metadata experiments/shadows/examples/extended_ghz/experiment_metadata.yaml \
   --output validation_data/pipeline_runs/ghz4_aer \
+  --backend aer_simulator
+```
+
+**Windows:**
+```powershell
+python -m experiments.pipeline.run_full_pipeline `
+  --metadata experiments/shadows/examples/extended_ghz/experiment_metadata.yaml `
+  --output validation_data/pipeline_runs/ghz4_aer `
   --backend aer_simulator
 ```
 
@@ -102,11 +123,30 @@ python -m experiments.pipeline.run_full_pipeline \
 
 ### IBM Quantum hardware
 
+**Unix/macOS:**
 ```bash
 export QISKIT_IBM_TOKEN="<your-runtime-token>"
 python -m experiments.pipeline.run_full_pipeline \
   --metadata experiments/shadows/examples/extended_ghz/experiment_metadata.yaml \
   --output data/pipeline_runs/ghz4_kyoto \
+  --backend ibm:ibm_kyoto
+```
+
+**Windows (PowerShell):**
+```powershell
+$env:QISKIT_IBM_TOKEN="<your-runtime-token>"
+python -m experiments.pipeline.run_full_pipeline `
+  --metadata experiments/shadows/examples/extended_ghz/experiment_metadata.yaml `
+  --output data/pipeline_runs/ghz4_kyoto `
+  --backend ibm:ibm_kyoto
+```
+
+**Windows (Command Prompt):**
+```cmd
+set QISKIT_IBM_TOKEN=<your-runtime-token>
+python -m experiments.pipeline.run_full_pipeline ^
+  --metadata experiments/shadows/examples/extended_ghz/experiment_metadata.yaml ^
+  --output data/pipeline_runs/ghz4_kyoto ^
   --backend ibm:ibm_kyoto
 ```
 
@@ -124,9 +164,16 @@ value. Omit the flag to use `metadata.device` as-is.
 
 After a pipeline run completes, inspect the output directory:
 
+**Unix/macOS:**
 ```bash
 ls -R validation_data/pipeline_runs/ghz4_aer
 cat validation_data/pipeline_runs/ghz4_aer/report_*.html | head
+```
+
+**Windows:**
+```powershell
+Get-ChildItem -Recurse validation_data/pipeline_runs/ghz4_aer
+Get-Content validation_data/pipeline_runs/ghz4_aer/report_*.html | Select-Object -First 10
 ```
 
 You should see:
@@ -141,6 +188,7 @@ You should see:
 
 Replaying artefacts does not require backend access:
 
+**Unix/macOS:**
 ```bash
 # Regenerate the HTML report after editing metadata or narrative sections
 quartumse report validation_data/pipeline_runs/ghz4_aer/manifests/<manifest>.json \
@@ -156,6 +204,16 @@ manifest = ProvenanceManifest.from_json(manifest_path)
 estimator = ShadowEstimator.replay_from_manifest(manifest)
 print(estimator)
 PY
+```
+
+**Windows:**
+```powershell
+# Regenerate the HTML report after editing metadata or narrative sections
+quartumse report validation_data/pipeline_runs/ghz4_aer/manifests/<manifest>.json `
+  --output validation_data/pipeline_runs/ghz4_aer/replay_report.html
+
+# Programmatic replay: recompute observables from saved manifests
+python -c "from quartumse.estimator import ShadowEstimator; from quartumse.reporting.manifest import ProvenanceManifest; manifest_path = 'validation_data/pipeline_runs/ghz4_aer/manifests/<manifest>.json'; manifest = ProvenanceManifest.from_json(manifest_path); estimator = ShadowEstimator.replay_from_manifest(manifest); print(estimator)"
 ```
 
 The verifier stage (`experiments/pipeline/verifier.py`) checks that shot files and MEM

@@ -56,7 +56,13 @@ and pulls docstrings directly from the Python package in `src/quartumse`.
 
 Install the optional documentation dependencies:
 
+**Unix/macOS:**
 ```bash
+pip install -e .[docs]
+```
+
+**Windows:**
+```powershell
 pip install -e .[docs]
 ```
 
@@ -64,7 +70,13 @@ pip install -e .[docs]
 
 Use [tox](https://tox.wiki/) to build the docs and fail on warnings:
 
+**Unix/macOS:**
 ```bash
+tox -e docs
+```
+
+**Windows:**
+```powershell
 tox -e docs
 ```
 

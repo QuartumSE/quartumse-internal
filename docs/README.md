@@ -4,16 +4,24 @@ The documentation has been reorganised to keep the root directory lean and to
 highlight the most up-to-date sources of truth.  Start with the sections below
 when exploring the project.
 
-## Guides
+## Tutorials
 
-- [`guides/getting_started.md`](guides/getting_started.md) – environment setup,
+- [`tutorials/quickstart.md`](tutorials/quickstart.md) – environment setup,
   installation options, and first experiments.
-- [`guides/testing.md`](guides/testing.md) – pytest markers, notebook validation,
-  and hardware readiness checks.
-- [`guides/data_storage.md`](guides/data_storage.md) – manifest, Parquet, and
-  report artefact formats.
-- [`guides/pipeline.md`](guides/pipeline.md) – Phase-1 automated experiment
-  pipeline usage, calibration reuse, and replay workflow.
+- [`tutorials/hardware_quickstart.md`](tutorials/hardware_quickstart.md) –
+  minimum hardware configuration steps for IBM Quantum backends.
+
+## How-to
+
+- [`how-to/run-tests.md`](how-to/run-tests.md) – pytest markers, notebook
+  validation, and hardware readiness checks.
+- **Pipeline guide** – Phase-1 automated experiment pipeline usage, calibration
+  reuse, and replay workflow (legacy location under *Guides → Pipeline*).
+
+## Explanation
+
+- [`explanation/manifest-schema.md`](explanation/manifest-schema.md) – manifest,
+  Parquet, and report artefact formats.
 
 ## Operations & strategy
 

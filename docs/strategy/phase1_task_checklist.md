@@ -52,7 +52,7 @@ This checklist aggregates the outstanding Phase 1 tasks called out across the ro
 
 ## Validation gating tasks
 - [ ] Complete the **extended IBM hardware validation** campaign (SSR ≥ 1.1×; manifests saved under `validation_data/`).
-- [ ] Run the hardware validation post-checks: manifests present, calibration snapshot archived, v0 vs v1 MAE comparison, and results logged in `docs/archive/status_report_20251022.md`.
+- [ ] Run the hardware validation post-checks: manifests present, calibration snapshot archived, v0 vs v1 MAE comparison, and results summarised in the Phase 1 status log section below.
 - [ ] Verify validation CI coverage ≥ 80% and document Phase 1 completion once criteria are met.
 
 ## Cross-workstream starters (C/O/B/M)
@@ -71,4 +71,10 @@ This checklist aggregates the outstanding Phase 1 tasks called out across the ro
 3. After completing an experiment, attach manifests, calibration data, and summary notebooks to the appropriate `results/` and `discussion/` folders and check the corresponding box here.
 4. When preparing a public release or milestone summary, update [`CHANGELOG.md`](../../CHANGELOG.md) with the scope of work that shipped before tagging.
 
-Update this document whenever a task is completed or a new Phase 1 dependency is identified.
+Update this document whenever a task is completed or a new Phase 1 dependency is identified. Use the log below to capture concise status updates instead of scattering notes across ad-hoc documents.
+
+### Phase 1 status log
+
+| Date | Update |
+|------|--------|
+| 2025-10-22 | IBM ibm_torino smoke test complete. GHZ v0/v1 + MEM validated, SSR ≥ 1.2× on simulator, CI coverage 100%. |

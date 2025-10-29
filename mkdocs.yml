@@ -28,10 +28,7 @@ nav:
   - Strategy:
       - Project Bible: strategy/project_bible.md
       - Roadmap: strategy/roadmap.md
-  - Archive:
-      - Bootstrap Summary (Oct 20, 2025): archive/bootstrap_summary_20251020.md
-      - Status Report (Oct 22, 2025): archive/status_report_20251022.md
-      - Strategic Analysis (Oct 21, 2025): archive/strategic_analysis_20251021.md
+      - Phase 1 Checklist: strategy/phase1_task_checklist.md
 plugins:
   - search
   - section-index

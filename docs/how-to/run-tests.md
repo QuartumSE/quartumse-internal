@@ -74,15 +74,16 @@ Three curated notebooks cover the major user journeys:
 - `notebooks/comprehensive_test_suite.ipynb` – End-to-end path combining CLI,
   replay, and reporting.
 
-Archived or superseded notebooks now live under `notebooks/archive/` to keep the
-entry points focused.
+The notebooks folder now contains only the actively maintained tutorials so new
+users can focus on the recommended path. Historical experiments have been
+retired from version control to keep the repo lightweight.
 
 ## Experiment scripts
 
 The active experiment scripts are under `experiments/shadows/` and
-`experiments/validation/`.  Additional scaffolds for chemistry, optimization,
-and metrology have been moved to `experiments/archive/` until they are fully
-implemented.  The S‑T01 GHZ baseline remains the canonical CLI example:
+`experiments/validation/`.  Legacy scaffolds were removed during the repo
+cleanup, so everything under `experiments/` is production-supported. The S‑T01
+GHZ baseline remains the canonical CLI example:
 
 **Unix/macOS:**
 ```bash

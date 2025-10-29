@@ -126,6 +126,7 @@ markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "hardware: marks tests that require real quantum hardware",
     "integration: marks integration tests",
+    "smoke: marks smoke tests for quick validation of critical paths",
 ]
 
 [tool.black]

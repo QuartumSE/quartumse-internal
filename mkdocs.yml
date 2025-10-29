@@ -1,0 +1,55 @@
+site_name: QuartumSE
+repo_url: https://github.com/QuartumSE/quartumse
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - content.code.copy
+    - toc.integrate
+nav:
+  - Home: index.md
+  - Tutorials:
+      - Quickstart: tutorials/quickstart.md
+      - Hardware Quickstart: tutorials/hardware_quickstart.md
+  - How-to:
+      - Run S-T01 GHZ: how-to/run-st01-ghz.md
+      - Run MEM (v1): how-to/run-mem-v1.md
+      - Replay from Manifest: how-to/replay-from-manifest.md
+      - Generate Report: how-to/generate-report.md
+  - Reference:
+      - API: reference/api/index.md
+      - CLI: reference/cli.md
+  - Explanation:
+      - Architecture: explanation/architecture.md
+      - Manifest Schema: explanation/manifest-schema.md
+      - Shadows Theory: explanation/shadows-theory.md
+  - Operations:
+      - IBM Runtime Runbook: ops/runtime_runbook.md
+  - Strategy:
+      - Project Bible: strategy/project_bible.md
+      - Roadmap: strategy/roadmap.md
+  - Archive:
+      - Bootstrap Summary (Oct 20, 2025): archive/bootstrap_summary_20251020.md
+      - Status Report (Oct 22, 2025): archive/status_report_20251022.md
+      - Strategic Analysis (Oct 21, 2025): archive/strategic_analysis_20251021.md
+plugins:
+  - search
+  - section-index
+  - mkdocstrings:
+      handlers:
+        python:
+          setup_commands:
+            - import sys
+            - sys.path.append("src")
+          options:
+            docstring_style: google
+            show_signature: true
+            show_source: true
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - tables
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - markdown_include.include

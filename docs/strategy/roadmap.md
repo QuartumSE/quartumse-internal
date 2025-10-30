@@ -139,6 +139,8 @@ Each phase below enumerates **Experiments & Tests** with IDs that recur across p
 - **SSR ≥ 1.5×** achieved on internal benchmarks; **RMSE@$** consistently better than baselines.
 - **At least one paper accepted** (or under strong revise‑&‑resubmit) and **patents filed**.
 - **Provenance & replay** validated; CI green across full suite.
+- **Repository made public**: Audit Git history for secrets, make repo public to enable external contributions.
+- **CI matrix expanded**: Restore full cross-platform testing (12 jobs: 3 OSes × 4 Python versions). See [`docs/ops/ci_expansion_guide.md`](../ops/ci_expansion_guide.md).
 
 > **Only once the above gates are cleared do we begin external onboarding.**
 

@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Guided learning path table in README (Step 1-5 progression from quickstart to automation).
 - Repository tour with ASCII directory tree structure in README.
 - Configurable `--data-dir`, `--seed`, and `--shadow-size` flags to `S_T01_ghz_baseline.py`.
+- `docs/ops/ci_expansion_guide.md` - Step-by-step guide for expanding CI matrix when repository becomes public (Phase 3).
 
 ### Changed
 - Streamlined README.md from ~500 lines to ~180 lines with clearer vision, 10-minute quickstart, and documentation index.
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refactored `experiments/shadows/S_T01_ghz_baseline.py` to use standardized CLI argument helpers and improved config resolution logic.
 - Updated `docs/README.md` with comprehensive how-to guide listing and clearer section organization.
 - Simplified `docs/index.md` to 13-line narrative with navigation pointers.
+- **Reduced CI matrix from 12 jobs to 1 job** (Ubuntu + Python 3.11) during Phase 1-2 while repository is private. Full matrix (3 OSes × 4 Python versions) will be restored in Phase 3 when repository becomes public. See Phase 3 exit criteria in roadmap.
 
 ### Removed
 - Archive directories (`docs/archive/`, `experiments/archive/`, `notebooks/archive/`) containing:

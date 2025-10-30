@@ -12,11 +12,24 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Reduced matrix during billing issue resolution
-        # Full matrix: os: [ubuntu-latest, macos-latest, windows-latest], python: ["3.10", "3.11", "3.12", "3.13"]
+        # REDUCED MATRIX: Keeping private repo during Phase 1-2
+        # This minimal configuration validates core functionality while minimizing GitHub Actions costs.
+        #
+        # CURRENT (Phase 1-2, private repo):
         os: [ubuntu-latest]
         python-version: ["3.11"]
-        # TODO: Restore full matrix after fixing billing or making repo public
+        #
+        # EXPAND WHEN REPO GOES PUBLIC (Phase 3+):
+        # Uncomment the lines below and remove the reduced config above:
+        # os: [ubuntu-latest, macos-latest, windows-latest]
+        # python-version: ["3.10", "3.11", "3.12", "3.13"]
+        #
+        # Benefits of full matrix:
+        # - Tests cross-platform compatibility (Windows, macOS, Linux)
+        # - Validates all supported Python versions
+        # - No cost for public repos (unlimited Actions minutes)
+        #
+        # See: docs/ops/ci_expansion_guide.md for detailed instructions
 
     steps:
     - uses: actions/checkout@v4

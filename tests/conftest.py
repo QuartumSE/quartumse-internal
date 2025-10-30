@@ -8,6 +8,35 @@ from quartumse.shadows import ShadowConfig
 from quartumse.shadows.core import Observable
 
 
+def pytest_addoption(parser):
+    """Provide no-op coverage options when pytest-cov is unavailable."""
+
+    cov_group = parser.getgroup("cov")
+
+    try:
+        cov_group.addoption(
+            "--cov",
+            action="append",
+            dest="cov_source",
+            default=[],
+            help="dummy coverage option registered when pytest-cov is missing",
+        )
+    except ValueError:
+        # Option already provided (e.g., real pytest-cov is installed).
+        pass
+
+    try:
+        cov_group.addoption(
+            "--cov-report",
+            action="append",
+            dest="cov_report",
+            default=[],
+            help="dummy coverage report option registered when pytest-cov is missing",
+        )
+    except ValueError:
+        pass
+
+
 @pytest.fixture
 def backend():
     """Aer simulator backend."""

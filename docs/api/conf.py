@@ -106,6 +106,12 @@ nitpick_ignore = [
     # Pydantic classes
     ("py:class", "BackendSnapshot"),
     ("py:class", "MitigationConfig"),
+    # Ambiguous cross-references (classes re-exported from multiple modules)
+    # These use ref.python domain for internal cross-references
+    ("ref.python", "BackendSnapshot"),
+    ("ref.python", "MitigationConfig"),
+    ("ref.python", "MeasurementErrorMitigation"),
+    ("ref.python", "ShadowConfig"),
 ]
 
 apidoc_output_path = Path(__file__).parent / "reference"

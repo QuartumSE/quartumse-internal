@@ -75,6 +75,14 @@ docs = [
     "sphinx-autodoc-typehints>=1.24.0",
 ]
 
+mkdocs = [
+    "mkdocs>=1.5.0",
+    "mkdocs-material>=9.0.0",
+    "mkdocstrings[python]>=0.24.0",
+    "mkdocs-section-index>=0.3.0",
+    "markdown-include>=0.8.0",
+]
+
 # Phase 2+ optional dependencies (Python <3.13 required)
 mitigation = [
     "mitiq>=0.25.0; python_version<'3.13'",

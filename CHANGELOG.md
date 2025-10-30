@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Repository tour with ASCII directory tree structure in README.
 - Configurable `--data-dir`, `--seed`, and `--shadow-size` flags to `S_T01_ghz_baseline.py`.
 - `docs/ops/ci_expansion_guide.md` - Step-by-step guide for expanding CI matrix when repository becomes public (Phase 3).
+- MkDocs extras dependency group in `pyproject.toml` with `mkdocs-section-index` and `markdown-include` plugins.
 
 ### Changed
 - Streamlined README.md from ~500 lines to ~180 lines with clearer vision, 10-minute quickstart, and documentation index.
@@ -30,6 +31,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Outdated notebooks (preliminary_smoke_test, review_smoke_test_results, s_t01_ghz_classical_shadows)
   - Total reduction: ~3,285 lines of stale content
   - Files remain accessible in Git history for reference.
+
+### Fixed
+- MkDocs deployment workflow failures caused by missing `markdown-include` and `mkdocs-section-index` dependencies.
+- Type annotation compatibility issues with Python 3.10+ (replaced `Optional[X]` with `X | None`, removed deprecated typing imports).
+- Exception handling patterns to properly chain exceptions with `from err` or `from None`.
+- Windows path compatibility in test suite (`test_manifest_io.py`).
 
 ## [0.1.0] - 2024-05-01
 ### Added

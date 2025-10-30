@@ -23,6 +23,9 @@ try:
 except PackageNotFoundError:
     release = "0.1.0"
 
+# Extract version from release (e.g., "0.1.0" from "0.1.0")
+version = release.split("+")[0]  # Strip any +dev suffix if present
+
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autodoc.typehints",
@@ -59,8 +62,8 @@ html_theme = "alabaster"
 html_static_path = ["_static"]
 
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/3", {}),
-    "sphinx": ("https://www.sphinx-doc.org/en/master", {}),
+    "python": ("https://docs.python.org/3", None),
+    "sphinx": ("https://www.sphinx-doc.org/en/master", None),
 }
 
 apidoc_output_path = Path(__file__).parent / "reference"

@@ -51,28 +51,28 @@ jobs:
 
       - name: Update CITATION.cff
         run: |
-          python - <<'PY'
-import pathlib
-import sys
-import yaml
+          python - <<'EOF'
+          import pathlib
+          import sys
+          import yaml
 
-citation_path = pathlib.Path("CITATION.cff")
-if not citation_path.exists():
-    sys.stderr.write("CITATION.cff not found at repository root\n")
-    sys.exit(1)
+          citation_path = pathlib.Path("CITATION.cff")
+          if not citation_path.exists():
+              sys.stderr.write("CITATION.cff not found at repository root\n")
+              sys.exit(1)
 
-data = yaml.safe_load(citation_path.read_text())
-if not isinstance(data, dict):
-    sys.stderr.write("Unexpected CITATION.cff format\n")
-    sys.exit(1)
+          data = yaml.safe_load(citation_path.read_text())
+          if not isinstance(data, dict):
+              sys.stderr.write("Unexpected CITATION.cff format\n")
+              sys.exit(1)
 
-data["version"] = "${{ steps.release.outputs.version }}"
-data["date-released"] = "${{ steps.release.outputs.date }}"
+          data["version"] = "${{ steps.release.outputs.version }}"
+          data["date-released"] = "${{ steps.release.outputs.date }}"
 
-citation_path.write_text(
-    yaml.safe_dump(data, sort_keys=False, width=80)
-)
-PY
+          citation_path.write_text(
+              yaml.safe_dump(data, sort_keys=False, width=80)
+          )
+          EOF
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v6

@@ -68,6 +68,8 @@ intersphinx_mapping = {
     "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
     "scipy": ("https://docs.scipy.org/doc/scipy", None),
     "qiskit": ("https://docs.quantum.ibm.com/api/qiskit", None),
+    "qiskit_ibm_runtime": ("https://docs.quantum.ibm.com/api/qiskit-ibm-runtime", None),
+    "pydantic": ("https://docs.pydantic.dev/latest", None),
 }
 
 # Provide canonical targets for commonly re-exported types so that autodoc
@@ -76,6 +78,17 @@ intersphinx_mapping = {
 autodoc_type_aliases = {
     "ShadowConfig": "quartumse.shadows.config.ShadowConfig",
     "MeasurementErrorMitigation": "quartumse.mitigation.mem.MeasurementErrorMitigation",
+    "BackendSnapshot": "quartumse.reporting.manifest.BackendSnapshot",
+    "CircuitFingerprint": "quartumse.reporting.manifest.CircuitFingerprint",
+    "MitigationConfig": "quartumse.reporting.manifest.MitigationConfig",
+    "ResourceUsage": "quartumse.reporting.manifest.ResourceUsage",
+    "ShadowsConfig": "quartumse.reporting.manifest.ShadowsConfig",
+    "ManifestSchema": "quartumse.reporting.manifest.ManifestSchema",
+    "Backend": "qiskit.providers.backend.Backend",
+    "SamplerV2": "qiskit_ibm_runtime.SamplerV2",
+    "QiskitRuntimeService": "qiskit_ibm_runtime.QiskitRuntimeService",
+    "ValidationInfo": "pydantic_core.core_schema.ValidationInfo",
+    "Path": "pathlib.Path",
 }
 
 # ``numpy.random.Generator`` is exposed from an internal module in the NumPy
@@ -84,6 +97,8 @@ autodoc_type_aliases = {
 # private target name that appears in the type hints.
 nitpick_ignore = [
     ("py:class", "numpy.random._generator.Generator"),
+    ("py:class", "pydantic.main.BaseModel"),
+    ("py:attr", "confusion_matrix"),
 ]
 
 apidoc_output_path = Path(__file__).parent / "reference"

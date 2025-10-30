@@ -12,7 +12,7 @@ directly from the docstrings that live alongside the implementation in
    ../README
    ../tutorials/quickstart
    ../how-to/run-tests
-   ../strategy/roadmap
+   ../strategy/roadmap.md
 
 .. toctree::
    :maxdepth: 2

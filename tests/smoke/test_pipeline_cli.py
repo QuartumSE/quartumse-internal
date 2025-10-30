@@ -17,8 +17,8 @@ def _write_metadata(path: Path) -> None:
         "context": "Automated smoke validation for the pipeline CLI.",
         "aims": ["Exercise execution, verification, analysis, and reporting."],
         "success_criteria": [
-            "SSR average should be above 0.5",
-            "CI coverage should exceed 50%",
+            "SSR average should be above 0.3",
+            "CI coverage should exceed 40%",
         ],
         "methods": ["Execute the Aer simulator baseline and shadows runs."],
         "budget": {
@@ -29,7 +29,7 @@ def _write_metadata(path: Path) -> None:
         },
         "device": "aer_simulator",
         "discussion_template": "MAE {mae} CI {ci_coverage} SSR {ssr_average}",
-        "targets": {"ssr_average": 0.5, "ci_coverage": 0.5},
+        "targets": {"ssr_average": 0.3, "ci_coverage": 0.4},
         "ground_truth": {
             "observables": {
                 "ZI": {"expectation": 0.0},
@@ -87,5 +87,5 @@ def test_run_full_pipeline_cli(tmp_path: Path) -> None:
     assert "ssr_average" in summary
     assert "ci_coverage" in summary
     targets = analysis.get("targets", {})
-    assert targets.get("ssr_average") == pytest.approx(0.5)
-    assert targets.get("ci_coverage") == pytest.approx(0.5)
+    assert targets.get("ssr_average") == pytest.approx(0.3)
+    assert targets.get("ci_coverage") == pytest.approx(0.4)

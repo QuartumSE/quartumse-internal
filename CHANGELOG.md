@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Files remain accessible in Git history for reference.
 
 ### Fixed
+- GitHub Pages using random subdomain instead of proper project URL (added `site_url` to mkdocs.yml).
 - Integration test job failing with exit code 5 (added missing `@pytest.mark.integration` decorators to all integration tests).
 - Deprecated `actions/upload-artifact@v3` in CI workflow (upgraded to v4).
 - MkDocs deployment workflow failures caused by missing `markdown-include` and `mkdocs-section-index` dependencies.

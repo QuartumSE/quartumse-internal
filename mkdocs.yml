@@ -1,4 +1,5 @@
 site_name: QuartumSE
+site_url: https://quartumse.github.io/quartumse/
 repo_url: https://github.com/QuartumSE/quartumse
 theme:
   name: material

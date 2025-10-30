@@ -19,6 +19,7 @@ nav:
   - Reference:
       - API: reference/api/index.md
       - CLI: reference/cli.md
+      - Observable Notation: reference/observable-notation.md
   - Explanation:
       - Architecture: explanation/architecture.md
       - Manifest Schema: explanation/manifest-schema.md

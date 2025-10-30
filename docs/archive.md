@@ -47,11 +47,11 @@ Visit the commit directly: [fa5e756](https://github.com/quartumse/quartumse/tree
 
 For up-to-date documentation, see:
 
-- [Documentation index](README.md) - Complete navigation guide
-- [Tutorials](tutorials/) - Getting started guides
-- [How-to guides](how-to/) - Task-oriented walkthroughs
-- [Explanation](explanation/) - Deep dives into architecture and theory
-- [Strategy](strategy/) - Project roadmap and planning
+- [Documentation index](index.md) - Complete navigation guide
+- [Tutorials](tutorials/quickstart.md) - Getting started guides
+- [How-to guides](how-to/run-st01-ghz.md) - Task-oriented walkthroughs
+- [Explanation](explanation/architecture.md) - Deep dives into architecture and theory
+- [Strategy](strategy/roadmap.md) - Project roadmap and planning
 
 ## Superseding resources
 
@@ -59,7 +59,7 @@ Content from archived materials has been integrated into current documentation:
 
 - **Bootstrap & status reports** → [Phase 1 Task Checklist](strategy/phase1_task_checklist.md)
 - **Strategic analysis** → [Project Bible](strategy/project_bible.md) and [Roadmap](strategy/roadmap.md)
-- **Starter experiments** → [Shadow Experiments Directory](../experiments/shadows/)
-- **Old notebooks** → [Current Notebooks](../notebooks/) with comprehensive test suite
+- **Starter experiments** → Shadow experiments directory in repository root (`experiments/shadows/`)
+- **Old notebooks** → Current notebooks in repository root (`notebooks/`) with comprehensive test suite
 
 If you need specific information from archived files that isn't covered in current docs, please [open a discussion](https://github.com/quartumse/quartumse/discussions) or [file an issue](https://github.com/quartumse/quartumse/issues).

@@ -117,7 +117,7 @@ All data directories follow the same subdirectory structure:
     └── {experiment_id}_confusion.json
 ```
 
-See [`data/README.md`](../../data/README.md) for detailed schema documentation.
+See [`data/README.md`](https://github.com/quartumse/quartumse/blob/master/data/README.md) in the repository for detailed schema documentation.
 
 ---
 

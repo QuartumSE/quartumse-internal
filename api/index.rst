@@ -12,7 +12,13 @@ directly from the docstrings that live alongside the implementation in
    ../README
    ../tutorials/quickstart
    ../how-to/run-tests
-   ../strategy/roadmap.md
+   strategy/roadmap
+
+.. toctree::
+   :hidden:
+
+   ../strategy/phase1_task_checklist
+   ../ops/ci_expansion_guide
 
 .. toctree::
    :maxdepth: 2

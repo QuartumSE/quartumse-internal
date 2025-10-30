@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MkDocs extras dependency group in `pyproject.toml` with `mkdocs-section-index` and `markdown-include` plugins.
 
 ### Changed
+- **Switched MkDocs theme from Material to ReadTheDocs** for a cleaner, more traditional documentation appearance.
 - Streamlined README.md from ~500 lines to ~180 lines with clearer vision, 10-minute quickstart, and documentation index.
 - Updated documentation navigation structure (removed archive section, moved Phase 1 Checklist to Strategy).
 - Refactored `experiments/shadows/S_T01_ghz_baseline.py` to use standardized CLI argument helpers and improved config resolution logic.

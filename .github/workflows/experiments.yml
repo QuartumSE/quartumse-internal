@@ -35,7 +35,7 @@ jobs:
         # are not run in CI until fully implemented
 
     - name: Archive all manifests
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: nightly-experiment-manifests
@@ -43,7 +43,7 @@ jobs:
         retention-days: 90
 
     - name: Archive all reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: nightly-experiment-reports
@@ -75,7 +75,7 @@ jobs:
           --output validation_data/pipeline_smoke/
 
     - name: Upload pipeline artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: pipeline-simulator-artifacts

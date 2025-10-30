@@ -12,8 +12,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        # Reduced matrix during billing issue resolution
+        # Full matrix: os: [ubuntu-latest, macos-latest, windows-latest], python: ["3.10", "3.11", "3.12", "3.13"]
+        os: [ubuntu-latest]
+        python-version: ["3.11"]
+        # TODO: Restore full matrix after fixing billing or making repo public
 
     steps:
     - uses: actions/checkout@v4

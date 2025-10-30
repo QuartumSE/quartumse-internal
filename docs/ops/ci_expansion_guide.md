@@ -306,7 +306,7 @@ Status: Free forever
 
 - [Phase 1 Task Checklist](../strategy/phase1_task_checklist.md)
 - [Roadmap](../strategy/roadmap.md) - Phase 3 milestones
-- [CI Workflow](.github/workflows/ci.yml) - Current configuration
+- [CI Workflow](https://github.com/QuartumSE/quartumse/blob/master/.github/workflows/ci.yml) - Current configuration
 - [GitHub Actions Pricing](https://docs.github.com/en/billing/managing-billing-for-github-actions/about-billing-for-github-actions)
 
 ---

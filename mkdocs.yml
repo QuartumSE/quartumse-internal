@@ -2,11 +2,12 @@ site_name: QuartumSE
 site_url: https://quartumse.github.io/quartumse/
 repo_url: https://github.com/QuartumSE/quartumse
 theme:
-  name: material
-  features:
-    - navigation.sections
-    - content.code.copy
-    - toc.integrate
+  name: readthedocs
+  highlightjs: true
+  hljs_languages:
+    - yaml
+    - python
+    - bash
 nav:
   - Home: index.md
   - Tutorials:

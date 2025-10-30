@@ -177,7 +177,15 @@ def _resolve_backend(descriptor: str):
     """Resolve ``descriptor`` into a backend and snapshot."""
 
     if descriptor == "aer_simulator":
-        backend = AerSimulator()
+        # The Aer simulator is used throughout the smoke tests where reproducibility
+        # is important to avoid flakiness.  By default the simulator samples from
+        # a new random seed on every invocation which leads to highly variable
+        # classical-shadow estimates and therefore to occasional target failures
+        # when the CLI is exercised with a tiny shot budget.  Seeding the
+        # simulator keeps the entire pipeline deterministic and ensures that
+        # repeated runs – locally and in CI – observe identical expectation
+        # values.
+        backend = AerSimulator(seed_simulator=314159)
         snapshot = create_backend_snapshot(backend)
         return backend, snapshot
 

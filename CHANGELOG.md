@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Files remain accessible in Git history for reference.
 
 ### Fixed
+- Deprecated `actions/upload-artifact@v3` in CI workflow (upgraded to v4).
 - MkDocs deployment workflow failures caused by missing `markdown-include` and `mkdocs-section-index` dependencies.
 - Type annotation compatibility issues with Python 3.10+ (replaced `Optional[X]` with `X | None`, removed deprecated typing imports).
 - Exception handling patterns to properly chain exceptions with `from err` or `from None`.

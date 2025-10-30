@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MkDocs extras dependency group in `pyproject.toml` with `mkdocs-section-index` and `markdown-include` plugins.
 
 ### Changed
-- **Switched MkDocs theme from Material to ReadTheDocs** for a cleaner, more traditional documentation appearance.
+- **Reverted MkDocs theme back to Material** (from ReadTheDocs) for better navigation, modern design, and improved mobile experience. Added light/dark mode toggle.
 - Streamlined README.md from ~500 lines to ~180 lines with clearer vision, 10-minute quickstart, and documentation index.
 - Updated documentation navigation structure (removed archive section, moved Phase 1 Checklist to Strategy).
 - Refactored `experiments/shadows/S_T01_ghz_baseline.py` to use standardized CLI argument helpers and improved config resolution logic.
@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Files remain accessible in Git history for reference.
 
 ### Fixed
+- Pipeline smoke test unrealistic SSR targets (adjusted from 0.5 to 0.3 for 64-shot test runs).
 - Sphinx API documentation build errors (added missing `version` config value and fixed `intersphinx_mapping` for Sphinx 8.x compatibility).
 - GitHub Pages using random subdomain instead of proper project URL (added `site_url` to mkdocs.yml).
 - Integration test job failing with exit code 5 (added missing `@pytest.mark.integration` decorators to all integration tests).

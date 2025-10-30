@@ -1,0 +1,1839 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../project_bible/">
+      
+      
+        <link rel="next" href="../phase1_task_checklist/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
+    
+    
+      
+        <title>Roadmap - QuartumSE</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.84d31ad4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#quartumse-rdcentric-roadmap-updated-20252026" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="QuartumSE" class="md-header__button md-logo" aria-label="QuartumSE" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            QuartumSE
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Roadmap
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/QuartumSE/quartumse" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="QuartumSE" class="md-nav__button md-logo" aria-label="QuartumSE" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    QuartumSE
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/QuartumSE/quartumse" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Tutorials
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorials
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quickstart
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/hardware_quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hardware Quickstart
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    How-to
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            How-to
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/run-st01-ghz/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Run S-T01 GHZ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/run-mem-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Run MEM (v1)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/replay-from-manifest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Replay from Manifest
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/generate-report/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Generate Report
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/observable-notation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Observable Notation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Explanation
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Explanation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/manifest-schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Manifest Schema
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/shadows-theory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Shadows Theory
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Operations
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Operations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ops/runtime_runbook/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    IBM Runtime Runbook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Strategy
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Strategy
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../project_bible/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Project Bible
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Roadmap
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Roadmap
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#phase-snapshot-oct-2025" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase snapshot (Oct 2025)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glossary-metrics-terms" class="md-nav__link">
+    <span class="md-ellipsis">
+      Glossary (metrics &amp; terms)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#program-structure-at-a-glance" class="md-nav__link">
+    <span class="md-ellipsis">
+      Program Structure at a Glance
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operational-cadence-checkpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      Operational cadence checkpoints
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-1-foundation-rd-sprints-now-nov-2025" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 1 — Foundation &amp; R&amp;D Sprints (Now → Nov 2025)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 1 — Foundation &amp; R&amp;D Sprints (Now → Nov 2025)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objectives" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objectives
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deliverables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deliverables
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#experiments-tests-p1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Experiments &amp; Tests (P1)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exit-success-criteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exit / Success Criteria
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-2-hardwarefirst-iteration-patent-drafts-nov-dec-2025" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 2 — Hardware‑First Iteration &amp; Patent Drafts (Nov → Dec 2025)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 2 — Hardware‑First Iteration &amp; Patent Drafts (Nov → Dec 2025)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objectives_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objectives
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deliverables_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deliverables
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#experiments-tests-p2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Experiments &amp; Tests (P2)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exit-success-criteria-gate-to-p3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exit / Success Criteria (Gate to P3)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-3-internal-validation-publicationpatent-gate-jan-mar-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 3 — Internal Validation &amp; Publication/Patent Gate (Jan → Mar 2026)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 3 — Internal Validation &amp; Publication/Patent Gate (Jan → Mar 2026)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objectives_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objectives
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deliverables_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deliverables
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#experiments-tests-p3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Experiments &amp; Tests (P3)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exit-success-criteria-gate-to-early-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exit / Success Criteria (Gate to Early Access)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-4-early-access-design-partners-multiprovider-expansion-apr-jun-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 4 — Early Access (Design Partners) &amp; Multi‑Provider Expansion (Apr → Jun 2026)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 4 — Early Access (Design Partners) &amp; Multi‑Provider Expansion (Apr → Jun 2026)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objectives_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objectives
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deliverables_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deliverables
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#experiments-tests-p4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Experiments &amp; Tests (P4)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exit-success-criteria_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exit / Success Criteria
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-5-public-beta-pilot-conversion-jul-sep-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 5 — Public Beta &amp; Pilot Conversion (Jul → Sep 2026)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 5 — Public Beta &amp; Pilot Conversion (Jul → Sep 2026)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#objectives_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Objectives
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deliverables_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deliverables
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#experiments-tests-p5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Experiments &amp; Tests (P5)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kpis" class="md-nav__link">
+    <span class="md-ellipsis">
+      KPIs
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#algorithm-test-matrix-ids-referenced-above" class="md-nav__link">
+    <span class="md-ellipsis">
+      Algorithm &amp; Test Matrix (IDs referenced above)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#governance-gating-quality" class="md-nav__link">
+    <span class="md-ellipsis">
+      Governance, Gating &amp; Quality
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#timeline-target" class="md-nav__link">
+    <span class="md-ellipsis">
+      Timeline (target)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Timeline (target)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#notes-for-engineering" class="md-nav__link">
+    <span class="md-ellipsis">
+      Notes for Engineering
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../phase1_task_checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Phase 1 Checklist
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="quartumse-rdcentric-roadmap-updated-20252026">QuartumSE R&amp;D‑Centric Roadmap (Updated, 2025–2026)<a class="headerlink" href="#quartumse-rdcentric-roadmap-updated-20252026" title="Permanent link">&para;</a></h1>
+<p><em>Last updated: 2025-10-24</em></p>
+<h3 id="phase-snapshot-oct-2025">Phase snapshot (Oct 2025)<a class="headerlink" href="#phase-snapshot-oct-2025" title="Permanent link">&para;</a></h3>
+<ul>
+<li>✅ Phase 1 scaffolding, provenance pipeline, and CI harness are live.</li>
+<li>✅ S‑T01 GHZ baseline + S‑T02 noise-aware runs validated on IBM <code>ibm_torino</code> (smoke test Oct 22, 2025).</li>
+<li>✅ IBM Runtime CLI (<code>quartumse runtime-status</code>) operational with webhook notifications.</li>
+<li>⚠️ Extended IBM hardware validation (target SSR ≥ 1.1 across repeated runs) scheduled for Nov 2025.</li>
+<li>⚠️ Cross-workstream starter experiments (C/O/B/M) need first data drops before Phase 1 closes.</li>
+<li>📝 Patent theme shortlist drafting in progress ahead of the Phase 2 gate review.</li>
+<li>📋 See <a href="../phase1_task_checklist/"><code>phase1_task_checklist.md</code></a> for the consolidated execution checklist that enumerates every
+  outstanding task before the Phase 1 gate review.</li>
+</ul>
+<blockquote>
+<p><strong>Principle:</strong> Front‑load <strong>research &amp; hardware iteration</strong>. Build on IBM Quantum free‑tier devices until we have an <strong>attractive, validated, and patentable</strong> measurement stack. Only then open <strong>Early Access</strong> for design partners.</p>
+</blockquote>
+<p>This roadmap folds in: (i) a <strong>sophisticated classical shadows</strong> program, (ii) concrete <strong>experiments &amp; tests</strong> mapped to each phase, and (iii) clear <strong>publication/patent gates</strong> before external onboarding.</p>
+<hr />
+<h2 id="glossary-metrics-terms">Glossary (metrics &amp; terms)<a class="headerlink" href="#glossary-metrics-terms" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>SSR (Shot‑Savings Ratio):</strong> shot‑count (baseline) ÷ shot‑count (QuartumSE) at equal error tolerance.</li>
+<li><strong>RMSE@$:</strong> cost‑for‑accuracy — dollars (or credits/time) to reach a target RMSE on an observable/metric.</li>
+<li><strong>CI coverage:</strong> frequency a 95% CI contains ground truth (simulation) or gold standard (hardware cross‑checks).</li>
+<li><strong>Provenance Manifest:</strong> JSON artifact capturing circuits, calibrations, mitigations, backend, seeds, versions.</li>
+<li><strong>MEM / M3:</strong> measurement error mitigation (confusion matrices); <strong>ZNE:</strong> zero‑noise extrapolation.</li>
+<li><strong>PEC:</strong> probabilistic error cancellation; <strong>RC:</strong> randomized compiling.</li>
+</ul>
+<hr />
+<h2 id="program-structure-at-a-glance">Program Structure at a Glance<a class="headerlink" href="#program-structure-at-a-glance" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Workstream S (Shadows):</strong> Classical Shadows Engine v0→v4 (baseline → noise‑aware → fermionic → adaptive/derandomized → robust Bayesian/bootstrapped).</li>
+<li><strong>Workstream C (Chemistry/VQE):</strong> Shadow‑VQE for small molecules (H₂, LiH, BeH₂).</li>
+<li><strong>Workstream O (Optimization/QAOA):</strong> Shot‑frugal QAOA on MAX‑CUT &amp; MIS toy instances.</li>
+<li><strong>Workstream B (Benchmarking):</strong> RB/XEB/Quantum‑Volume + <strong>Shadow‑Benchmarking</strong> (fidelity/entropy/purity via shadows).</li>
+<li><strong>Workstream M (Metrology):</strong> Variational entangled probes (GHZ/W states) for phase‑sensing toy tasks.</li>
+<li><strong>Workstream P (Provenance &amp; Reporting):</strong> Manifest schema, CI pipelines, PDF/HTML reports, reproducibility notebooks.</li>
+</ul>
+<p>Each phase below enumerates <strong>Experiments &amp; Tests</strong> with IDs that recur across phases for iteration &amp; scaling.</p>
+<h2 id="operational-cadence-checkpoints">Operational cadence checkpoints<a class="headerlink" href="#operational-cadence-checkpoints" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Monthly (first business day):</strong> Run <code>quartumse runtime-status --json --backend ibm:ibmq_brisbane --instance ibm-q/open/main</code> and log runtime minutes, queue caps, and fallback readiness in <code>OPS_RUNTIME_RUNBOOK.md</code>. Schedule a recurring calendar reminder for the ops lead.</li>
+<li><strong>Weekly (Mondays):</strong> Trigger the runtime status CLI with Slack webhook enabled to post queue depth/quota snapshots into the project notifications channel. Use the summary to reprioritise hardware jobs if the queue is saturated.</li>
+</ul>
+<hr />
+<h2 id="phase-1-foundation-rd-sprints-now-nov-2025">Phase 1 — Foundation &amp; R&amp;D Sprints (Now → Nov 2025)<a class="headerlink" href="#phase-1-foundation-rd-sprints-now-nov-2025" title="Permanent link">&para;</a></h2>
+<p><strong>Focus:</strong> Ship scaffolding <em>and</em> start real algorithmic experiments immediately (sim + small IBM jobs).</p>
+<h3 id="objectives">Objectives<a class="headerlink" href="#objectives" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Solidify repository, CI/CD, SDK skeleton, provenance/reporting.</li>
+<li>Implement <strong>Shadows v0</strong> (random local Clifford) + <strong>v1</strong> (noise‑aware inverse‑channel + MEM).</li>
+<li>Stand up baseline <strong>C</strong>, <strong>O</strong>, <strong>B</strong>, <strong>M</strong> toy pipelines against Aer simulator and at least one IBM free‑tier backend.</li>
+<li>Deliver a tractable <strong>test suite</strong> and benchmarking harness (pytest + notebooks).</li>
+</ul>
+<h3 id="deliverables">Deliverables<a class="headerlink" href="#deliverables" title="Permanent link">&para;</a></h3>
+<ul>
+<li>SDK modules: <code>Estimator</code>, <code>Shadows</code>, <code>Report</code>; <strong>Provenance Manifest v1</strong>; quickstart notebook.</li>
+<li>Mitigation core: <strong>MEM (M3)</strong> (production) and <strong>ZNE</strong> scaffolding; PEC/RC hooks planned post-Phase 1.</li>
+<li><strong>Shadows v0–v1</strong> reference implementation with CI. </li>
+<li>Test harness: datasets, seeds, fixtures; storage: Parquet/DuckDB; PDF/HTML report.</li>
+<li><strong>Internal whiteboard spec</strong> for patent themes (see Phase 2 gate).</li>
+</ul>
+<h3 id="experiments-tests-p1">Experiments &amp; Tests (P1)<a class="headerlink" href="#experiments-tests-p1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>S‑T01 (Shadows‑Core):</strong> Random local Clifford shadows on GHZ(3–5), Bell pairs; estimate ⟨Zᵢ⟩, ⟨ZᵢZⱼ⟩, purity. <em>Targets:</em> CI coverage ≥ 0.9; SSR ≥ 1.2 on sim, ≥ 1.1 on IBM.</li>
+<li><strong>S‑T02 (Noise‑Aware):</strong> Calibrate per‑qubit inverse channel; compare with/without MEM; compute variance reduction.</li>
+<li><strong>C‑T01 (H₂@STO‑3G):</strong> Hardware‑efficient VQE (depth ≤ 2) + <strong>Shadows readout</strong> of Hamiltonian terms; energy error ≤ 50 mHa (sim), ≤ 80 mHa (IBM).</li>
+<li><strong>O‑T01 (MAX‑CUT‑5):</strong> QAOA p∈{1,2} on 5‑node ring; shot‑frugal optimizer; compare cost estimate variance with/without Shadows proxy.</li>
+<li><strong>B‑T01 (RB/XEB):</strong> 1–3 qubit RB; XEB on depth‑limited random circuits; log into Manifest; compare to IBM backend calibration metadata.</li>
+<li><strong>M‑T01 (GHZ‑Phase):</strong> Prepare GHZ(3–4), encode small Z‑phase, estimate via optimal readout; CI coverage ≥ 0.8 on sim; explore ZNE for readout bias.</li>
+</ul>
+<h3 id="exit-success-criteria">Exit / Success Criteria<a class="headerlink" href="#exit-success-criteria" title="Permanent link">&para;</a></h3>
+<ul>
+<li>End‑to‑end run from notebook → manifest → report on Aer + <em>at least one</em> IBM free‑tier backend.</li>
+<li>SSR ≥ <strong>1.2×</strong> on Shadows‑Core (sim) and ≥ <strong>1.1×</strong> (IBM).</li>
+<li>CI coverage ≥ 80%, zero critical issues, reproducible seeds &amp; manifests.</li>
+<li>Patent themes shortlist (top‑3) + experiment data to support novelty.</li>
+</ul>
+<hr />
+<h2 id="phase-2-hardwarefirst-iteration-patent-drafts-nov-dec-2025">Phase 2 — Hardware‑First Iteration &amp; Patent Drafts (Nov → Dec 2025)<a class="headerlink" href="#phase-2-hardwarefirst-iteration-patent-drafts-nov-dec-2025" title="Permanent link">&para;</a></h2>
+<p><strong>Focus:</strong> Iterate <strong>on hardware</strong>. Elevate shadows &amp; domain demos; lock initial patent filings; prep first papers.</p>
+<h3 id="objectives_1">Objectives<a class="headerlink" href="#objectives_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Implement <strong>Shadows v2 (Fermionic)</strong> for 2‑RDM estimation; integrate with VQE readout.</li>
+<li>Prototype <strong>Shadows v3 (Adaptive/Derandomized)</strong>: choose measurement ensembles to minimize estimator variance given target observable set.</li>
+<li>Harden error mitigation combinations (<strong>MEM + RC + ZNE</strong>) with ablation studies.</li>
+<li>Run structured <strong>hardware campaigns</strong> (blocked time windows) to control drift.</li>
+</ul>
+<h3 id="deliverables_1">Deliverables<a class="headerlink" href="#deliverables_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>IBM hardware campaign #1</strong> dataset + full manifests + PDF/HTML reports.</li>
+<li><strong>Provisional patent</strong> draft(s) for: <strong>Variance‑Aware Adaptive Classical Shadows (VACS)</strong>; <strong>Shadow‑VQE readout</strong> integration; <strong>Shadow‑Benchmarking</strong> workflow.</li>
+<li>Two <strong>arXiv preprints</strong>: (i) Shadows engine on IBM, (ii) Shadow‑VQE for H₂/LiH small‑basis.</li>
+<li>Updated SDK APIs (stabilize experimental flags), plus “replay from manifest” tooling.</li>
+</ul>
+<h3 id="experiments-tests-p2">Experiments &amp; Tests (P2)<a class="headerlink" href="#experiments-tests-p2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>S‑T03 (Fermionic‑Shadows):</strong> Direct 2‑RDM from shadows; H₂/LiH energies within 40–60 mHa on IBM at ≤ baseline shots; <strong>SSR ≥ 1.3×</strong> (IBM).</li>
+<li><strong>S‑T04 (Adaptive/Derand):</strong> Greedy/importance‑sampled basis selection vs plain random; measure variance ↓ ≥ 25% for fixed shots (IBM).</li>
+<li><strong>C‑T02 (LiH@Minimal):</strong> VQE with <strong>Shadow‑readout</strong> vs grouped‑Pauli readout; RMSE@$ ↓ by ≥ 30% at matched error bars.</li>
+<li><strong>O‑T02 (MAX‑CUT‑6/7):</strong> Depth‑aware layout + RC; shot‑allocation per‑iteration; track optimizer steps saved vs fixed‑shot budget.</li>
+<li><strong>B‑T02 (Shadow‑Benchmarking):</strong> Estimate linear entropy, multi‑qubit purities, and fidelity to GHZ using the same shadows dataset; compare to direct methods; <strong>sample‑efficiency ≥ 2×</strong>.</li>
+<li><strong>M‑T02 (Variational‑Metrology):</strong> Variational state+measurement co‑optimization for phase sensing; demonstrate &gt; classical shot‑noise scaling on sim, and robust advantage trend on IBM within CI.</li>
+</ul>
+<h3 id="exit-success-criteria-gate-to-p3">Exit / Success Criteria (Gate to P3)<a class="headerlink" href="#exit-success-criteria-gate-to-p3" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>SSR ≥ 1.3× on IBM</strong> for at least one domain test (Shadows‑Core or Fermionic‑Shadows).</li>
+<li>Draft <strong>provisional patent(s) filed</strong>; arXiv preprints ready.</li>
+<li>CI artifacts: reproducible notebooks, manifests, reports for all P2 tests.</li>
+</ul>
+<hr />
+<h2 id="phase-3-internal-validation-publicationpatent-gate-jan-mar-2026">Phase 3 — Internal Validation &amp; Publication/Patent Gate (Jan → Mar 2026)<a class="headerlink" href="#phase-3-internal-validation-publicationpatent-gate-jan-mar-2026" title="Permanent link">&para;</a></h2>
+<p><strong>Focus:</strong> Consolidate results; conduct controlled comparisons; submit publications; finalize patents. No external users yet.</p>
+<h3 id="objectives_2">Objectives<a class="headerlink" href="#objectives_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Build <strong>automated benchmark suite</strong>: GHZ, VQE(H₂, LiH, BeH₂), QAOA(MAX‑CUT‑k), Shadow‑Benchmarking panels.</li>
+<li>Statistical validation: <strong>SSR</strong>, <strong>RMSE@$</strong>, <strong>CI coverage</strong>, <strong>reproducibility</strong> (&lt; 2% drift under re‑runs).</li>
+<li>Implement <strong>Shadows v4 (Robust/Bayesian)</strong>: bootstrap CI, variance debiasing, heteroscedastic weighting by device cal data.</li>
+<li>Prepare <strong>journal submissions</strong> (PRX Quantum/npjQI/Quantum) and <strong>non‑provisional patent filings</strong>.</li>
+</ul>
+<h3 id="deliverables_2">Deliverables<a class="headerlink" href="#deliverables_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Benchmark suite (pytest + CLI) with <strong>per‑test Manifest templates</strong> and reporting.</li>
+<li>Internal <strong>whitepaper</strong> and slide deck with full ablation matrices.</li>
+<li>Code‑frozen <strong>R&amp;D branch</strong> tagged for archival reproducibility (DOI/Zenodo).</li>
+</ul>
+<h3 id="experiments-tests-p3">Experiments &amp; Tests (P3)<a class="headerlink" href="#experiments-tests-p3" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>S‑T05 (Robust‑Shadows):</strong> Bootstrap CI coverage ≥ 0.9 on sim and ≥ 0.85 on IBM across GHZ and small‑chemistry states.</li>
+<li><strong>C‑T03 (BeH₂@Minimal):</strong> Shadow‑VQE energy within 80–100 mHa on IBM; <strong>RMSE@$</strong> ↓ ≥ 35% vs grouped‑Pauli baseline.</li>
+<li><strong>O‑T03 (MAX‑CUT‑7)</strong> and <strong>O‑T04 (MIS‑6):</strong> Evaluate solution quality vs shots; show <strong>optimizer steps ↓ ≥ 20%</strong> using shot‑frugal and variance‑aware estimates.</li>
+<li><strong>B‑T03 (Cross‑Provider Sim):</strong> Aer vs IBM reproducibility; manifest “replay” round‑trip equality.</li>
+<li><strong>M‑T03 (Sensor‑Tuning):</strong> Variational probe robustness to readout noise; CI width ↓ 15–25% after robust shadows weighting.</li>
+</ul>
+<h3 id="exit-success-criteria-gate-to-early-access">Exit / Success Criteria (Gate to Early Access)<a class="headerlink" href="#exit-success-criteria-gate-to-early-access" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>SSR ≥ 1.5×</strong> achieved on internal benchmarks; <strong>RMSE@$</strong> consistently better than baselines.</li>
+<li><strong>At least one paper accepted</strong> (or under strong revise‑&amp;‑resubmit) and <strong>patents filed</strong>.</li>
+<li><strong>Provenance &amp; replay</strong> validated; CI green across full suite.</li>
+<li><strong>Repository made public</strong>: Audit Git history for secrets, make repo public to enable external contributions.</li>
+<li><strong>CI matrix expanded</strong>: Restore full cross-platform testing (12 jobs: 3 OSes × 4 Python versions). See <a href="../../ops/ci_expansion_guide/"><code>docs/ops/ci_expansion_guide.md</code></a>.</li>
+</ul>
+<blockquote>
+<p><strong>Only once the above gates are cleared do we begin external onboarding.</strong></p>
+</blockquote>
+<hr />
+<h2 id="phase-4-early-access-design-partners-multiprovider-expansion-apr-jun-2026">Phase 4 — Early Access (Design Partners) &amp; Multi‑Provider Expansion (Apr → Jun 2026)<a class="headerlink" href="#phase-4-early-access-design-partners-multiprovider-expansion-apr-jun-2026" title="Permanent link">&para;</a></h2>
+<p><strong>Focus:</strong> Limited Early Access after patents/papers. Add AWS Braket connector. Gather external evidence on real workloads.</p>
+<h3 id="objectives_3">Objectives<a class="headerlink" href="#objectives_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Onboard 2–3 design partners (academia/industry) with NDAs referencing filed IP.</li>
+<li>Implement <strong>AWS Braket connector</strong>; cross‑provider parity and consistency tests.</li>
+<li>Partner‑coauthored case studies; feedback loop into APIs &amp; docs.</li>
+</ul>
+<h3 id="deliverables_3">Deliverables<a class="headerlink" href="#deliverables_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Partner playbooks; onboarding notebooks; Slack/Discord channels.</li>
+<li>Cross‑provider tests: same circuits on IBM vs AWS; delta analysis reported.</li>
+<li>Case study draft(s) + testimonial(s).</li>
+</ul>
+<h3 id="experiments-tests-p4">Experiments &amp; Tests (P4)<a class="headerlink" href="#experiments-tests-p4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>B‑T04 (Cross‑Provider Parity):</strong> Within 10% agreement on observables post‑mitigation across IBM/AWS for GHZ and VQE(H₂) tasks.</li>
+<li><strong>C‑T04 (Partner‑Chemistry):</strong> Run partner‑provided small chemistry model; maintain <strong>SSR ≥ 1.5×</strong>.</li>
+<li><strong>O‑T05 (Partner‑Optimization):</strong> QAOA on a partner toy instance; capture wall‑clock + cost deltas in RMSE@$.</li>
+<li><strong>S‑T06 (Partner‑Shadows):</strong> Validate adaptive shadows on partner circuits; document any domain‑specific gains.</li>
+</ul>
+<h3 id="exit-success-criteria_1">Exit / Success Criteria<a class="headerlink" href="#exit-success-criteria_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>≥3 partners actively running; parity across providers; partner satisfaction survey ≥ 8/10.</li>
+<li>External replication of <strong>SSR ≥ 1.5×</strong>; stable APIs for public beta drafting.</li>
+</ul>
+<hr />
+<h2 id="phase-5-public-beta-pilot-conversion-jul-sep-2026">Phase 5 — Public Beta &amp; Pilot Conversion (Jul → Sep 2026)<a class="headerlink" href="#phase-5-public-beta-pilot-conversion-jul-sep-2026" title="Permanent link">&para;</a></h2>
+<p><strong>Focus:</strong> Stabilize and open up. Convert Early Access into pilots. Prepare commercial posture.</p>
+<h3 id="objectives_4">Objectives<a class="headerlink" href="#objectives_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Public Beta (v1.0) on PyPI + GitHub; full docs; examples; tutorials.</li>
+<li>Secure 2–3 pilot customers/LOIs; webinar/demo using published results.</li>
+<li>Verify <strong>SSR ≥ 2.0×</strong> in multi‑provider benchmarks; publish follow‑ups.</li>
+</ul>
+<h3 id="deliverables_4">Deliverables<a class="headerlink" href="#deliverables_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>v1.0 release; docs portal; community channels; issue triage.</li>
+<li>Pilot SOW templates; pricing experiments around RMSE@$ value metric.</li>
+<li>Public benchmark report with manifests for community reproduction.</li>
+</ul>
+<h3 id="experiments-tests-p5">Experiments &amp; Tests (P5)<a class="headerlink" href="#experiments-tests-p5" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>B‑T05 (Public Benchmarks):</strong> Community‑reproducible GHZ/VQE/QAOA panels with manifests and reference CI.</li>
+<li><strong>C‑T05 (Chemistry‑Scale‑Up):</strong> Largest feasible molecule instance on accessible hardware; publish shot &amp; cost curves.</li>
+<li><strong>S‑T07 (Shadows‑Ablation Public):</strong> Public ablation notebook isolating contributions from v0→v4 components.</li>
+</ul>
+<h3 id="kpis">KPIs<a class="headerlink" href="#kpis" title="Permanent link">&para;</a></h3>
+<ul>
+<li>≥5 orgs using (3 design partners + ≥2 pilots); ≥2 paying/committed customers.</li>
+<li>Verified <strong>SSR ≥ 2.0×</strong> on multi‑provider suite; community replications reported.</li>
+</ul>
+<hr />
+<h2 id="algorithm-test-matrix-ids-referenced-above">Algorithm &amp; Test Matrix (IDs referenced above)<a class="headerlink" href="#algorithm-test-matrix-ids-referenced-above" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">ID</th>
+<th>Category</th>
+<th>Technique</th>
+<th>Circuits / Instances</th>
+<th>Backends</th>
+<th>Primary Metrics</th>
+<th>Evidence Artifacts</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">S‑T01</td>
+<td>Shadows</td>
+<td>v0 (random local Clifford)</td>
+<td>Bell, GHZ(3–5)</td>
+<td>Aer, IBM free‑tier</td>
+<td>SSR, CI coverage</td>
+<td>Manifest, notebook, PDF</td>
+</tr>
+<tr>
+<td style="text-align: right;">S‑T02</td>
+<td>Shadows</td>
+<td>v1 (noise‑aware + MEM)</td>
+<td>As above</td>
+<td>Aer, IBM</td>
+<td>Var. reduction, bias</td>
+<td>Manifest, ablation table</td>
+</tr>
+<tr>
+<td style="text-align: right;">S‑T03</td>
+<td>Shadows</td>
+<td>v2 (fermionic)</td>
+<td>H₂/LiH 2‑RDM</td>
+<td>Aer, IBM</td>
+<td>Energy error, SSR</td>
+<td>Manifest, data parquet</td>
+</tr>
+<tr>
+<td style="text-align: right;">S‑T04</td>
+<td>Shadows</td>
+<td>v3 (adaptive/derand)</td>
+<td>Target Pauli sets</td>
+<td>Aer, IBM</td>
+<td>Variance ↓</td>
+<td>Manifest, policy snapshot</td>
+</tr>
+<tr>
+<td style="text-align: right;">S‑T05</td>
+<td>Shadows</td>
+<td>v4 (robust/Bayesian)</td>
+<td>GHZ + chemistry</td>
+<td>Aer, IBM</td>
+<td>CI coverage, width</td>
+<td>Manifest, bootstrap logs</td>
+</tr>
+<tr>
+<td style="text-align: right;">C‑T01</td>
+<td>Chemistry</td>
+<td>VQE + Shadow readout</td>
+<td>H₂@STO‑3G</td>
+<td>Aer, IBM</td>
+<td>Energy error, RMSE@$</td>
+<td>Manifest, report</td>
+</tr>
+<tr>
+<td style="text-align: right;">C‑T02</td>
+<td>Chemistry</td>
+<td>Shadow‑VQE vs grouped</td>
+<td>LiH@minimal</td>
+<td>Aer, IBM</td>
+<td>RMSE@$ ↓</td>
+<td>Notebook, plot</td>
+</tr>
+<tr>
+<td style="text-align: right;">C‑T03</td>
+<td>Chemistry</td>
+<td>Scale‑up</td>
+<td>BeH₂@minimal</td>
+<td>Aer, IBM</td>
+<td>Energy error, SSR</td>
+<td>Manifest, report</td>
+</tr>
+<tr>
+<td style="text-align: right;">C‑T04</td>
+<td>Chemistry</td>
+<td>Partner task</td>
+<td>Partner circuit</td>
+<td>IBM/AWS</td>
+<td>SSR ≥1.5×</td>
+<td>Case study</td>
+</tr>
+<tr>
+<td style="text-align: right;">C‑T05</td>
+<td>Chemistry</td>
+<td>Public benchmark</td>
+<td>Largest feasible</td>
+<td>IBM/AWS</td>
+<td>Shot &amp; cost curves</td>
+<td>Public repo</td>
+</tr>
+<tr>
+<td style="text-align: right;">O‑T01</td>
+<td>Optimization</td>
+<td>QAOA p≤2</td>
+<td>MAX‑CUT‑5</td>
+<td>Aer, IBM</td>
+<td>Cost var., steps</td>
+<td>Manifest, runtime logs</td>
+</tr>
+<tr>
+<td style="text-align: right;">O‑T02</td>
+<td>Optimization</td>
+<td>Shot‑frugal + RC</td>
+<td>MAX‑CUT‑6/7</td>
+<td>IBM</td>
+<td>Steps ↓, RMSE@$</td>
+<td>Report</td>
+</tr>
+<tr>
+<td style="text-align: right;">O‑T03</td>
+<td>Optimization</td>
+<td>MIS‑6</td>
+<td>MIS‑6</td>
+<td>IBM</td>
+<td>Quality vs shots</td>
+<td>Manifest</td>
+</tr>
+<tr>
+<td style="text-align: right;">O‑T04</td>
+<td>Optimization</td>
+<td>MAX‑CUT‑7</td>
+<td>MAX‑CUT‑7</td>
+<td>IBM</td>
+<td>Steps ↓</td>
+<td>Logs</td>
+</tr>
+<tr>
+<td style="text-align: right;">O‑T05</td>
+<td>Optimization</td>
+<td>Partner task</td>
+<td>Partner graph</td>
+<td>IBM/AWS</td>
+<td>RMSE@$</td>
+<td>Case study</td>
+</tr>
+<tr>
+<td style="text-align: right;">B‑T01</td>
+<td>Benchmark</td>
+<td>RB/XEB</td>
+<td>1–3q RB; XEB</td>
+<td>IBM</td>
+<td>Gate error trends</td>
+<td>Manifest, plots</td>
+</tr>
+<tr>
+<td style="text-align: right;">B‑T02</td>
+<td>Benchmark</td>
+<td>Shadow‑Benchmarking</td>
+<td>Purity, entropy, GHZ‑Fid</td>
+<td>IBM</td>
+<td>Sample‑efficiency</td>
+<td>Report</td>
+</tr>
+<tr>
+<td style="text-align: right;">B‑T03</td>
+<td>Benchmark</td>
+<td>Reproducibility</td>
+<td>Aer vs IBM</td>
+<td>Aer/IBM</td>
+<td>Replay fidelity</td>
+<td>Replay manifests</td>
+</tr>
+<tr>
+<td style="text-align: right;">B‑T04</td>
+<td>Benchmark</td>
+<td>Cross‑provider</td>
+<td>IBM vs AWS</td>
+<td>IBM/AWS</td>
+<td>Parity</td>
+<td>Report</td>
+</tr>
+<tr>
+<td style="text-align: right;">B‑T05</td>
+<td>Benchmark</td>
+<td>Public suite</td>
+<td>Community panels</td>
+<td>All</td>
+<td>Replications</td>
+<td>Public repo</td>
+</tr>
+<tr>
+<td style="text-align: right;">M‑T01</td>
+<td>Metrology</td>
+<td>GHZ phase toy</td>
+<td>GHZ(3–4)</td>
+<td>Aer/IBM</td>
+<td>CI cov.</td>
+<td>Manifest</td>
+</tr>
+<tr>
+<td style="text-align: right;">M‑T02</td>
+<td>Metrology</td>
+<td>Variational</td>
+<td>GHZ/W</td>
+<td>Aer/IBM</td>
+<td>Advantage trend</td>
+<td>Logs</td>
+</tr>
+<tr>
+<td style="text-align: right;">M‑T03</td>
+<td>Metrology</td>
+<td>Robust probes</td>
+<td>GHZ k‑qubit</td>
+<td>Aer/IBM</td>
+<td>CI width ↓</td>
+<td>Report</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="governance-gating-quality">Governance, Gating &amp; Quality<a class="headerlink" href="#governance-gating-quality" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Gates:</strong> P2→P3 requires IBM <strong>SSR ≥ 1.3×</strong>; P3→P4 requires <strong>SSR ≥ 1.5×</strong> + patent(s) filed + ≥1 paper accepted/near‑accept; P4→P5 requires cross‑provider parity and partner replication of SSR.</li>
+<li><strong>Reproducibility:</strong> Every result ships with a <strong>Manifest</strong>, raw parquet shot data, and a replay notebook.</li>
+<li><strong>Risk controls:</strong> Time‑boxed hardware campaigns; ablations to isolate mitigation effects; fail‑closed CI (no release if tests or coverage gates fail).</li>
+</ul>
+<hr />
+<h2 id="timeline-target">Timeline (target)<a class="headerlink" href="#timeline-target" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Focus</th>
+<th>Key Milestone</th>
+<th>Target Date</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P1</td>
+<td>Foundation &amp; R&amp;D sprints</td>
+<td>First IBM runs + Shadows v1</td>
+<td><strong>Nov 2025</strong></td>
+</tr>
+<tr>
+<td>P2</td>
+<td>Hardware‑first iteration</td>
+<td>IBM campaign #1 + provisional patents + preprints</td>
+<td><strong>Dec 2025</strong></td>
+</tr>
+<tr>
+<td>P3</td>
+<td>Internal validation</td>
+<td>SSR ≥1.5× + journal submits + non‑provisionals</td>
+<td><strong>Mar 2026</strong></td>
+</tr>
+<tr>
+<td>P4</td>
+<td>Early Access &amp; expansion</td>
+<td>2–3 partners + AWS parity</td>
+<td><strong>Jun 2026</strong></td>
+</tr>
+<tr>
+<td>P5</td>
+<td>Public Beta</td>
+<td>v1.0 + pilots</td>
+<td><strong>Sep 2026</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="notes-for-engineering">Notes for Engineering<a class="headerlink" href="#notes-for-engineering" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Keep <strong>device‑agnostic connectors</strong>; IBM first, AWS next.</li>
+<li>Prefer <strong>layout‑aware, shallow circuits</strong>; re‑seed experiments; record cal snapshots.</li>
+<li>Implement <strong>manifest replay</strong> (offline) as a first‑class command; integrate with CI.</li>
+<li>Publish small, frequent preprints; convert to journals as results mature.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.sections", "content.code.copy", "toc.integrate"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

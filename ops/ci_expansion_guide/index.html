@@ -1,0 +1,1230 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
+    
+    
+      
+        <title>CI Matrix Expansion Guide - QuartumSE</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.84d31ad4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ci-matrix-expansion-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="QuartumSE" class="md-header__button md-logo" aria-label="QuartumSE" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            QuartumSE
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CI Matrix Expansion Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/QuartumSE/quartumse" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="QuartumSE" class="md-nav__button md-logo" aria-label="QuartumSE" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    QuartumSE
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/QuartumSE/quartumse" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Tutorials
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorials
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quickstart
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/hardware_quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hardware Quickstart
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    How-to
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            How-to
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/run-st01-ghz/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Run S-T01 GHZ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/run-mem-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Run MEM (v1)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/replay-from-manifest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Replay from Manifest
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/generate-report/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Generate Report
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/observable-notation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Observable Notation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Explanation
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Explanation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/manifest-schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Manifest Schema
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/shadows-theory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Shadows Theory
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Operations
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Operations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../runtime_runbook/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    IBM Runtime Runbook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Strategy
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Strategy
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../strategy/project_bible/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Project Bible
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../strategy/roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Roadmap
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../strategy/phase1_task_checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Phase 1 Checklist
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="ci-matrix-expansion-guide">CI Matrix Expansion Guide<a class="headerlink" href="#ci-matrix-expansion-guide" title="Permanent link">&para;</a></h1>
+<p>This guide explains how to expand the GitHub Actions CI matrix from the reduced configuration (Phase 1-2) to full multi-platform testing when the repository becomes public.</p>
+<hr />
+<h2 id="current-state-phase-1-2">Current State (Phase 1-2)<a class="headerlink" href="#current-state-phase-1-2" title="Permanent link">&para;</a></h2>
+<p><strong>Configuration:</strong> Reduced matrix
+<strong>File:</strong> <code>.github/workflows/ci.yml</code>
+<strong>Jobs:</strong> 1 (Ubuntu + Python 3.11 only)
+<strong>Reason:</strong> Private repository + cost optimization</p>
+<div class="highlight"><pre><span></span><code><span class="nt">matrix</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">ubuntu-latest</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;3.11&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<p><strong>What's tested:</strong>
+- ✅ Code formatting (black, ruff)
+- ✅ Type checking (mypy)
+- ✅ Core unit tests on Python 3.11
+- ✅ Coverage reporting to Codecov</p>
+<p><strong>What's NOT tested:</strong>
+- ❌ Windows compatibility
+- ❌ macOS compatibility
+- ❌ Python 3.10, 3.12, 3.13 edge cases</p>
+<hr />
+<h2 id="when-to-expand">When to Expand<a class="headerlink" href="#when-to-expand" title="Permanent link">&para;</a></h2>
+<p><strong>Trigger:</strong> Repository becomes public (planned for Phase 3)</p>
+<p><strong>Phase 3 Checklist Item:</strong>
+- Internal validation complete
+- SSR ≥ 1.5× achieved
+- Ready for external contributors
+- No secrets in Git history
+- <strong>→ Make repo public</strong>
+- <strong>→ Expand CI matrix</strong></p>
+<p><strong>Why wait until Phase 3:</strong>
+- Phase 1-2: Private repo, cost-sensitive, core team only
+- Phase 3+: Public repo, unlimited Actions, external contributors need cross-platform validation</p>
+<hr />
+<h2 id="expansion-steps">Expansion Steps<a class="headerlink" href="#expansion-steps" title="Permanent link">&para;</a></h2>
+<h3 id="step-1-verify-repository-is-public">Step 1: Verify Repository is Public<a class="headerlink" href="#step-1-verify-repository-is-public" title="Permanent link">&para;</a></h3>
+<p><strong>Check visibility:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Visit repo settings</span>
+open<span class="w"> </span>https://github.com/QuartumSE/quartumse/settings
+
+<span class="c1"># Or check with gh CLI</span>
+gh<span class="w"> </span>repo<span class="w"> </span>view<span class="w"> </span>QuartumSE/quartumse<span class="w"> </span>--json<span class="w"> </span>visibility<span class="w"> </span>-q<span class="w"> </span>.visibility
+<span class="c1"># Should output: &quot;public&quot;</span>
+</code></pre></div></p>
+<p><strong>Confirm unlimited Actions:</strong>
+- Go to: https://github.com/settings/billing
+- Public repos show: "GitHub Actions: Unlimited" ✅</p>
+<hr />
+<h3 id="step-2-edit-ci-workflow">Step 2: Edit CI Workflow<a class="headerlink" href="#step-2-edit-ci-workflow" title="Permanent link">&para;</a></h3>
+<p><strong>File:</strong> <code>.github/workflows/ci.yml</code></p>
+<p><strong>Find the matrix section (around line 14):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">matrix</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># REDUCED MATRIX: Keeping private repo during Phase 1-2</span>
+<span class="w">  </span><span class="c1"># ...</span>
+<span class="w">  </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">ubuntu-latest</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;3.11&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="c1">#</span>
+<span class="w">  </span><span class="c1"># EXPAND WHEN REPO GOES PUBLIC (Phase 3+):</span>
+<span class="w">  </span><span class="c1"># ...</span>
+</code></pre></div>
+<p><strong>Replace with full matrix:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="nt">matrix</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">ubuntu-latest</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">macos-latest</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">windows-latest</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;3.10&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;3.11&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;3.12&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;3.13&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+<p><strong>Remove all the comment blocks</strong> about reduced/expanded matrix.</p>
+<hr />
+<h3 id="step-3-test-the-expansion">Step 3: Test the Expansion<a class="headerlink" href="#step-3-test-the-expansion" title="Permanent link">&para;</a></h3>
+<p><strong>Create a test PR:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Create a branch</span>
+git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>ci/expand-matrix
+
+<span class="c1"># Edit .github/workflows/ci.yml (apply Step 2 changes)</span>
+
+<span class="c1"># Commit</span>
+git<span class="w"> </span>add<span class="w"> </span>.github/workflows/ci.yml
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Expand CI matrix to full platform coverage</span>
+
+<span class="s2">Repository is now public, enabling full cross-platform testing:</span>
+<span class="s2">- 3 operating systems (Ubuntu, macOS, Windows)</span>
+<span class="s2">- 4 Python versions (3.10, 3.11, 3.12, 3.13)</span>
+<span class="s2">- Total: 12 test jobs per run</span>
+
+<span class="s2">This provides comprehensive validation for external contributors</span>
+<span class="s2">and ensures QuartumSE works across all supported environments.&quot;</span>
+
+<span class="c1"># Push and create PR</span>
+git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>ci/expand-matrix
+gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--title<span class="w"> </span><span class="s2">&quot;Expand CI matrix for public repo&quot;</span><span class="w"> </span>--body<span class="w"> </span><span class="s2">&quot;Restores full cross-platform testing now that repo is public. See docs/ops/ci_expansion_guide.md&quot;</span>
+</code></pre></div>
+<p><strong>Watch the PR checks:</strong>
+- All 12 jobs should run
+- Expect some Windows/macOS-specific issues initially
+- Fix any platform-specific failures before merging</p>
+<hr />
+<h3 id="step-4-fix-platform-specific-issues">Step 4: Fix Platform-Specific Issues<a class="headerlink" href="#step-4-fix-platform-specific-issues" title="Permanent link">&para;</a></h3>
+<p>Common issues when expanding to full matrix:</p>
+<h4 id="windows-path-issues">Windows Path Issues<a class="headerlink" href="#windows-path-issues" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Before (Unix-only)</span>
+<span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;data/manifests/file.json&quot;</span>
+
+<span class="c1"># After (cross-platform)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;manifests&quot;</span> <span class="o">/</span> <span class="s2">&quot;file.json&quot;</span>
+</code></pre></div>
+<h4 id="macos-line-ending-issues">macOS Line Ending Issues<a class="headerlink" href="#macos-line-ending-issues" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># In CI workflow, normalize line endings</span>
+-<span class="w"> </span>name:<span class="w"> </span>Normalize<span class="w"> </span>line<span class="w"> </span>endings<span class="w"> </span><span class="o">(</span>macOS<span class="o">)</span>
+<span class="w">  </span><span class="k">if</span>:<span class="w"> </span>runner.os<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;macOS&#39;</span>
+<span class="w">  </span>run:<span class="w"> </span><span class="p">|</span>
+<span class="w">    </span>find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.py&quot;</span><span class="w"> </span>-exec<span class="w"> </span>dos2unix<span class="w"> </span><span class="o">{}</span><span class="w"> </span><span class="se">\;</span>
+</code></pre></div>
+<h4 id="python-313-compatibility">Python 3.13 Compatibility<a class="headerlink" href="#python-313-compatibility" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check for deprecated features removed in 3.13</span>
+<span class="c1"># Update dependencies if needed</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> <span class="n">qiskit</span> <span class="n">qiskit</span><span class="o">-</span><span class="n">aer</span>
+</code></pre></div>
+<hr />
+<h3 id="step-5-update-documentation">Step 5: Update Documentation<a class="headerlink" href="#step-5-update-documentation" title="Permanent link">&para;</a></h3>
+<p><strong>Update references mentioning reduced matrix:</strong></p>
+<ol>
+<li>
+<p><strong>CHANGELOG.md:</strong>
+   <div class="highlight"><pre><span></span><code><span class="gu">## [Unreleased]</span>
+<span class="gu">### Changed</span>
+<span class="k">-</span><span class="w"> </span>Expanded CI matrix to full platform coverage (12 jobs) now that repository is public
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>README.md badges:</strong>
+   <div class="highlight"><pre><span></span><code>[<span class="nt">![CI</span>](<span class="na">https://github.com/quartumse/quartumse/workflows/CI/badge.svg</span>)](https://github.com/quartumse/quartumse/actions)
+</code></pre></div>
+   Badge will now show "12 passing" instead of "1 passing"</p>
+</li>
+<li>
+<p><strong>CONTRIBUTING.md:</strong>
+   Add note about cross-platform testing:
+   <div class="highlight"><pre><span></span><code><span class="gu">## Testing</span>
+
+Pull requests are tested on:
+<span class="k">-</span><span class="w"> </span>Ubuntu, macOS, Windows
+<span class="k">-</span><span class="w"> </span>Python 3.10, 3.11, 3.12, 3.13
+
+Ensure your changes work on all platforms before submitting.
+</code></pre></div></p>
+</li>
+</ol>
+<hr />
+<h3 id="step-6-monitor-actions-usage">Step 6: Monitor Actions Usage<a class="headerlink" href="#step-6-monitor-actions-usage" title="Permanent link">&para;</a></h3>
+<p>Even with unlimited minutes, monitor for efficiency:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check Actions usage</span>
+gh<span class="w"> </span>api<span class="w"> </span>/repos/QuartumSE/quartumse/actions/runs<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--jq<span class="w"> </span><span class="s1">&#39;.workflow_runs[] | select(.name==&quot;CI&quot;) | {id, status, conclusion, duration: .run_duration_ms}&#39;</span>
+
+<span class="c1"># View workflow run times</span>
+gh<span class="w"> </span>run<span class="w"> </span>list<span class="w"> </span>--workflow<span class="o">=</span>ci.yml<span class="w"> </span>--limit<span class="w"> </span><span class="m">10</span>
+</code></pre></div>
+<p><strong>Optimization tips if runs are slow:</strong>
+- Use <code>fail-fast: true</code> to cancel remaining jobs on first failure
+- Cache pip dependencies with <code>actions/cache</code>
+- Run expensive checks (mypy, integration tests) only on one platform</p>
+<hr />
+<h2 id="rollback-procedure">Rollback Procedure<a class="headerlink" href="#rollback-procedure" title="Permanent link">&para;</a></h2>
+<p>If full matrix causes issues, temporarily rollback:</p>
+<p><strong>Quick rollback:</strong>
+<div class="highlight"><pre><span></span><code><span class="nt">matrix</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">ubuntu-latest</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># Rollback to single platform</span>
+<span class="w">  </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;3.11&quot;</span><span class="p p-Indicator">]</span>
+</code></pre></div></p>
+<p><strong>Fix issues offline:</strong>
+- Test problematic platforms locally
+- Fix compatibility issues
+- Re-expand when ready</p>
+<hr />
+<h2 id="expected-results">Expected Results<a class="headerlink" href="#expected-results" title="Permanent link">&para;</a></h2>
+<h3 id="before-expansion-current">Before Expansion (Current)<a class="headerlink" href="#before-expansion-current" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code>✅ test (ubuntu-latest, 3.11)
+</code></pre></div>
+<strong>Time:</strong> ~3 minutes
+<strong>Coverage:</strong> Core functionality only</p>
+<h3 id="after-expansion-phase-3">After Expansion (Phase 3+)<a class="headerlink" href="#after-expansion-phase-3" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code>✅ test (ubuntu-latest, 3.10)
+✅ test (ubuntu-latest, 3.11)
+✅ test (ubuntu-latest, 3.12)
+✅ test (ubuntu-latest, 3.13)
+✅ test (macos-latest, 3.10)
+✅ test (macos-latest, 3.11)
+✅ test (macos-latest, 3.12)
+✅ test (macos-latest, 3.13)
+✅ test (windows-latest, 3.10)
+✅ test (windows-latest, 3.11)
+✅ test (windows-latest, 3.12)
+✅ test (windows-latest, 3.13)
+</code></pre></div>
+<strong>Time:</strong> ~8-10 minutes (parallel execution)
+<strong>Coverage:</strong> Full cross-platform validation</p>
+<hr />
+<h2 id="validation-checklist">Validation Checklist<a class="headerlink" href="#validation-checklist" title="Permanent link">&para;</a></h2>
+<p>After expansion, verify:</p>
+<ul>
+<li>[ ] All 12 jobs complete successfully</li>
+<li>[ ] Coverage reports upload correctly (Ubuntu 3.11 job)</li>
+<li>[ ] No platform-specific test failures</li>
+<li>[ ] Codecov badge shows correct coverage</li>
+<li>[ ] CI badge shows "12 passing"</li>
+<li>[ ] PR checks show all jobs</li>
+<li>[ ] No excessive Actions usage warnings</li>
+<li>[ ] Windows path handling works</li>
+<li>[ ] macOS-specific issues resolved</li>
+<li>[ ] Python 3.10-3.13 all pass</li>
+</ul>
+<hr />
+<h2 id="cost-analysis">Cost Analysis<a class="headerlink" href="#cost-analysis" title="Permanent link">&para;</a></h2>
+<h3 id="private-repo-current">Private Repo (Current)<a class="headerlink" href="#private-repo-current" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Matrix: 1 job
+Duration: 3 min
+Cost per run: 3 minutes (Ubuntu 1×)
+Monthly estimate: ~100-300 minutes
+Status: Within 2,000 min free tier
+</code></pre></div>
+<h3 id="public-repo-after-expansion">Public Repo (After Expansion)<a class="headerlink" href="#public-repo-after-expansion" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>Matrix: 12 jobs
+Duration: 3-4 min per job (parallel)
+Cost per run: 0 minutes (unlimited for public)
+Monthly estimate: Unlimited ✅
+Status: Free forever
+</code></pre></div>
+<p><strong>Key takeaway:</strong> Expansion is cost-free once repo is public!</p>
+<hr />
+<h2 id="related-documentation">Related Documentation<a class="headerlink" href="#related-documentation" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../strategy/phase1_task_checklist/">Phase 1 Task Checklist</a></li>
+<li><a href="../../strategy/roadmap/">Roadmap</a> - Phase 3 milestones</li>
+<li><a href=".github/workflows/ci.yml">CI Workflow</a> - Current configuration</li>
+<li><a href="https://docs.github.com/en/billing/managing-billing-for-github-actions/about-billing-for-github-actions">GitHub Actions Pricing</a></li>
+</ul>
+<hr />
+<h2 id="questions">Questions?<a class="headerlink" href="#questions" title="Permanent link">&para;</a></h2>
+<p><strong>When should I expand?</strong>
+→ When repo becomes public (Phase 3+)</p>
+<p><strong>Can I expand before repo is public?</strong>
+→ Not recommended (cost ~$20-50/month for private repos)</p>
+<p><strong>What if some jobs fail after expansion?</strong>
+→ Normal! Fix platform-specific issues and re-run</p>
+<p><strong>Do I need to change anything else?</strong>
+→ Just update docs mentioning "reduced matrix" or "Ubuntu only"</p>
+<p><strong>How do I test locally before expanding?</strong>
+→ Use <code>tox</code> with multiple Python versions, test on VM for other OSes</p>
+<hr />
+<p><strong>Last updated:</strong> 2025-10-30
+<strong>Next review:</strong> Phase 3 (Internal Validation) - Target Mar 2026</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.sections", "content.code.copy", "toc.integrate"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1236 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
+    
+    
+      
+        <title>Automated Experiment Pipeline (Phase-1) - QuartumSE</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.84d31ad4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#automated-experiment-pipeline-phase-1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="QuartumSE" class="md-header__button md-logo" aria-label="QuartumSE" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            QuartumSE
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Automated Experiment Pipeline (Phase-1)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/QuartumSE/quartumse" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="QuartumSE" class="md-nav__button md-logo" aria-label="QuartumSE" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    QuartumSE
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/QuartumSE/quartumse" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Tutorials
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorials
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quickstart
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/hardware_quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hardware Quickstart
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    How-to
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            How-to
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../run-st01-ghz/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Run S-T01 GHZ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../run-mem-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Run MEM (v1)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../replay-from-manifest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Replay from Manifest
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../generate-report/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Generate Report
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/observable-notation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Observable Notation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Explanation
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Explanation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/manifest-schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Manifest Schema
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/shadows-theory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Shadows Theory
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Operations
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Operations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ops/runtime_runbook/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    IBM Runtime Runbook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Strategy
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Strategy
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../strategy/project_bible/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Project Bible
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../strategy/roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Roadmap
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../strategy/phase1_task_checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Phase 1 Checklist
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="automated-experiment-pipeline-phase-1">Automated Experiment Pipeline (Phase-1)<a class="headerlink" href="#automated-experiment-pipeline-phase-1" title="Permanent link">&para;</a></h1>
+<p>The Phase-1 pipeline automates the reproducible baseline → shadows v0 → shadows v1
+runs, aggregates metrics, and emits artefacts that can be replayed later. Use this
+guide when you need to run, extend, or debug the <code>experiments/pipeline</code> package.</p>
+<h2 id="metadata-schema">Metadata schema<a class="headerlink" href="#metadata-schema" title="Permanent link">&para;</a></h2>
+<p><code>experiments/pipeline/metadata_schema.py</code> defines the structured metadata that every
+pipeline run consumes. Provide the fields below in YAML or JSON (see
+<code>experiments/shadows/examples/extended_ghz/experiment_metadata.yaml</code> for a template):</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>experiment</code></td>
+<td>string</td>
+<td>Human-readable experiment name that is echoed in manifests and reports.</td>
+</tr>
+<tr>
+<td><code>context</code></td>
+<td>string</td>
+<td>One-paragraph background describing why the run exists.</td>
+</tr>
+<tr>
+<td><code>aims</code></td>
+<td>list[string]</td>
+<td>Bullet points for the primary questions the run answers.</td>
+</tr>
+<tr>
+<td><code>success_criteria</code></td>
+<td>list[string]</td>
+<td>Quantitative exit checks (used to infer default targets).</td>
+</tr>
+<tr>
+<td><code>methods</code></td>
+<td>list[string]</td>
+<td>High-level procedure summary for provenance.</td>
+</tr>
+<tr>
+<td><code>budget.total_shots</code></td>
+<td>int</td>
+<td><strong>Equal-budget anchor:</strong> total shots to spend per approach (baseline, v0, v1).</td>
+</tr>
+<tr>
+<td><code>budget.calibration.shots_per_state</code></td>
+<td>int</td>
+<td>Shots to allocate to each computational-basis state during MEM calibration.</td>
+</tr>
+<tr>
+<td><code>budget.calibration.total</code></td>
+<td>int</td>
+<td>Total calibration shots (must equal <code>shots_per_state * 2^n</code>).</td>
+</tr>
+<tr>
+<td><code>budget.v0_shadow_size</code></td>
+<td>int</td>
+<td>Measurement budget for the Phase-1 shadows v0 reference.</td>
+</tr>
+<tr>
+<td><code>budget.v1_shadow_size</code></td>
+<td>int</td>
+<td>Measurement budget for the Phase-1 shadows v1 + MEM run (not including calibration shots).</td>
+</tr>
+<tr>
+<td><code>device</code></td>
+<td>string</td>
+<td>Default backend descriptor (e.g. <code>aer_simulator</code> or <code>ibm:ibm_brisbane</code>).</td>
+</tr>
+<tr>
+<td><code>discussion_template</code></td>
+<td>string</td>
+<td>Markdown template pre-populated in the generated HTML report.</td>
+</tr>
+<tr>
+<td><code>num_qubits</code></td>
+<td>int (optional)</td>
+<td>Override for inferred qubit count (normally derived from the calibration budget).</td>
+</tr>
+<tr>
+<td><code>targets</code></td>
+<td>map[string, number] (optional)</td>
+<td>Explicit metric thresholds (<code>ssr_average</code>, <code>ci_coverage</code>, etc.).</td>
+</tr>
+<tr>
+<td><code>ground_truth</code></td>
+<td>mapping (optional)</td>
+<td>Observable → expectation pairs for MAE/CI/SSR calculations.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Tip:</strong> Leave <code>targets</code> blank if the success criteria already specify SSR/CI
+thresholds—<code>run_full_pipeline.py</code> automatically parses numbers from those strings.</p>
+</blockquote>
+<h2 id="phase-1-equal-budget-rules">Phase-1 equal-budget rules<a class="headerlink" href="#phase-1-equal-budget-rules" title="Permanent link">&para;</a></h2>
+<p>Phase-1 comparisons assume every approach consumes the <strong>same total shot budget</strong>
+and distributes resources uniformly across observables:</p>
+<ul>
+<li>Stage 1 (direct Pauli baseline) divides <code>budget.total_shots</code> evenly across the
+  stabiliser observables using <code>_allocate_shots</code> in
+  <code>experiments/pipeline/_runners.py</code>.</li>
+<li>Stage 2 (<code>ShadowVersion.V0_BASELINE</code>) records the exact <code>budget.v0_shadow_size</code>
+  measurements with mitigation disabled.</li>
+<li>Stage 3 (<code>ShadowVersion.V1_NOISE_AWARE</code>) spends <code>budget.v1_shadow_size</code> on
+  measurement shots and reuses calibration snapshots so that
+  <code>calibration.total + v1_shadow_size = budget.total_shots</code>.</li>
+<li>The analysis layer (<code>experiments/pipeline/analyzer.py</code>) uses the equal-budget
+  metrics from <code>src/quartumse/utils/metrics.py</code> (<code>compute_mae</code>, <code>compute_ci_coverage</code>,
+  and <code>compute_ssr_equal_budget</code>) that treat each observable with uniform weight.</li>
+</ul>
+<p>Violating the equal-budget assumption (for example, by changing the shot allocator
+or by skipping calibration reuse) invalidates SSR/CI comparisons, so keep the
+metadata and runner defaults aligned when you extend the pipeline.</p>
+<h2 id="calibration-reuse-and-refresh-windows">Calibration reuse and refresh windows<a class="headerlink" href="#calibration-reuse-and-refresh-windows" title="Permanent link">&para;</a></h2>
+<p>The pipeline and CLI share the <code>ReadoutCalibrationManager</code> so that measurement error
+mitigation (MEM) snapshots are only regenerated when required:</p>
+<p><strong>Unix/macOS:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Reuse cached confusion matrices unless forced or stale</span>
+quartumse<span class="w"> </span>calibrate-readout<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--backend<span class="w"> </span>ibm:ibm_brisbane<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--qubit<span class="w"> </span><span class="m">0</span><span class="w"> </span>--qubit<span class="w"> </span><span class="m">1</span><span class="w"> </span>--qubit<span class="w"> </span><span class="m">2</span><span class="w"> </span>--qubit<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--shots<span class="w"> </span><span class="m">256</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output-dir<span class="w"> </span>validation_data/calibrations<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--max-age-hours<span class="w"> </span><span class="m">6</span>
+</code></pre></div></p>
+<p><strong>Windows:</strong>
+<div class="highlight"><pre><span></span><code><span class="c"># Reuse cached confusion matrices unless forced or stale</span>
+<span class="n">quartumse</span> <span class="n">calibrate-readout</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-backend</span> <span class="n">ibm</span><span class="p">:</span><span class="n">ibm_brisbane</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-qubit</span> <span class="n">0</span> <span class="p">-</span><span class="n">-qubit</span> <span class="n">1</span> <span class="p">-</span><span class="n">-qubit</span> <span class="n">2</span> <span class="p">-</span><span class="n">-qubit</span> <span class="n">3</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-shots</span> <span class="n">256</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-output-dir</span> <span class="n">validation_data</span><span class="p">/</span><span class="n">calibrations</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-max-age-hours</span> <span class="n">6</span>
+</code></pre></div></p>
+<p>Key behaviours (<code>src/quartumse/cli.py</code>):</p>
+<ul>
+<li><strong>Reuse by default:</strong> <code>ensure_calibration</code> returns cached matrices and marks the
+  manifest as <code>"reused": true</code> when the existing artefact matches the qubit set and
+  backend descriptor.</li>
+<li><strong><code>--max-age-hours</code>:</strong> Provide a float to refresh calibrations that are older than
+  the allowed window. Pass <code>--force</code> to ignore age checks entirely.</li>
+<li><strong>Manifest trail:</strong> Each calibration writes <code>&lt;confusion&gt;.manifest.json</code> alongside
+  the <code>.npz</code>, recording backend version, shot counts, and reuse flags for provenance.</li>
+</ul>
+<p>The automated pipeline (<code>experiments/pipeline/executor.py</code>) points its calibration
+manager at <code>&lt;output&gt;/calibrations/</code> so reruns in the same directory automatically
+reuse MEM artefacts as long as the age/force constraints permit.</p>
+<h2 id="running-the-cli-pipeline">Running the CLI pipeline<a class="headerlink" href="#running-the-cli-pipeline" title="Permanent link">&para;</a></h2>
+<p>Use the <code>run_full_pipeline.py</code> entrypoint to execute the three stages, verify
+artefacts, and render a report.</p>
+<h3 id="simulator-aer">Simulator (Aer)<a class="headerlink" href="#simulator-aer" title="Permanent link">&para;</a></h3>
+<p><strong>Unix/macOS:</strong>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>experiments.pipeline.run_full_pipeline<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--metadata<span class="w"> </span>experiments/shadows/examples/extended_ghz/experiment_metadata.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>validation_data/pipeline_runs/ghz4_aer<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--backend<span class="w"> </span>aer_simulator
+</code></pre></div></p>
+<p><strong>Windows:</strong>
+<div class="highlight"><pre><span></span><code><span class="n">python</span> <span class="n">-m</span> <span class="n">experiments</span><span class="p">.</span><span class="n">pipeline</span><span class="p">.</span><span class="n">run_full_pipeline</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-metadata</span> <span class="n">experiments</span><span class="p">/</span><span class="n">shadows</span><span class="p">/</span><span class="n">examples</span><span class="p">/</span><span class="n">extended_ghz</span><span class="p">/</span><span class="n">experiment_metadata</span><span class="p">.</span><span class="n">yaml</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-output</span> <span class="n">validation_data</span><span class="p">/</span><span class="n">pipeline_runs</span><span class="p">/</span><span class="n">ghz4_aer</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-backend</span> <span class="n">aer_simulator</span>
+</code></pre></div></p>
+<ul>
+<li>Produces manifests under <code>validation_data/pipeline_runs/ghz4_aer/manifests/</code>.</li>
+<li>Stores calibration artefacts in <code>validation_data/pipeline_runs/ghz4_aer/calibrations/</code>.</li>
+<li>Writes the result digest (<code>result_hash.txt</code>), analysis summary, and HTML report to the
+  same directory.</li>
+</ul>
+<h3 id="ibm-quantum-hardware">IBM Quantum hardware<a class="headerlink" href="#ibm-quantum-hardware" title="Permanent link">&para;</a></h3>
+<p><strong>Unix/macOS:</strong>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">QISKIT_IBM_TOKEN</span><span class="o">=</span><span class="s2">&quot;&lt;your-runtime-token&gt;&quot;</span>
+python<span class="w"> </span>-m<span class="w"> </span>experiments.pipeline.run_full_pipeline<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--metadata<span class="w"> </span>experiments/shadows/examples/extended_ghz/experiment_metadata.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>data/pipeline_runs/ghz4_kyoto<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--backend<span class="w"> </span>ibm:ibm_kyoto
+</code></pre></div></p>
+<p><strong>Windows (PowerShell):</strong>
+<div class="highlight"><pre><span></span><code><span class="nv">$env:QISKIT_IBM_TOKEN</span><span class="p">=</span><span class="s2">&quot;&lt;your-runtime-token&gt;&quot;</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">experiments</span><span class="p">.</span><span class="n">pipeline</span><span class="p">.</span><span class="n">run_full_pipeline</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-metadata</span> <span class="n">experiments</span><span class="p">/</span><span class="n">shadows</span><span class="p">/</span><span class="n">examples</span><span class="p">/</span><span class="n">extended_ghz</span><span class="p">/</span><span class="n">experiment_metadata</span><span class="p">.</span><span class="n">yaml</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-output</span> <span class="n">data</span><span class="p">/</span><span class="n">pipeline_runs</span><span class="p">/</span><span class="n">ghz4_kyoto</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-backend</span> <span class="n">ibm</span><span class="p">:</span><span class="n">ibm_kyoto</span>
+</code></pre></div></p>
+<p><strong>Windows (Command Prompt):</strong>
+<div class="highlight"><pre><span></span><code>set QISKIT_IBM_TOKEN=&lt;your-runtime-token&gt;
+python -m experiments.pipeline.run_full_pipeline ^
+  --metadata experiments/shadows/examples/extended_ghz/experiment_metadata.yaml ^
+  --output data/pipeline_runs/ghz4_kyoto ^
+  --backend ibm:ibm_kyoto
+</code></pre></div></p>
+<ul>
+<li>Set <code>QISKIT_RUNTIME_API_TOKEN</code>/<code>QISKIT_IBM_CHANNEL</code>/<code>QISKIT_IBM_INSTANCE</code> if your hub
+  requires them (see <code>quartumse connect ibm</code> hints in <code>src/quartumse/cli.py</code>).</li>
+<li>Hardware runs honour the same equal-budget accounting—MEM calibration shots are
+  deducted from the total and reused when possible.</li>
+<li>The output directory is Git-ignored; move final manifests to <code>data/manifests/</code> when
+  publishing results.</li>
+</ul>
+<p>To override the backend encoded in the metadata file, pass a different <code>--backend</code>
+value. Omit the flag to use <code>metadata.device</code> as-is.</p>
+<h2 id="artefacts-and-replay-workflow">Artefacts and replay workflow<a class="headerlink" href="#artefacts-and-replay-workflow" title="Permanent link">&para;</a></h2>
+<p>After a pipeline run completes, inspect the output directory:</p>
+<p><strong>Unix/macOS:</strong>
+<div class="highlight"><pre><span></span><code>ls<span class="w"> </span>-R<span class="w"> </span>validation_data/pipeline_runs/ghz4_aer
+cat<span class="w"> </span>validation_data/pipeline_runs/ghz4_aer/report_*.html<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</code></pre></div></p>
+<p><strong>Windows:</strong>
+<div class="highlight"><pre><span></span><code><span class="nb">Get-ChildItem</span> <span class="n">-Recurse</span> <span class="n">validation_data</span><span class="p">/</span><span class="n">pipeline_runs</span><span class="p">/</span><span class="n">ghz4_aer</span>
+<span class="nb">Get-Content</span> <span class="n">validation_data</span><span class="p">/</span><span class="n">pipeline_runs</span><span class="p">/</span><span class="n">ghz4_aer</span><span class="p">/</span><span class="n">report_</span><span class="p">*.</span><span class="n">html</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-First</span> <span class="n">10</span>
+</code></pre></div></p>
+<p>You should see:</p>
+<ul>
+<li><code>manifests/</code> – baseline, v0, and v1 JSON manifests (Stage 1–3).</li>
+<li><code>calibrations/</code> – MEM confusion matrices plus <code>.manifest.json</code> metadata (only when
+  Phase-1 runs require mitigation).</li>
+<li><code>analysis_&lt;hash&gt;.json</code> – Aggregated metrics (<code>ssr_average</code>, <code>ci_coverage</code>, MAE) and
+  target evaluation flags.</li>
+<li><code>report_&lt;hash&gt;.html</code> – Full Phase-1 report ready for review or screenshots.</li>
+<li><code>result_hash.txt</code> – Stable digest derived from the manifest payloads.</li>
+</ul>
+<p>Replaying artefacts does not require backend access:</p>
+<p><strong>Unix/macOS:</strong>
+<div class="highlight"><pre><span></span><code><span class="c1"># Regenerate the HTML report after editing metadata or narrative sections</span>
+quartumse<span class="w"> </span>report<span class="w"> </span>validation_data/pipeline_runs/ghz4_aer/manifests/&lt;manifest&gt;.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>validation_data/pipeline_runs/ghz4_aer/replay_report.html
+
+<span class="c1"># Programmatic replay: recompute observables from saved manifests</span>
+python<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;&#39;PY&#39;</span>
+<span class="s">from quartumse.estimator import ShadowEstimator</span>
+<span class="s">from quartumse.reporting.manifest import ProvenanceManifest</span>
+
+<span class="s">manifest_path = &quot;validation_data/pipeline_runs/ghz4_aer/manifests/&lt;manifest&gt;.json&quot;</span>
+<span class="s">manifest = ProvenanceManifest.from_json(manifest_path)</span>
+<span class="s">estimator = ShadowEstimator.replay_from_manifest(manifest)</span>
+<span class="s">print(estimator)</span>
+<span class="s">PY</span>
+</code></pre></div></p>
+<p><strong>Windows:</strong>
+<div class="highlight"><pre><span></span><code><span class="c"># Regenerate the HTML report after editing metadata or narrative sections</span>
+<span class="n">quartumse</span> <span class="n">report</span> <span class="n">validation_data</span><span class="p">/</span><span class="n">pipeline_runs</span><span class="p">/</span><span class="n">ghz4_aer</span><span class="p">/</span><span class="n">manifests</span><span class="p">/&lt;</span><span class="n">manifest</span><span class="p">&gt;.</span><span class="n">json</span> <span class="p">`</span>
+  <span class="p">-</span><span class="n">-output</span> <span class="n">validation_data</span><span class="p">/</span><span class="n">pipeline_runs</span><span class="p">/</span><span class="n">ghz4_aer</span><span class="p">/</span><span class="n">replay_report</span><span class="p">.</span><span class="n">html</span>
+
+<span class="c"># Programmatic replay: recompute observables from saved manifests</span>
+<span class="n">python</span> <span class="n">-c</span> <span class="s2">&quot;from quartumse.estimator import ShadowEstimator; from quartumse.reporting.manifest import ProvenanceManifest; manifest_path = &#39;validation_data/pipeline_runs/ghz4_aer/manifests/&lt;manifest&gt;.json&#39;; manifest = ProvenanceManifest.from_json(manifest_path); estimator = ShadowEstimator.replay_from_manifest(manifest); print(estimator)&quot;</span>
+</code></pre></div></p>
+<p>The verifier stage (<code>experiments/pipeline/verifier.py</code>) checks that shot files and MEM
+confusion matrices still exist and match their checksums. If you relocate artefacts,
+update <code>manifest.schema.shot_data_path</code> or keep the directory layout intact so replay
+continues to pass.</p>
+<hr />
+<p>Need more automation? Extend <code>experiments/pipeline/executor.py</code> with new stages, but
+keep the metadata schema and equal-budget invariants intact so downstream analysis and
+reports remain comparable.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.sections", "content.code.copy", "toc.integrate"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

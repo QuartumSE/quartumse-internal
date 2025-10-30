@@ -1,0 +1,1508 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../run-mem-v1/">
+      
+      
+        <link rel="next" href="../generate-report/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
+    
+    
+      
+        <title>Replay from Manifest - QuartumSE</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.84d31ad4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#replay-from-manifest" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="QuartumSE" class="md-header__button md-logo" aria-label="QuartumSE" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            QuartumSE
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Replay from Manifest
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/QuartumSE/quartumse" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="QuartumSE" class="md-nav__button md-logo" aria-label="QuartumSE" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    QuartumSE
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/QuartumSE/quartumse" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Tutorials
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorials
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quickstart
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/hardware_quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hardware Quickstart
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    How-to
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            How-to
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../run-st01-ghz/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Run S-T01 GHZ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../run-mem-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Run MEM (v1)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Replay from Manifest
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Replay from Manifest
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quick Start
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quick Start">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-replay-python-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic Replay (Python API)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#finding-manifests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Finding Manifests
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Finding Manifests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#list-saved-experiments" class="md-nav__link">
+    <span class="md-ellipsis">
+      List saved experiments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inspect-manifest-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inspect manifest metadata
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-replay-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Complete Replay Example
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Complete Replay Example">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-run-original-experiment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 1: Run Original Experiment
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-replay-with-new-observables-daysweeks-later" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 2: Replay with New Observables (Days/Weeks Later)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#replay-with-noise-aware-shadows-v1-mem" class="md-nav__link">
+    <span class="md-ellipsis">
+      Replay with Noise-Aware Shadows (v1 + MEM)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-programmatic-replay-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced: Programmatic Replay Loop
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#replay-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Replay Validation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related" class="md-nav__link">
+    <span class="md-ellipsis">
+      Related
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../generate-report/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Generate Report
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/observable-notation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Observable Notation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Explanation
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Explanation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/manifest-schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Manifest Schema
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/shadows-theory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Shadows Theory
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Operations
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Operations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ops/runtime_runbook/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    IBM Runtime Runbook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Strategy
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Strategy
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../strategy/project_bible/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Project Bible
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../strategy/roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Roadmap
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../strategy/phase1_task_checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Phase 1 Checklist
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="replay-from-manifest">Replay from Manifest<a class="headerlink" href="#replay-from-manifest" title="Permanent link">&para;</a></h1>
+<p>QuartumSE's "measure once, ask later" capability lets you compute new observable estimates from saved measurement data without re-executing on quantum hardware.</p>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p><strong>Why replay?</strong>
+- <strong>Zero hardware cost</strong> - No additional quantum shots needed
+- <strong>Instant results</strong> - Compute new observables in seconds
+- <strong>Reproducibility</strong> - Same data, different analysis
+- <strong>Exploration</strong> - Test hypotheses without waiting for hardware queue</p>
+<p><strong>What's replayable:</strong>
+- Shadow measurement outcomes (bitstrings + bases)
+- MEM confusion matrices (for v1 noise-aware shadows)
+- Backend calibration snapshots
+- Circuit fingerprints and random seeds
+- Output directory is configurable; if you ran experiments with
+  <code>--data-dir=/path/to/artifacts</code> the manifest and shot data live underneath
+  that directory instead of the default <code>data/</code> tree.</p>
+<hr />
+<h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
+<h3 id="basic-replay-python-api">Basic Replay (Python API)<a class="headerlink" href="#basic-replay-python-api" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">quartumse</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShadowEstimator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quartumse.shadows.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Observable</span>
+
+<span class="c1"># Original experiment saved manifest to: data/manifests/a3f2b1c4...json</span>
+
+<span class="c1"># Create estimator (backend not used during replay)</span>
+<span class="n">estimator</span> <span class="o">=</span> <span class="n">ShadowEstimator</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s2">&quot;aer_simulator&quot;</span><span class="p">)</span>
+
+<span class="c1"># Define NEW observables (different from original run)</span>
+<span class="n">new_observables</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;XX&quot;</span><span class="p">,</span> <span class="n">coefficient</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;YY&quot;</span><span class="p">,</span> <span class="n">coefficient</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;ZZ&quot;</span><span class="p">,</span> <span class="n">coefficient</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="c1"># Replay from saved manifest</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">replay_from_manifest</span><span class="p">(</span>
+    <span class="n">manifest_path</span><span class="o">=</span><span class="s2">&quot;data/manifests/a3f2b1c4-5678-90ab-cdef-1234567890ab.json&quot;</span><span class="p">,</span>
+    <span class="n">observables</span><span class="o">=</span><span class="n">new_observables</span>
+<span class="p">)</span>
+
+<span class="c1"># Access results (same structure as estimate())</span>
+<span class="k">for</span> <span class="n">obs_str</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">exp_val</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;expectation_value&#39;</span><span class="p">]</span>
+    <span class="n">variance</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;variance&#39;</span><span class="p">]</span>
+    <span class="n">ci</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ci_95&#39;</span><span class="p">]</span>
+    <span class="n">ci_width</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ci_width&#39;</span><span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">obs_str</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Value: </span><span class="si">{</span><span class="n">exp_val</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> ± </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">variance</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  95% CI: [</span><span class="si">{</span><span class="n">ci</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">ci</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">] (width: </span><span class="si">{</span><span class="n">ci_width</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Output:</strong>
+<div class="highlight"><pre><span></span><code>1.0*XX:
+  Value: 0.9844 ± 0.0312
+  95% CI: [0.923, 1.046] (width: 0.123)
+1.0*YY:
+  Value: 0.9922 ± 0.0289
+  95% CI: [0.936, 1.048] (width: 0.113)
+1.0*ZZ:
+  Value: 1.0039 ± 0.0156
+  95% CI: [0.973, 1.035] (width: 0.061)
+</code></pre></div></p>
+<hr />
+<h2 id="finding-manifests">Finding Manifests<a class="headerlink" href="#finding-manifests" title="Permanent link">&para;</a></h2>
+<h3 id="list-saved-experiments">List saved experiments<a class="headerlink" href="#list-saved-experiments" title="Permanent link">&para;</a></h3>
+<p><strong>Unix/macOS:</strong>
+<div class="highlight"><pre><span></span><code>ls<span class="w"> </span>-lt<span class="w"> </span>data/manifests/<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-10
+</code></pre></div></p>
+<p><strong>Windows:</strong>
+<div class="highlight"><pre><span></span><code><span class="nb">Get-ChildItem</span> <span class="n">data</span><span class="p">/</span><span class="n">manifests</span><span class="p">/</span> <span class="p">|</span> <span class="nb">Sort-Object</span> <span class="n">LastWriteTime</span> <span class="n">-Descending</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">-First</span> <span class="n">10</span>
+</code></pre></div></p>
+<h3 id="inspect-manifest-metadata">Inspect manifest metadata<a class="headerlink" href="#inspect-manifest-metadata" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="n">manifest_path</span> <span class="o">=</span> <span class="s2">&quot;data/manifests/a3f2b1c4-5678-90ab-cdef-1234567890ab.json&quot;</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">manifest_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">manifest</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Experiment ID: </span><span class="si">{</span><span class="n">manifest</span><span class="p">[</span><span class="s1">&#39;experiment_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created: </span><span class="si">{</span><span class="n">manifest</span><span class="p">[</span><span class="s1">&#39;created_at&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Backend: </span><span class="si">{</span><span class="n">manifest</span><span class="p">[</span><span class="s1">&#39;backend&#39;</span><span class="p">][</span><span class="s1">&#39;backend_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Shadow size: </span><span class="si">{</span><span class="n">manifest</span><span class="p">[</span><span class="s1">&#39;shadows&#39;</span><span class="p">][</span><span class="s1">&#39;shadow_size&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Circuit qubits: </span><span class="si">{</span><span class="n">manifest</span><span class="p">[</span><span class="s1">&#39;circuit&#39;</span><span class="p">][</span><span class="s1">&#39;num_qubits&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Original observables: </span><span class="si">{</span><span class="p">[</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;pauli&#39;</span><span class="p">]</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">obs</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">manifest</span><span class="p">[</span><span class="s1">&#39;observables&#39;</span><span class="p">]]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Output:</strong>
+<div class="highlight"><pre><span></span><code>Experiment ID: a3f2b1c4-5678-90ab-cdef-1234567890ab
+Created: 2025-10-29T14:32:15.789012
+Backend: aer_simulator
+Shadow size: 256
+Circuit qubits: 3
+Original observables: [&#39;ZII&#39;, &#39;ZZI&#39;, &#39;ZZZ&#39;]
+</code></pre></div></p>
+<hr />
+<h2 id="complete-replay-example">Complete Replay Example<a class="headerlink" href="#complete-replay-example" title="Permanent link">&para;</a></h2>
+<h3 id="step-1-run-original-experiment">Step 1: Run Original Experiment<a class="headerlink" href="#step-1-run-original-experiment" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">qiskit</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantumCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_aer</span><span class="w"> </span><span class="kn">import</span> <span class="n">AerSimulator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quartumse</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShadowEstimator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quartumse.shadows</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShadowConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quartumse.shadows.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Observable</span>
+
+<span class="c1"># Create GHZ state</span>
+<span class="n">circuit</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">circuit</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Original observables (Z-type stabilizers)</span>
+<span class="n">original_obs</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;ZII&quot;</span><span class="p">),</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;ZZI&quot;</span><span class="p">),</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;ZZZ&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="c1"># Run experiment with manifest saving</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">ShadowConfig</span><span class="p">(</span><span class="n">shadow_size</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">random_seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">estimator</span> <span class="o">=</span> <span class="n">ShadowEstimator</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="n">AerSimulator</span><span class="p">(),</span> <span class="n">shadow_config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span>
+    <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+    <span class="n">observables</span><span class="o">=</span><span class="n">original_obs</span><span class="p">,</span>
+    <span class="n">save_manifest</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># Important!</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Manifest saved: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">manifest_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Shot data saved: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">shot_data_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="step-2-replay-with-new-observables-daysweeks-later">Step 2: Replay with New Observables (Days/Weeks Later)<a class="headerlink" href="#step-2-replay-with-new-observables-daysweeks-later" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># No hardware needed! Can run offline with saved data</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">quartumse</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShadowEstimator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quartumse.shadows.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Observable</span>
+
+<span class="c1"># Define new observables (X/Y type for comparison)</span>
+<span class="n">new_observables</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;XII&quot;</span><span class="p">),</span>  <span class="c1"># X on qubit 0</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;XXI&quot;</span><span class="p">),</span>  <span class="c1"># X on qubits 0-1</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;XXX&quot;</span><span class="p">),</span>  <span class="c1"># X on all qubits</span>
+<span class="p">]</span>
+
+<span class="c1"># Replay (backend argument ignored during replay)</span>
+<span class="n">estimator</span> <span class="o">=</span> <span class="n">ShadowEstimator</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s2">&quot;aer_simulator&quot;</span><span class="p">)</span>
+
+<span class="n">replayed</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">replay_from_manifest</span><span class="p">(</span>
+    <span class="n">manifest_path</span><span class="o">=</span><span class="s2">&quot;data/manifests/a3f2b1c4-5678-90ab-cdef-1234567890ab.json&quot;</span><span class="p">,</span>
+    <span class="n">observables</span><span class="o">=</span><span class="n">new_observables</span>
+<span class="p">)</span>
+
+<span class="c1"># Compare with analytical expectations for GHZ</span>
+<span class="n">ghz_x_expectations</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;1.0*XII&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>   <span class="c1"># Single X → 0</span>
+    <span class="s2">&quot;1.0*XXI&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>   <span class="c1"># Two X&#39;s → 0</span>
+    <span class="s2">&quot;1.0*XXX&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>   <span class="c1"># All X&#39;s → 1</span>
+<span class="p">}</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Replayed Results:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;Observable&#39;</span><span class="si">:</span><span class="s2">&lt;15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;Estimated&#39;</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;Expected&#39;</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;Error&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">55</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">obs_str</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">replayed</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">exp_val</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;expectation_value&#39;</span><span class="p">]</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">ghz_x_expectations</span><span class="p">[</span><span class="n">obs_str</span><span class="p">]</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">exp_val</span> <span class="o">-</span> <span class="n">expected</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">obs_str</span><span class="si">:</span><span class="s2">&lt;15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">exp_val</span><span class="si">:</span><span class="s2">&gt;11.4f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">expected</span><span class="si">:</span><span class="s2">&gt;11.4f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">error</span><span class="si">:</span><span class="s2">&gt;9.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Output:</strong>
+<div class="highlight"><pre><span></span><code>Replayed Results:
+Observable      Estimated    Expected    Error
+-------------------------------------------------------
+1.0*XII             0.0156      0.0000    0.0156
+1.0*XXI            -0.0234      0.0000    0.0234
+1.0*XXX             0.9922      1.0000    0.0078
+</code></pre></div></p>
+<hr />
+<h2 id="replay-with-noise-aware-shadows-v1-mem">Replay with Noise-Aware Shadows (v1 + MEM)<a class="headerlink" href="#replay-with-noise-aware-shadows-v1-mem" title="Permanent link">&para;</a></h2>
+<p>For experiments using MEM, the replay automatically loads the confusion matrix from the manifest.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">quartumse</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShadowEstimator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quartumse.shadows</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShadowConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quartumse.shadows.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShadowVersion</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quartumse.shadows.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Observable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quartumse.reporting.manifest</span><span class="w"> </span><span class="kn">import</span> <span class="n">MitigationConfig</span>
+
+<span class="c1"># Original experiment (v1 with MEM)</span>
+<span class="n">config_v1</span> <span class="o">=</span> <span class="n">ShadowConfig</span><span class="p">(</span>
+    <span class="n">version</span><span class="o">=</span><span class="n">ShadowVersion</span><span class="o">.</span><span class="n">V1_NOISE_AWARE</span><span class="p">,</span>
+    <span class="n">shadow_size</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+    <span class="n">random_seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+    <span class="n">apply_inverse_channel</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">mit_config</span> <span class="o">=</span> <span class="n">MitigationConfig</span><span class="p">(</span>
+    <span class="n">techniques</span><span class="o">=</span><span class="p">[],</span>  <span class="c1"># Populated automatically</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;mem_shots&quot;</span><span class="p">:</span> <span class="mi">512</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">estimator_v1</span> <span class="o">=</span> <span class="n">ShadowEstimator</span><span class="p">(</span>
+    <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;aer_simulator&quot;</span><span class="p">,</span>
+    <span class="n">shadow_config</span><span class="o">=</span><span class="n">config_v1</span><span class="p">,</span>
+    <span class="n">mitigation_config</span><span class="o">=</span><span class="n">mit_config</span>
+<span class="p">)</span>
+
+<span class="c1"># Run and save</span>
+<span class="n">result_v1</span> <span class="o">=</span> <span class="n">estimator_v1</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">observables</span><span class="o">=</span><span class="n">original_obs</span><span class="p">,</span> <span class="n">save_manifest</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># --- Later: Replay with MEM applied ---</span>
+
+<span class="c1"># Replay loads confusion matrix path from manifest</span>
+<span class="n">replayed_v1</span> <span class="o">=</span> <span class="n">estimator_v1</span><span class="o">.</span><span class="n">replay_from_manifest</span><span class="p">(</span>
+    <span class="n">manifest_path</span><span class="o">=</span><span class="n">result_v1</span><span class="o">.</span><span class="n">manifest_path</span><span class="p">,</span>
+    <span class="n">observables</span><span class="o">=</span><span class="n">new_observables</span>
+<span class="p">)</span>
+
+<span class="c1"># Noise correction automatically applied during replay!</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Confusion matrix loaded from: </span><span class="si">{</span><span class="n">result_v1</span><span class="o">.</span><span class="n">mitigation_confusion_matrix_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Note:</strong> The confusion matrix file must still exist at the path recorded in the manifest. If files have been moved, replay will fail with a <code>FileNotFoundError</code>.</p>
+<hr />
+<h2 id="advanced-programmatic-replay-loop">Advanced: Programmatic Replay Loop<a class="headerlink" href="#advanced-programmatic-replay-loop" title="Permanent link">&para;</a></h2>
+<p>Batch-process multiple manifests to compare different observables:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quartumse</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShadowEstimator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quartumse.shadows.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Observable</span>
+
+<span class="c1"># Define observable set to test across all experiments</span>
+<span class="n">test_observables</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;XXX&quot;</span><span class="p">),</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;YYY&quot;</span><span class="p">),</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;ZZZ&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">estimator</span> <span class="o">=</span> <span class="n">ShadowEstimator</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s2">&quot;aer_simulator&quot;</span><span class="p">)</span>
+<span class="n">results_table</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># Replay all manifests in directory</span>
+<span class="n">manifest_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data/manifests&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">manifest_path</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">manifest_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.json&quot;</span><span class="p">)):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">replayed</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">replay_from_manifest</span><span class="p">(</span>
+            <span class="n">manifest_path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">manifest_path</span><span class="p">),</span>
+            <span class="n">observables</span><span class="o">=</span><span class="n">test_observables</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Extract experiment metadata</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">manifest_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">manifest</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+        <span class="n">exp_id</span> <span class="o">=</span> <span class="n">manifest</span><span class="p">[</span><span class="s1">&#39;experiment_id&#39;</span><span class="p">]</span>
+        <span class="n">backend</span> <span class="o">=</span> <span class="n">manifest</span><span class="p">[</span><span class="s1">&#39;backend&#39;</span><span class="p">][</span><span class="s1">&#39;backend_name&#39;</span><span class="p">]</span>
+        <span class="n">shadow_size</span> <span class="o">=</span> <span class="n">manifest</span><span class="p">[</span><span class="s1">&#39;shadows&#39;</span><span class="p">][</span><span class="s1">&#39;shadow_size&#39;</span><span class="p">]</span>
+
+        <span class="c1"># Store results</span>
+        <span class="k">for</span> <span class="n">obs_str</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">replayed</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">results_table</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s1">&#39;experiment_id&#39;</span><span class="p">:</span> <span class="n">exp_id</span><span class="p">,</span>
+                <span class="s1">&#39;backend&#39;</span><span class="p">:</span> <span class="n">backend</span><span class="p">,</span>
+                <span class="s1">&#39;shadow_size&#39;</span><span class="p">:</span> <span class="n">shadow_size</span><span class="p">,</span>
+                <span class="s1">&#39;observable&#39;</span><span class="p">:</span> <span class="n">obs_str</span><span class="p">,</span>
+                <span class="s1">&#39;expectation&#39;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;expectation_value&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;ci_width&#39;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ci_width&#39;</span><span class="p">],</span>
+            <span class="p">})</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✓ Replayed: </span><span class="si">{</span><span class="n">manifest_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✗ Failed: </span><span class="si">{</span><span class="n">manifest_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Convert to DataFrame for analysis</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results_table</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Replayed Results Summary:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;observable&#39;</span><span class="p">,</span> <span class="s1">&#39;backend&#39;</span><span class="p">])[</span><span class="s1">&#39;expectation&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;std&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">]))</span>
+</code></pre></div>
+<hr />
+<h2 id="replay-validation">Replay Validation<a class="headerlink" href="#replay-validation" title="Permanent link">&para;</a></h2>
+<p>Verify that replay produces identical results to original run:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Original run</span>
+<span class="n">result_original</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">observables</span><span class="o">=</span><span class="n">original_obs</span><span class="p">,</span> <span class="n">save_manifest</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Replay with SAME observables</span>
+<span class="n">result_replay</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">replay_from_manifest</span><span class="p">(</span>
+    <span class="n">manifest_path</span><span class="o">=</span><span class="n">result_original</span><span class="o">.</span><span class="n">manifest_path</span><span class="p">,</span>
+    <span class="n">observables</span><span class="o">=</span><span class="n">original_obs</span>  <span class="c1"># Same as original</span>
+<span class="p">)</span>
+
+<span class="c1"># Compare</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Replay Validation:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;Observable&#39;</span><span class="si">:</span><span class="s2">&lt;15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;Original&#39;</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;Replayed&#39;</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;Match&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">55</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">obs_str</span> <span class="ow">in</span> <span class="n">result_original</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="n">orig_val</span> <span class="o">=</span> <span class="n">result_original</span><span class="o">.</span><span class="n">observables</span><span class="p">[</span><span class="n">obs_str</span><span class="p">][</span><span class="s1">&#39;expectation_value&#39;</span><span class="p">]</span>
+    <span class="n">replay_val</span> <span class="o">=</span> <span class="n">result_replay</span><span class="o">.</span><span class="n">observables</span><span class="p">[</span><span class="n">obs_str</span><span class="p">][</span><span class="s1">&#39;expectation_value&#39;</span><span class="p">]</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="s2">&quot;✓&quot;</span> <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">orig_val</span> <span class="o">-</span> <span class="n">replay_val</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-10</span> <span class="k">else</span> <span class="s2">&quot;✗&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">obs_str</span><span class="si">:</span><span class="s2">&lt;15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">orig_val</span><span class="si">:</span><span class="s2">&gt;11.6f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">replay_val</span><span class="si">:</span><span class="s2">&gt;11.6f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">match</span><span class="si">:</span><span class="s2">&gt;7</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Expected output:</strong>
+<div class="highlight"><pre><span></span><code>Replay Validation:
+Observable      Original    Replayed    Match
+-------------------------------------------------------
+1.0*ZII           0.003906    0.003906      ✓
+1.0*ZZI           0.996094    0.996094      ✓
+1.0*ZZZ          -0.007812   -0.007812      ✓
+</code></pre></div></p>
+<hr />
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<p><strong>"Manifest file not found"</strong>
+- Check path is correct (absolute or relative to current directory)
+- Verify manifest was saved during original run (<code>save_manifest=True</code>)
+- Use <code>Path(manifest_path).resolve()</code> to see absolute path</p>
+<p><strong>"Shot data file not found"</strong>
+- Manifest contains path to Parquet file with measurement outcomes
+- Ensure shot data file hasn't been deleted or moved
+- Check <code>manifest['shot_data_path']</code> for expected location</p>
+<p><strong>"Confusion matrix file not found"</strong>
+- For v1 noise-aware shadows with MEM
+- Check <code>manifest['mitigation']['confusion_matrix_path']</code>
+- Ensure MEM calibration file still exists at recorded path
+- Re-run MEM calibration if needed (see <a href="../run-mem-v1/">MEM v1 Guide</a>)</p>
+<p><strong>"Different results between original and replay"</strong>
+- Should be bit-identical if observables are the same
+- Check random seed is recorded in manifest
+- Verify no floating-point precision issues (compare within tolerance)</p>
+<p><strong>"Replay slower than expected"</strong>
+- Replay should complete in &lt;1 second for typical shadow sizes
+- Check Parquet file isn't corrupted (try loading with pandas)
+- Verify no network I/O (all files should be local)</p>
+<hr />
+<h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../run-st01-ghz/">Run S-T01 GHZ</a> - Generate manifests worth replaying</li>
+<li><a href="../generate-report/">Generate Report</a> - Create HTML reports from replayed results</li>
+<li><a href="../../explanation/manifest-schema/">Manifest Schema</a> - Full manifest specification</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.sections", "content.code.copy", "toc.integrate"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

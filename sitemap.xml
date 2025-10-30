@@ -13,10 +13,6 @@
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.com/api/strategy/roadmap/</loc>
-         <lastmod>2025-10-30</lastmod>
-    </url>
-    <url>
          <loc>https://quartumse.com/explanation/architecture/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
@@ -66,6 +62,10 @@
     </url>
     <url>
          <loc>https://quartumse.com/ops/runtime_runbook/</loc>
+         <lastmod>2025-10-30</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/ops/sphinx_regression_analysis/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>

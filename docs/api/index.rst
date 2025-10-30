@@ -15,6 +15,12 @@ directly from the docstrings that live alongside the implementation in
    strategy/roadmap
 
 .. toctree::
+   :hidden:
+
+   ../strategy/phase1_task_checklist
+   ../ops/ci_expansion_guide
+
+.. toctree::
    :maxdepth: 2
    :caption: API Modules
 

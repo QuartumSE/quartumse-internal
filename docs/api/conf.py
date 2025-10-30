@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+import inspect
 from datetime import datetime
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
@@ -67,6 +68,19 @@ html_static_path = ["_static"]
 suppress_warnings = [
     "ref.python",  # Ambiguous Python cross-references
 ]
+
+# Modules that primarily re-export symbols from their submodules. Documenting the
+# same class in both the parent package and the implementation module causes
+# ``autodoc`` to emit duplicate-description warnings when Sphinx runs in
+# nitpicky/``-W`` mode. We skip these re-exported members when documenting the
+# parent package to avoid the duplicates while still keeping the canonical
+# documentation attached to the implementation module.
+REEXPORT_PACKAGES = {
+    "quartumse",
+    "quartumse.estimator",
+    "quartumse.reporting",
+    "quartumse.shadows",
+}
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
@@ -142,3 +156,34 @@ def run_apidoc(app: Sphinx) -> None:
 
 def setup(app: Sphinx) -> None:
     app.connect("builder-inited", run_apidoc)
+    app.connect("autodoc-skip-member", skip_reexported_members)
+
+
+def skip_reexported_members(app: Sphinx, what: str, name: str, obj: object, skip: bool, options: dict) -> bool | None:
+    """Omit members that are re-exported from submodules.
+
+    Returning ``True`` tells autodoc to skip the member. ``None`` defers to the
+    default behaviour, so we only return ``True`` for classes that originate from
+    a submodule of one of the re-export-heavy packages listed above. Attributes
+    such as ``__version__`` (which come from ``builtins``) continue to be
+    documented normally.
+    """
+
+    if skip or what != "module":
+        return None
+
+    module_name = options.get("module")
+    if module_name is None and hasattr(app, "env"):
+        module_name = getattr(app.env, "temp_data", {}).get("autodoc:module")
+
+    if module_name not in REEXPORT_PACKAGES:
+        return None
+
+    if not inspect.isclass(obj):
+        return None
+
+    obj_module = getattr(obj, "__module__", "")
+    if obj_module.startswith(f"{module_name}."):
+        return True
+
+    return None

@@ -4,12 +4,14 @@ from __future__ import annotations
 
 import logging
 from collections import defaultdict
-from typing import Dict, Iterable, List, MutableMapping, Sequence, Set
+from collections.abc import Iterable, MutableMapping, Sequence
+
+from qiskit.providers.backend import Backend
 
 LOGGER = logging.getLogger(__name__)
 
 
-def _normalise_edges(raw_edges: Iterable[Sequence[int]] | None) -> List[Sequence[int]]:
+def _normalise_edges(raw_edges: Iterable[Sequence[int]] | None) -> list[Sequence[int]]:
     """Normalise assorted coupling-map representations into edge pairs."""
 
     if raw_edges is None:
@@ -22,7 +24,7 @@ def _normalise_edges(raw_edges: Iterable[Sequence[int]] | None) -> List[Sequence
         except Exception:  # pragma: no cover - degrade gracefully
             return []
 
-    edges: List[Sequence[int]] = []
+    edges: list[Sequence[int]] = []
     for entry in raw_edges:
         if entry is None:
             continue
@@ -33,15 +35,15 @@ def _normalise_edges(raw_edges: Iterable[Sequence[int]] | None) -> List[Sequence
                 edges.append((int(entry[0]), int(entry[1])))
             else:
                 # Some backends provide multi-hop paths; split them into pairs.
-                for left, right in zip(entry[:-1], entry[1:]):
+                for left, right in zip(entry[:-1], entry[1:], strict=False):
                     edges.append((int(left), int(right)))
     return edges
 
 
-def _build_adjacency(num_qubits: int, edges: Iterable[Sequence[int]]) -> Dict[int, Set[int]]:
+def _build_adjacency(num_qubits: int, edges: Iterable[Sequence[int]]) -> dict[int, set[int]]:
     """Construct an undirected adjacency map for the device graph."""
 
-    adjacency: Dict[int, Set[int]] = defaultdict(set)
+    adjacency: dict[int, set[int]] = defaultdict(set)
     for qubit in range(num_qubits):
         adjacency[qubit]  # ensure all keys exist
 
@@ -57,12 +59,12 @@ def _build_adjacency(num_qubits: int, edges: Iterable[Sequence[int]]) -> Dict[in
 
 
 def _depth_first_path(
-    adjacency: MutableMapping[int, Set[int]],
+    adjacency: MutableMapping[int, set[int]],
     start: int,
     length: int,
-    path: List[int],
-    visited: Set[int],
-) -> List[int] | None:
+    path: list[int],
+    visited: set[int],
+) -> list[int] | None:
     if len(path) == length:
         return path.copy()
 
@@ -79,7 +81,7 @@ def _depth_first_path(
     return None
 
 
-def _find_simple_path(adjacency: MutableMapping[int, Set[int]], length: int) -> List[int] | None:
+def _find_simple_path(adjacency: MutableMapping[int, set[int]], length: int) -> list[int] | None:
     for start in sorted(adjacency):
         result = _depth_first_path(adjacency, start, length, [start], {start})
         if result is not None:
@@ -89,16 +91,16 @@ def _find_simple_path(adjacency: MutableMapping[int, Set[int]], length: int) -> 
 
 def _greedy_chain(
     num_qubits: int,
-    adjacency: MutableMapping[int, Set[int]],
+    adjacency: MutableMapping[int, set[int]],
     length: int,
-) -> List[int]:
+) -> list[int]:
     """Best-effort greedy chain selection when an exact path is unavailable."""
 
     nodes = list(range(num_qubits))
     degree = {node: len(adjacency.get(node, set())) for node in nodes}
     start_candidates = sorted(nodes, key=lambda item: (-degree[item], item))
 
-    best_chain: List[int] = []
+    best_chain: list[int] = []
     for start in start_candidates:
         chain = [start]
         visited = {start}
@@ -106,7 +108,9 @@ def _greedy_chain(
         while len(chain) < length:
             candidates = [
                 node
-                for node in sorted(adjacency.get(current, set()), key=lambda item: (-degree[item], item))
+                for node in sorted(
+                    adjacency.get(current, set()), key=lambda item: (-degree[item], item)
+                )
                 if node not in visited
             ]
             if not candidates:
@@ -126,7 +130,7 @@ def _greedy_chain(
     return list(range(length)) if length <= num_qubits else []
 
 
-def get_linear_chain(backend, length: int) -> List[int]:
+def get_linear_chain(backend: Backend, length: int) -> list[int]:
     """Select a linear chain of ``length`` qubits on ``backend``.
 
     The function first attempts to locate a simple path of the requested length

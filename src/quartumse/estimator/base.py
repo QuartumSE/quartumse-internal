@@ -1,8 +1,8 @@
 """Base estimator interface."""
 
-from dataclasses import dataclass
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional
+from dataclasses import dataclass
+from typing import Any
 
 from qiskit import QuantumCircuit
 
@@ -13,14 +13,14 @@ from quartumse.shadows.core import Observable
 class EstimationResult:
     """Result container for observable estimation."""
 
-    observables: Dict[str, Any]
+    observables: dict[str, Any]
     shots_used: int
     execution_time: float
     backend_name: str
-    experiment_id: Optional[str] = None
-    manifest_path: Optional[str] = None
-    shot_data_path: Optional[str] = None
-    mitigation_confusion_matrix_path: Optional[str] = None
+    experiment_id: str | None = None
+    manifest_path: str | None = None
+    shot_data_path: str | None = None
+    mitigation_confusion_matrix_path: str | None = None
 
     def __repr__(self) -> str:
         return (
@@ -41,7 +41,7 @@ class Estimator(ABC):
     - Grouped Pauli measurement
     """
 
-    def __init__(self, backend: Any, config: Optional[Any] = None) -> None:
+    def __init__(self, backend: Any, config: Any | None = None) -> None:
         self.backend = backend
         self.config = config
 
@@ -49,8 +49,8 @@ class Estimator(ABC):
     def estimate(
         self,
         circuit: QuantumCircuit,
-        observables: List[Observable],
-        target_precision: Optional[float] = None,
+        observables: list[Observable],
+        target_precision: float | None = None,
     ) -> EstimationResult:
         """
         Estimate expectation values of observables.
@@ -66,9 +66,7 @@ class Estimator(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def estimate_shots_needed(
-        self, observables: List[Observable], target_precision: float
-    ) -> int:
+    def estimate_shots_needed(self, observables: list[Observable], target_precision: float) -> int:
         """
         Estimate number of shots needed for target precision.
 

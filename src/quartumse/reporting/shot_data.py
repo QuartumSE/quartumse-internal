@@ -6,7 +6,6 @@ import time
 from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Union
 
 import numpy as np
 import pandas as pd
@@ -19,11 +18,11 @@ class ShotDataDiagnostics:
     experiment_id: str
     total_shots: int
     num_qubits: int
-    measurement_basis_distribution: Dict[str, int]
-    bitstring_histogram: Dict[str, int]
-    qubit_marginals: Dict[int, Dict[str, float]]
+    measurement_basis_distribution: dict[str, int]
+    bitstring_histogram: dict[str, int]
+    qubit_marginals: dict[int, dict[str, float]]
 
-    def to_dict(self) -> Dict[str, object]:
+    def to_dict(self) -> dict[str, object]:
         """Convert diagnostics to a plain dictionary for templating."""
 
         return {
@@ -92,9 +91,7 @@ class ShotDataWriter:
 
             # Encode measurement bases as string (e.g., "XYZ")
             basis_map = {0: "Z", 1: "X", 2: "Y"}  # Common Clifford basis convention
-            bases_str = "".join(
-                basis_map.get(int(b), str(b)) for b in measurement_bases[offset]
-            )
+            bases_str = "".join(basis_map.get(int(b), str(b)) for b in measurement_bases[offset])
 
             # Encode outcomes as bitstring
             outcomes_str = "".join(str(int(o)) for o in measurement_outcomes[offset])
@@ -132,9 +129,7 @@ class ShotDataWriter:
 
         return pd.read_parquet(parquet_path, engine="pyarrow")
 
-    def load_shadow_measurements(
-        self, experiment_id: str
-    ) -> tuple[np.ndarray, np.ndarray, int]:
+    def load_shadow_measurements(self, experiment_id: str) -> tuple[np.ndarray, np.ndarray, int]:
         """
         Load shadow measurement data from Parquet.
 
@@ -148,7 +143,7 @@ class ShotDataWriter:
 
         # Decode bases
         basis_map_inv = {"Z": 0, "X": 1, "Y": 2}
-        measurement_bases_list: List[List[int]] = []
+        measurement_bases_list: list[list[int]] = []
         for bases_str in df["measurement_bases"]:
             bases = [basis_map_inv[b] for b in bases_str]
             measurement_bases_list.append(bases)
@@ -156,7 +151,7 @@ class ShotDataWriter:
         measurement_bases_array = np.asarray(measurement_bases_list, dtype=int)
 
         # Decode outcomes
-        measurement_outcomes_list: List[List[int]] = []
+        measurement_outcomes_list: list[list[int]] = []
         for outcomes_str in df["measurement_outcomes"]:
             outcomes = [int(o) for o in outcomes_str]
             measurement_outcomes_list.append(outcomes)
@@ -177,7 +172,7 @@ class ShotDataWriter:
 
     @staticmethod
     def summarize_parquet(
-        parquet_path: Union[str, Path], *, top_bitstrings: int = 10
+        parquet_path: str | Path, *, top_bitstrings: int = 10
     ) -> ShotDataDiagnostics:
         """Compute diagnostics directly from a Parquet file."""
 
@@ -205,12 +200,10 @@ def summarize_dataframe(
         df["measurement_bases"].value_counts().sort_values(ascending=False).to_dict()
     )
 
-    bitstring_counts = (
-        df["measurement_outcomes"].value_counts().head(top_bitstrings).to_dict()
-    )
+    bitstring_counts = df["measurement_outcomes"].value_counts().head(top_bitstrings).to_dict()
     bitstring_histogram = {bit: int(count) for bit, count in bitstring_counts.items()}
 
-    qubit_marginals: Dict[int, Dict[str, float]] = {}
+    qubit_marginals: dict[int, dict[str, float]] = {}
     for qubit in range(num_qubits):
         qubit_bits = df["measurement_outcomes"].str.get(qubit)
         counts = Counter(qubit_bits)

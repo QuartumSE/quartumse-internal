@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import json
 import logging
-from pathlib import Path
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Any, Dict, Optional, Sequence, Tuple, Union
+from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from qiskit import QuantumCircuit, transpile
@@ -37,15 +38,15 @@ class MeasurementErrorMitigation:
 
     def __init__(self, backend: Backend):
         self.backend = backend
-        self.confusion_matrix: Optional[np.ndarray] = None
-        self._calibrated_qubits: Optional[tuple[int, ...]] = None
-        self._runtime_sampler: Optional[SamplerPrimitive] = None
+        self.confusion_matrix: np.ndarray | None = None
+        self._calibrated_qubits: tuple[int, ...] | None = None
+        self._runtime_sampler: SamplerPrimitive | None = None
         self._runtime_sampler_checked = False
         self._use_runtime_sampler = is_ibm_runtime_backend(backend)
-        self.confusion_matrix_path: Optional[Path] = None
-        self._confusion_metadata: Dict[str, Any] = {}
+        self.confusion_matrix_path: Path | None = None
+        self._confusion_metadata: dict[str, Any] = {}
 
-    def _get_runtime_sampler(self) -> Optional[SamplerPrimitive]:
+    def _get_runtime_sampler(self) -> SamplerPrimitive | None:
         """Initialise (if necessary) and return an IBM Runtime sampler."""
 
         if not self._use_runtime_sampler:
@@ -61,11 +62,11 @@ class MeasurementErrorMitigation:
         self,
         qubits: Sequence[int],
         shots: int = 4096,
-        run_options: Optional[Dict[str, object]] = None,
+        run_options: dict[str, object] | None = None,
         *,
-        output_path: Optional[Union[str, Path]] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> Optional[Path]:
+        output_path: str | Path | None = None,
+        metadata: dict[str, Any] | None = None,
+    ) -> Path | None:
         """
         Calibrate confusion matrix by preparing and measuring basis states.
 
@@ -121,7 +122,7 @@ class MeasurementErrorMitigation:
                 job = sampler.run(list(transpiled_circuits), shots=shots)
             result = job.result()
 
-            def _get_counts(batch_index: int) -> Dict[str, int]:
+            def _get_counts(batch_index: int) -> dict[str, int]:
                 pub_result = result[batch_index]
                 data_bin = pub_result.data
 
@@ -129,7 +130,9 @@ class MeasurementErrorMitigation:
                 for key in ["meas", "c", "measure"]:
                     if hasattr(data_bin, key):
                         counts = getattr(data_bin, key).get_counts()
-                        return {str(bitstring): int(count) for bitstring, count in dict(counts).items()}
+                        return {
+                            str(bitstring): int(count) for bitstring, count in dict(counts).items()
+                        }
 
                 # Fallback: get first measurement attribute
                 data_attrs = [attr for attr in dir(data_bin) if not attr.startswith("_")]
@@ -146,7 +149,7 @@ class MeasurementErrorMitigation:
             job = self.backend.run(transpiled_circuits, shots=shots, **run_options)
             result = job.result()
 
-            def _get_counts(batch_index: int) -> Dict[str, int]:
+            def _get_counts(batch_index: int) -> dict[str, int]:
                 counts = result.get_counts(batch_index)
                 return {str(bitstring): int(count) for bitstring, count in dict(counts).items()}
 
@@ -190,7 +193,7 @@ class MeasurementErrorMitigation:
 
         return self.confusion_matrix_path
 
-    def load_confusion_matrix(self, path: Union[str, Path]) -> np.ndarray:
+    def load_confusion_matrix(self, path: str | Path) -> np.ndarray:
         """Load a persisted confusion matrix archive."""
 
         archive_path = Path(path)
@@ -212,17 +215,17 @@ class MeasurementErrorMitigation:
 
         return confusion
 
-    def get_confusion_metadata(self) -> Dict[str, Any]:
+    def get_confusion_metadata(self) -> dict[str, Any]:
         """Return metadata captured during calibration."""
 
         return self._confusion_metadata.copy()
 
     @staticmethod
-    def _read_confusion_archive(path: Union[str, Path]) -> tuple[np.ndarray, Dict[str, Any]]:
+    def _read_confusion_archive(path: str | Path) -> tuple[np.ndarray, dict[str, Any]]:
         archive_path = Path(path)
         with np.load(archive_path, allow_pickle=False) as archive:
             confusion = np.asarray(archive["confusion_matrix"], dtype=float)
-            metadata: Dict[str, Any] = {}
+            metadata: dict[str, Any] = {}
             if "metadata" in archive:
                 raw_metadata = archive["metadata"]
                 if isinstance(raw_metadata, np.ndarray):
@@ -238,11 +241,13 @@ class MeasurementErrorMitigation:
                     try:
                         metadata = json.loads(metadata_json)
                     except json.JSONDecodeError:
-                        LOGGER.warning("Failed to decode calibration metadata from %s", archive_path)
+                        LOGGER.warning(
+                            "Failed to decode calibration metadata from %s", archive_path
+                        )
                         metadata = {}
         return confusion, metadata
 
-    def apply(self, counts: Dict[str, int]) -> Dict[str, float]:
+    def apply(self, counts: dict[str, int]) -> dict[str, float]:
         """
         Apply mitigation to measurement counts.
 
@@ -283,7 +288,7 @@ class MeasurementErrorMitigation:
 
         mitigated_counts = corrected_probabilities * total_counts
 
-        mitigated_dict: Dict[str, float] = {}
+        mitigated_dict: dict[str, float] = {}
         for state_index, value in enumerate(mitigated_counts):
             if value <= 1e-12:
                 continue
@@ -314,24 +319,24 @@ class CalibrationRecord:
     """Persisted readout calibration details."""
 
     backend_name: str
-    backend_version: Optional[str]
+    backend_version: str | None
     qubits: tuple[int, ...]
     shots_per_state: int
     total_shots: int
     path: Path
     created_at: datetime
     confusion_matrix: np.ndarray
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
     reused: bool = False
 
-    def to_mitigation_config(
-        self, base_config: Optional["MitigationConfig"] = None
-    ) -> "MitigationConfig":
+    def to_mitigation_config(self, base_config: MitigationConfig | None = None) -> MitigationConfig:
         """Build a :class:`MitigationConfig` bound to this calibration."""
 
         from quartumse.reporting.manifest import MitigationConfig, compute_file_checksum
 
-        config = base_config.model_copy(deep=True) if base_config is not None else MitigationConfig()
+        config = (
+            base_config.model_copy(deep=True) if base_config is not None else MitigationConfig()
+        )
         if "MEM" not in config.techniques:
             config.techniques.append("MEM")
 
@@ -346,10 +351,10 @@ class CalibrationRecord:
 class ReadoutCalibrationManager:
     """Coordinate measurement calibration reuse across experiments."""
 
-    def __init__(self, base_dir: Union[str, Path] = Path("validation_data/calibrations")):
+    def __init__(self, base_dir: str | Path = Path("validation_data/calibrations")):
         self.base_dir = Path(base_dir)
         self.base_dir.mkdir(parents=True, exist_ok=True)
-        self._cache: Dict[Tuple[str, tuple[int, ...]], CalibrationRecord] = {}
+        self._cache: dict[tuple[str, tuple[int, ...]], CalibrationRecord] = {}
 
     def ensure_calibration(
         self,
@@ -357,13 +362,13 @@ class ReadoutCalibrationManager:
         qubits: Sequence[int],
         *,
         shots: int = 4096,
-        run_options: Optional[Dict[str, Any]] = None,
+        run_options: dict[str, Any] | None = None,
         force: bool = False,
-        max_age: Optional[timedelta] = None,
+        max_age: timedelta | None = None,
     ) -> CalibrationRecord:
         """Return a calibration record, reusing disk artifacts when possible."""
 
-        normalized_qubits = tuple(sorted(set(int(q) for q in qubits)))
+        normalized_qubits = tuple(sorted({int(q) for q in qubits}))
         if not normalized_qubits:
             raise ValueError("At least one qubit must be specified for calibration")
 
@@ -377,7 +382,9 @@ class ReadoutCalibrationManager:
 
         archive_path = self._archive_path(backend_name, normalized_qubits)
         if not force and archive_path.exists():
-            record = self._load_record_from_path(backend_name, backend_version, normalized_qubits, archive_path)
+            record = self._load_record_from_path(
+                backend_name, backend_version, normalized_qubits, archive_path
+            )
             if record and not self._is_expired(record, max_age):
                 record.reused = True
                 self._cache[key] = record
@@ -412,14 +419,18 @@ class ReadoutCalibrationManager:
             total_shots=metadata["total_shots"],
             path=Path(saved_path).resolve(),
             created_at=datetime.fromisoformat(metadata["created_at"]),
-            confusion_matrix=np.asarray(mem.confusion_matrix) if mem.confusion_matrix is not None else np.empty((0, 0)),
+            confusion_matrix=(
+                np.asarray(mem.confusion_matrix)
+                if mem.confusion_matrix is not None
+                else np.empty((0, 0))
+            ),
             metadata=metadata,
             reused=False,
         )
         self._cache[key] = record
         return record
 
-    def _describe_backend(self, backend: Backend) -> Tuple[str, Optional[str]]:
+    def _describe_backend(self, backend: Backend) -> tuple[str, str | None]:
         """Return sanitized backend name and version."""
 
         raw_name = None
@@ -457,10 +468,10 @@ class ReadoutCalibrationManager:
     def _load_record_from_path(
         self,
         backend_name: str,
-        backend_version: Optional[str],
+        backend_version: str | None,
         qubits: tuple[int, ...],
         path: Path,
-    ) -> Optional[CalibrationRecord]:
+    ) -> CalibrationRecord | None:
         try:
             confusion, metadata = MeasurementErrorMitigation._read_confusion_archive(path)
         except FileNotFoundError:
@@ -495,7 +506,7 @@ class ReadoutCalibrationManager:
         self._cache[(backend_name, qubits)] = record
         return record
 
-    def _is_expired(self, record: CalibrationRecord, max_age: Optional[timedelta]) -> bool:
+    def _is_expired(self, record: CalibrationRecord, max_age: timedelta | None) -> bool:
         if max_age is None:
             return False
         return datetime.utcnow() - record.created_at > max_age
@@ -510,4 +521,3 @@ class ReadoutCalibrationManager:
                 safe.append("_")
         collapsed = "".join(safe).strip("_")
         return collapsed or "backend"
-

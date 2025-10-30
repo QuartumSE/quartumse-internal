@@ -9,12 +9,11 @@ from pathlib import Path
 from qiskit import QuantumCircuit
 from qiskit_aer import AerSimulator
 
+from experiments.pipeline.verifier import verify_experiment
 from quartumse.estimator import ShadowEstimator
 from quartumse.reporting.manifest import ProvenanceManifest
 from quartumse.shadows import ShadowConfig
 from quartumse.shadows.core import Observable
-
-from experiments.pipeline.verifier import verify_experiment
 
 
 def _create_manifest(tmp_path: Path) -> Path:
@@ -102,7 +101,9 @@ class TestVerifyExperiment:
 
         manifest_data = json.loads(manifest_path.read_text())
         mem_path = tmp_path / "confusion.json"
-        mem_path.write_text(json.dumps({"confusion_matrix": [[1.0, 0.0], [0.0, 1.0]]}), encoding="utf-8")
+        mem_path.write_text(
+            json.dumps({"confusion_matrix": [[1.0, 0.0], [0.0, 1.0]]}), encoding="utf-8"
+        )
 
         mitigation = manifest_data.setdefault("mitigation", {})
         mitigation.setdefault("techniques", []).append("MEM")
@@ -123,4 +124,3 @@ class TestVerifyExperiment:
         assert report_bad["mem_confusion_matrix_exists"] is True
         assert report_bad["mem_confusion_matrix_checksum_matches"] is False
         assert any("checksum" in err.lower() for err in report_bad["errors"])
-

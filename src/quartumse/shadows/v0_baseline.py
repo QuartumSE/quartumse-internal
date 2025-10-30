@@ -11,11 +11,8 @@ This implements the standard classical shadows protocol:
 4. Estimate observables by averaging Pauli expectations
 """
 
-from typing import List, Optional
-
 import numpy as np
 from qiskit import QuantumCircuit
-from qiskit.circuit.library import HGate, SGate, SdgGate
 
 from quartumse.shadows.config import ShadowConfig
 from quartumse.shadows.core import ClassicalShadows, Observable, ShadowEstimate
@@ -59,7 +56,7 @@ class RandomLocalCliffordShadows(ClassicalShadows):
 
     def generate_measurement_circuits(
         self, base_circuit: QuantumCircuit, num_shadows: int
-    ) -> List[QuantumCircuit]:
+    ) -> list[QuantumCircuit]:
         """
         Generate shadow measurement circuits with random local Clifford rotations.
 
@@ -120,9 +117,7 @@ class RandomLocalCliffordShadows(ClassicalShadows):
         # For now, we store data and compute during estimation
         return np.stack([measurement_outcomes, measurement_bases], axis=-1)
 
-    def _pauli_expectation_single_shadow(
-        self, shadow_idx: int, observable: Observable
-    ) -> float:
+    def _pauli_expectation_single_shadow(self, shadow_idx: int, observable: Observable) -> float:
         """
         Compute Pauli expectation for a single shadow snapshot.
 
@@ -168,11 +163,11 @@ class RandomLocalCliffordShadows(ClassicalShadows):
                 return 0.0
 
         # Apply 3^k scaling factor from inverse channel
-        scaling_factor = 3 ** support_size
+        scaling_factor = 3**support_size
         return float(scaling_factor * expectation * observable.coefficient)
 
     def estimate_observable(
-        self, observable: Observable, shadow_data: Optional[np.ndarray] = None
+        self, observable: Observable, shadow_data: np.ndarray | None = None
     ) -> ShadowEstimate:
         """
         Estimate observable expectation value from shadow snapshots.

@@ -10,28 +10,28 @@ Phase 1 validation artefacts.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field, asdict
+from collections.abc import Callable, Iterable, Mapping, Sequence
+from dataclasses import asdict, dataclass, field
 from statistics import NormalDist
-from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple, Union
+from typing import Any
 
 import numpy as np
 
-
-Number = Union[int, float, np.ndarray]
+Number = int | float | np.ndarray
 
 
 @dataclass(frozen=True)
 class _ObservableRecord:
     """Normalised representation of an observable result payload."""
 
-    expectation: Optional[float]
-    ground_truth: Optional[float]
-    ci: Optional[Tuple[float, float]]
-    ci_width: Optional[float]
-    error: Optional[float]
+    expectation: float | None
+    ground_truth: float | None
+    ci: tuple[float, float] | None
+    ci_width: float | None
+    error: float | None
 
 
-def _as_float(value: Optional[Number]) -> Optional[float]:
+def _as_float(value: Number | None) -> float | None:
     if value is None:
         return None
     if isinstance(value, (int, float)):
@@ -47,9 +47,9 @@ def _as_float(value: Optional[Number]) -> Optional[float]:
 
 def _normalise_ci(
     raw_ci: Any,
-    expectation: Optional[float],
-    ci_width: Optional[float],
-) -> Optional[Tuple[float, float]]:
+    expectation: float | None,
+    ci_width: float | None,
+) -> tuple[float, float] | None:
     if raw_ci is None:
         if expectation is not None and ci_width is not None:
             half_width = float(ci_width) / 2.0
@@ -79,11 +79,11 @@ def _normalise_observable_entry(
     if isinstance(payload, _ObservableRecord):
         return payload
 
-    expectation: Optional[float] = None
-    ground_truth: Optional[float] = None
-    ci: Optional[Tuple[float, float]] = None
-    ci_width: Optional[float] = None
-    error: Optional[float] = None
+    expectation: float | None = None
+    ground_truth: float | None = None
+    ci: tuple[float, float] | None = None
+    ci_width: float | None = None
+    error: float | None = None
 
     if isinstance(payload, Mapping):
         expectation_keys = ("expectation_value", "expectation", "value", "estimate")
@@ -107,7 +107,9 @@ def _normalise_observable_entry(
         if ci is not None and ci_width is None:
             ci_width = float(ci[1] - ci[0])
         if "error" in payload and payload["error"] is not None:
-            error = abs(_as_float(payload["error"]))
+            error_value = _as_float(payload["error"])
+            if error_value is not None:
+                error = abs(error_value)
     elif isinstance(payload, (int, float, np.ndarray)):
         expectation = _as_float(payload)
     elif isinstance(payload, ConfidenceInterval):
@@ -139,7 +141,7 @@ def _normalise_observables(
     observables: Mapping[Any, Any],
     *,
     treat_as_truth: bool,
-) -> Dict[str, _ObservableRecord]:
+) -> dict[str, _ObservableRecord]:
     if not isinstance(observables, Mapping):
         raise TypeError("Observable collections must be mapping types")
     return {
@@ -148,7 +150,7 @@ def _normalise_observables(
     }
 
 
-def _resolve_truth(record: _ObservableRecord) -> Optional[float]:
+def _resolve_truth(record: _ObservableRecord) -> float | None:
     if record.ground_truth is not None:
         return record.ground_truth
     return record.expectation
@@ -183,7 +185,7 @@ class ConfidenceInterval:
 
         return NormalDist().inv_cdf(0.5 + self.level / 2.0)
 
-    def standard_error(self) -> Optional[float]:
+    def standard_error(self) -> float | None:
         """Infer the standard error represented by the interval."""
 
         if self.half_width == 0:
@@ -193,7 +195,7 @@ class ConfidenceInterval:
             return None
         return self.half_width / z
 
-    def to_dict(self) -> Dict[str, float]:
+    def to_dict(self) -> dict[str, float]:
         return {"lower": float(self.lower), "upper": float(self.upper), "level": float(self.level)}
 
 
@@ -201,15 +203,15 @@ class ConfidenceInterval:
 class MetricEstimate:
     """Describes an estimator for an observable or aggregate quantity."""
 
-    expectation: Optional[float] = None
-    variance: Optional[float] = None
-    std_error: Optional[float] = None
-    ci: Optional[ConfidenceInterval] = None
-    shots: Optional[int] = None
-    weight: Optional[float] = None
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    expectation: float | None = None
+    variance: float | None = None
+    std_error: float | None = None
+    ci: ConfidenceInterval | None = None
+    shots: int | None = None
+    weight: float | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
 
-    def effective_variance(self) -> Optional[float]:
+    def effective_variance(self) -> float | None:
         """Return a best-effort variance estimate for downstream comparisons."""
 
         if self.variance is not None:
@@ -221,7 +223,7 @@ class MetricEstimate:
             return None if se is None else se**2
         return None
 
-    def standard_error(self) -> Optional[float]:
+    def standard_error(self) -> float | None:
         if self.std_error is not None:
             return float(self.std_error)
         variance = self.effective_variance()
@@ -229,8 +231,8 @@ class MetricEstimate:
             return float(np.sqrt(variance))
         return None
 
-    def to_dict(self) -> Dict[str, Any]:
-        out: Dict[str, Any] = {
+    def to_dict(self) -> dict[str, Any]:
+        out: dict[str, Any] = {
             "expectation": self.expectation,
             "variance": self.variance,
             "std_error": self.std_error,
@@ -252,13 +254,13 @@ class ObservableComparison:
     name: str
     baseline: MetricEstimate
     approach: MetricEstimate
-    expected_value: Optional[float] = None
-    ssr: Optional[float] = None
-    variance_ratio: Optional[float] = None
-    in_ci: Optional[bool] = None
+    expected_value: float | None = None
+    ssr: float | None = None
+    variance_ratio: float | None = None
+    in_ci: bool | None = None
     weight: float = 1.0
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         data = asdict(self)
         # Replace nested dataclasses with explicit dictionaries for manifest/report usage
         data["baseline"] = self.baseline.to_dict()
@@ -274,28 +276,30 @@ class ObservableComparison:
 class MetricsSummary:
     """Aggregate metrics across all observables for a single experiment."""
 
-    comparisons: Dict[str, ObservableComparison]
-    ssr_average: Optional[float]
-    ci_coverage: Optional[float]
-    variance_ratio_average: Optional[float]
+    comparisons: dict[str, ObservableComparison]
+    ssr_average: float | None
+    ci_coverage: float | None
+    variance_ratio_average: float | None
     total_observables: int
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "ssr_average": self.ssr_average,
             "ci_coverage": self.ci_coverage,
             "variance_ratio_average": self.variance_ratio_average,
             "total_observables": self.total_observables,
-            "observables": {name: comparison.to_dict() for name, comparison in self.comparisons.items()},
+            "observables": {
+                name: comparison.to_dict() for name, comparison in self.comparisons.items()
+            },
         }
 
 
 def _normalise_precision_to_variance(
     value: float,
     *,
-    mode: Optional[str],
+    mode: str | None,
     ci_level: float = 0.95,
-) -> Optional[float]:
+) -> float | None:
     """Convert any supported precision descriptor to a variance value."""
 
     if value is None:
@@ -320,11 +324,11 @@ def _normalise_precision_to_variance(
 def compute_ssr(
     baseline_shots: int,
     quartumse_shots: int,
-    baseline_precision: Optional[float] = None,
-    quartumse_precision: Optional[float] = None,
+    baseline_precision: float | None = None,
+    quartumse_precision: float | None = None,
     *,
-    baseline_precision_mode: Optional[str] = None,
-    quartumse_precision_mode: Optional[str] = None,
+    baseline_precision_mode: str | None = None,
+    quartumse_precision_mode: str | None = None,
     baseline_ci_level: float = 0.95,
     quartumse_ci_level: float = 0.95,
 ) -> float:
@@ -354,11 +358,7 @@ def compute_ssr(
         ci_level=quartumse_ci_level,
     )
 
-    if (
-        baseline_variance is None
-        or quartumse_variance is None
-        or quartumse_variance == 0
-    ):
+    if baseline_variance is None or quartumse_variance is None or quartumse_variance == 0:
         return base_ratio
 
     return base_ratio * (baseline_variance / quartumse_variance)
@@ -380,7 +380,9 @@ def estimate_gate_error_rate(backend_properties: dict) -> dict:
     return {}
 
 
-def weighted_mean(values: Sequence[Number], weights: Optional[Sequence[Number]] = None) -> Optional[float]:
+def weighted_mean(
+    values: Sequence[Number], weights: Sequence[Number] | None = None
+) -> float | None:
     """Compute a weighted mean, guarding against empty inputs."""
 
     if not values:
@@ -397,7 +399,9 @@ def weighted_mean(values: Sequence[Number], weights: Optional[Sequence[Number]] 
     return float(np.average(arr, weights=w))
 
 
-def weighted_variance(values: Sequence[Number], weights: Optional[Sequence[Number]] = None) -> Optional[float]:
+def weighted_variance(
+    values: Sequence[Number], weights: Sequence[Number] | None = None
+) -> float | None:
     """Compute the weighted variance of a sequence."""
 
     if not values:
@@ -462,7 +466,7 @@ def compute_ci_coverage(
     results = _normalise_observables(observable_results, treat_as_truth=False)
     truths = _normalise_observables(ground_truth, treat_as_truth=True)
 
-    flags: List[float] = []
+    flags: list[float] = []
     for name in results.keys() & truths.keys():
         ci = results[name].ci
         truth = _resolve_truth(truths[name])
@@ -499,7 +503,7 @@ def compute_ssr_equal_budget(
     baseline = _normalise_observables(baseline_errors, treat_as_truth=False)
     approach = _normalise_observables(approach_errors, treat_as_truth=False)
 
-    ratios: List[float] = []
+    ratios: list[float] = []
     for name in baseline.keys() & approach.keys():
         baseline_error = baseline[name].error
         approach_error = approach[name].error
@@ -523,7 +527,7 @@ class BootstrapSummary:
     confidence_interval: ConfidenceInterval
     samples: int
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "estimate": float(self.estimate),
             "variance": float(self.variance),
@@ -535,11 +539,11 @@ class BootstrapSummary:
 def bootstrap_summary(
     values: Sequence[Number],
     *,
-    weights: Optional[Sequence[Number]] = None,
-    statistic: Optional[Callable[[np.ndarray], np.ndarray]] = None,
+    weights: Sequence[Number] | None = None,
+    statistic: Callable[[np.ndarray], np.ndarray] | None = None,
     n_resamples: int = 1000,
     ci_level: float = 0.95,
-    random_state: Optional[np.random.Generator] = None,
+    random_state: np.random.Generator | None = None,
 ) -> BootstrapSummary:
     """Bootstrap an arbitrary statistic over ``values``.
 
@@ -589,21 +593,28 @@ def bootstrap_summary(
     lower = float(np.quantile(stat_values, alpha))
     upper = float(np.quantile(stat_values, 1.0 - alpha))
     interval = ConfidenceInterval(lower=lower, upper=upper, level=ci_level)
-    return BootstrapSummary(estimate=estimate, variance=variance, confidence_interval=interval, samples=n_resamples)
+    return BootstrapSummary(
+        estimate=estimate, variance=variance, confidence_interval=interval, samples=n_resamples
+    )
 
 
 def _parse_confidence_interval(
     payload: Mapping[str, Any],
     *,
     default_level: float = 0.95,
-) -> Optional[ConfidenceInterval]:
+) -> ConfidenceInterval | None:
     ci = payload.get("confidence_interval") or payload.get("ci")
     if ci is None:
         return None
 
-    level = float(payload.get("ci_level") or payload.get("confidence_level") or getattr(ci, "get", lambda *_: None)("level") or default_level)
-    lower: Optional[float] = None
-    upper: Optional[float] = None
+    level = float(
+        payload.get("ci_level")
+        or payload.get("confidence_level")
+        or getattr(ci, "get", lambda *_: None)("level")
+        or default_level
+    )
+    lower: float | None = None
+    upper: float | None = None
 
     if isinstance(ci, Mapping):
         lower = ci.get("lower")
@@ -619,7 +630,9 @@ def _parse_confidence_interval(
     return ConfidenceInterval(lower=float(lower), upper=float(upper), level=level)
 
 
-def build_metric_estimate(payload: Mapping[str, Any], *, default_ci_level: float = 0.95) -> MetricEstimate:
+def build_metric_estimate(
+    payload: Mapping[str, Any], *, default_ci_level: float = 0.95
+) -> MetricEstimate:
     """Create a :class:`MetricEstimate` from an experiment payload mapping."""
 
     expectation = payload.get("expectation")
@@ -629,7 +642,7 @@ def build_metric_estimate(payload: Mapping[str, Any], *, default_ci_level: float
     shots = payload.get("shots")
     weight = payload.get("weight") or shots
 
-    metadata: Dict[str, Any] = {}
+    metadata: dict[str, Any] = {}
     for key in ("expected", "error", "in_ci"):
         if key in payload:
             metadata[key] = payload[key]
@@ -667,18 +680,14 @@ def build_observable_comparison(
         expected_value = float(expected_value)
 
     approach_ci = approach_estimate.ci
-    in_ci: Optional[bool] = None
+    in_ci: bool | None = None
     if approach_ci is not None and expected_value is not None:
         in_ci = approach_ci.contains(expected_value)
 
     baseline_variance = baseline_estimate.effective_variance()
     approach_variance = approach_estimate.effective_variance()
     variance_ratio = None
-    if (
-        baseline_variance is not None
-        and approach_variance is not None
-        and approach_variance != 0
-    ):
+    if baseline_variance is not None and approach_variance is not None and approach_variance != 0:
         variance_ratio = float(baseline_variance / approach_variance)
 
     baseline_precision = baseline_estimate.standard_error()
@@ -716,14 +725,14 @@ def summarise_observable_comparisons(
     """Aggregate observable comparisons into summary statistics."""
 
     comparisons = list(comparisons)
-    per_obs: Dict[str, ObservableComparison] = {item.name: item for item in comparisons}
+    per_obs: dict[str, ObservableComparison] = {item.name: item for item in comparisons}
 
-    ssr_values: List[float] = []
-    ssr_weights: List[float] = []
-    coverage_flags: List[float] = []
-    coverage_weights: List[float] = []
-    variance_ratios: List[float] = []
-    variance_weights: List[float] = []
+    ssr_values: list[float] = []
+    ssr_weights: list[float] = []
+    coverage_flags: list[float] = []
+    coverage_weights: list[float] = []
+    variance_ratios: list[float] = []
+    variance_weights: list[float] = []
 
     for comparison in comparisons:
         weight = comparison.weight

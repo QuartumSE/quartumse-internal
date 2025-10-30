@@ -1,11 +1,13 @@
 import importlib.util
-from pathlib import Path
 import types
+from pathlib import Path
 
 import pytest
 from qiskit import QuantumCircuit
 
-MODULE_PATH = Path(__file__).resolve().parents[3] / "experiments" / "validation" / "hardware_validation.py"
+MODULE_PATH = (
+    Path(__file__).resolve().parents[3] / "experiments" / "validation" / "hardware_validation.py"
+)
 spec = importlib.util.spec_from_file_location("hardware_validation", MODULE_PATH)
 hardware_validation = importlib.util.module_from_spec(spec)
 assert spec.loader is not None

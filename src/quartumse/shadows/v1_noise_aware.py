@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import List, Optional
-
 import numpy as np
 
 from quartumse.mitigation import MeasurementErrorMitigation
@@ -18,7 +16,7 @@ class NoiseAwareRandomLocalCliffordShadows(RandomLocalCliffordShadows):
     def __init__(self, config: ShadowConfig, mem: MeasurementErrorMitigation):
         super().__init__(config)
         self.mem = mem
-        self.noise_corrected_distributions: Optional[np.ndarray] = None
+        self.noise_corrected_distributions: np.ndarray | None = None
 
     def reconstruct_classical_shadow(
         self, measurement_outcomes: np.ndarray, measurement_bases: np.ndarray
@@ -52,17 +50,14 @@ class NoiseAwareRandomLocalCliffordShadows(RandomLocalCliffordShadows):
         self.noise_corrected_distributions = corrected
         return reconstructed
 
-    def _pauli_expectation_single_shadow(
-        self, shadow_idx: int, observable: Observable
-    ) -> float:
+    def _pauli_expectation_single_shadow(self, shadow_idx: int, observable: Observable) -> float:
         """Compute Pauli expectation using MEM-corrected distributions."""
 
         if self.measurement_bases is None:
             raise ValueError("No measurement bases recorded; cannot compute expectation.")
 
-        if (
-            self.noise_corrected_distributions is None
-            or shadow_idx >= len(self.noise_corrected_distributions)
+        if self.noise_corrected_distributions is None or shadow_idx >= len(
+            self.noise_corrected_distributions
         ):
             return super()._pauli_expectation_single_shadow(shadow_idx, observable)
 
@@ -71,7 +66,7 @@ class NoiseAwareRandomLocalCliffordShadows(RandomLocalCliffordShadows):
             return super()._pauli_expectation_single_shadow(shadow_idx, observable)
 
         pauli_string = observable.pauli_string
-        relevant_qubits: List[int] = []
+        relevant_qubits: list[int] = []
         pauli_to_basis = {"X": 1, "Y": 2, "Z": 0}
         support_size = 0  # Count non-identity Paulis
 
@@ -105,7 +100,7 @@ class NoiseAwareRandomLocalCliffordShadows(RandomLocalCliffordShadows):
             expectation += probability * parity
 
         # Apply 3^k scaling factor for classical shadows inverse channel
-        scaling_factor = 3 ** support_size
+        scaling_factor = 3**support_size
         return float(scaling_factor * expectation * observable.coefficient)
 
     @staticmethod

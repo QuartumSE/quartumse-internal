@@ -10,10 +10,9 @@ The manifest captures every detail needed to reproduce a quantum experiment:
 """
 
 import hashlib
-import json
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 from pydantic import (
     BaseModel,
@@ -31,12 +30,12 @@ class CircuitFingerprint(BaseModel):
     qasm3: str = Field(description="OpenQASM 3.0 representation")
     num_qubits: int
     depth: int
-    gate_counts: Dict[str, int] = Field(default_factory=dict)
-    circuit_hash: Optional[str] = Field(default=None, description="SHA256 hash of QASM")
+    gate_counts: dict[str, int] = Field(default_factory=dict)
+    circuit_hash: str | None = Field(default=None, description="SHA256 hash of QASM")
 
     @field_validator("circuit_hash", mode="before")
     @classmethod
-    def compute_hash(cls, v: Optional[str], info: ValidationInfo) -> str:
+    def compute_hash(cls, v: str | None, info: ValidationInfo) -> str:
         """Compute SHA256 hash if not provided."""
         if v is None:
             qasm = info.data.get("qasm3", "")
@@ -58,25 +57,25 @@ class BackendSnapshot(BaseModel):
     backend_name: str
     backend_version: str
     num_qubits: int
-    coupling_map: Optional[List[List[int]]] = None
-    basis_gates: List[str]
+    coupling_map: list[list[int]] | None = None
+    basis_gates: list[str]
 
     # Calibration data
-    t1_times: Optional[Dict[int, float]] = Field(None, description="T1 times (us) per qubit")
-    t2_times: Optional[Dict[int, float]] = Field(None, description="T2 times (us) per qubit")
-    gate_errors: Optional[Dict[str, float]] = Field(None, description="Gate errors by gate type")
-    readout_errors: Optional[Dict[int, float]] = Field(None, description="Readout errors per qubit")
+    t1_times: dict[int, float] | None = Field(None, description="T1 times (us) per qubit")
+    t2_times: dict[int, float] | None = Field(None, description="T2 times (us) per qubit")
+    gate_errors: dict[str, float] | None = Field(None, description="Gate errors by gate type")
+    readout_errors: dict[int, float] | None = Field(None, description="Readout errors per qubit")
 
     calibration_timestamp: datetime
     properties_hash: str = Field(description="Hash of full properties JSON")
 
 
 def compute_file_checksum(
-    path: Union[str, Path],
+    path: str | Path,
     *,
     algorithm: str = "sha256",
     chunk_size: int = 64 * 1024,
-) -> Optional[str]:
+) -> str | None:
     """Compute a checksum for ``path`` using ``algorithm``.
 
     Args:
@@ -102,25 +101,23 @@ def compute_file_checksum(
 class MitigationConfig(BaseModel):
     """Error mitigation techniques applied."""
 
-    techniques: List[str] = Field(
-        default_factory=list, description="e.g., ['MEM', 'ZNE', 'RC']"
-    )
-    parameters: Dict[str, Any] = Field(
+    techniques: list[str] = Field(default_factory=list, description="e.g., ['MEM', 'ZNE', 'RC']")
+    parameters: dict[str, Any] = Field(
         default_factory=dict, description="Technique-specific parameters"
     )
 
     # For MEM
-    confusion_matrix_path: Optional[str] = None
-    confusion_matrix_checksum: Optional[str] = Field(
+    confusion_matrix_path: str | None = None
+    confusion_matrix_checksum: str | None = Field(
         default=None, description="Checksum of the MEM confusion matrix file"
     )
 
     # For ZNE
-    zne_scale_factors: Optional[List[float]] = None
-    zne_extrapolator: Optional[str] = None
+    zne_scale_factors: list[float] | None = None
+    zne_extrapolator: str | None = None
 
     # For randomized compiling
-    rc_num_samples: Optional[int] = None
+    rc_num_samples: int | None = None
 
 
 class ShadowsConfig(BaseModel):
@@ -128,25 +125,23 @@ class ShadowsConfig(BaseModel):
 
     version: str = Field(description="v0, v1, v2, v3, v4")
     shadow_size: int = Field(description="Number of random measurements")
-    measurement_ensemble: str = Field(
-        default="random_local_clifford", description="Ensemble type"
-    )
+    measurement_ensemble: str = Field(default="random_local_clifford", description="Ensemble type")
 
     # v1+ (noise-aware)
-    noise_model_path: Optional[str] = None
+    noise_model_path: str | None = None
     inverse_channel_applied: bool = False
 
     # v2+ (fermionic)
     fermionic_mode: bool = False
-    rdm_order: Optional[int] = Field(None, description="Reduced density matrix order (1 or 2)")
+    rdm_order: int | None = Field(None, description="Reduced density matrix order (1 or 2)")
 
     # v3+ (adaptive)
     adaptive: bool = False
-    target_observables: Optional[List[str]] = Field(None, description="Observable prioritization")
+    target_observables: list[str] | None = Field(None, description="Observable prioritization")
 
     # v4+ (robust Bayesian)
     bayesian_inference: bool = False
-    bootstrap_samples: Optional[int] = None
+    bootstrap_samples: int | None = None
 
 
 class ResourceUsage(BaseModel):
@@ -154,16 +149,14 @@ class ResourceUsage(BaseModel):
 
     total_shots: int
     execution_time_seconds: float
-    queue_time_seconds: Optional[float] = None
+    queue_time_seconds: float | None = None
 
     # Cost tracking
-    estimated_cost_usd: Optional[float] = Field(None, description="Estimated dollar cost")
-    credits_used: Optional[float] = Field(None, description="Backend-specific credits")
+    estimated_cost_usd: float | None = Field(None, description="Estimated dollar cost")
+    credits_used: float | None = Field(None, description="Backend-specific credits")
 
     # Compute resources
-    classical_compute_seconds: Optional[float] = Field(
-        None, description="Post-processing time"
-    )
+    classical_compute_seconds: float | None = Field(None, description="Post-processing time")
 
 
 class ManifestSchema(BaseModel):
@@ -176,45 +169,41 @@ class ManifestSchema(BaseModel):
     # Metadata
     manifest_version: str = Field(default="1.0.0", description="Manifest schema version")
     experiment_id: str = Field(description="Unique experiment identifier (UUID)")
-    experiment_name: Optional[str] = Field(None, description="Human-readable name")
+    experiment_name: str | None = Field(None, description="Human-readable name")
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
     # Experiment definition
     circuit: CircuitFingerprint
-    observables: List[Dict[str, Any]] = Field(
+    observables: list[dict[str, Any]] = Field(
         description="Observables estimated (Pauli strings, etc.)"
     )
 
     # Execution context
     backend: BackendSnapshot
     mitigation: MitigationConfig = Field(default_factory=MitigationConfig)
-    shadows: Optional[ShadowsConfig] = None
+    shadows: ShadowsConfig | None = None
 
     # Results & data
     shot_data_path: str = Field(description="Path to Parquet file with shot results")
-    shot_data_checksum: Optional[str] = Field(
+    shot_data_checksum: str | None = Field(
         default=None, description="Checksum of the shot data file"
     )
-    results_summary: Dict[str, Any] = Field(
+    results_summary: dict[str, Any] = Field(
         description="High-level results (expectation values, CIs, etc.)"
     )
     resource_usage: ResourceUsage
 
     # Reproducibility
-    random_seed: Optional[int] = None
+    random_seed: int | None = None
     quartumse_version: str
     qiskit_version: str
     python_version: str
 
     # Extensions
-    metadata: Dict[str, Any] = Field(
-        default_factory=dict, description="User-defined metadata"
-    )
-    tags: List[str] = Field(default_factory=list, description="Searchable tags")
+    metadata: dict[str, Any] = Field(default_factory=dict, description="User-defined metadata")
+    tags: list[str] = Field(default_factory=list, description="Searchable tags")
 
-    model_config = ConfigDict(
-        json_encoders={datetime: lambda v: v.isoformat()}
-    )
+    model_config = ConfigDict(json_encoders={datetime: lambda v: v.isoformat()})
 
 
 class ProvenanceManifest:
@@ -242,7 +231,7 @@ class ProvenanceManifest:
         )
         return cls(schema)
 
-    def to_json(self, path: Optional[Union[str, Path]] = None) -> str:
+    def to_json(self, path: str | Path | None = None) -> str:
         """Export manifest as JSON."""
         json_str = self.schema.model_dump_json(indent=2)
 
@@ -252,7 +241,7 @@ class ProvenanceManifest:
         return json_str
 
     @classmethod
-    def from_json(cls, path: Union[str, Path]) -> "ProvenanceManifest":
+    def from_json(cls, path: str | Path) -> "ProvenanceManifest":
         """Load manifest from JSON file."""
         json_data = Path(path).read_text()
         schema = ManifestSchema.model_validate_json(json_data)
@@ -263,7 +252,7 @@ class ProvenanceManifest:
         if tag not in self.schema.tags:
             self.schema.tags.append(tag)
 
-    def update_results(self, results: Dict[str, Any]) -> None:
+    def update_results(self, results: dict[str, Any]) -> None:
         """Update the results summary."""
         self.schema.results_summary.update(results)
 
@@ -273,9 +262,7 @@ class ProvenanceManifest:
         if require_shot_file:
             shot_path = Path(self.schema.shot_data_path)
             if not shot_path.exists():
-                raise FileNotFoundError(
-                    f"Shot data referenced by manifest is missing: {shot_path}"
-                )
+                raise FileNotFoundError(f"Shot data referenced by manifest is missing: {shot_path}")
 
         return True
 

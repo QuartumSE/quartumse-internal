@@ -68,20 +68,18 @@ def test_extract_artifact_paths_handles_missing_keys() -> None:
 def test_extract_artifact_paths_normalizes_values(monkeypatch: pytest.MonkeyPatch) -> None:
     home = Path("/tmp/test-home").resolve()
     monkeypatch.setenv("HOME", str(home))
+    monkeypatch.setenv("USERPROFILE", str(home))  # Windows uses USERPROFILE
 
     manifest = {
         "shot_data_path": "./data/../data/shots.parquet",
         "mitigation": {"confusion_matrix_path": "~/artifacts/confusion.npy"},
         "shadows": {"noise_model_path": "s3://bucket/model.json"},
-        "results_summary": {
-            "metadata": {"analysis_path": "results/figures/../plots.png"}
-        },
+        "results_summary": {"metadata": {"analysis_path": "results/figures/../plots.png"}},
     }
 
     paths = extract_artifact_paths(manifest)
 
-    assert paths["shot_data_path"] == "data/shots.parquet"
+    assert paths["shot_data_path"] == str(Path("data/shots.parquet"))
     assert paths["confusion_matrix_path"] == str(home / "artifacts" / "confusion.npy")
     assert paths["noise_model_path"] == "s3://bucket/model.json"
-    assert paths["analysis_path"] == "results/plots.png"
-
+    assert paths["analysis_path"] == str(Path("results/plots.png"))

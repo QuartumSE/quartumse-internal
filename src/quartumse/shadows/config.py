@@ -1,7 +1,7 @@
 """Configuration for classical shadows experiments."""
 
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -43,9 +43,7 @@ class ShadowConfig(BaseModel):
     apply_inverse_channel: bool = Field(
         default=False, description="Apply noise-aware inverse channel (v1+)"
     )
-    noise_model_path: Optional[str] = Field(
-        None, description="Path to serialized noise model"
-    )
+    noise_model_path: str | None = Field(None, description="Path to serialized noise model")
 
     # v2+ (fermionic)
     fermionic_mode: bool = Field(default=False, description="Enable fermionic shadows (v2+)")
@@ -53,10 +51,10 @@ class ShadowConfig(BaseModel):
 
     # v3+ (adaptive)
     adaptive: bool = Field(default=False, description="Use adaptive measurement selection (v3+)")
-    target_observables: Optional[List[str]] = Field(
+    target_observables: list[str] | None = Field(
         None, description="Observable strings for adaptive prioritization"
     )
-    derandomization_strategy: Optional[str] = Field(
+    derandomization_strategy: str | None = Field(
         None, description="greedy, importance_sampling, etc."
     )
 
@@ -68,11 +66,11 @@ class ShadowConfig(BaseModel):
     confidence_level: float = Field(default=0.95, description="Confidence interval level")
 
     # General settings
-    random_seed: Optional[int] = Field(None, description="Random seed for reproducibility")
+    random_seed: int | None = Field(None, description="Random seed for reproducibility")
     parallel_shots: bool = Field(
         default=True, description="Execute shadow measurements in parallel batches"
     )
-    batch_size: Optional[int] = Field(None, description="Batch size for parallel execution")
+    batch_size: int | None = Field(None, description="Batch size for parallel execution")
 
     # Variance reduction
     median_of_means: bool = Field(
@@ -81,7 +79,7 @@ class ShadowConfig(BaseModel):
     num_groups: int = Field(default=10, description="Number of groups for median-of-means")
 
     # Advanced
-    custom_parameters: Dict[str, Any] = Field(
+    custom_parameters: dict[str, Any] = Field(
         default_factory=dict, description="Version-specific custom parameters"
     )
 
@@ -89,13 +87,6 @@ class ShadowConfig(BaseModel):
 
     def validate_version_compatibility(self) -> None:
         """Validate that enabled features match the selected version."""
-        version_requirements = {
-            ShadowVersion.V0_BASELINE: [],
-            ShadowVersion.V1_NOISE_AWARE: ["apply_inverse_channel"],
-            ShadowVersion.V2_FERMIONIC: ["fermionic_mode"],
-            ShadowVersion.V3_ADAPTIVE: ["adaptive"],
-            ShadowVersion.V4_ROBUST: ["bayesian_inference"],
-        }
 
         # Warning: simplified validation
         # In production, this would check feature availability

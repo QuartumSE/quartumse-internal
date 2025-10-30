@@ -4,14 +4,14 @@ from __future__ import annotations
 
 import json
 import os
+from collections.abc import Iterable, Mapping, MutableMapping
 from pathlib import Path
-from typing import Any, Dict, Iterable, Mapping, MutableMapping, Optional, Union
+from typing import Any
+
+ManifestDict = dict[str, Any]
 
 
-ManifestDict = Dict[str, Any]
-
-
-def load_manifest(path: Union[str, Path]) -> ManifestDict:
+def load_manifest(path: str | Path) -> ManifestDict:
     """Load a provenance manifest JSON file.
 
     Args:
@@ -29,7 +29,9 @@ def load_manifest(path: Union[str, Path]) -> ManifestDict:
     return data
 
 
-def extract_observable_table(manifest_dict: Mapping[str, Any]) -> Dict[str, Dict[str, Optional[float]]]:
+def extract_observable_table(
+    manifest_dict: Mapping[str, Any],
+) -> dict[str, dict[str, float | None]]:
     """Normalize observable estimates from a manifest dictionary.
 
     The manifest stores observable estimates within ``results_summary``.  Historically
@@ -56,7 +58,7 @@ def extract_observable_table(manifest_dict: Mapping[str, Any]) -> Dict[str, Dict
     if not isinstance(observables_section, Mapping):
         return {}
 
-    normalized: Dict[str, Dict[str, Optional[float]]] = {}
+    normalized: dict[str, dict[str, float | None]] = {}
     for label, payload in observables_section.items():
         if not isinstance(payload, Mapping):
             continue
@@ -65,8 +67,8 @@ def extract_observable_table(manifest_dict: Mapping[str, Any]) -> Dict[str, Dict
             ("expectation", "expectation_value", "value"),
         )
         variance = _coerce_number(payload, ("variance", "var"))
-        ci_lower: Optional[float] = None
-        ci_upper: Optional[float] = None
+        ci_lower: float | None = None
+        ci_upper: float | None = None
 
         if "ci_95" in payload:
             ci_lower, ci_upper = _coerce_interval(payload.get("ci_95"))
@@ -85,7 +87,7 @@ def extract_observable_table(manifest_dict: Mapping[str, Any]) -> Dict[str, Dict
     return normalized
 
 
-def extract_artifact_paths(manifest_dict: Mapping[str, Any]) -> Dict[str, Optional[str]]:
+def extract_artifact_paths(manifest_dict: Mapping[str, Any]) -> dict[str, str | None]:
     """Return a dictionary of artifact paths referenced by the manifest.
 
     The helper is intentionally tolerant and will surface any ``*_path`` keys found
@@ -99,7 +101,7 @@ def extract_artifact_paths(manifest_dict: Mapping[str, Any]) -> Dict[str, Option
         Mapping of artifact identifier to a normalized string path (or ``None``).
     """
 
-    artifacts: MutableMapping[str, Optional[str]] = {
+    artifacts: MutableMapping[str, str | None] = {
         "shot_data_path": _normalize_path(manifest_dict.get("shot_data_path")),
         "confusion_matrix_path": None,
         "noise_model_path": None,
@@ -143,7 +145,7 @@ def _iter_path_fields(data: Any) -> Iterable[tuple[str, Any]]:
             yield from _iter_path_fields(item)
 
 
-def _coerce_number(payload: Mapping[str, Any], keys: Iterable[str]) -> Optional[float]:
+def _coerce_number(payload: Mapping[str, Any], keys: Iterable[str]) -> float | None:
     for key in keys:
         value = payload.get(key)
         if isinstance(value, (int, float)):
@@ -151,7 +153,7 @@ def _coerce_number(payload: Mapping[str, Any], keys: Iterable[str]) -> Optional[
     return None
 
 
-def _coerce_interval(value: Any) -> tuple[Optional[float], Optional[float]]:
+def _coerce_interval(value: Any) -> tuple[float | None, float | None]:
     if isinstance(value, (list, tuple)) and len(value) >= 2:
         lower = value[0]
         upper = value[1]
@@ -169,7 +171,7 @@ def _coerce_interval(value: Any) -> tuple[Optional[float], Optional[float]]:
     return (None, None)
 
 
-def _normalize_path(value: Any) -> Optional[str]:
+def _normalize_path(value: Any) -> str | None:
     if not isinstance(value, str):
         return None
 
@@ -183,4 +185,3 @@ def _normalize_path(value: Any) -> Optional[str]:
 
     expanded = os.path.expanduser(candidate)
     return os.path.normpath(expanded)
-

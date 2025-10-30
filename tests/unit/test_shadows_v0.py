@@ -4,7 +4,6 @@ import numpy as np
 import pytest
 from qiskit import QuantumCircuit
 
-from quartumse.shadows.config import ShadowConfig
 from quartumse.shadows.core import Observable
 from quartumse.shadows.v0_baseline import RandomLocalCliffordShadows
 

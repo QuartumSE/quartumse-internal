@@ -4,8 +4,6 @@ Zero-Noise Extrapolation (ZNE).
 Runs circuit at multiple noise levels and extrapolates to zero noise.
 """
 
-from typing import Callable, List, Optional
-
 import numpy as np
 
 
@@ -18,7 +16,7 @@ class ZeroNoiseExtrapolation:
 
     def __init__(
         self,
-        scale_factors: Optional[List[float]] = None,
+        scale_factors: list[float] | None = None,
         extrapolator: str = "linear",
     ):
         """
@@ -31,7 +29,7 @@ class ZeroNoiseExtrapolation:
         self.scale_factors = scale_factors or [1.0, 3.0, 5.0]
         self.extrapolator = extrapolator
 
-    def extrapolate(self, noise_levels: List[float], expectation_values: List[float]) -> float:
+    def extrapolate(self, noise_levels: list[float], expectation_values: list[float]) -> float:
         """
         Extrapolate to zero noise.
 

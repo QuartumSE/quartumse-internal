@@ -1,12 +1,14 @@
 """Utilities for monitoring IBM Quantum Runtime usage and queue depth."""
+
 from __future__ import annotations
 
 import json
 import logging
-from dataclasses import dataclass, field, asdict
+from collections.abc import Iterable, Mapping
+from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from math import floor
-from typing import Any, Dict, Iterable, Mapping, Optional
+from typing import Any
 
 LOGGER = logging.getLogger(__name__)
 
@@ -16,23 +18,23 @@ class QueueStatus:
     """Details about a backend's queue state."""
 
     backend_name: str
-    pending_jobs: Optional[int] = None
-    operational: Optional[bool] = None
-    status_msg: Optional[str] = None
+    pending_jobs: int | None = None
+    operational: bool | None = None
+    status_msg: str | None = None
 
 
 @dataclass
 class QuotaStatus:
     """Details about runtime quota consumption."""
 
-    plan: Optional[str] = None
-    limit_seconds: Optional[int] = None
-    consumed_seconds: Optional[int] = None
-    remaining_seconds: Optional[int] = None
-    refresh_date: Optional[datetime] = None
-    max_pending_jobs: Optional[int] = None
-    current_pending_jobs: Optional[int] = None
-    raw: Optional[Dict[str, Any]] = None
+    plan: str | None = None
+    limit_seconds: int | None = None
+    consumed_seconds: int | None = None
+    remaining_seconds: int | None = None
+    refresh_date: datetime | None = None
+    max_pending_jobs: int | None = None
+    current_pending_jobs: int | None = None
+    raw: dict[str, Any] | None = None
 
 
 @dataclass
@@ -48,7 +50,7 @@ def collect_runtime_status(
     backend_name: str,
     *,
     service: Any | None = None,
-    service_kwargs: Optional[Dict[str, Any]] = None,
+    service_kwargs: dict[str, Any] | None = None,
 ) -> RuntimeStatusReport:
     """Collect queue depth and quota usage for ``backend_name``.
 
@@ -78,7 +80,7 @@ def collect_runtime_status(
     return RuntimeStatusReport(queue=queue_status, quota=quota_status)
 
 
-def seconds_to_pretty(seconds: Optional[int]) -> str:
+def seconds_to_pretty(seconds: int | None) -> str:
     """Render ``seconds`` into a human friendly duration string."""
 
     if seconds is None:
@@ -137,7 +139,7 @@ def build_notification_message(report: RuntimeStatusReport) -> str:
     return "\n".join(parts)
 
 
-def report_to_dict(report: RuntimeStatusReport) -> Dict[str, Any]:
+def report_to_dict(report: RuntimeStatusReport) -> dict[str, Any]:
     """Serialise ``report`` into a JSON-friendly dictionary."""
 
     data = asdict(report)
@@ -154,7 +156,9 @@ def report_to_dict(report: RuntimeStatusReport) -> Dict[str, Any]:
     return data
 
 
-def post_to_webhook(webhook_url: str, message: str, *, dry_run: bool = False, timeout: int = 10) -> None:
+def post_to_webhook(
+    webhook_url: str, message: str, *, dry_run: bool = False, timeout: int = 10
+) -> None:
     """POST ``message`` to ``webhook_url`` (Slack-compatible JSON payload)."""
 
     if dry_run:
@@ -201,9 +205,9 @@ def _resolve_backend(service: Any, backend_name: str) -> Any:
 
 def _extract_queue_status(backend: Any, default_name: str) -> QueueStatus:
     backend_name = getattr(backend, "name", default_name)
-    pending_jobs: Optional[int] = None
-    operational: Optional[bool] = None
-    status_msg: Optional[str] = None
+    pending_jobs: int | None = None
+    operational: bool | None = None
+    status_msg: str | None = None
 
     try:
         status = backend.status()
@@ -224,7 +228,7 @@ def _extract_queue_status(backend: Any, default_name: str) -> QueueStatus:
 
 
 def _extract_quota_status(service: Any) -> QuotaStatus:
-    usage: Dict[str, Any]
+    usage: dict[str, Any]
     try:
         usage = service.usage()
     except Exception as exc:  # pragma: no cover - requires remote service
@@ -232,7 +236,9 @@ def _extract_quota_status(service: Any) -> QuotaStatus:
         return QuotaStatus(raw={"error": str(exc)})
 
     plan = _first_value(usage, ("plan", "planId", "type"))
-    limit_seconds = _first_int(usage, ("usage_limit_seconds", "usage_limit", "usage_allocation_seconds"))
+    limit_seconds = _first_int(
+        usage, ("usage_limit_seconds", "usage_limit", "usage_allocation_seconds")
+    )
     consumed_seconds = _first_int(usage, ("usage_consumed_seconds", "usage_consumed"))
     remaining_seconds = _first_int(usage, ("usage_remaining_seconds", "usage_remaining"))
     if remaining_seconds is None and limit_seconds is not None and consumed_seconds is not None:
@@ -242,8 +248,8 @@ def _extract_quota_status(service: Any) -> QuotaStatus:
     refresh_date = _parse_datetime(refresh_raw)
 
     by_instance = usage.get("byInstance") or usage.get("by_instance")
-    max_pending_jobs: Optional[int] = None
-    current_pending_jobs: Optional[int] = None
+    max_pending_jobs: int | None = None
+    current_pending_jobs: int | None = None
     if isinstance(by_instance, Iterable):
         try:
             instance_entry = next(iter(by_instance))
@@ -271,7 +277,7 @@ def _extract_quota_status(service: Any) -> QuotaStatus:
     )
 
 
-def _first_value(mapping: Mapping[str, Any], keys: Iterable[str]) -> Optional[str]:
+def _first_value(mapping: Mapping[str, Any], keys: Iterable[str]) -> str | None:
     for key in keys:
         value = mapping.get(key)
         if value is not None:
@@ -279,7 +285,7 @@ def _first_value(mapping: Mapping[str, Any], keys: Iterable[str]) -> Optional[st
     return None
 
 
-def _first_int(mapping: Mapping[str, Any], keys: Iterable[str]) -> Optional[int]:
+def _first_int(mapping: Mapping[str, Any], keys: Iterable[str]) -> int | None:
     for key in keys:
         if key not in mapping:
             continue
@@ -293,7 +299,7 @@ def _first_int(mapping: Mapping[str, Any], keys: Iterable[str]) -> Optional[int]
     return None
 
 
-def _parse_datetime(value: Any) -> Optional[datetime]:
+def _parse_datetime(value: Any) -> datetime | None:
     if value is None:
         return None
     if isinstance(value, datetime):
@@ -324,7 +330,7 @@ def compute_budgeting_hints(
     shots_per_second: float,
     batch_seconds: int = 600,
     calibration_shots: int = 0,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Derive budgeting hints from a :class:`RuntimeStatusReport`.
 
     Args:
@@ -347,22 +353,22 @@ def compute_budgeting_hints(
         raise ValueError("calibration_shots cannot be negative")
 
     remaining_seconds = report.quota.remaining_seconds
-    usable_seconds: Optional[int] = None
+    usable_seconds: int | None = None
     if remaining_seconds is not None:
         usable_seconds = max(min(remaining_seconds, batch_seconds), 0)
 
-    estimated_total_shots: Optional[int] = None
-    estimated_batch_shots: Optional[int] = None
+    estimated_total_shots: int | None = None
+    estimated_batch_shots: int | None = None
     if remaining_seconds is not None:
         estimated_total_shots = max(floor(remaining_seconds * shots_per_second), 0)
     if usable_seconds is not None:
         estimated_batch_shots = max(floor(usable_seconds * shots_per_second), 0)
 
-    measurement_shots_available: Optional[int] = None
+    measurement_shots_available: int | None = None
     if estimated_batch_shots is not None:
         measurement_shots_available = max(estimated_batch_shots - calibration_shots, 0)
 
-    estimated_batches: Optional[int] = None
+    estimated_batches: int | None = None
     if remaining_seconds is not None:
         estimated_batches = max(floor(remaining_seconds / batch_seconds), 0)
 

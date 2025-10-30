@@ -114,7 +114,9 @@ def test_post_to_webhook_dry_run() -> None:
 
 def test_compute_budgeting_hints_uses_remaining_seconds() -> None:
     report = collect_runtime_status("ibmq_fake", service=_FakeService())
-    hints = compute_budgeting_hints(report, shots_per_second=10.0, batch_seconds=600, calibration_shots=100)
+    hints = compute_budgeting_hints(
+        report, shots_per_second=10.0, batch_seconds=600, calibration_shots=100
+    )
 
     assert hints["assumptions"]["shots_per_second"] == 10.0
     assert hints["shot_capacity"]["estimated_total_shots"] == 4800

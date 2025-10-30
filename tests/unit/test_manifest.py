@@ -1,11 +1,8 @@
 """Unit tests for provenance manifest."""
 
-import json
 import tempfile
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from pathlib import Path
-
-import pytest
 
 from quartumse.reporting.manifest import (
     BackendSnapshot,
@@ -14,7 +11,6 @@ from quartumse.reporting.manifest import (
     MitigationConfig,
     ProvenanceManifest,
     ResourceUsage,
-    ShadowsConfig,
 )
 
 

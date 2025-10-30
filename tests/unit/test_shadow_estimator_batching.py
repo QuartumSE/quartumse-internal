@@ -60,8 +60,8 @@ def test_shadow_estimator_batches_by_backend_limit(monkeypatch, tmp_path):
     assert all(size <= 2 for size in run_batch_sizes)
     assert sum(run_batch_sizes) == shadow_config.shadow_size
 
-    measurement_bases, measurement_outcomes, num_qubits = estimator.shot_data_writer.load_shadow_measurements(
-        result.experiment_id
+    measurement_bases, measurement_outcomes, num_qubits = (
+        estimator.shot_data_writer.load_shadow_measurements(result.experiment_id)
     )
 
     assert num_qubits == 1

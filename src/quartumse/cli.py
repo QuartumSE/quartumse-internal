@@ -7,7 +7,7 @@ Command-line interface for running experiments, generating reports, etc.
 import json
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, cast
 
 import typer
 import yaml
@@ -29,14 +29,14 @@ class BackendConfig(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def _parse_descriptor(cls, value: Any) -> Dict[str, Any]:
+    def _parse_descriptor(cls, value: Any) -> dict[str, Any]:
         if isinstance(value, str):
             provider, sep, name = value.partition(":")
             if sep:
                 return {"provider": provider or "local", "name": name}
             return {"provider": "local", "name": value}
         if isinstance(value, dict):
-            return cast(Dict[str, Any], value)
+            return cast(dict[str, Any], value)
         raise TypeError("Backend descriptor must be a string or mapping")
 
     @property
@@ -52,13 +52,13 @@ class ExperimentConfig(BaseModel):
     """Top-level experiment configuration schema."""
 
     backend: BackendConfig = Field(default_factory=lambda: BackendConfig(name="aer_simulator"))
-    num_qubits: Optional[list[int]] = Field(default=None, description="Target qubit counts")
-    shadow_size: Optional[int] = Field(default=None, ge=1, description="Shadows per circuit")
-    baseline_shots: Optional[int] = Field(default=None, ge=1, description="Baseline shot count")
-    random_seed: Optional[int] = Field(default=None, description="Random seed override")
+    num_qubits: list[int] | None = Field(default=None, description="Target qubit counts")
+    shadow_size: int | None = Field(default=None, ge=1, description="Shadows per circuit")
+    baseline_shots: int | None = Field(default=None, ge=1, description="Baseline shot count")
+    random_seed: int | None = Field(default=None, description="Random seed override")
 
 
-def _load_yaml_config(path: Path) -> Dict[str, Any]:
+def _load_yaml_config(path: Path) -> dict[str, Any]:
     """Load YAML configuration from disk."""
 
     if not path.exists():
@@ -67,18 +67,18 @@ def _load_yaml_config(path: Path) -> Dict[str, Any]:
     with path.open("r", encoding="utf-8") as handle:
         raw_data = yaml.safe_load(handle)
 
-    empty_config: Dict[str, Any] = {}
+    empty_config: dict[str, Any] = {}
     if raw_data is None:
         return empty_config
     if not isinstance(raw_data, dict):
         raise typer.BadParameter("Experiment config must be a mapping at the top level")
 
-    typed_data = cast(Dict[str, Any], raw_data)
-    normalized: Dict[str, Any] = {str(key): value for key, value in typed_data.items()}
+    typed_data = cast(dict[str, Any], raw_data)
+    normalized: dict[str, Any] = {str(key): value for key, value in typed_data.items()}
     return normalized
 
 
-def _parse_experiment_config(data: Dict[str, Any]) -> ExperimentConfig:
+def _parse_experiment_config(data: dict[str, Any]) -> ExperimentConfig:
     """Validate YAML payload into :class:`ExperimentConfig`."""
 
     try:
@@ -86,7 +86,7 @@ def _parse_experiment_config(data: Dict[str, Any]) -> ExperimentConfig:
     except ValidationError as exc:
         console.print("[red]Invalid experiment configuration:[/red]")
         console.print(exc, style="red")
-        raise typer.Exit(code=1)
+        raise typer.Exit(code=1) from None
 
 
 @app.command()
@@ -100,7 +100,7 @@ def version() -> None:
 @app.command()
 def run(
     config: str = typer.Option(..., help="Path to experiment config YAML"),
-    backend: Optional[str] = typer.Option(
+    backend: str | None = typer.Option(
         None,
         help="Override backend descriptor (e.g., ibm:ibmq_qasm_simulator)",
     ),
@@ -149,7 +149,7 @@ def calibrate_readout(
     backend: str = typer.Option(
         ..., "--backend", "-b", help="Backend descriptor (e.g., ibm:ibm_brisbane)"
     ),
-    qubit: List[int] = typer.Option(
+    qubit: list[int] = typer.Option(
         ..., "--qubit", "-q", help="Qubit index to include; repeat for multiple qubits"
     ),
     shots: int = typer.Option(4096, help="Shots per computational basis state"),
@@ -162,7 +162,7 @@ def calibrate_readout(
     force: bool = typer.Option(
         False, "--force", help="Force recalibration even if a cached artifact exists"
     ),
-    max_age_hours: Optional[float] = typer.Option(
+    max_age_hours: float | None = typer.Option(
         None,
         "--max-age-hours",
         help="Refresh calibration if the cached artifact is older than this many hours",
@@ -253,19 +253,19 @@ def runtime_status(
         "-b",
         help="Backend descriptor to query (e.g., ibm:ibm_brisbane)",
     ),
-    instance: Optional[str] = typer.Option(
+    instance: str | None = typer.Option(
         None,
         "--instance",
         help="IBM Quantum hub/group/project instance override",
         envvar="QISKIT_IBM_INSTANCE",
     ),
-    channel: Optional[str] = typer.Option(
+    channel: str | None = typer.Option(
         None,
         "--channel",
         help="IBM Quantum channel override",
         envvar="QISKIT_IBM_CHANNEL",
     ),
-    token: Optional[str] = typer.Option(
+    token: str | None = typer.Option(
         None,
         "--token",
         help="IBM Quantum API token override",
@@ -276,7 +276,7 @@ def runtime_status(
         "--json",
         help="Emit machine-readable JSON instead of a formatted table.",
     ),
-    slack_webhook: Optional[str] = typer.Option(
+    slack_webhook: str | None = typer.Option(
         None,
         "--slack-webhook",
         help="Optional Slack-compatible webhook URL (env: QUARTUMSE_SLACK_WEBHOOK).",
@@ -331,7 +331,7 @@ def runtime_status(
     else:
         backend_name = provider
 
-    service_kwargs: Dict[str, str] = {}
+    service_kwargs: dict[str, str] = {}
     if instance:
         service_kwargs["instance"] = instance
     if channel:
@@ -372,7 +372,9 @@ def runtime_status(
         table.add_column("Value", style="white", justify="left")
 
         table.add_row("Backend", report.queue.backend_name)
-        queue_value = "unknown" if report.queue.pending_jobs is None else str(report.queue.pending_jobs)
+        queue_value = (
+            "unknown" if report.queue.pending_jobs is None else str(report.queue.pending_jobs)
+        )
         if report.queue.operational is not None:
             queue_value += f" (operational={report.queue.operational})"
         table.add_row("Queue depth", queue_value)

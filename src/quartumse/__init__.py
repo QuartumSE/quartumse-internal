@@ -15,8 +15,8 @@ __author__ = "QuartumSE Team"
 
 # Core API exports
 from quartumse.estimator import Estimator, ShadowEstimator
-from quartumse.shadows import ClassicalShadows, ShadowConfig
 from quartumse.reporting import ProvenanceManifest, Report
+from quartumse.shadows import ClassicalShadows, ShadowConfig
 
 __all__ = [
     # Version

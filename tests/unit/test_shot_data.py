@@ -43,8 +43,8 @@ class TestShotDataWriter:
             assert parquet_path.suffix == ".parquet"
 
             # Load back
-            loaded_bases, loaded_outcomes, loaded_num_qubits = (
-                writer.load_shadow_measurements(experiment_id)
+            loaded_bases, loaded_outcomes, loaded_num_qubits = writer.load_shadow_measurements(
+                experiment_id
             )
 
             # Verify data integrity
@@ -213,9 +213,7 @@ class TestShadowEstimatorPersistence:
             original_observables = [Observable("ZZZ"), Observable("XXX")]
 
             # Run original estimation
-            original_result = estimator.estimate(
-                circuit, original_observables, save_manifest=True
-            )
+            original_result = estimator.estimate(circuit, original_observables, save_manifest=True)
 
             manifest = ProvenanceManifest.from_json(Path(original_result.manifest_path))
 
@@ -257,9 +255,7 @@ class TestShadowEstimatorPersistence:
             original_observables = [Observable("ZZ")]
 
             # Run original estimation
-            original_result = estimator.estimate(
-                circuit, original_observables, save_manifest=True
-            )
+            original_result = estimator.estimate(circuit, original_observables, save_manifest=True)
 
             # Replay with different observable (leveraging classical shadows' reusability)
             new_observables = [Observable("XX"), Observable("YY")]

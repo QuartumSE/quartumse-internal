@@ -26,7 +26,7 @@ import logging
 import os
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any, Dict, Optional
+from typing import TYPE_CHECKING, Any
 
 from qiskit.providers.backend import Backend
 from qiskit_aer import AerSimulator
@@ -67,7 +67,7 @@ class IBMBackendHandle:
 
     backend: Backend
     snapshot: BackendSnapshot
-    service: Optional[QiskitRuntimeService] = None
+    service: QiskitRuntimeService | None = None
 
 
 def is_ibm_runtime_backend(backend: Backend) -> bool:
@@ -77,7 +77,7 @@ def is_ibm_runtime_backend(backend: Backend) -> bool:
     return "qiskit_ibm_runtime" in module_name
 
 
-def create_runtime_sampler(backend: Backend) -> Optional[SamplerPrimitive]:
+def create_runtime_sampler(backend: Backend) -> SamplerPrimitive | None:
     """Instantiate ``SamplerV2`` for ``backend`` when supported."""
 
     if SamplerV2 is None or not is_ibm_runtime_backend(backend):
@@ -94,7 +94,7 @@ def create_runtime_sampler(backend: Backend) -> Optional[SamplerPrimitive]:
         return None
 
 
-def _read_first_env(*keys: str) -> Optional[str]:
+def _read_first_env(*keys: str) -> str | None:
     """Return the first populated environment variable from ``keys``."""
 
     for key in keys:
@@ -104,7 +104,7 @@ def _read_first_env(*keys: str) -> Optional[str]:
     return None
 
 
-def _coerce_datetime(value: Any) -> Optional[datetime]:
+def _coerce_datetime(value: Any) -> datetime | None:
     """Convert assorted timestamp formats into ``datetime`` objects."""
 
     if value is None:
@@ -144,16 +144,15 @@ def create_backend_snapshot(backend: Backend) -> BackendSnapshot:
         basis_gates = list(getattr(configuration, "basis_gates", []) or [])
         coupling_map = getattr(configuration, "coupling_map", None)
         num_qubits = int(
-            getattr(configuration, "n_qubits", getattr(configuration, "num_qubits", 0))
-            or 0
+            getattr(configuration, "n_qubits", getattr(configuration, "num_qubits", 0)) or 0
         )
 
     calibration_timestamp = datetime.now(timezone.utc)
-    t1_times: Dict[int, float] = {}
-    t2_times: Dict[int, float] = {}
-    readout_errors: Dict[int, float] = {}
-    gate_error_totals: Dict[str, float] = {}
-    gate_error_counts: Dict[str, int] = {}
+    t1_times: dict[int, float] = {}
+    t2_times: dict[int, float] = {}
+    readout_errors: dict[int, float] = {}
+    gate_error_totals: dict[str, float] = {}
+    gate_error_counts: dict[str, int] = {}
     properties_hash = ""
 
     try:
@@ -229,14 +228,14 @@ def create_backend_snapshot(backend: Backend) -> BackendSnapshot:
 class IBMBackendConnector:
     """Lightweight helper for resolving IBM Quantum backends."""
 
-    def __init__(self, config: Optional[Dict[str, Any]] = None):
+    def __init__(self, config: dict[str, Any] | None = None):
         self.config = config or {}
-        self._service: Optional[QiskitRuntimeService] = None
+        self._service: QiskitRuntimeService | None = None
 
-    def _build_service_kwargs(self) -> Dict[str, Any]:
+    def _build_service_kwargs(self) -> dict[str, Any]:
         """Collect keyword arguments for :class:`QiskitRuntimeService`."""
 
-        kwargs: Dict[str, Any] = {}
+        kwargs: dict[str, Any] = {}
 
         token = self.config.get("token") or _read_first_env(*_ENV_TOKEN_KEYS)
         channel = self.config.get("channel") or _read_first_env(*_ENV_CHANNEL_KEYS)
@@ -255,7 +254,7 @@ class IBMBackendConnector:
 
         return kwargs
 
-    def _get_service(self) -> Optional[QiskitRuntimeService]:
+    def _get_service(self) -> QiskitRuntimeService | None:
         """Instantiate (or reuse) the runtime service."""
 
         if self._service is not None:
@@ -278,7 +277,7 @@ class IBMBackendConnector:
     def connect(self, backend_name: str) -> IBMBackendHandle:
         """Resolve ``backend_name`` to a backend and calibration snapshot."""
 
-        backend: Optional[Backend] = None
+        backend: Backend | None = None
         service = self._get_service()
         if service is not None:
             try:
@@ -290,9 +289,7 @@ class IBMBackendConnector:
 
         if backend is None:
             if backend_name in {"aer_simulator", "ibmq_qasm_simulator", "simulator"}:
-                LOGGER.info(
-                    "Using local AerSimulator fallback for backend '%s'", backend_name
-                )
+                LOGGER.info("Using local AerSimulator fallback for backend '%s'", backend_name)
                 backend = AerSimulator()
             else:
                 raise ValueError(
@@ -303,7 +300,9 @@ class IBMBackendConnector:
         return IBMBackendHandle(backend=backend, snapshot=snapshot, service=service)
 
 
-def resolve_backend_descriptor(descriptor: str, config: Optional[Dict[str, Any]] = None) -> IBMBackendHandle:
+def resolve_backend_descriptor(
+    descriptor: str, config: dict[str, Any] | None = None
+) -> IBMBackendHandle:
     """Resolve a ``provider:backend`` descriptor.
 
     Currently only the ``ibm`` provider is implemented, but the descriptor

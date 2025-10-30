@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 import json
+import math
 import sys
 from pathlib import Path
-
-import math
 from statistics import mean
 
 import pytest
@@ -80,26 +79,21 @@ def test_analyze_experiment_aer(tmp_path: Path, example_metadata: ExperimentMeta
 
     canonical = analyzer_module._canonical_name  # type: ignore[attr-defined]
     baseline_results = {
-        canonical(name): payload
-        for name, payload in manifest_baseline["results_summary"].items()
+        canonical(name): payload for name, payload in manifest_baseline["results_summary"].items()
     }
     v0_results = {
-        canonical(name): payload
-        for name, payload in manifest_v0["results_summary"].items()
+        canonical(name): payload for name, payload in manifest_v0["results_summary"].items()
     }
     v1_results = {
-        canonical(name): payload
-        for name, payload in manifest_v1["results_summary"].items()
+        canonical(name): payload for name, payload in manifest_v1["results_summary"].items()
     }
 
     truth_map = {
-        canonical(name): value["expectation"]
-        for name, value in ground_truth["observables"].items()
+        canonical(name): value["expectation"] for name, value in ground_truth["observables"].items()
     }
 
     mae_expected = mean(
-        abs(v1_results[name]["expectation_value"] - truth_map[name])
-        for name in truth_map
+        abs(v1_results[name]["expectation_value"] - truth_map[name]) for name in truth_map
     )
 
     ci_flags = []

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
-from typing import Optional
 
 __all__ = [
     "DEFAULT_DATA_DIR",
@@ -41,7 +40,7 @@ _SHADOW_SIZE_HELP = (
 def add_backend_option(
     parser: argparse.ArgumentParser,
     *,
-    default: Optional[str] = None,
+    default: str | None = None,
     required: bool = False,
 ) -> argparse.Action:
     """Attach a ``--backend`` option to *parser* and return the created action."""
@@ -81,7 +80,7 @@ def add_data_dir_option(
 def add_seed_option(
     parser: argparse.ArgumentParser,
     *,
-    default: Optional[int] = None,
+    default: int | None = None,
 ) -> argparse.Action:
     """Attach a ``--seed`` option for reproducibility overrides."""
 
@@ -96,7 +95,7 @@ def add_seed_option(
 def add_shadow_size_option(
     parser: argparse.ArgumentParser,
     *,
-    default: Optional[int] = None,
+    default: int | None = None,
 ) -> argparse.Action:
     """Attach a ``--shadow-size`` option for measurement counts."""
 

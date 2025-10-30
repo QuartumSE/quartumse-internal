@@ -4,18 +4,16 @@ Report generation for quantum experiments.
 Generates human-readable HTML and PDF reports from provenance manifests.
 """
 
+import math
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
-
-import math
+from typing import Any
 
 from jinja2 import Template
 
 from quartumse.reporting.manifest import ProvenanceManifest
 from quartumse.reporting.shot_data import ShotDataDiagnostics, ShotDataWriter
 from quartumse.utils.metrics import MetricsSummary
-
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
@@ -265,7 +263,9 @@ HTML_TEMPLATE = """
 """
 
 
-def _format_number(value: Optional[float], *, precision: int = 2, suffix: str = "", percentage: bool = False) -> str:
+def _format_number(
+    value: float | None, *, precision: int = 2, suffix: str = "", percentage: bool = False
+) -> str:
     if value is None:
         return "–"
     if percentage:
@@ -276,8 +276,8 @@ def _format_number(value: Optional[float], *, precision: int = 2, suffix: str = 
 
 
 def normalise_metrics_for_report(
-    metrics: Optional[Union[MetricsSummary, Dict[str, Any]]]
-) -> Optional[Dict[str, Any]]:
+    metrics: MetricsSummary | dict[str, Any] | None,
+) -> dict[str, Any] | None:
     """Normalise metrics summaries for templating."""
 
     if metrics is None:
@@ -290,21 +290,28 @@ def normalise_metrics_for_report(
     else:
         raise TypeError("Unsupported metrics payload; expected MetricsSummary or mapping")
 
-    summary_items: List[Dict[str, str]] = []
+    summary_items: list[dict[str, str]] = []
     ssr_avg = metrics_dict.get("ssr_average")
     if ssr_avg is not None:
         summary_items.append({"label": "Average SSR", "value": _format_number(ssr_avg, suffix="×")})
     coverage = metrics_dict.get("ci_coverage")
     if coverage is not None:
-        summary_items.append({"label": "CI Coverage", "value": _format_number(coverage, precision=1, percentage=True)})
+        summary_items.append(
+            {
+                "label": "CI Coverage",
+                "value": _format_number(coverage, precision=1, percentage=True),
+            }
+        )
     variance_ratio = metrics_dict.get("variance_ratio_average")
     if variance_ratio is not None:
-        summary_items.append({"label": "Variance Ratio", "value": _format_number(variance_ratio, suffix="×")})
+        summary_items.append(
+            {"label": "Variance Ratio", "value": _format_number(variance_ratio, suffix="×")}
+        )
     total = metrics_dict.get("total_observables")
     if total is not None:
         summary_items.append({"label": "Observables", "value": str(total)})
 
-    per_observable_rows: List[Dict[str, str]] = []
+    per_observable_rows: list[dict[str, str]] = []
     observables = metrics_dict.get("observables", {}) or {}
     for name, payload in observables.items():
         baseline_data = payload.get("baseline", {}) or {}
@@ -330,8 +337,12 @@ def normalise_metrics_for_report(
         per_observable_rows.append(
             {
                 "name": name,
-                "baseline_expectation": _format_number(baseline_data.get("expectation"), precision=3),
-                "approach_expectation": _format_number(approach_data.get("expectation"), precision=3),
+                "baseline_expectation": _format_number(
+                    baseline_data.get("expectation"), precision=3
+                ),
+                "approach_expectation": _format_number(
+                    approach_data.get("expectation"), precision=3
+                ),
                 "variance_ratio": _format_number(variance_ratio_value, suffix="×"),
                 "ssr": _format_number(ssr_value, suffix="×"),
                 "ci_flag": ci_text,
@@ -351,14 +362,14 @@ class Report:
     def __init__(
         self,
         manifest: ProvenanceManifest,
-        plots: Optional[Dict[str, Any]] = None,
-        shot_diagnostics: Optional[ShotDataDiagnostics] = None,
+        plots: dict[str, Any] | None = None,
+        shot_diagnostics: ShotDataDiagnostics | None = None,
     ):
         self.manifest = manifest
         self.plots = plots or {}
         self.shot_diagnostics = shot_diagnostics
 
-    def to_html(self, output_path: Optional[Union[str, Path]] = None) -> str:
+    def to_html(self, output_path: str | Path | None = None) -> str:
         """Generate HTML report."""
         template = Template(HTML_TEMPLATE)
         metrics_context = normalise_metrics_for_report(
@@ -374,28 +385,28 @@ class Report:
         )
 
         if output_path:
-            Path(output_path).write_text(html, encoding='utf-8')
+            Path(output_path).write_text(html, encoding="utf-8")
 
         return html
 
-    def to_pdf(self, output_path: Union[str, Path]) -> None:
+    def to_pdf(self, output_path: str | Path) -> None:
         """Generate PDF report (requires weasyprint)."""
         try:
             from weasyprint import HTML
 
             html_content = self.to_html()
             HTML(string=html_content).write_pdf(output_path)
-        except ImportError:
+        except ImportError as err:
             raise ImportError(
                 "PDF generation requires weasyprint. Install with: pip install weasyprint"
-            )
+            ) from err
 
 
 class ReportGenerator:
     """Utility class for generating reports from manifests."""
 
     @staticmethod
-    def from_manifest_file(manifest_path: Union[str, Path]) -> Report:
+    def from_manifest_file(manifest_path: str | Path) -> Report:
         """Create a report from a manifest JSON file."""
         manifest = ProvenanceManifest.from_json(manifest_path)
 
@@ -408,9 +419,7 @@ class ReportGenerator:
         return Report(manifest, shot_diagnostics=shot_diagnostics)
 
     @staticmethod
-    def batch_generate(
-        manifest_paths: List[Union[str, Path]], output_dir: Union[str, Path]
-    ) -> None:
+    def batch_generate(manifest_paths: list[str | Path], output_dir: str | Path) -> None:
         """Generate reports for multiple manifests."""
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)

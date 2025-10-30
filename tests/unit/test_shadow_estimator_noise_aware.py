@@ -5,7 +5,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-
 from qiskit import QuantumCircuit
 from qiskit_aer import AerSimulator
 

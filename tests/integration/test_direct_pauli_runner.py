@@ -34,7 +34,7 @@ def test_even_shot_split_and_expectations(seeded_backend: AerSimulator) -> None:
     results_by_obs = result["results_by_obs"]
 
     expected_allocations = [834, 834, 833, 833, 833, 833]
-    for obs, expected_shots in zip(observables, expected_allocations):
+    for obs, expected_shots in zip(observables, expected_allocations, strict=False):
         obs_result = results_by_obs[obs.pauli_string]
         assert obs_result["shots"] == expected_shots
         assert obs_result["expectation"] == pytest.approx(1.0, rel=0, abs=0)

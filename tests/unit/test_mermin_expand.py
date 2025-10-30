@@ -34,4 +34,3 @@ def test_expand_mermin_expression_equivalence() -> None:
 def test_expand_mermin_invalid_expression() -> None:
     with pytest.raises(ValueError):
         expand_mermin_to_pauli("mermin: sqrt(2)")
-

@@ -218,9 +218,7 @@ class TestNamespaceOverrides:
 
     def test_handles_all_none(self):
         """namespace_overrides should return empty dict when all values None."""
-        namespace = argparse.Namespace(
-            backend=None, data_dir=None, seed=None, shadow_size=None
-        )
+        namespace = argparse.Namespace(backend=None, data_dir=None, seed=None, shadow_size=None)
         overrides = namespace_overrides(namespace)
         assert overrides == {}
 

@@ -5,24 +5,21 @@ import logging
 import time
 import uuid
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
-import pandas as pd
 from qiskit import QuantumCircuit, qasm3, transpile
 from qiskit.providers import Backend
 from qiskit_aer import AerSimulator
 
+from quartumse import __version__
 from quartumse.connectors import (
+    SamplerPrimitive,
     create_backend_snapshot,
     create_runtime_sampler,
     is_ibm_runtime_backend,
     resolve_backend,
-    SamplerPrimitive,
 )
-
-from quartumse import __version__
-from quartumse.estimator.base import Estimator, EstimationResult
+from quartumse.estimator.base import EstimationResult, Estimator
 from quartumse.mitigation import MeasurementErrorMitigation
 from quartumse.reporting.manifest import (
     BackendSnapshot,
@@ -39,7 +36,6 @@ from quartumse.shadows.config import ShadowConfig, ShadowVersion
 from quartumse.shadows.core import ClassicalShadows, Observable
 from quartumse.shadows.v0_baseline import RandomLocalCliffordShadows
 from quartumse.shadows.v1_noise_aware import NoiseAwareRandomLocalCliffordShadows
-
 
 LOGGER = logging.getLogger(__name__)
 
@@ -58,10 +54,10 @@ class ShadowEstimator(Estimator):
 
     def __init__(
         self,
-        backend: Union[Backend, str],
-        shadow_config: Optional[ShadowConfig] = None,
-        mitigation_config: Optional[MitigationConfig] = None,
-        data_dir: Optional[Union[str, Path]] = None,
+        backend: Backend | str,
+        shadow_config: ShadowConfig | None = None,
+        mitigation_config: MitigationConfig | None = None,
+        data_dir: str | Path | None = None,
     ):
         """
         Initialize shadow estimator.
@@ -73,8 +69,8 @@ class ShadowEstimator(Estimator):
             data_dir: Directory for storing shot data and manifests
         """
         # Handle backend
-        self._backend_descriptor: Optional[str] = None
-        self._backend_snapshot: Optional[BackendSnapshot] = None
+        self._backend_descriptor: str | None = None
+        self._backend_snapshot: BackendSnapshot | None = None
 
         if isinstance(backend, str):
             self._backend_descriptor = backend
@@ -92,7 +88,7 @@ class ShadowEstimator(Estimator):
 
         super().__init__(backend, shadow_config)
 
-        self._runtime_sampler: Optional[SamplerPrimitive] = None
+        self._runtime_sampler: SamplerPrimitive | None = None
         self._runtime_sampler_checked = False
         self._use_runtime_sampler = is_ibm_runtime_backend(self.backend)
 
@@ -101,7 +97,7 @@ class ShadowEstimator(Estimator):
         self.data_dir = Path(data_dir) if data_dir else Path("./data")
         self.data_dir.mkdir(parents=True, exist_ok=True)
 
-        self.measurement_error_mitigation: Optional[MeasurementErrorMitigation] = None
+        self.measurement_error_mitigation: MeasurementErrorMitigation | None = None
         self._mem_required = (
             self.shadow_config.version == ShadowVersion.V1_NOISE_AWARE
             or self.shadow_config.apply_inverse_channel
@@ -116,7 +112,7 @@ class ShadowEstimator(Estimator):
         # Initialize shot data writer
         self.shot_data_writer = ShotDataWriter(self.data_dir)
 
-    def _get_runtime_sampler(self) -> Optional[SamplerPrimitive]:
+    def _get_runtime_sampler(self) -> SamplerPrimitive | None:
         """Initialise (if necessary) and return the IBM Runtime sampler."""
 
         if not self._use_runtime_sampler:
@@ -155,8 +151,8 @@ class ShadowEstimator(Estimator):
     def estimate(
         self,
         circuit: QuantumCircuit,
-        observables: List[Observable],
-        target_precision: Optional[float] = None,
+        observables: list[Observable],
+        target_precision: float | None = None,
         save_manifest: bool = True,
     ) -> EstimationResult:
         """
@@ -223,7 +219,11 @@ class ShadowEstimator(Estimator):
                     )
                     mem_confusion_path_str = None
 
-            if self.shadow_impl.mem.confusion_matrix is None or mem_force or not mem_confusion_path_str:
+            if (
+                self.shadow_impl.mem.confusion_matrix is None
+                or mem_force
+                or not mem_confusion_path_str
+            ):
                 mem_dir = self.data_dir / "mem"
                 mem_dir.mkdir(parents=True, exist_ok=True)
                 confusion_matrix_path = mem_dir / f"{experiment_id}.npz"
@@ -234,7 +234,9 @@ class ShadowEstimator(Estimator):
                     output_path=confusion_matrix_path,
                 )
                 mem_confusion_path = (
-                    saved_confusion_path if saved_confusion_path is not None else confusion_matrix_path
+                    saved_confusion_path
+                    if saved_confusion_path is not None
+                    else confusion_matrix_path
                 )
                 self.mitigation_config.confusion_matrix_path = str(mem_confusion_path.resolve())
                 mem_confusion_path_str = self.mitigation_config.confusion_matrix_path
@@ -273,7 +275,7 @@ class ShadowEstimator(Estimator):
                 f"Using safe default batch size: {max_experiments}"
             )
 
-        measurement_outcomes_list: List[np.ndarray] = []
+        measurement_outcomes_list: list[np.ndarray] = []
 
         sampler = self._get_runtime_sampler()
 
@@ -320,12 +322,10 @@ class ShadowEstimator(Estimator):
         )
 
         # Reconstruct shadows
-        self.shadow_impl.reconstruct_classical_shadow(
-            measurement_outcomes, measurement_bases
-        )
+        self.shadow_impl.reconstruct_classical_shadow(measurement_outcomes, measurement_bases)
 
         # Estimate all observables
-        estimates: Dict[str, Dict[str, object]] = {}
+        estimates: dict[str, dict[str, object]] = {}
         for obs in observables:
             estimate = self.shadow_impl.estimate_observable(obs)
             estimates[str(obs)] = {
@@ -365,9 +365,7 @@ class ShadowEstimator(Estimator):
             mitigation_confusion_matrix_path=self.mitigation_config.confusion_matrix_path,
         )
 
-    def estimate_shots_needed(
-        self, observables: List[Observable], target_precision: float
-    ) -> int:
+    def estimate_shots_needed(self, observables: list[Observable], target_precision: float) -> int:
         """Estimate shadow size needed for target precision."""
         # Use worst-case observable
         max_shadow_size = 0
@@ -377,11 +375,10 @@ class ShadowEstimator(Estimator):
 
         return max_shadow_size
 
-
     def replay_from_manifest(
         self,
-        manifest_path: Union[str, Path],
-        observables: Optional[List[Observable]] = None,
+        manifest_path: str | Path,
+        observables: list[Observable] | None = None,
     ) -> EstimationResult:
         """
         Replay an experiment from a saved manifest and shot data.
@@ -421,7 +418,7 @@ class ShadowEstimator(Estimator):
         shadow_payload["random_seed"] = manifest.schema.random_seed
         shadow_config = ShadowConfig.model_validate(shadow_payload)
 
-        resolved_confusion_matrix_path: Optional[str] = (
+        resolved_confusion_matrix_path: str | None = (
             manifest.schema.mitigation.confusion_matrix_path
         )
 
@@ -444,9 +441,11 @@ class ShadowEstimator(Estimator):
                 candidate_paths.append((self.data_dir / raw_confusion_path).resolve())
 
             candidate_paths.append((self.data_dir / "mem" / raw_confusion_path.name).resolve())
-            candidate_paths.append((manifest_path.parent / "mem" / raw_confusion_path.name).resolve())
+            candidate_paths.append(
+                (manifest_path.parent / "mem" / raw_confusion_path.name).resolve()
+            )
 
-            confusion_matrix_path: Optional[Path] = None
+            confusion_matrix_path: Path | None = None
             for candidate in candidate_paths:
                 if candidate and candidate.exists():
                     confusion_matrix_path = candidate
@@ -487,7 +486,7 @@ class ShadowEstimator(Estimator):
             ]
 
         # Estimate all observables
-        estimates: Dict[str, Dict[str, object]] = {}
+        estimates: dict[str, dict[str, object]] = {}
         for obs in observables:
             estimate = shadow_impl.estimate_observable(obs)
             estimates[str(obs)] = {
@@ -512,14 +511,13 @@ class ShadowEstimator(Estimator):
         self,
         experiment_id: str,
         circuit: QuantumCircuit,
-        observables: List[Observable],
-        estimates: Dict[str, Dict[str, object]],
+        observables: list[Observable],
+        estimates: dict[str, dict[str, object]],
         shadow_size: int,
         execution_time: float,
         shot_data_path: Path,
     ) -> ProvenanceManifest:
         """Create provenance manifest for the experiment."""
-        import platform
         import sys
 
         import qiskit
@@ -527,16 +525,16 @@ class ShadowEstimator(Estimator):
         # Circuit fingerprint
         try:
             qasm_str = qasm3.dumps(circuit)
-        except:
+        except Exception:
             qasm_str = circuit.qasm()
 
-        gate_counts: Dict[str, int] = {}
+        gate_counts: dict[str, int] = {}
         for instruction in circuit.data:
             gate_name = instruction.operation.name
             gate_counts[gate_name] = gate_counts.get(gate_name, 0) + 1
 
         circuit_hash = hashlib.sha256(qasm_str.encode()).hexdigest()[:16]
-        
+
         circuit_fp = CircuitFingerprint(
             qasm3=qasm_str,
             num_qubits=circuit.num_qubits,
@@ -587,15 +585,15 @@ class ShadowEstimator(Estimator):
         mitigation_config = self.mitigation_config.model_copy(deep=True)
         confusion_path = mitigation_config.confusion_matrix_path
         if confusion_path:
-            mitigation_config.confusion_matrix_checksum = compute_file_checksum(
-                confusion_path
-            )
+            mitigation_config.confusion_matrix_checksum = compute_file_checksum(confusion_path)
 
         manifest_schema = ManifestSchema(
             experiment_id=experiment_id,
             experiment_name=None,
             circuit=circuit_fp,
-            observables=[{"pauli": obs.pauli_string, "coefficient": obs.coefficient} for obs in observables],
+            observables=[
+                {"pauli": obs.pauli_string, "coefficient": obs.coefficient} for obs in observables
+            ],
             backend=backend_snapshot,
             mitigation=mitigation_config,
             shadows=shadows_config,

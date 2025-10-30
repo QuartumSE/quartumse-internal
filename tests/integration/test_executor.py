@@ -60,8 +60,7 @@ def test_execute_experiment_aer(tmp_path: Path, example_metadata: ExperimentMeta
     assert len(manifest_v0.get("shot_data_checksum", "")) == 64
     v0_shot_path = Path(manifest_v0["shot_data_path"])
     assert (
-        manifest_v0["shot_data_checksum"]
-        == hashlib.sha256(v0_shot_path.read_bytes()).hexdigest()
+        manifest_v0["shot_data_checksum"] == hashlib.sha256(v0_shot_path.read_bytes()).hexdigest()
     )
 
     manifest_v1_path = outputs["manifest_v1"]
@@ -79,13 +78,14 @@ def test_execute_experiment_aer(tmp_path: Path, example_metadata: ExperimentMeta
     )
     v1_shot_path = Path(manifest_v1["shot_data_path"])
     assert (
-        manifest_v1["shot_data_checksum"]
-        == hashlib.sha256(v1_shot_path.read_bytes()).hexdigest()
+        manifest_v1["shot_data_checksum"] == hashlib.sha256(v1_shot_path.read_bytes()).hexdigest()
     )
-    assert manifest_v1["mitigation"]["parameters"]["mem_shots"] == example_metadata.budget.calibration.shots_per_state
     assert (
-        manifest_v1["resource_usage"]["total_shots"]
-        + example_metadata.budget.calibration.total
+        manifest_v1["mitigation"]["parameters"]["mem_shots"]
+        == example_metadata.budget.calibration.shots_per_state
+    )
+    assert (
+        manifest_v1["resource_usage"]["total_shots"] + example_metadata.budget.calibration.total
         == example_metadata.budget.total_shots
     )
 

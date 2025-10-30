@@ -6,7 +6,7 @@ sample a small number of randomized measurements, then estimate many observables
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
 from qiskit import QuantumCircuit
@@ -38,9 +38,9 @@ class ShadowEstimate:
         self,
         expectation_value: float,
         variance: float,
-        confidence_interval: Tuple[float, float],
+        confidence_interval: tuple[float, float],
         shadow_size: int,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: dict[str, Any] | None = None,
     ):
         self.expectation_value = expectation_value
         self.variance = variance
@@ -77,14 +77,14 @@ class ClassicalShadows(ABC):
 
     def __init__(self, config: Any):
         self.config = config
-        self.shadow_data: Optional[np.ndarray] = None
-        self.measurement_bases: Optional[np.ndarray] = None
-        self.measurement_outcomes: Optional[np.ndarray] = None
+        self.shadow_data: np.ndarray | None = None
+        self.measurement_bases: np.ndarray | None = None
+        self.measurement_outcomes: np.ndarray | None = None
 
     @abstractmethod
     def generate_measurement_circuits(
         self, base_circuit: QuantumCircuit, num_shadows: int
-    ) -> List[QuantumCircuit]:
+    ) -> list[QuantumCircuit]:
         """
         Generate randomized measurement circuits for shadows protocol.
 
@@ -115,7 +115,7 @@ class ClassicalShadows(ABC):
 
     @abstractmethod
     def estimate_observable(
-        self, observable: Observable, shadow_data: Optional[np.ndarray] = None
+        self, observable: Observable, shadow_data: np.ndarray | None = None
     ) -> ShadowEstimate:
         """
         Estimate expectation value of an observable using shadow data.
@@ -130,16 +130,14 @@ class ClassicalShadows(ABC):
         pass
 
     @abstractmethod
-    def estimate_shadow_size_needed(
-        self, observable: Observable, target_precision: float
-    ) -> int:
+    def estimate_shadow_size_needed(self, observable: Observable, target_precision: float) -> int:
         """Estimate the number of shadows required for a desired precision."""
 
         raise NotImplementedError
 
     def estimate_multiple_observables(
-        self, observables: List[Observable]
-    ) -> Dict[str, ShadowEstimate]:
+        self, observables: list[Observable]
+    ) -> dict[str, ShadowEstimate]:
         """
         Estimate multiple observables from the same shadow data.
 
@@ -168,7 +166,7 @@ class ClassicalShadows(ABC):
 
     def compute_confidence_interval(
         self, mean: float, variance: float, n_samples: int, confidence: float = 0.95
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         """Compute confidence interval using normal approximation."""
         from scipy import stats
 

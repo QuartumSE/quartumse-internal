@@ -1,9 +1,9 @@
 """Error mitigation orchestration."""
 
 from quartumse.mitigation.mem import (
+    CalibrationRecord,
     MeasurementErrorMitigation,
     ReadoutCalibrationManager,
-    CalibrationRecord,
 )
 from quartumse.mitigation.zne import ZeroNoiseExtrapolation
 

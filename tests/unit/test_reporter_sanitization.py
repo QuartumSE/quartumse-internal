@@ -1,6 +1,10 @@
 from __future__ import annotations
 
-from experiments.pipeline.metadata_schema import CalibrationBudget, ExperimentMetadata, PhaseOneBudget
+from experiments.pipeline.metadata_schema import (
+    CalibrationBudget,
+    ExperimentMetadata,
+    PhaseOneBudget,
+)
 from experiments.pipeline.reporter import generate_report
 
 
@@ -42,7 +46,9 @@ def test_reporter_redacts_environment_and_paths(tmp_path, monkeypatch) -> None:
     }
 
     output_dir = tmp_path / "reports"
-    html_path = generate_report(metadata, artifacts, analysis, verification, output_dir / "report.html")
+    html_path = generate_report(
+        metadata, artifacts, analysis, verification, output_dir / "report.html"
+    )
 
     html = html_path.read_text(encoding="utf-8")
 

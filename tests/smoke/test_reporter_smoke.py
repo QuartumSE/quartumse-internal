@@ -2,7 +2,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from experiments.pipeline.metadata_schema import CalibrationBudget, ExperimentMetadata, PhaseOneBudget
+from experiments.pipeline.metadata_schema import (
+    CalibrationBudget,
+    ExperimentMetadata,
+    PhaseOneBudget,
+)
 from experiments.pipeline.reporter import generate_report
 
 

@@ -3,7 +3,7 @@
 
 _Last updated: 2025-10-24_
 
-### Phase snapshot (Oct 2025)
+## Phase snapshot (Oct 2025)
 
 - ✅ Phase 1 scaffolding, provenance pipeline, and CI harness are live.
 - ✅ S‑T01 GHZ baseline + S‑T02 noise-aware runs validated on IBM `ibm_torino` (smoke test Oct 22, 2025).

@@ -361,7 +361,7 @@ class ShadowEstimator(Estimator):
             backend_name=self.backend.name,
             experiment_id=experiment_id,
             manifest_path=str(manifest_path) if manifest_path else None,
-            shot_data_path=str(shot_data_path.resolve()),
+            shot_data_path=str(shot_data_path),
             mitigation_confusion_matrix_path=self.mitigation_config.confusion_matrix_path,
         )
 
@@ -597,7 +597,7 @@ class ShadowEstimator(Estimator):
             backend=backend_snapshot,
             mitigation=mitigation_config,
             shadows=shadows_config,
-            shot_data_path=str(shot_data_path.resolve()),
+            shot_data_path=str(shot_data_path),
             shot_data_checksum=shot_checksum,
             results_summary=estimates,
             resource_usage=resource_usage,

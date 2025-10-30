@@ -1,8 +1,13 @@
 """Unit tests for provenance manifest."""
 
 import tempfile
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
+
+try:  # pragma: no cover - exercised via Python 3.10 CI job
+    from datetime import UTC
+except ImportError:  # Python < 3.11
+    UTC = timezone.utc  # type: ignore[assignment]
 
 from quartumse.reporting.manifest import (
     BackendSnapshot,

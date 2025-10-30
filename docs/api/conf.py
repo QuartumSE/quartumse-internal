@@ -61,11 +61,13 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 html_theme = "alabaster"
 html_static_path = ["_static"]
 
-# Suppress ambiguous cross-reference warnings for classes re-exported from multiple modules
-# These warnings occur because classes like ShadowConfig, BackendSnapshot, etc. are
-# intentionally exposed from both their source module and parent __init__.py files
+# Suppress warnings for classes re-exported from multiple modules
+# These warnings occur because classes are intentionally exposed from both their
+# source module (e.g., quartumse.shadows.config) and parent package (e.g., quartumse.shadows)
 suppress_warnings = [
     "ref.python",  # Ambiguous Python cross-references
+    "autodoc",  # Duplicate object descriptions and other autodoc warnings
+    "toc",  # TOC/toctree warnings (nonexistent documents, etc.)
 ]
 
 intersphinx_mapping = {

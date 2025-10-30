@@ -67,8 +67,8 @@ intersphinx_mapping = {
     "numpy": ("https://numpy.org/doc/stable", None),
     "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
     "scipy": ("https://docs.scipy.org/doc/scipy", None),
-    "qiskit": ("https://docs.quantum.ibm.com/api/qiskit", None),
-    "qiskit_ibm_runtime": ("https://docs.quantum.ibm.com/api/qiskit-ibm-runtime", None),
+    "qiskit": ("https://quantum.cloud.ibm.com/docs/api/qiskit", None),
+    "qiskit_ibm_runtime": ("https://quantum.cloud.ibm.com/docs/api/qiskit-ibm-runtime", None),
     "pydantic": ("https://docs.pydantic.dev/latest", None),
 }
 
@@ -99,6 +99,13 @@ nitpick_ignore = [
     ("py:class", "numpy.random._generator.Generator"),
     ("py:class", "pydantic.main.BaseModel"),
     ("py:attr", "confusion_matrix"),
+    # External Qiskit classes that intersphinx can't always resolve
+    ("py:class", "Backend"),
+    ("py:class", "QiskitRuntimeService"),
+    ("py:class", "Path"),
+    # Pydantic classes
+    ("py:class", "BackendSnapshot"),
+    ("py:class", "MitigationConfig"),
 ]
 
 apidoc_output_path = Path(__file__).parent / "reference"

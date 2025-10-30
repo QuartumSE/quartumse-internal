@@ -16,6 +16,7 @@ def seeded_backend() -> AerSimulator:
     return backend
 
 
+@pytest.mark.integration
 def test_even_shot_split_and_expectations(seeded_backend: AerSimulator) -> None:
     circuit = QuantumCircuit(3)
 
@@ -40,6 +41,7 @@ def test_even_shot_split_and_expectations(seeded_backend: AerSimulator) -> None:
         assert obs_result["expectation"] == pytest.approx(1.0, rel=0, abs=0)
 
 
+@pytest.mark.integration
 def test_basis_rotations_and_logging(
     seeded_backend: AerSimulator, caplog: pytest.LogCaptureFixture
 ) -> None:

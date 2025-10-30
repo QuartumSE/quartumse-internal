@@ -29,6 +29,7 @@ def example_metadata() -> ExperimentMetadata:
     return metadata.model_copy(update={"device": "aer_simulator", "num_qubits": 4})
 
 
+@pytest.mark.integration
 def test_execute_experiment_aer(tmp_path: Path, example_metadata: ExperimentMetadata) -> None:
     outputs = execute_experiment(example_metadata, tmp_path, backend="aer_simulator")
 

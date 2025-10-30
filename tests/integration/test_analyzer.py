@@ -38,6 +38,7 @@ def _load_manifest(path: Path) -> dict:
         return json.load(handle)
 
 
+@pytest.mark.integration
 def test_analyze_experiment_aer(tmp_path: Path, example_metadata: ExperimentMetadata) -> None:
     outputs = execute_experiment(example_metadata, tmp_path, backend="aer_simulator")
 

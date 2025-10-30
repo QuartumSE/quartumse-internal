@@ -61,6 +61,13 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 html_theme = "alabaster"
 html_static_path = ["_static"]
 
+# Suppress ambiguous cross-reference warnings for classes re-exported from multiple modules
+# These warnings occur because classes like ShadowConfig, BackendSnapshot, etc. are
+# intentionally exposed from both their source module and parent __init__.py files
+suppress_warnings = [
+    "ref.python",  # Ambiguous Python cross-references
+]
+
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "sphinx": ("https://www.sphinx-doc.org/en/master", None),
@@ -103,15 +110,9 @@ nitpick_ignore = [
     ("py:class", "Backend"),
     ("py:class", "QiskitRuntimeService"),
     ("py:class", "Path"),
-    # Pydantic classes
+    # Pydantic classes (for missing reference warnings)
     ("py:class", "BackendSnapshot"),
     ("py:class", "MitigationConfig"),
-    # Ambiguous cross-references (classes re-exported from multiple modules)
-    # These use ref.python domain for internal cross-references
-    ("ref.python", "BackendSnapshot"),
-    ("ref.python", "MitigationConfig"),
-    ("ref.python", "MeasurementErrorMitigation"),
-    ("ref.python", "ShadowConfig"),
 ]
 
 apidoc_output_path = Path(__file__).parent / "reference"

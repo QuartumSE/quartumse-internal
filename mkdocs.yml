@@ -1,6 +1,8 @@
 site_name: QuartumSE
 site_url: https://quartumse.com/
 repo_url: https://github.com/QuartumSE/quartumse
+# IMPORTANT: docs/CNAME file configures custom domain for GitHub Pages.
+# DO NOT DELETE - mkdocs gh-deploy copies it to gh-pages branch automatically.
 theme:
   name: material
   palette:

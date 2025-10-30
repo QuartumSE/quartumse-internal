@@ -1,95 +1,95 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://quartumse.github.io/quartumse/</loc>
+         <loc>https://quartumse.com/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/archive/</loc>
+         <loc>https://quartumse.com/archive/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/explanation/architecture/</loc>
+         <loc>https://quartumse.com/explanation/architecture/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/explanation/manifest-schema/</loc>
+         <loc>https://quartumse.com/explanation/manifest-schema/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/explanation/shadows-theory/</loc>
+         <loc>https://quartumse.com/explanation/shadows-theory/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/how-to/generate-report/</loc>
+         <loc>https://quartumse.com/how-to/generate-report/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/how-to/replay-from-manifest/</loc>
+         <loc>https://quartumse.com/how-to/replay-from-manifest/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/how-to/run-automated-pipeline/</loc>
+         <loc>https://quartumse.com/how-to/run-automated-pipeline/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/how-to/run-mem-v1/</loc>
+         <loc>https://quartumse.com/how-to/run-mem-v1/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/how-to/run-st01-ghz/</loc>
+         <loc>https://quartumse.com/how-to/run-st01-ghz/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/how-to/run-tests/</loc>
+         <loc>https://quartumse.com/how-to/run-tests/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/ops/ci_expansion_guide/</loc>
+         <loc>https://quartumse.com/ops/ci_expansion_guide/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/ops/runtime_runbook/</loc>
+         <loc>https://quartumse.com/ops/runtime_runbook/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/reference/cli/</loc>
+         <loc>https://quartumse.com/reference/cli/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/reference/observable-notation/</loc>
+         <loc>https://quartumse.com/reference/observable-notation/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/reference/api/</loc>
+         <loc>https://quartumse.com/reference/api/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/strategy/phase1_reference_runs/</loc>
+         <loc>https://quartumse.com/strategy/phase1_reference_runs/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/strategy/phase1_task_checklist/</loc>
+         <loc>https://quartumse.com/strategy/phase1_task_checklist/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/strategy/project_bible/</loc>
+         <loc>https://quartumse.com/strategy/project_bible/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/strategy/roadmap/</loc>
+         <loc>https://quartumse.com/strategy/roadmap/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/strategy/runtime_budgeting_checklist/</loc>
+         <loc>https://quartumse.com/strategy/runtime_budgeting_checklist/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/tutorials/hardware_quickstart/</loc>
+         <loc>https://quartumse.com/tutorials/hardware_quickstart/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
     <url>
-         <loc>https://quartumse.github.io/quartumse/tutorials/quickstart/</loc>
+         <loc>https://quartumse.com/tutorials/quickstart/</loc>
          <lastmod>2025-10-30</lastmod>
     </url>
 </urlset>

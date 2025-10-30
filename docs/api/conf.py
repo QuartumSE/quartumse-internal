@@ -67,7 +67,8 @@ html_static_path = ["_static"]
 # source module (e.g., quartumse.shadows.config) and parent package (e.g., quartumse.shadows)
 suppress_warnings = [
     "ref.python",  # Ambiguous Python cross-references
-    "autodoc.duplicate_object_description",  # Re-exported classes documented twice
+    "autodoc",     # Duplicate object descriptions and other autodoc warnings
+    "toc",         # TOC/toctree warnings (nonexistent documents, etc.)
 ]
 
 # Modules that primarily re-export symbols from their submodules. Documenting the

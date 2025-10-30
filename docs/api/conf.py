@@ -64,7 +64,27 @@ html_static_path = ["_static"]
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "sphinx": ("https://www.sphinx-doc.org/en/master", None),
+    "numpy": ("https://numpy.org/doc/stable", None),
+    "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy", None),
+    "qiskit": ("https://docs.quantum.ibm.com/api/qiskit", None),
 }
+
+# Provide canonical targets for commonly re-exported types so that autodoc
+# generates unambiguous cross references even when the symbols are available
+# from multiple modules (e.g., ``quartumse`` and ``quartumse.shadows``).
+autodoc_type_aliases = {
+    "ShadowConfig": "quartumse.shadows.config.ShadowConfig",
+    "MeasurementErrorMitigation": "quartumse.mitigation.mem.MeasurementErrorMitigation",
+}
+
+# ``numpy.random.Generator`` is exposed from an internal module in the NumPy
+# documentation inventory, so Sphinx cannot resolve it automatically when we
+# run in ``-n`` (nitpicky) mode. Silence the warning by explicitly ignoring the
+# private target name that appears in the type hints.
+nitpick_ignore = [
+    ("py:class", "numpy.random._generator.Generator"),
+]
 
 apidoc_output_path = Path(__file__).parent / "reference"
 apidoc_module_path = SRC_PATH / "quartumse"

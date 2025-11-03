@@ -204,10 +204,14 @@ against managed hardware or the cloud simulator once credentials are configured.
 ## 6. Next steps
 
 - Review [Testing](../how-to/run-tests.md) for guidance on slow, integration,
-  and hardware test markers.
+  and hardware test markers, then log your execution in the
+  [experiment tracker](../research/experiment-tracker.md).
 - Explore the [Manifest Schema](../explanation/manifest-schema.md) reference to
-  understand the manifest and Parquet schemas.
+  understand the manifest and Parquet schemas and how they feed research
+  workflows.
 - Consult the [Runtime runbook](../ops/runtime_runbook.md) when planning IBM
-  hardware executions.
+  hardware executions and coordinating with the
+  [community hub](../community/community-hub.md) for support windows.
 - Study the strategic context in the [Project Bible](../strategy/project_bible.md)
-  and [Roadmap](../strategy/roadmap.md).
+  and [Roadmap](../strategy/roadmap.md), then share insights or blockers via the
+  [partnerships and use cases board](../community/partnerships.md).

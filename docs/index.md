@@ -1,12 +1,25 @@
 # QuartumSE Documentation
 
-Welcome to the QuartumSE documentation site. This MkDocs-powered hub follows the same narrative as the repository:
+Welcome to the QuartumSE documentation hub. The site is organised into four major sections so you can move from first contact to deep experimentation without losing context.
 
-1. **Install & verify** the SDK locally.
-2. **Run baseline experiments** on Aer or IBM Runtime.
-3. **Automate campaigns** with reporting and provenance capture.
-4. **Dig into architecture and theory** as you extend the platform.
+## Home
 
-Use the navigation to jump directly to tutorials, how-to guides, explanation notes, and operational runbooks. Each section is kept intentionally focused so new contributors can follow a linear path from installation to production-grade experiments.
+- Start with the [QuartumSE roadmap](strategy/roadmap.md) to understand the mission and upcoming milestones.
+- Browse the [Educational Videos](home/educational-videos.md) page for recordings as they become available.
 
-Looking for API details? Head to the [Reference](reference/api/index.md) section. Need the strategic context? See the [Roadmap](strategy/roadmap.md) and [Project Bible](strategy/project_bible.md).
+## Tutorials
+
+- Follow the [Quickstart](tutorials/quickstart.md) and [Hardware Quickstart](tutorials/hardware_quickstart.md) to set up your environment.
+- Dive deeper with targeted [how-to guides](how-to/run-st01-ghz.md) covering experiments, reporting, and automation, and the [advanced runbooks](ops/runtime_runbook.md) that support production operations.
+
+## Research
+
+- Keep pace with experiments via the [Research overview](research/index.md) and the [experiment tracker](research/experiment-tracker.md).
+- Explore the supporting theory in the [Shadows primer](explanation/shadows-theory.md) and provenance tooling in the [manifest schema guide](explanation/manifest-schema.md).
+
+## Community
+
+- Connect with other contributors through the [community hub](community/community-hub.md).
+- Share integrations or success stories in the [partnerships and use cases](community/partnerships.md) area, and consult the [developer docs](explanation/architecture.md) when extending the platform.
+
+Use the navigation tabs to jump directly between these sections. Each area links out to the others so you can, for example, move from a tutorial into the research tracker or from a literature review into community discussions.

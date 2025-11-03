@@ -226,3 +226,9 @@ continues to pass.
 Need more automation? Extend `experiments/pipeline/executor.py` with new stages, but
 keep the metadata schema and equal-budget invariants intact so downstream analysis and
 reports remain comparable.
+
+## Connect the Dots
+
+- Log new pipeline stages or campaign results in the [experiment tracker](../research/experiment-tracker.md).
+- Share automation patterns or feature requests in the [community hub](../community/community-hub.md).
+- Reference supporting research in the [literature library](../research/literature.md) when proposing major workflow changes.

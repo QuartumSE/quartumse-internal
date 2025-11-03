@@ -20,3 +20,9 @@ python experiments/shadows/S_T01_ghz_baseline.py --backend ibm:ibmq_qasm_simulat
 ## 4) Outputs
 
 Manifests under `data/manifests/`, shots under `data/shots/`. See the [Manifest Schema](../explanation/manifest-schema.md).
+
+## 5) Continue the journey
+
+- Record IBM Runtime activity in the [experiment tracker](../research/experiment-tracker.md).
+- Share backend learnings or quota updates in the [community hub](../community/community-hub.md).
+- Capture notable runs for the [partnerships and use cases](../community/partnerships.md) showcase.

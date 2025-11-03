@@ -31,29 +31,42 @@ theme:
     - content.code.copy
     - content.code.annotate
 nav:
-  - Home: index.md
+  - Home:
+      - Welcome: index.md
+      - Roadmap: strategy/roadmap.md
+      - Educational Videos: home/educational-videos.md
   - Tutorials:
       - Quickstart: tutorials/quickstart.md
       - Hardware Quickstart: tutorials/hardware_quickstart.md
-  - How-to:
-      - Run S-T01 GHZ: how-to/run-st01-ghz.md
-      - Run MEM (v1): how-to/run-mem-v1.md
-      - Replay from Manifest: how-to/replay-from-manifest.md
-      - Generate Report: how-to/generate-report.md
-  - Reference:
-      - API: reference/api/index.md
-      - CLI: reference/cli.md
-      - Observable Notation: reference/observable-notation.md
-  - Explanation:
-      - Architecture: explanation/architecture.md
-      - Manifest Schema: explanation/manifest-schema.md
+      - How-to Guides:
+          - Run S-T01 GHZ: how-to/run-st01-ghz.md
+          - Run MEM (v1): how-to/run-mem-v1.md
+          - Replay from Manifest: how-to/replay-from-manifest.md
+          - Generate Reports: how-to/generate-report.md
+          - Run Automated Pipeline: how-to/run-automated-pipeline.md
+          - Run Test Suite: how-to/run-tests.md
+      - Advanced Runbooks:
+          - IBM Runtime Runbook: ops/runtime_runbook.md
+  - Research:
+      - Research Overview: research/index.md
+      - Experiment Tracker: research/experiment-tracker.md
+      - Literature Library: research/literature.md
       - Shadows Theory: explanation/shadows-theory.md
-  - Operations:
-      - IBM Runtime Runbook: ops/runtime_runbook.md
-  - Strategy:
-      - Project Bible: strategy/project_bible.md
-      - Roadmap: strategy/roadmap.md
-      - Phase 1 Checklist: strategy/phase1_task_checklist.md
+      - Manifest Schema: explanation/manifest-schema.md
+      - Strategy Artifacts:
+          - Project Bible: strategy/project_bible.md
+          - Phase 1 Checklist: strategy/phase1_task_checklist.md
+          - Phase 1 Reference Runs: strategy/phase1_reference_runs.md
+          - Strategic Review (Oct 30, 2025): strategy/strategic_review_2025_10_30.md
+          - Runtime Budgeting Checklist: strategy/runtime_budgeting_checklist.md
+  - Community:
+      - Developer Docs:
+          - Architecture Overview: explanation/architecture.md
+          - API Reference: reference/api/index.md
+          - CLI Reference: reference/cli.md
+          - Observable Notation: reference/observable-notation.md
+      - Community & Support: community/community-hub.md
+      - Partnerships & Use Cases: community/partnerships.md
 plugins:
   - search
   - section-index

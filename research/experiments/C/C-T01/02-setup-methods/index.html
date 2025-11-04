@@ -1,0 +1,2108 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://quartumse.com/research/experiments/C/C-T01/02-setup-methods/">
+      
+      
+      
+      
+      <link rel="icon" href="../../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.23">
+    
+    
+      
+        <title>C-T01: H₂ Chemistry Experiment - Setup & Methods - QuartumSE</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.84d31ad4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#c-t01-h2-chemistry-experiment-setup-methods" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../../.." title="QuartumSE" class="md-header__button md-logo" aria-label="QuartumSE" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            QuartumSE
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              C-T01: H₂ Chemistry Experiment - Setup &amp; Methods
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/QuartumSE/quartumse" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../.." class="md-tabs__link">
+          
+  
+  
+  Home
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../../tutorials/quickstart/" class="md-tabs__link">
+          
+  
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../" class="md-tabs__link">
+          
+  
+  
+  Research
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../../explanation/architecture/" class="md-tabs__link">
+          
+  
+  
+  Community
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../../.." title="QuartumSE" class="md-nav__button md-logo" aria-label="QuartumSE" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    QuartumSE
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/QuartumSE/quartumse" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            Home
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Welcome
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../strategy/roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Roadmap
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../home/educational-videos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Educational Videos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Tutorials
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorials
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../tutorials/quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quickstart
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../tutorials/hardware_quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hardware Quickstart
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    How-to Guides
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            How-to Guides
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../how-to/run-st01-ghz/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Run S-T01 GHZ
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../how-to/run-mem-v1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Run MEM (v1)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../how-to/replay-from-manifest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Replay from Manifest
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../how-to/generate-report/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Generate Reports
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../how-to/run-automated-pipeline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Run Automated Pipeline
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../how-to/run-tests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Run Test Suite
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Advanced Runbooks
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            Advanced Runbooks
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../ops/runtime_runbook/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    IBM Runtime Runbook
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Research
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Research
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Research Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../experiment-tracker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Experiment Tracker
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../literature/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Literature Library
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../explanation/shadows-theory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Shadows Theory
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../explanation/manifest-schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Manifest Schema
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Strategy Artifacts
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
+            <span class="md-nav__icon md-icon"></span>
+            Strategy Artifacts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../strategy/project_bible/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Project Bible
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../strategy/phase1_task_checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Phase 1 Checklist
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../strategy/phase1_reference_runs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Phase 1 Reference Runs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../strategy/strategic_review_2025_10_30/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Strategic Review (Oct 30, 2025)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../strategy/runtime_budgeting_checklist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Runtime Budgeting Checklist
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Community
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Community
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Developer Docs
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            Developer Docs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../explanation/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Architecture Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../reference/api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLI Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../reference/observable-notation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Observable Notation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../community/community-hub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Community & Support
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../community/partnerships/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Partnerships & Use Cases
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#circuit-description" class="md-nav__link">
+    <span class="md-ellipsis">
+      Circuit Description
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Circuit Description">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#h2-molecular-ansatz-4-qubits" class="md-nav__link">
+    <span class="md-ellipsis">
+      H₂ Molecular Ansatz (4 Qubits)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hamiltonian-observable-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hamiltonian Observable Set
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#backend-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Backend Configuration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Backend Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ibm-quantum-hardware-ibm_fez" class="md-nav__link">
+    <span class="md-ellipsis">
+      IBM Quantum Hardware: ibm_fez
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#classical-shadows-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Classical Shadows Configuration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Classical Shadows Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#v1-noise-aware-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      v1 Noise-Aware Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#theoretical-shot-budget" class="md-nav__link">
+    <span class="md-ellipsis">
+      Theoretical Shot Budget
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mitigation-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mitigation Strategy
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mitigation Strategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#measurement-error-mitigation-mem" class="md-nav__link">
+    <span class="md-ellipsis">
+      Measurement Error Mitigation (MEM)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#v1-inverse-channel" class="md-nav__link">
+    <span class="md-ellipsis">
+      v1 Inverse Channel
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#execution-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Execution Workflow
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Execution Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-backend-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 1: Backend Validation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-mem-calibration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 2: MEM Calibration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-shadow-measurement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 3: Shadow Measurement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-post-processing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 4: Post-Processing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-code-snippets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Code Snippets
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Code Snippets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hamiltonian-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hamiltonian Definition
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shadow-estimation-with-mem" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shadow Estimation with MEM
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#replay-from-manifest" class="md-nav__link">
+    <span class="md-ellipsis">
+      Replay from Manifest
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-storage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Data Storage
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Data Storage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#artifacts-generated" class="md-nav__link">
+    <span class="md-ellipsis">
+      Artifacts Generated
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validation Checks
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reproducibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reproducibility
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#link-to-executable-notebook" class="md-nav__link">
+    <span class="md-ellipsis">
+      Link to Executable Notebook
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-experiments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next Experiments
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="c-t01-h2-chemistry-experiment-setup-methods">C-T01: H₂ Chemistry Experiment - Setup &amp; Methods<a class="headerlink" href="#c-t01-h2-chemistry-experiment-setup-methods" title="Permanent link">&para;</a></h1>
+<p><strong>Experiment ID:</strong> C-T01 / S-CHEM
+<strong>Manifest ID:</strong> <code>2a89df46-3c81-4638-9ff4-2f60ecf3325d</code>
+<strong>Executable:</strong> <code>C:\Users\User\Desktop\Projects\QuartumSE\experiments\shadows\h2_energy\run_h2_energy.py</code></p>
+<h2 id="circuit-description">Circuit Description<a class="headerlink" href="#circuit-description" title="Permanent link">&para;</a></h2>
+<h3 id="h2-molecular-ansatz-4-qubits">H₂ Molecular Ansatz (4 Qubits)<a class="headerlink" href="#h2-molecular-ansatz-4-qubits" title="Permanent link">&para;</a></h3>
+<p><strong>Molecular Parameters:</strong>
+- <strong>Molecule:</strong> H₂ (hydrogen dimer)
+- <strong>Geometry:</strong> R = 0.74 Å (equilibrium bond length)
+- <strong>Basis Set:</strong> STO-3G (minimal basis)
+- <strong>Active Space:</strong> 2 orbitals × 2 spins = 4 qubits</p>
+<p><strong>Ansatz Circuit:</strong>
+<div class="highlight"><pre><span></span><code>Circuit Depth: 5
+Gates:
+  - Hadamard (h): 1
+  - CNOT (cx): 3
+  - RY rotations: 3
+  - RZ rotations: 3
+
+Circuit Hash: 4d5f8436e8e437af
+</code></pre></div></p>
+<p><strong>State Preparation:</strong>
+Hardware-efficient ansatz (not chemically-inspired):
+1. Initial state: |0000⟩
+2. Apply Hadamard and rotation layers
+3. Entangle with CNOT ladder
+4. Final rotations for variational parameters</p>
+<p>[NOTE: Circuit parameters not optimized in this run, using placeholder values]</p>
+<h3 id="hamiltonian-observable-set">Hamiltonian Observable Set<a class="headerlink" href="#hamiltonian-observable-set" title="Permanent link">&para;</a></h3>
+<p><strong>H₂ Hamiltonian (12 Pauli Terms):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Observable</th>
+<th>Coefficient</th>
+<th>Physical Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IIII</td>
+<td>-1.05</td>
+<td>Nuclear repulsion + constant</td>
+</tr>
+<tr>
+<td>ZIII</td>
+<td>0.39</td>
+<td>Orbital 0 occupation</td>
+</tr>
+<tr>
+<td>IZII</td>
+<td>-0.39</td>
+<td>Orbital 1 occupation</td>
+</tr>
+<tr>
+<td>ZZII</td>
+<td>-0.01</td>
+<td>Orbital 0-1 correlation</td>
+</tr>
+<tr>
+<td>IIZI</td>
+<td>0.39</td>
+<td>Orbital 2 occupation</td>
+</tr>
+<tr>
+<td>IIIZ</td>
+<td>-0.39</td>
+<td>Orbital 3 occupation</td>
+</tr>
+<tr>
+<td>IIZZ</td>
+<td>-0.01</td>
+<td>Orbital 2-3 correlation</td>
+</tr>
+<tr>
+<td>ZIZI</td>
+<td>0.03</td>
+<td>Cross-orbital correlation</td>
+</tr>
+<tr>
+<td>IZIZ</td>
+<td>0.03</td>
+<td>Cross-orbital correlation</td>
+</tr>
+<tr>
+<td>XXXX</td>
+<td>0.06</td>
+<td>Hopping term (4-body)</td>
+</tr>
+<tr>
+<td>YYXX</td>
+<td>-0.02</td>
+<td>Hopping term (4-body)</td>
+</tr>
+<tr>
+<td>XXYY</td>
+<td>-0.02</td>
+<td>Hopping term (4-body)</td>
+</tr>
+</tbody>
+</table>
+<p>[NOTE: These are placeholder coefficients for demonstration. Real H₂@STO-3G coefficients should be loaded from qiskit-nature.]</p>
+<p><strong>Total Energy:</strong>
+<div class="highlight"><pre><span></span><code>E = Σ coefficient_i × ⟨Pauli_i⟩
+</code></pre></div></p>
+<h2 id="backend-configuration">Backend Configuration<a class="headerlink" href="#backend-configuration" title="Permanent link">&para;</a></h2>
+<h3 id="ibm-quantum-hardware-ibm_fez">IBM Quantum Hardware: ibm_fez<a class="headerlink" href="#ibm-quantum-hardware-ibm_fez" title="Permanent link">&para;</a></h3>
+<p><strong>Device Specifications:</strong>
+- <strong>Processor:</strong> 156-qubit superconducting transmon
+- <strong>Topology:</strong> Heavy-hex lattice
+- <strong>Qubits Used:</strong> 0, 1, 2, 3 (linear connectivity)
+- <strong>Calibration:</strong> 2025-11-03T13:17:32Z (&lt; 1 hour before experiment)</p>
+<p><strong>Qubit Quality (Used Qubits):</strong>
+| Qubit | T1 (μs) | T2 (μs) | Readout Error | Gate Error (SX) |
+|-------|---------|---------|---------------|-----------------|
+| 0 | 63.6 | 49.7 | 0.98% | 0.0364% |
+| 1 | 174.8 | 199.1 | 2.22% | 0.0364% |
+| 2 | 208.9 | 178.7 | 0.77% | 0.0364% |
+| 3 | 126.5 | 143.8 | 2.10% | 0.0364% |</p>
+<p><strong>Two-Qubit Gates:</strong>
+- Average CZ Error: 1.083%
+- Circuit depth 5 → Total gate error budget: ~3-5%</p>
+<p><strong>Assessment:</strong> Excellent qubit quality for 4-qubit chemistry experiment.</p>
+<h2 id="classical-shadows-configuration">Classical Shadows Configuration<a class="headerlink" href="#classical-shadows-configuration" title="Permanent link">&para;</a></h2>
+<h3 id="v1-noise-aware-configuration">v1 Noise-Aware Configuration<a class="headerlink" href="#v1-noise-aware-configuration" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">shadow_config</span> <span class="o">=</span> <span class="n">ShadowConfig</span><span class="p">(</span>
+    <span class="n">shadow_size</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>                          <span class="c1"># Conservative for 12 observables</span>
+    <span class="n">random_seed</span><span class="o">=</span><span class="mi">77</span><span class="p">,</span>                           <span class="c1"># Reproducibility</span>
+    <span class="n">confidence_level</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>                    <span class="c1"># 95% CIs</span>
+    <span class="n">version</span><span class="o">=</span><span class="n">ShadowVersion</span><span class="o">.</span><span class="n">V1_NOISE_AWARE</span><span class="p">,</span>    <span class="c1"># Use inverse channel</span>
+    <span class="n">apply_inverse_channel</span><span class="o">=</span><span class="kc">True</span>               <span class="c1"># Noise correction enabled</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Key Parameters:</strong>
+- <strong>Shadow Size:</strong> 300 snapshots (25 shots/observable average)
+- <strong>Version:</strong> v1 (noise-aware with inverse channel correction)
+- <strong>Bootstrap Samples:</strong> 1000 (for CI estimation)
+- <strong>Random Seed:</strong> 77 (different from SMOKE-SIM/HW for independence)</p>
+<h3 id="theoretical-shot-budget">Theoretical Shot Budget<a class="headerlink" href="#theoretical-shot-budget" title="Permanent link">&para;</a></h3>
+<p><strong>Naive Approach (Direct Measurement):</strong>
+- 12 terms × 100 shots/term = 1,200 shots minimum</p>
+<p><strong>Grouped Pauli Measurement:</strong>
+- Typical grouping: 3-5 groups for H₂ Hamiltonian
+- 3 groups × 400 shots/group = 1,200 shots</p>
+<p><strong>Classical Shadows (This Experiment):</strong>
+- 300 shadows estimate ALL 12 terms
+- <strong>Expected SSR:</strong> 1,200 / 300 = 4×</p>
+<h2 id="mitigation-strategy">Mitigation Strategy<a class="headerlink" href="#mitigation-strategy" title="Permanent link">&para;</a></h2>
+<h3 id="measurement-error-mitigation-mem">Measurement Error Mitigation (MEM)<a class="headerlink" href="#measurement-error-mitigation-mem" title="Permanent link">&para;</a></h3>
+<p><strong>Calibration:</strong>
+- <strong>Technique:</strong> Confusion matrix measurement
+- <strong>Shots per State:</strong> 128 shots × 2^4 = 2,048 total calibration shots
+- <strong>Qubits Calibrated:</strong> [0, 1, 2, 3]
+- <strong>Confusion Matrix Path:</strong> <code>data/mem/2a89df46-3c81-4638-9ff4-2f60ecf3325d.npz</code>
+- <strong>Checksum:</strong> <code>69dced449ce1479211404c31e77abafa...</code></p>
+<p><strong>Procedure:</strong>
+1. Prepare computational basis state |b⟩ for b ∈ {0, 1}^4
+2. Measure 128 times without rotation
+3. Construct 16×16 confusion matrix C[measured|prepared]
+4. Invert matrix: C^{-1} corrects readout errors</p>
+<p><strong>Expected Improvement:</strong>
+- Readout errors: 0.77-2.22% per qubit
+- Uncorrelated assumption → ~5-10% total bitstring error
+- MEM expected to reduce readout variance by 20-30%</p>
+<h3 id="v1-inverse-channel">v1 Inverse Channel<a class="headerlink" href="#v1-inverse-channel" title="Permanent link">&para;</a></h3>
+<p><strong>Noise Model:</strong>
+Locally-biased inverse channel accounts for:
+- Single-qubit depolarizing noise
+- Readout errors (already corrected by MEM)
+- Approximate gate errors via effective noise parameter</p>
+<p><strong>Application:</strong>
+Each shadow snapshot ρ̂_i corrected:
+<div class="highlight"><pre><span></span><code>ρ̂_corrected = Λ^{-1}(ρ̂_measured)
+</code></pre></div>
+where Λ is learned noise channel.</p>
+<p>[NOTE: In this run, inverse channel parameters derived from backend calibration data.]</p>
+<h2 id="execution-workflow">Execution Workflow<a class="headerlink" href="#execution-workflow" title="Permanent link">&para;</a></h2>
+<h3 id="step-1-backend-validation">Step 1: Backend Validation<a class="headerlink" href="#step-1-backend-validation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>quartumse<span class="w"> </span>runtime-status<span class="w"> </span>--backend<span class="w"> </span>ibm:ibm_fez
+</code></pre></div>
+<p>Confirm:
+- Queue depth &lt; 200 jobs
+- Calibration &lt; 24 hours old
+- Target qubits (0-3) have readout error &lt; 3%</p>
+<h3 id="step-2-mem-calibration">Step 2: MEM Calibration<a class="headerlink" href="#step-2-mem-calibration" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Automatic in run_h2_energy.py</span>
+<span class="c1"># Generates confusion matrix for qubits 0-3</span>
+<span class="c1"># Saves to data/mem/{experiment_id}.npz</span>
+</code></pre></div>
+<h3 id="step-3-shadow-measurement">Step 3: Shadow Measurement<a class="headerlink" href="#step-3-shadow-measurement" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>C:<span class="se">\U</span>sers<span class="se">\U</span>ser<span class="se">\D</span>esktop<span class="se">\P</span>rojects<span class="se">\Q</span>uartumSE
+
+python<span class="w"> </span>experiments/shadows/h2_energy/run_h2_energy.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--backend<span class="w"> </span>ibm:ibm_fez<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--shadow-size<span class="w"> </span><span class="m">300</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--seed<span class="w"> </span><span class="m">77</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--data-dir<span class="w"> </span>./data
+</code></pre></div>
+<p><strong>Execution Flow:</strong>
+1. Transpile H₂ ansatz circuit for ibm_fez topology
+2. Submit MEM calibration job (2,048 shots)
+3. Submit shadow measurement job (300 shots)
+4. Retrieve results and apply MEM correction
+5. Estimate all 12 Hamiltonian terms with bootstrap CIs
+6. Save manifest + shot data</p>
+<h3 id="step-4-post-processing">Step 4: Post-Processing<a class="headerlink" href="#step-4-post-processing" title="Permanent link">&para;</a></h3>
+<p>Automatic:
+- Observable expectation values computed
+- 95% confidence intervals via bootstrap (1000 samples)
+- Total energy = Σ coefficient_i × ⟨Pauli_i⟩
+- Manifest saved with full provenance</p>
+<h2 id="key-code-snippets">Key Code Snippets<a class="headerlink" href="#key-code-snippets" title="Permanent link">&para;</a></h2>
+<h3 id="hamiltonian-definition">Hamiltonian Definition<a class="headerlink" href="#hamiltonian-definition" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">quartumse.shadows.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Observable</span>
+
+<span class="n">hamiltonian_terms</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;IIII&quot;</span><span class="p">,</span> <span class="n">coefficient</span><span class="o">=-</span><span class="mf">1.05</span><span class="p">),</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;ZIII&quot;</span><span class="p">,</span> <span class="n">coefficient</span><span class="o">=</span><span class="mf">0.39</span><span class="p">),</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;IZII&quot;</span><span class="p">,</span> <span class="n">coefficient</span><span class="o">=-</span><span class="mf">0.39</span><span class="p">),</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;ZZII&quot;</span><span class="p">,</span> <span class="n">coefficient</span><span class="o">=-</span><span class="mf">0.01</span><span class="p">),</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;IIZI&quot;</span><span class="p">,</span> <span class="n">coefficient</span><span class="o">=</span><span class="mf">0.39</span><span class="p">),</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;IIIZ&quot;</span><span class="p">,</span> <span class="n">coefficient</span><span class="o">=-</span><span class="mf">0.39</span><span class="p">),</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;IIZZ&quot;</span><span class="p">,</span> <span class="n">coefficient</span><span class="o">=-</span><span class="mf">0.01</span><span class="p">),</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;ZIZI&quot;</span><span class="p">,</span> <span class="n">coefficient</span><span class="o">=</span><span class="mf">0.03</span><span class="p">),</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;IZIZ&quot;</span><span class="p">,</span> <span class="n">coefficient</span><span class="o">=</span><span class="mf">0.03</span><span class="p">),</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;XXXX&quot;</span><span class="p">,</span> <span class="n">coefficient</span><span class="o">=</span><span class="mf">0.06</span><span class="p">),</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;YYXX&quot;</span><span class="p">,</span> <span class="n">coefficient</span><span class="o">=-</span><span class="mf">0.02</span><span class="p">),</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;XXYY&quot;</span><span class="p">,</span> <span class="n">coefficient</span><span class="o">=-</span><span class="mf">0.02</span><span class="p">),</span>
+<span class="p">]</span>
+</code></pre></div>
+<h3 id="shadow-estimation-with-mem">Shadow Estimation with MEM<a class="headerlink" href="#shadow-estimation-with-mem" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">quartumse</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShadowEstimator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">quartumse.reporting.manifest</span><span class="w"> </span><span class="kn">import</span> <span class="n">MitigationConfig</span>
+
+<span class="n">mitigation_config</span> <span class="o">=</span> <span class="n">MitigationConfig</span><span class="p">(</span>
+    <span class="n">techniques</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;MEM&quot;</span><span class="p">],</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;mem_shots&quot;</span><span class="p">:</span> <span class="mi">128</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">estimator</span> <span class="o">=</span> <span class="n">ShadowEstimator</span><span class="p">(</span>
+    <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;ibm:ibm_fez&quot;</span><span class="p">,</span>
+    <span class="n">shadow_config</span><span class="o">=</span><span class="n">shadow_config</span><span class="p">,</span>
+    <span class="n">mitigation_config</span><span class="o">=</span><span class="n">mitigation_config</span><span class="p">,</span>
+    <span class="n">data_dir</span><span class="o">=</span><span class="s2">&quot;./data&quot;</span>
+<span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span>
+    <span class="n">circuit</span><span class="o">=</span><span class="n">h2_ansatz</span><span class="p">,</span>
+    <span class="n">observables</span><span class="o">=</span><span class="n">hamiltonian_terms</span><span class="p">,</span>
+    <span class="n">save_manifest</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">total_energy</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+    <span class="n">term</span><span class="o">.</span><span class="n">coefficient</span> <span class="o">*</span> <span class="n">result</span><span class="o">.</span><span class="n">observables</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">term</span><span class="p">)][</span><span class="s2">&quot;expectation_value&quot;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">hamiltonian_terms</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="replay-from-manifest">Replay from Manifest<a class="headerlink" href="#replay-from-manifest" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Estimate NEW observables without re-running on hardware</span>
+<span class="n">estimator</span> <span class="o">=</span> <span class="n">ShadowEstimator</span><span class="o">.</span><span class="n">replay_from_manifest</span><span class="p">(</span>
+    <span class="s2">&quot;data/manifests/2a89df46-3c81-4638-9ff4-2f60ecf3325d.json&quot;</span>
+<span class="p">)</span>
+
+<span class="n">new_observables</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;ZZZZ&quot;</span><span class="p">),</span>  <span class="c1"># All-Z correlation</span>
+    <span class="n">Observable</span><span class="p">(</span><span class="s2">&quot;XXII&quot;</span><span class="p">),</span>  <span class="c1"># X-X hopping</span>
+<span class="p">]</span>
+
+<span class="n">new_result</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">estimate_from_replay</span><span class="p">(</span><span class="n">new_observables</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="data-storage">Data Storage<a class="headerlink" href="#data-storage" title="Permanent link">&para;</a></h2>
+<h3 id="artifacts-generated">Artifacts Generated<a class="headerlink" href="#artifacts-generated" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Manifest:</strong> <code>data/manifests/2a89df46-3c81-4638-9ff4-2f60ecf3325d.json</code></li>
+<li>2,136 lines of JSON</li>
+<li>Complete circuit QASM3 representation</li>
+<li>All 12 observable estimates with CIs</li>
+<li>Backend calibration snapshot</li>
+<li>
+<p>Software versions (Qiskit 2.2.1, QuartumSE 0.1.0)</p>
+</li>
+<li>
+<p><strong>Shot Data:</strong> <code>data/shots/2a89df46-3c81-4638-9ff4-2f60ecf3325d.parquet</code></p>
+</li>
+<li>300 shadow measurement outcomes</li>
+<li>Basis choices (random Clifford per qubit)</li>
+<li>
+<p>Raw bitstrings before MEM correction</p>
+</li>
+<li>
+<p><strong>Confusion Matrix:</strong> <code>data/mem/2a89df46-3c81-4638-9ff4-2f60ecf3325d.npz</code></p>
+</li>
+<li>16×16 matrix for 4-qubit system</li>
+<li>Calibration metadata (shots, timestamp)</li>
+</ol>
+<h2 id="validation-checks">Validation Checks<a class="headerlink" href="#validation-checks" title="Permanent link">&para;</a></h2>
+<p>Automated in script:
+1. ✓ All 12 observables estimated
+2. ✓ Confidence intervals non-degenerate
+3. ✓ Identity term (IIII) ≈ coefficient (constant check)
+4. ✓ Manifest saved with all required fields
+5. ✓ Total energy within physical bounds</p>
+<h2 id="reproducibility">Reproducibility<a class="headerlink" href="#reproducibility" title="Permanent link">&para;</a></h2>
+<p><strong>Full Reproduction:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">quartumse</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShadowEstimator</span>
+
+<span class="c1"># Exact replication using manifest + shot data</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">ShadowEstimator</span><span class="o">.</span><span class="n">replay_from_manifest</span><span class="p">(</span>
+    <span class="s2">&quot;data/manifests/2a89df46-3c81-4638-9ff4-2f60ecf3325d.json&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Results identical to original run (deterministic replay)</span>
+</code></pre></div></p>
+<p><strong>Random Seed Control:</strong>
+- Shadow sampling: seed=77
+- Bootstrap: seed=77 + offset
+- NumPy RNG: seeded in estimator</p>
+<h2 id="link-to-executable-notebook">Link to Executable Notebook<a class="headerlink" href="#link-to-executable-notebook" title="Permanent link">&para;</a></h2>
+<p>Interactive notebook: <code>notebooks/experiments/chemistry/h2_energy_shadows.ipynb</code> [TBD]</p>
+<p>For now, use standalone script with <code>--help</code> for options.</p>
+<h2 id="next-experiments">Next Experiments<a class="headerlink" href="#next-experiments" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>C-T01 Re-Run with Real Hamiltonian:</strong> Update coefficients from qiskit-nature</li>
+<li><strong>C-T01 Baseline:</strong> Run grouped Pauli measurement for SSR validation</li>
+<li><strong>C-T02 (LiH):</strong> Scale to 6-qubit molecule</li>
+<li><strong>S-T03 (Fermionic Shadows):</strong> Direct 2-RDM estimation</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

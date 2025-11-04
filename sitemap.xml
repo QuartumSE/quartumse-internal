@@ -2,138 +2,306 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://quartumse.com/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/CNAME_README/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/archive/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/community/community-hub/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/community/partnerships/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/explanation/architecture/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/explanation/manifest-schema/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/explanation/shadows-theory/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/home/educational-videos/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/how-to/generate-report/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/how-to/replay-from-manifest/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/how-to/run-automated-pipeline/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/how-to/run-mem-v1/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/how-to/run-st01-ghz/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/how-to/run-tests/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/ops/ci_expansion_guide/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/ops/ci_test_strategy/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/ops/lessons_learned_sphinx_ci/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/ops/runtime_runbook/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/ops/sphinx_regression_analysis/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/reference/cli/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/reference/observable-notation/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/reference/api/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/research/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/research/experiment-tracker/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/research/literature/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/phase1-research-plan/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/B/B-T01/01-rationale/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/B/B-T01/02-setup-methods/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/B/B-T01/03-results-analysis/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/B/B-T01/04-conclusions/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/C/C-T01/01-rationale/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/C/C-T01/02-setup-methods/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/C/C-T01/03-results-analysis/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/C/C-T01/04-conclusions/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/M/M-T01/01-rationale/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/M/M-T01/02-setup-methods/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/M/M-T01/03-results-analysis/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/M/M-T01/04-conclusions/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/S-BELL/01-rationale/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/S-BELL/02-setup-methods/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/S-BELL/03-results-analysis/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/S-BELL/04-conclusions/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/S-CLIFF/01-rationale/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/S-CLIFF/02-setup-methods/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/S-CLIFF/03-results-analysis/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/S-CLIFF/04-conclusions/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/S-ISING/01-rationale/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/S-ISING/02-setup-methods/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/S-ISING/03-results-analysis/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/S-ISING/04-conclusions/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/S-T01/01-rationale/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/S-T01/02-setup-methods/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/S-T01/03-results-analysis/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/S-T01/04-conclusions/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/S-T02/01-rationale/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/S-T02/02-setup-methods/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/S-T02/03-results-analysis/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/S-T02/04-conclusions/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/SMOKE-HW/01-rationale/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/SMOKE-HW/02-setup-methods/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/SMOKE-HW/03-results-analysis/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/SMOKE-HW/04-conclusions/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/SMOKE-SIM/01-rationale/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/SMOKE-SIM/02-setup-methods/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/SMOKE-SIM/03-results-analysis/</loc>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://quartumse.com/research/experiments/S/SMOKE-SIM/04-conclusions/</loc>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/strategy/phase1_reference_runs/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/strategy/phase1_task_checklist/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/strategy/project_bible/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/strategy/roadmap/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/strategy/runtime_budgeting_checklist/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/strategy/strategic_review_2025_10_30/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/tutorials/hardware_quickstart/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://quartumse.com/tutorials/quickstart/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
 </urlset>

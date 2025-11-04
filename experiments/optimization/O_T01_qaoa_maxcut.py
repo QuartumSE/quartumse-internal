@@ -15,8 +15,13 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
+from dotenv import load_dotenv
 from qiskit import QuantumCircuit
 from scipy.optimize import minimize
+
+# Load environment (for IBM credentials)
+env_path = Path(__file__).parent.parent.parent / '.env'
+load_dotenv(env_path)
 
 # Add src to path for development
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))

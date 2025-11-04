@@ -1,8 +1,8 @@
 # O-T01: QAOA MAX-CUT with Shot-Frugal Cost Estimation - Setup & Methods
 
 **Experiment ID:** O-T01
-**Status:** [PLANNED]
-**Executable:** `C:\Users\User\Desktop\Projects\QuartumSE\experiments\optimization\O_T01_qaoa_maxcut.py` [TBD]
+**Status:** [READY TO EXECUTE]
+**Executable:** `C:\Users\User\Desktop\Projects\QuartumSE\experiments\optimization\O_T01_qaoa_maxcut.py`
 
 ## Problem Definition
 

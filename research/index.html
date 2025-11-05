@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#research-overview" class="md-skip">
+        <a href="#quartumse-research-overview-workflows" class="md-skip">
           Skip to content
         </a>
       
@@ -958,15 +958,6 @@
   <a href="#planned-experiments" class="md-nav__link">
     <span class="md-ellipsis">
       📋 Planned Experiments
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#useful-links" class="md-nav__link">
-    <span class="md-ellipsis">
-      Useful Links
     </span>
   </a>
   
@@ -3260,15 +3251,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#useful-links" class="md-nav__link">
-    <span class="md-ellipsis">
-      Useful Links
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -3288,24 +3270,26 @@
   
 
 
-<h1 id="research-overview">Research Overview<a class="headerlink" href="#research-overview" title="Permanent link">&para;</a></h1>
-<p>QuartumSE’s research program is designed to maximize shot-efficiency in quantum measurements – extracting more information per experiment while rigorously tracking uncertainty. The core methodology revolves around classical shadows, a randomized measurement technique that allows one to “measure once, ask later”, estimating many observables from the same set of quantum circuit runs. This approach aims to reduce the total number of shots required for tasks like Hamiltonian estimation, algorithm optimization, and device benchmarking, thereby lowering the cost per result without sacrificing accuracy. Key metrics such as the Shot-Savings Ratio (SSR) – the factor by which shots are reduced compared to conventional methods – are used to quantify these advantages. In Phase 1 (late 2025), the research emphasis is on validating the shadows-based workflow on both simulators and real hardware, with targets of SSR ≥ 1.2× on simulator and SSR ≥ 1.1× on IBM hardware as proof of shot-efficiency gains before scaling up in subsequent phases.</p>
-<p>To organize this effort, the Phase 1 experiments are divided into five parallel workstreams (or workflows), each focused on a different application domain but integrated under the common goal of shot-efficient measurement. The workstreams are:</p>
+<h1 id="quartumse-research-overview-workflows">QuartumSE Research Overview &amp; Workflows<a class="headerlink" href="#quartumse-research-overview-workflows" title="Permanent link">&para;</a></h1>
+<p><strong>QuartumSE</strong>’s research program is designed to <strong>maximize shot-efficiency</strong> in quantum measurements – extracting more information per experiment while rigorously tracking uncertainty. The core methodology revolves around <strong>classical shadows</strong>, a randomized measurement technique that allows one to “measure once, ask later”, estimating many observables from the same set of quantum circuit runs.</p>
+<p>This approach aims to reduce the total number of shots required for tasks like <strong>Hamiltonian estimation</strong>, <strong>algorithm optimization</strong>, and <strong>device benchmarking</strong>, thereby lowering the cost per result without sacrificing accuracy. Key metrics such as the <strong>Shot-Savings Ratio (SSR)</strong> – the factor by which shots are reduced compared to conventional methods – are used to quantify these advantages. </p>
+<p>Currently, the research emphasis is on validating the shadows-based workflow on both <strong>simulators and real hardware</strong>, with targets of SSR ≥ 1.2× on simulator and SSR ≥ 1.1× on <strong>IBM hardware</strong> as proof of shot-efficiency gains before scaling up in subsequent phases.</p>
+<p>To organize this effort, we have divided experiments into <strong>five parallel workstreams</strong> (or workflows), each focused on a different application domain but integrated under the common goal of shot-efficient measurement. The workstreams are:</p>
 <ul>
 <li>
-<p>Shadows (Workstream S): Establishes and validates the base classical shadows technique on well-defined quantum states (e.g. GHZ states) using both simulators and hardware. This forms the foundation for all other workstreams.</p>
+<p><strong>Shadows</strong> (Workstream S): Establishes and validates the base classical shadows technique on well-defined quantum states (e.g. GHZ states) using both simulators and hardware. This forms the foundation for all other workstreams.</p>
 </li>
 <li>
-<p>Chemistry (Workstream C): Applies classical shadows to molecular Hamiltonian estimation (e.g. computing a molecule’s energy) to demonstrate more efficient Quantum Chemistry experiments.</p>
+<p><strong>Chemistry</strong> (Workstream C): Applies classical shadows to molecular Hamiltonian estimation (e.g. computing a molecule’s energy) to demonstrate more efficient Quantum Chemistry experiments.</p>
 </li>
 <li>
-<p>Optimization (Workstream O): Integrates shadows into variational algorithms (specifically QAOA for MAX-CUT) to reduce the measurement overhead per optimization step.</p>
+<p><strong>Optimization</strong> (Workstream O): Integrates shadows into variational algorithms (specifically QAOA for MAX-CUT) to reduce the measurement overhead per optimization step.</p>
 </li>
 <li>
-<p>Benchmarking (Workstream B): Uses shadows for device characterization tasks like Randomized Benchmarking (RB) and Cross-Entropy Benchmarking (XEB), aiming to obtain fidelity metrics with fewer runs.</p>
+<p><strong>Benchmarking</strong> (Workstream B): Uses shadows for device characterization tasks like Randomized Benchmarking (RB) and Cross-Entropy Benchmarking (XEB), aiming to obtain fidelity metrics with fewer runs.</p>
 </li>
 <li>
-<p>Metrology (Workstream M): Explores the use of shadows in quantum sensing scenarios (e.g. GHZ-phase estimation) to see if entanglement-assisted measurements can be read out more efficiently.</p>
+<p><strong>Metrology</strong> (Workstream M): Explores the use of shadows in quantum sensing scenarios (e.g. GHZ-phase estimation) to see if entanglement-assisted measurements can be read out more efficiently.</p>
 </li>
 </ul>
 <hr />
@@ -3415,21 +3399,10 @@
 </tbody>
 </table>
 <hr />
-<h2 id="useful-links">Useful Links<a class="headerlink" href="#useful-links" title="Permanent link">&para;</a></h2>
-<ul>
-<li>
 <p><a href="experiments/">Results &amp; Analysis</a></p>
-</li>
-<li>
 <p><a href="experiments/">Theory &amp; Data Models</a></p>
-</li>
-<li>
 <p><a href="experiments/">Literature Library</a></p>
-</li>
-<li>
 <p><a href="experiments/">Collaborate</a></p>
-</li>
-</ul>
 
 
 

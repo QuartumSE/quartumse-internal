@@ -1077,6 +1077,48 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Roadmap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#completed-experiments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Completed Experiments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#in-progress" class="md-nav__link">
+    <span class="md-ellipsis">
+      In Progress
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#planned-experiments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Planned Experiments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-exploratory-experiments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional Exploratory Experiments
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -3172,6 +3214,48 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Roadmap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#completed-experiments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Completed Experiments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#in-progress" class="md-nav__link">
+    <span class="md-ellipsis">
+      In Progress
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#planned-experiments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Planned Experiments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-exploratory-experiments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optional Exploratory Experiments
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -3204,40 +3288,67 @@
 
 <h1 id="shadows-workstream-overview-workstream-s">Shadows Workstream Overview (Workstream S)<a class="headerlink" href="#shadows-workstream-overview-workstream-s" title="Permanent link">&para;</a></h1>
 <h2 id="motivation-aims">Motivation &amp; Aims<a class="headerlink" href="#motivation-aims" title="Permanent link">&para;</a></h2>
-<p>The Shadows workstream underpins the entire <strong>QuartumSE</strong> research program by validating the classical shadows technique itself. </p>
-<p>Classical shadows were introduced as a way to <strong>predict many properties of a quantum state from few measurements</strong>. In theory, using randomized Pauli measurements and classical post-processing, one can estimate an exponential number of observables with sample complexity that grows only logarithmically with the number of observables. This promises huge gains in shot efficiency for diverse tasks. Workstream S is tasked with demonstrating these gains in practice: first in ideal noiseless conditions, and then on real hardware where noise and errors enter. The primary aim is to confirm that the v0 shadows implementation (random Cliffords with no mitigation) produces correct expectation values and achieves a shot-savings ratio ≥ 1.2× in simulation, and to push toward SSR ≥ 1.1× on hardware by introducing a noise-mitigated v1 variant.</p>
+<p>The Shadows workstream underpins the entire <strong>QuartumSE</strong> research program by validating the classical shadows technique itself.</p>
+<p>Classical shadows were introduced as a way to <strong>predict many properties of a quantum state from few measurements</strong>. In theory, using randomized Pauli measurements and classical post-processing, one can estimate an exponential number of observables with sample complexity that grows only logarithmically with the number of observables. This promises huge gains in shot efficiency for diverse tasks.</p>
+<p>Workstream S is tasked with demonstrating these gains in practice: first in ideal noiseless conditions, and then on real hardware where noise and errors enter. The primary aim is to confirm that the v0 shadows implementation (random Cliffords with no mitigation) produces correct expectation values and achieves a <strong>shot-savings ratio (SSR) ≥ 1.2×</strong> in simulation, and to push toward <strong>SSR ≥ 1.1×</strong> on hardware by introducing a noise-mitigated v1 variant.</p>
 <h2 id="relevance">Relevance<a class="headerlink" href="#relevance" title="Permanent link">&para;</a></h2>
-<p>Proving even a ~10–20% shot count reduction on hardware would be a significant milestone for near-term quantum experiments. It validates the “measure once, reuse data” paradigm in a real-world setting, directly reducing experimental costs. Moreover, Workstream S provides the <strong>core infrastructure</strong> (estimators, calibration capture, manifest format) that all other workstreams rely on. For example, a positive result in shadows means the Chemistry workstream can trust this measurement layer for molecular observables, and the Optimization workstream can embed it in feedback loops. Essentially, Workstream S establishes the “trust anchor” that classical shadows work as intended.</p>
+<p>Proving even a ~10–20% shot count reduction on hardware would be a significant milestone for near-term quantum experiments. It validates the "measure once, reuse data" paradigm in a real-world setting, directly reducing experimental costs.</p>
+<p>Moreover, Workstream S provides the <strong>core infrastructure</strong> (estimators, calibration capture, manifest format) that all other workstreams rely on. For example, a positive result in shadows means the <a href="../chemistry-overview/">Chemistry workstream</a> can trust this measurement layer for molecular observables, and the <a href="../optimization-overview/">Optimization workstream</a> can embed it in feedback loops. Essentially, Workstream S establishes the "trust anchor" that classical shadows work as intended.</p>
 <h2 id="roadmap">Roadmap<a class="headerlink" href="#roadmap" title="Permanent link">&para;</a></h2>
-<p>The Shadows workflow progresses through a series of experiments of increasing complexity, as follows:</p>
+<p>The Shadows workflow progresses through a series of experiments of increasing complexity:</p>
+<h3 id="completed-experiments">Completed Experiments<a class="headerlink" href="#completed-experiments" title="Permanent link">&para;</a></h3>
 <ul>
 <li>
-<p><strong>Simulator Smoke Test (SMOKE-SIM)</strong> – Completed. Baseline test on 3–5 qubit GHZ states using a noiseless simulator. This set the upper benchmark (achieved SSR ~17×) and verified correct implementation of shadows v0.</p>
+<p><strong><a href="../../experiments/S/SMOKE-SIM/01-rationale/">SMOKE-SIM</a> - Simulator Validation</strong> ✅
+  Baseline test on 3–5 qubit GHZ states using a noiseless simulator. This set the upper benchmark (achieved SSR ~17×) and verified correct implementation of shadows v0.</p>
 </li>
 <li>
-<p><strong>Hardware Smoke Test (SMOKE-HW)</strong> – Completed. Short run (3 qubits, 100 shots) on an IBM Q backend to validate hardware integration and gather initial noise data. This ensured the pipeline (job submission, data capture) works on real devices before larger trials.</p>
-</li>
-<li>
-<p><strong>Extended Hardware Validation (S-T01)</strong> – In progress (Nov 2025). A thorough test of shadows v0 on hardware: ≥10 independent runs on 4–5 qubit GHZ states. This will provide statistically significant evidence of any SSR &gt; 1 on hardware and measure run-to-run variability.</p>
-</li>
-<li>
-<p><strong>Noise-Mitigated Shadows (S-T02)</strong> – Pending. Introduces v1 shadows which include measurement error mitigation (MEM) and inverse calibration. By comparing S-T02 against S-T01 (v0), we will quantify how much mitigation improves the variance/accuracy (targeting ~20–30% variance reduction and hopefully pushing SSR beyond 1.1× on hardware).</p>
-</li>
-<li>
-<p>Optional exploratory experiments: <strong>S-BELL</strong> (parallel Bell pairs to test shadows on disjoint subsystems), <strong>S-CLIFF</strong> (random Clifford states with many observables, to benchmark shadows vs direct fidelity estimation), and <strong>S-ISING</strong> (a small quantum simulation of an Ising model) are also planned. These will broaden the validation of shadows to different state types and use-cases, feeding into Phase 2.</p>
+<p><strong><a href="../../experiments/S/SMOKE-HW/01-rationale/">SMOKE-HW</a> - Hardware Integration</strong> ✅
+  Short run (3 qubits, 100 shots) on an IBM Q backend to validate hardware integration and gather initial noise data. This ensured the pipeline (job submission, data capture) works on real devices before larger trials.</p>
 </li>
 </ul>
+<h3 id="in-progress">In Progress<a class="headerlink" href="#in-progress" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><a href="../../experiments/S/S-T01/01-rationale/">S-T01</a> - Extended GHZ</strong> ⏳
+  A thorough test of shadows v0 on hardware: ≥10 independent runs on 4–5 qubit GHZ states. This will provide statistically significant evidence of any SSR &gt; 1 on hardware and measure run-to-run variability.</li>
+</ul>
+<h3 id="planned-experiments">Planned Experiments<a class="headerlink" href="#planned-experiments" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><a href="../../experiments/S/S-T02/01-rationale/">S-T02</a> - Noise-Aware GHZ</strong> 📋
+  Introduces v1 shadows which include measurement error mitigation (MEM) and inverse calibration. By comparing S-T02 against S-T01 (v0), we will quantify how much mitigation improves the variance/accuracy (targeting ~20–30% variance reduction and hopefully pushing SSR beyond 1.1× on hardware).</li>
+</ul>
+<h3 id="optional-exploratory-experiments">Optional Exploratory Experiments<a class="headerlink" href="#optional-exploratory-experiments" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><strong><a href="../../experiments/S/S-BELL/01-rationale/">S-BELL</a> - Parallel Bell Pairs</strong> 📋
+  Test shadows on disjoint subsystems to validate multi-subsystem measurements.</p>
+</li>
+<li>
+<p><strong><a href="../../experiments/S/S-CLIFF/01-rationale/">S-CLIFF</a> - Random Clifford</strong> 📋
+  Random Clifford states with many observables (~50) to benchmark shadows vs direct fidelity estimation.</p>
+</li>
+<li>
+<p><strong><a href="../../experiments/S/S-ISING/01-rationale/">S-ISING</a> - Ising Chain</strong> 📋
+  Small quantum simulation of an Ising model to test shadows in dynamics and measure energy &amp; correlators.</p>
+</li>
+</ul>
+<p>These exploratory experiments will broaden the validation of shadows to different state types and use cases, feeding into Phase 2.</p>
 <h2 id="state-of-the-art">State of the Art<a class="headerlink" href="#state-of-the-art" title="Permanent link">&para;</a></h2>
-<p>The concept of shadow tomography was first explored in theoretical computer science (Aaronson et al., circa 2018–2020) as a means to learn properties of quantum states with optimal sample complexity. The specific classical shadows protocol used by QuartumSE builds on Huang, Kueng &amp; Preskill (2020), who proved that with random Pauli measurements one can estimate 
-𝑀
-M observables with only 
-𝑂
-(
-log
-⁡
-𝑀
-)
-O(logM) samples (up to state-dependent constants). This result underpins the shot-savings claims. Subsequent research has refined the technique: for example, derandomization strategies by Hadfield et al. (2022) bias the measurements to further improve efficiency for structured problems like chemistry, which informed our later workstreams. On the hardware side, recent studies have begun testing shadows in noisy conditions. Chen et al. (2021) developed robust shadow estimation to handle noise via invertible channels, providing a theoretical foundation for our v1 noise-mitigation approach. Additionally, connecting shadows with benchmarking is an emerging idea – e.g. a 2024 protocol combines shadow tomography with gate set tomography for more efficient RB-like procedures. Workstream S stays abreast of these developments, and in fact S-T02 will be one of the first implementations of a noise-aware shadow protocol on a public quantum device, directly testing the predictions of robust shadows theory.</p>
+<p>The concept of shadow tomography was first explored in theoretical computer science (Aaronson et al., circa 2018–2020) as a means to learn properties of quantum states with optimal sample complexity.</p>
+<p>The specific classical shadows protocol used by QuartumSE builds on <strong>Huang, Kueng &amp; Preskill (2020)</strong>, who proved that with random Pauli measurements one can estimate M observables with only O(log M) samples (up to state-dependent constants). This result underpins the shot-savings claims.</p>
+<p>Subsequent research has refined the technique:</p>
+<ul>
+<li>
+<p><strong>Hadfield et al. (2022)</strong> - Derandomization strategies that bias the measurements to further improve efficiency for structured problems like chemistry, which informed our later workstreams.</p>
+</li>
+<li>
+<p><strong>Chen et al. (2021)</strong> - Developed robust shadow estimation to handle noise via invertible channels, providing a theoretical foundation for our v1 noise-mitigation approach.</p>
+</li>
+<li>
+<p><strong>Recent developments (2024)</strong> - Emerging protocols combine shadow tomography with gate set tomography for more efficient randomized benchmarking procedures.</p>
+</li>
+</ul>
+<p>Workstream S stays abreast of these developments, and in fact <a href="../../experiments/S/S-T02/01-rationale/">S-T02</a> will be one of the first implementations of a noise-aware shadow protocol on a public quantum device, directly testing the predictions of robust shadows theory.</p>
 
 
 

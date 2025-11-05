@@ -48,9 +48,7 @@ nav:
       - Advanced Runbooks:
           - IBM Runtime Runbook: ops/runtime_runbook.md
   - Research:
-      - Research Overview: research/index.md
-      - Phase 1 Research Plan: research/phase1-research-plan.md
-      - Experiment Index: research/experiments/index.md
+      - Overview: research/index.md
       - Completed Experiments:
           - Shadows Workstream:
               - SMOKE-SIM - Simulator Validation:
@@ -103,12 +101,6 @@ nav:
           - Literature Library: research/literature.md
           - Shadows Theory: explanation/shadows-theory.md
           - Manifest Schema: explanation/manifest-schema.md
-      - Strategy Artifacts:
-          - Project Bible: strategy/project_bible.md
-          - Phase 1 Checklist: strategy/phase1_task_checklist.md
-          - Phase 1 Reference Runs: strategy/phase1_reference_runs.md
-          - Strategic Review (Oct 30, 2025): strategy/strategic_review_2025_10_30.md
-          - Runtime Budgeting Checklist: strategy/runtime_budgeting_checklist.md
   - Community:
       - Developer Docs:
           - Architecture Overview: explanation/architecture.md

@@ -51,6 +51,7 @@ nav:
       - Overview: research/index.md
       - Workflows:
           - Shadows:
+              - Overview: research/workflows/shadows-overview.md
               - SMOKE-SIM - Simulator Validation:
                   - Rationale: research/experiments/S/SMOKE-SIM/01-rationale.md
                   - Setup & Methods: research/experiments/S/SMOKE-SIM/02-setup-methods.md
@@ -76,24 +77,33 @@ nav:
               - S-ISING - Ising Chain:
                   - Rationale: research/experiments/S/S-ISING/01-rationale.md
                   - Setup & Methods: research/experiments/S/S-ISING/02-setup-methods.md
+              - Results Summary: research/workflows/shadows-results.md
           - Chemistry:
+              - Overview: research/workflows/chemistry-overview.md
               - C-T01 - H₂ Hamiltonian:
                   - Rationale: research/experiments/C/C-T01/01-rationale.md
                   - Setup & Methods: research/experiments/C/C-T01/02-setup-methods.md
                   - Results & Analysis: research/experiments/C/C-T01/03-results-analysis.md
                   - Conclusions: research/experiments/C/C-T01/04-conclusions.md
+              - Results Summary: research/workflows/chemistry-results.md
           - Optimization:
+              - Overview: research/workflows/optimization-overview.md
               - O-T01 - QAOA MAX-CUT:
                   - Rationale: research/experiments/O/O-T01/01-rationale.md
                   - Setup & Methods: research/experiments/O/O-T01/02-setup-methods.md
+              - Results Summary: research/workflows/optimization-results.md
           - Benchmarking:
+              - Overview: research/workflows/benchmarking-overview.md
               - B-T01 - RB/XEB:
                   - Rationale: research/experiments/B/B-T01/01-rationale.md
                   - Setup & Methods: research/experiments/B/B-T01/02-setup-methods.md
+              - Results Summary: research/workflows/benchmarking-results.md
           - Metrology:
+              - Overview: research/workflows/metrology-overview.md
               - M-T01 - GHZ Phase Sensing:
                   - Rationale: research/experiments/M/M-T01/01-rationale.md
                   - Setup & Methods: research/experiments/M/M-T01/02-setup-methods.md
+              - Results Summary: research/workflows/metrology-results.md
       - Theory & Background:
           - Experiment Tracker: research/experiment-tracker.md
           - Literature Library: research/literature.md

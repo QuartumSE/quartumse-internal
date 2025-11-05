@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#benchmarking-workstream-overview" class="md-skip">
+        <a href="#benchmarking-workstream-overview-workstream-b" class="md-skip">
           Skip to content
         </a>
       
@@ -2508,27 +2508,69 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#objectives" class="md-nav__link">
+  <a href="#motivation-aims" class="md-nav__link">
     <span class="md-ellipsis">
-      Objectives
+      Motivation &amp; Aims
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-experiments" class="md-nav__link">
+  <a href="#relevance" class="md-nav__link">
     <span class="md-ellipsis">
-      Key Experiments
+      Relevance
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#status" class="md-nav__link">
+  <a href="#roadmap" class="md-nav__link">
     <span class="md-ellipsis">
-      Status
+      Roadmap
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Roadmap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#planned-experiments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Planned Experiments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integration-of-shadows" class="md-nav__link">
+    <span class="md-ellipsis">
+      Integration of Shadows
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-preparations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 2 Preparations
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state-of-the-art" class="md-nav__link">
+    <span class="md-ellipsis">
+      State of the Art
     </span>
   </a>
   
@@ -3394,27 +3436,69 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#objectives" class="md-nav__link">
+  <a href="#motivation-aims" class="md-nav__link">
     <span class="md-ellipsis">
-      Objectives
+      Motivation &amp; Aims
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-experiments" class="md-nav__link">
+  <a href="#relevance" class="md-nav__link">
     <span class="md-ellipsis">
-      Key Experiments
+      Relevance
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#status" class="md-nav__link">
+  <a href="#roadmap" class="md-nav__link">
     <span class="md-ellipsis">
-      Status
+      Roadmap
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Roadmap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#planned-experiments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Planned Experiments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#integration-of-shadows" class="md-nav__link">
+    <span class="md-ellipsis">
+      Integration of Shadows
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-preparations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 2 Preparations
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state-of-the-art" class="md-nav__link">
+    <span class="md-ellipsis">
+      State of the Art
     </span>
   </a>
   
@@ -3439,15 +3523,78 @@
   
 
 
-<h1 id="benchmarking-workstream-overview">Benchmarking Workstream Overview<a class="headerlink" href="#benchmarking-workstream-overview" title="Permanent link">&para;</a></h1>
-<p>[Placeholder - Overview content to be added]</p>
-<p>This workstream uses shadows for device characterization tasks like Randomized Benchmarking (RB) and Cross-Entropy Benchmarking (XEB), aiming to obtain fidelity metrics with fewer runs.</p>
-<h2 id="objectives">Objectives<a class="headerlink" href="#objectives" title="Permanent link">&para;</a></h2>
-<p>[To be added]</p>
-<h2 id="key-experiments">Key Experiments<a class="headerlink" href="#key-experiments" title="Permanent link">&para;</a></h2>
-<p>[To be added]</p>
-<h2 id="status">Status<a class="headerlink" href="#status" title="Permanent link">&para;</a></h2>
-<p>[To be added]</p>
+<h1 id="benchmarking-workstream-overview-workstream-b">Benchmarking Workstream Overview (Workstream B)<a class="headerlink" href="#benchmarking-workstream-overview-workstream-b" title="Permanent link">&para;</a></h1>
+<h2 id="motivation-aims">Motivation &amp; Aims<a class="headerlink" href="#motivation-aims" title="Permanent link">&para;</a></h2>
+<p>Quantum hardware benchmarking is essential for assessing and improving device performance. Techniques like Randomized Benchmarking (RB) and Cross-Entropy Benchmarking (XEB) are widely used to estimate error rates and verify quantum advantage. However, these methods themselves can be resource-intensive – they require running many random circuits or specific sequences and collecting statistics.</p>
+<p>The Benchmarking workstream explores whether classical shadows can make certain benchmarking tasks more sample-efficient or informative. The idea is that by using a unified measurement approach, one might <strong>extract multiple metrics</strong> (e.g. fidelity, purity, crosstalk) from the same experimental data, rather than running separate experiments for each. Additionally, shadows could potentially reduce the number of repetitions needed by leveraging a form of tomography on the noise processes.</p>
+<p><strong>Phase 1 Aims:</strong></p>
+<ul>
+<li>Perform small-scale RB/XEB experiments on 1–3 qubit systems</li>
+<li>Explore if shadows provide at least <strong>2× improvement in sample efficiency</strong> compared to standard techniques</li>
+<li>Produce first "benchmarking data drop" with baseline RB decay curves and XEB fidelity measurements</li>
+<li>Test gate-set shadow protocol for extracting gate fidelities from randomized measurements</li>
+<li>Capture state purities, error correlators, and multiple metrics from single experimental campaign</li>
+</ul>
+<p><strong>Success Criteria:</strong></p>
+<ul>
+<li>Generate validated RB decay curves matching known hardware values</li>
+<li>Collect XEB fidelity data on random circuits (1–3 qubits)</li>
+<li>Full provenance tracking via manifests for all benchmark sequences</li>
+<li>Stretch goal: Demonstrate ≥2× sample efficiency improvement (defer to Phase 2 if not achieved)</li>
+</ul>
+<h2 id="relevance">Relevance<a class="headerlink" href="#relevance" title="Permanent link">&para;</a></h2>
+<p>Workstream B validates that classical shadows can enhance not just computation-focused applications (proven in <a href="../chemistry-overview/">Chemistry</a> and <a href="../optimization-overview/">Optimization</a> workstreams), but also device characterization and quality assessment.</p>
+<p>The ability to extract multiple benchmarking metrics from a single experimental campaign directly addresses a practical pain point: running comprehensive device characterization typically requires many separate experimental protocols (RB for gate fidelity, process tomography for noise characterization, purity measurements, crosstalk analysis, etc.). If shadows can unify these measurements, it significantly reduces the overhead of hardware validation and monitoring.</p>
+<p>This workstream also provides critical feedback to the <a href="../shadows-overview/">Shadows workstream</a> by stress-testing shadow protocols on highly randomized circuits where noise characterization is the primary goal rather than state preparation.</p>
+<h2 id="roadmap">Roadmap<a class="headerlink" href="#roadmap" title="Permanent link">&para;</a></h2>
+<p>The Benchmarking workflow in Phase 1 is exploratory, establishing baseline data and protocols for shadow-enhanced device characterization:</p>
+<h3 id="planned-experiments">Planned Experiments<a class="headerlink" href="#planned-experiments" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><a href="../../experiments/B/B-T01/01-rationale/">B-T01</a> - RB/XEB</strong> 📋
+  Combined Randomized Benchmarking and Cross-Entropy Benchmarking trial on 1–3 qubit systems. Run short Clifford random sequences (for RB) and small-depth random circuits (for XEB). Use QuartumSE framework to log results via manifests. Baseline goal: obtain RB decay curve and confirm it matches known values for the hardware. Exploratory goal: test if shadows can estimate fidelity of multiple individual Clifford gates simultaneously or capture full output distribution of random circuits more efficiently.</li>
+</ul>
+<h3 id="integration-of-shadows">Integration of Shadows<a class="headerlink" href="#integration-of-shadows" title="Permanent link">&para;</a></h3>
+<p>How can shadows help in benchmarking?</p>
+<ul>
+<li>
+<p><strong>Gate-Set Shadow Protocol</strong> - Recently proposed technique that performs shadow tomography on noise channels to extract gate fidelities. Rather than just fitting an exponential to survival probabilities (standard RB), use randomized measurements to learn the effect of noise on many different input states at once.</p>
+</li>
+<li>
+<p><strong>Efficient XEB Sampling</strong> - For Cross-Entropy Benchmarking, shadows might allow estimation of many output probabilities simultaneously, potentially reducing the number of random circuit instances needed. Google's supremacy experiment used 1 million samples per circuit to estimate XEB fidelity ~0.002; shadows could reduce this requirement by estimating off-diagonal terms and multi-output probabilities.</p>
+</li>
+<li>
+<p><strong>Unified Metrics Extraction</strong> - Single experimental campaign could yield: RB error rate, coherence time estimates, crosstalk characterization, state purities, error correlators – all from the same shadow data set.</p>
+</li>
+</ul>
+<h3 id="phase-2-preparations">Phase 2 Preparations<a class="headerlink" href="#phase-2-preparations" title="Permanent link">&para;</a></h3>
+<p>B-T01 establishes baseline protocols and data formats. Phase 2 will refine methods based on Phase 1 findings and pursue the 2× sample efficiency target if not achieved initially. Integration with <a href="../../experiments/S/S-CLIFF/01-rationale/">S-CLIFF</a> planned experiment (random Clifford states) will compare shadow-based approaches against direct fidelity estimation (DFE).</p>
+<h2 id="state-of-the-art">State of the Art<a class="headerlink" href="#state-of-the-art" title="Permanent link">&para;</a></h2>
+<p>The Benchmarking workstream blends well-established benchmarking protocols with cutting-edge proposals to incorporate tomographic techniques (like shadows) into them.</p>
+<p><strong>Randomized Benchmarking Foundations:</strong></p>
+<ul>
+<li>
+<p><strong>Emerson, Magesan, and others (2008–2011)</strong> - Formulated Randomized Benchmarking as a robust way to measure average gate fidelity independent of state preparation and measurement errors. Considered an industry standard with many variants (interleaved RB, simultaneous RB).</p>
+</li>
+<li>
+<p><strong>Silva &amp; Greplova (2025)</strong> - Hands-on introduction emphasizing RB as an essential tool for assessing quantum gate performance. Notably mentions new trends that "bridge shadow tomography with randomized benchmarking" – exactly the approach we are testing.</p>
+</li>
+</ul>
+<p><strong>Cross-Entropy Benchmarking:</strong></p>
+<ul>
+<li>
+<p><strong>Arute et al. (2019)</strong> - Google's quantum supremacy demonstration used linear XEB to validate their 53-qubit random circuit sampling against classical simulation. XEB checks that quantum device output probabilities match ideal circuit predictions better than random guessing.</p>
+</li>
+<li>
+<p><strong>Google Sycamore Result</strong> - Achieved XEB fidelity ~0.002 with 1 million samples per circuit, demonstrating the scale of sampling required. Any technique reducing this sample requirement while maintaining accuracy would be valuable.</p>
+</li>
+</ul>
+<p><strong>Direct Fidelity Estimation:</strong></p>
+<ul>
+<li><strong>Flammia &amp; Liu (2011)</strong> - Showed that for certain states, fidelity can be estimated with fewer samples by measuring randomly chosen Pauli operators – conceptually akin to shadows. Our <a href="../../experiments/S/S-CLIFF/01-rationale/">S-CLIFF</a> planned experiment extends this idea to generic circuits.</li>
+</ul>
+<p><strong>Novel Integration:</strong></p>
+<p>Workstream B doesn't seek to replace core benchmarking protocols but to enhance data collection efficiency. If successful, QuartumSE could offer an <strong>advanced benchmarking mode</strong> where a single experimental campaign yields comprehensive device characterization: RB error rates, coherence times, crosstalk analysis, and purity metrics – all from the same shadow data set.</p>
+<p><strong>Vision:</strong> Shadow-enhanced benchmarking that provides richer characterization with fewer experimental runs, making hardware validation and monitoring more practical and cost-effective.</p>
 
 
 

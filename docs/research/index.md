@@ -1,18 +1,22 @@
-# Research Overview
+# QuartumSE Research Overview & Workflows
 
-QuartumSE’s research program is designed to maximize shot-efficiency in quantum measurements – extracting more information per experiment while rigorously tracking uncertainty. The core methodology revolves around classical shadows, a randomized measurement technique that allows one to “measure once, ask later”, estimating many observables from the same set of quantum circuit runs. This approach aims to reduce the total number of shots required for tasks like Hamiltonian estimation, algorithm optimization, and device benchmarking, thereby lowering the cost per result without sacrificing accuracy. Key metrics such as the Shot-Savings Ratio (SSR) – the factor by which shots are reduced compared to conventional methods – are used to quantify these advantages. In Phase 1 (late 2025), the research emphasis is on validating the shadows-based workflow on both simulators and real hardware, with targets of SSR ≥ 1.2× on simulator and SSR ≥ 1.1× on IBM hardware as proof of shot-efficiency gains before scaling up in subsequent phases.
+**QuartumSE**’s research program is designed to **maximize shot-efficiency** in quantum measurements – extracting more information per experiment while rigorously tracking uncertainty. The core methodology revolves around **classical shadows**, a randomized measurement technique that allows one to “measure once, ask later”, estimating many observables from the same set of quantum circuit runs.
 
-To organize this effort, the Phase 1 experiments are divided into five parallel workstreams (or workflows), each focused on a different application domain but integrated under the common goal of shot-efficient measurement. The workstreams are:
+This approach aims to reduce the total number of shots required for tasks like **Hamiltonian estimation**, **algorithm optimization**, and **device benchmarking**, thereby lowering the cost per result without sacrificing accuracy. Key metrics such as the **Shot-Savings Ratio (SSR)** – the factor by which shots are reduced compared to conventional methods – are used to quantify these advantages. 
 
-- Shadows (Workstream S): Establishes and validates the base classical shadows technique on well-defined quantum states (e.g. GHZ states) using both simulators and hardware. This forms the foundation for all other workstreams.
+Currently, the research emphasis is on validating the shadows-based workflow on both **simulators and real hardware**, with targets of SSR ≥ 1.2× on simulator and SSR ≥ 1.1× on **IBM hardware** as proof of shot-efficiency gains before scaling up in subsequent phases.
 
-- Chemistry (Workstream C): Applies classical shadows to molecular Hamiltonian estimation (e.g. computing a molecule’s energy) to demonstrate more efficient Quantum Chemistry experiments.
+To organize this effort, we have divided experiments into **five parallel workstreams** (or workflows), each focused on a different application domain but integrated under the common goal of shot-efficient measurement. The workstreams are:
 
-- Optimization (Workstream O): Integrates shadows into variational algorithms (specifically QAOA for MAX-CUT) to reduce the measurement overhead per optimization step.
+- **Shadows** (Workstream S): Establishes and validates the base classical shadows technique on well-defined quantum states (e.g. GHZ states) using both simulators and hardware. This forms the foundation for all other workstreams.
 
-- Benchmarking (Workstream B): Uses shadows for device characterization tasks like Randomized Benchmarking (RB) and Cross-Entropy Benchmarking (XEB), aiming to obtain fidelity metrics with fewer runs.
+- **Chemistry** (Workstream C): Applies classical shadows to molecular Hamiltonian estimation (e.g. computing a molecule’s energy) to demonstrate more efficient Quantum Chemistry experiments.
 
-- Metrology (Workstream M): Explores the use of shadows in quantum sensing scenarios (e.g. GHZ-phase estimation) to see if entanglement-assisted measurements can be read out more efficiently.
+- **Optimization** (Workstream O): Integrates shadows into variational algorithms (specifically QAOA for MAX-CUT) to reduce the measurement overhead per optimization step.
+
+- **Benchmarking** (Workstream B): Uses shadows for device characterization tasks like Randomized Benchmarking (RB) and Cross-Entropy Benchmarking (XEB), aiming to obtain fidelity metrics with fewer runs.
+
+- **Metrology** (Workstream M): Explores the use of shadows in quantum sensing scenarios (e.g. GHZ-phase estimation) to see if entanglement-assisted measurements can be read out more efficiently.
 
 ---
 
@@ -51,12 +55,10 @@ The tables below lists all Phase 1 experiments across these workstreams, with th
 
 ---
 
-## Useful Links
+[Results & Analysis](experiments/index.md)
 
-- [Results & Analysis](experiments/index.md)
+[Theory & Data Models](experiments/index.md)
 
-- [Theory & Data Models](experiments/index.md)
+[Literature Library](experiments/index.md)
 
-- [Literature Library](experiments/index.md)
-
-- [Collaborate](experiments/index.md)
+[Collaborate](experiments/index.md)

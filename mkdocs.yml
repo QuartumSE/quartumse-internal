@@ -49,60 +49,65 @@ nav:
           - IBM Runtime Runbook: ops/runtime_runbook.md
   - Research:
       - Overview: research/index.md
-      - Workflows:
+      - Workstreams:
           - Shadows:
               - Overview: research/workflows/shadows-overview.md
-              - SMOKE-SIM - Simulator Validation:
-                  - Rationale: research/experiments/S/SMOKE-SIM/01-rationale.md
-                  - Setup & Methods: research/experiments/S/SMOKE-SIM/02-setup-methods.md
-                  - Results & Analysis: research/experiments/S/SMOKE-SIM/03-results-analysis.md
-                  - Conclusions: research/experiments/S/SMOKE-SIM/04-conclusions.md
-              - SMOKE-HW - Hardware Integration:
-                  - Rationale: research/experiments/S/SMOKE-HW/01-rationale.md
-                  - Setup & Methods: research/experiments/S/SMOKE-HW/02-setup-methods.md
-                  - Results & Analysis: research/experiments/S/SMOKE-HW/03-results-analysis.md
-                  - Conclusions: research/experiments/S/SMOKE-HW/04-conclusions.md
-              - S-T01 - Extended GHZ:
-                  - Rationale: research/experiments/S/S-T01/01-rationale.md
-                  - Setup & Methods: research/experiments/S/S-T01/02-setup-methods.md
-              - S-T02 - Noise-Aware GHZ:
-                  - Rationale: research/experiments/S/S-T02/01-rationale.md
-                  - Setup & Methods: research/experiments/S/S-T02/02-setup-methods.md
-              - S-BELL - Parallel Bell Pairs:
-                  - Rationale: research/experiments/S/S-BELL/01-rationale.md
-                  - Setup & Methods: research/experiments/S/S-BELL/02-setup-methods.md
-              - S-CLIFF - Random Clifford:
-                  - Rationale: research/experiments/S/S-CLIFF/01-rationale.md
-                  - Setup & Methods: research/experiments/S/S-CLIFF/02-setup-methods.md
-              - S-ISING - Ising Chain:
-                  - Rationale: research/experiments/S/S-ISING/01-rationale.md
-                  - Setup & Methods: research/experiments/S/S-ISING/02-setup-methods.md
+              - Experiments:
+                  - SMOKE-SIM - Simulator Validation:
+                      - Rationale: research/experiments/S/SMOKE-SIM/01-rationale.md
+                      - Setup & Methods: research/experiments/S/SMOKE-SIM/02-setup-methods.md
+                      - Results & Analysis: research/experiments/S/SMOKE-SIM/03-results-analysis.md
+                      - Conclusions: research/experiments/S/SMOKE-SIM/04-conclusions.md
+                  - SMOKE-HW - Hardware Integration:
+                      - Rationale: research/experiments/S/SMOKE-HW/01-rationale.md
+                      - Setup & Methods: research/experiments/S/SMOKE-HW/02-setup-methods.md
+                      - Results & Analysis: research/experiments/S/SMOKE-HW/03-results-analysis.md
+                      - Conclusions: research/experiments/S/SMOKE-HW/04-conclusions.md
+                  - S-T01 - Extended GHZ:
+                      - Rationale: research/experiments/S/S-T01/01-rationale.md
+                      - Setup & Methods: research/experiments/S/S-T01/02-setup-methods.md
+                  - S-T02 - Noise-Aware GHZ:
+                      - Rationale: research/experiments/S/S-T02/01-rationale.md
+                      - Setup & Methods: research/experiments/S/S-T02/02-setup-methods.md
+                  - S-BELL - Parallel Bell Pairs:
+                      - Rationale: research/experiments/S/S-BELL/01-rationale.md
+                      - Setup & Methods: research/experiments/S/S-BELL/02-setup-methods.md
+                  - S-CLIFF - Random Clifford:
+                      - Rationale: research/experiments/S/S-CLIFF/01-rationale.md
+                      - Setup & Methods: research/experiments/S/S-CLIFF/02-setup-methods.md
+                  - S-ISING - Ising Chain:
+                      - Rationale: research/experiments/S/S-ISING/01-rationale.md
+                      - Setup & Methods: research/experiments/S/S-ISING/02-setup-methods.md
               - Results Summary: research/workflows/shadows-results.md
           - Chemistry:
               - Overview: research/workflows/chemistry-overview.md
-              - C-T01 - H₂ Hamiltonian:
-                  - Rationale: research/experiments/C/C-T01/01-rationale.md
-                  - Setup & Methods: research/experiments/C/C-T01/02-setup-methods.md
-                  - Results & Analysis: research/experiments/C/C-T01/03-results-analysis.md
-                  - Conclusions: research/experiments/C/C-T01/04-conclusions.md
+              - Experiments:
+                  - C-T01 - H₂ Hamiltonian:
+                      - Rationale: research/experiments/C/C-T01/01-rationale.md
+                      - Setup & Methods: research/experiments/C/C-T01/02-setup-methods.md
+                      - Results & Analysis: research/experiments/C/C-T01/03-results-analysis.md
+                      - Conclusions: research/experiments/C/C-T01/04-conclusions.md
               - Results Summary: research/workflows/chemistry-results.md
           - Optimization:
               - Overview: research/workflows/optimization-overview.md
-              - O-T01 - QAOA MAX-CUT:
-                  - Rationale: research/experiments/O/O-T01/01-rationale.md
-                  - Setup & Methods: research/experiments/O/O-T01/02-setup-methods.md
+              - Experiments:
+                  - O-T01 - QAOA MAX-CUT:
+                      - Rationale: research/experiments/O/O-T01/01-rationale.md
+                      - Setup & Methods: research/experiments/O/O-T01/02-setup-methods.md
               - Results Summary: research/workflows/optimization-results.md
           - Benchmarking:
               - Overview: research/workflows/benchmarking-overview.md
-              - B-T01 - RB/XEB:
-                  - Rationale: research/experiments/B/B-T01/01-rationale.md
-                  - Setup & Methods: research/experiments/B/B-T01/02-setup-methods.md
+              - Experiments:
+                  - B-T01 - RB/XEB:
+                      - Rationale: research/experiments/B/B-T01/01-rationale.md
+                      - Setup & Methods: research/experiments/B/B-T01/02-setup-methods.md
               - Results Summary: research/workflows/benchmarking-results.md
           - Metrology:
               - Overview: research/workflows/metrology-overview.md
-              - M-T01 - GHZ Phase Sensing:
-                  - Rationale: research/experiments/M/M-T01/01-rationale.md
-                  - Setup & Methods: research/experiments/M/M-T01/02-setup-methods.md
+              - Experiments:
+                  - M-T01 - GHZ Phase Sensing:
+                      - Rationale: research/experiments/M/M-T01/01-rationale.md
+                      - Setup & Methods: research/experiments/M/M-T01/02-setup-methods.md
               - Results Summary: research/workflows/metrology-results.md
       - Theory & Background:
           - Experiment Tracker: research/experiment-tracker.md

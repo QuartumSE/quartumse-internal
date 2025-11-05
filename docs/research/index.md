@@ -23,8 +23,8 @@ To organize this effort, we have divided experiments into **five parallel workst
 ### Progress Dashboard
 
 - **Status:** Phase 1 Foundation & R&D (Nov 2025)
-- **Experiments:** 3 completed ✅ | 8 planned 📋 | 11 total
-- **Coverage:** 27% complete | All 5 workstreams active
+- **Experiments:** 4 completed ✅ | 7 planned 📋 | 11 total
+- **Coverage:** 36% complete | All 5 workstreams active
 
 The tables below lists all Phase 1 experiments across these workstreams, with their status and a brief description of each study
 
@@ -32,11 +32,12 @@ The tables below lists all Phase 1 experiments across these workstreams, with th
 
 ## 📊 Completed Experiments
 
-| ID | Name | Status | Description | Key Result | 
+| ID | Name | Status | Description | Key Result |
 |----|------|--------|------------|------|
 | [SMOKE-SIM](experiments/S/SMOKE-SIM/) | Simulator Smoke Test | ✅ Completed (Nov 2025) | 3–5 qubit GHZ states on simulator (baseline shadows v0) | SSR = 17.37× |
 | [SMOKE-HW](experiments/S/SMOKE-HW/) | Hardware Smoke Test | ✅ Completed (Nov 2025) | 3 qubit GHZ on IBM hardware (v0 shadows, no mitigation) | ibm_fez validated |
-| [C-T01](experiments/C/C-T01/) | H₂ Chemistry | ✅ Completed (Nov 2025) | H₂ molecule @STO-3G, 4 qubits – estimate 12-term Hamiltonian with shadows v1 (MEM mitigation) | Phase 1 data drop |
+| [C-T01](experiments/C/C-T01/) | H₂ Chemistry | ✅ Completed (Nov 2025) | H₂ molecule @STO-3G, 4 qubits – estimate 12-term Hamiltonian with shadows v1 (MEM mitigation) | E = -1.517 Ha |
+| [O-T01](experiments/O/O-T01/) | QAOA MAX-CUT | ✅ Completed (Nov 2025) | 5-node ring QAOA optimization with shadow-based cost estimation (ibm_fez, 300 shadows, v1+MEM) | 85% shot reduction, 0.83 approx ratio |
 
 ---
 

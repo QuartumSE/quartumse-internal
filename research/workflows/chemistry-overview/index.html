@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#chemistry-workstream-overview" class="md-skip">
+        <a href="#chemistry-workstream-overview-workstream-c" class="md-skip">
           Skip to content
         </a>
       
@@ -1972,27 +1972,69 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#objectives" class="md-nav__link">
+  <a href="#motivation-aims" class="md-nav__link">
     <span class="md-ellipsis">
-      Objectives
+      Motivation &amp; Aims
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-experiments" class="md-nav__link">
+  <a href="#relevance" class="md-nav__link">
     <span class="md-ellipsis">
-      Key Experiments
+      Relevance
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#status" class="md-nav__link">
+  <a href="#roadmap" class="md-nav__link">
     <span class="md-ellipsis">
-      Status
+      Roadmap
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Roadmap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#completed-experiments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Completed Experiments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#planned-experiments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Planned Experiments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-preparations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 2 Preparations
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state-of-the-art" class="md-nav__link">
+    <span class="md-ellipsis">
+      State of the Art
     </span>
   </a>
   
@@ -3394,27 +3436,69 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#objectives" class="md-nav__link">
+  <a href="#motivation-aims" class="md-nav__link">
     <span class="md-ellipsis">
-      Objectives
+      Motivation &amp; Aims
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-experiments" class="md-nav__link">
+  <a href="#relevance" class="md-nav__link">
     <span class="md-ellipsis">
-      Key Experiments
+      Relevance
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#status" class="md-nav__link">
+  <a href="#roadmap" class="md-nav__link">
     <span class="md-ellipsis">
-      Status
+      Roadmap
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Roadmap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#completed-experiments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Completed Experiments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#planned-experiments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Planned Experiments
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-preparations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Phase 2 Preparations
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#state-of-the-art" class="md-nav__link">
+    <span class="md-ellipsis">
+      State of the Art
     </span>
   </a>
   
@@ -3439,15 +3523,77 @@
   
 
 
-<h1 id="chemistry-workstream-overview">Chemistry Workstream Overview<a class="headerlink" href="#chemistry-workstream-overview" title="Permanent link">&para;</a></h1>
-<p>[Placeholder - Overview content to be added]</p>
-<p>This workstream applies classical shadows to molecular Hamiltonian estimation (e.g. computing a molecule's energy) to demonstrate more efficient Quantum Chemistry experiments.</p>
-<h2 id="objectives">Objectives<a class="headerlink" href="#objectives" title="Permanent link">&para;</a></h2>
-<p>[To be added]</p>
-<h2 id="key-experiments">Key Experiments<a class="headerlink" href="#key-experiments" title="Permanent link">&para;</a></h2>
-<p>[To be added]</p>
-<h2 id="status">Status<a class="headerlink" href="#status" title="Permanent link">&para;</a></h2>
-<p>[To be added]</p>
+<h1 id="chemistry-workstream-overview-workstream-c">Chemistry Workstream Overview (Workstream C)<a class="headerlink" href="#chemistry-workstream-overview-workstream-c" title="Permanent link">&para;</a></h1>
+<h2 id="motivation-aims">Motivation &amp; Aims<a class="headerlink" href="#motivation-aims" title="Permanent link">&para;</a></h2>
+<p>Quantum chemistry is a natural application for shot-frugal measurements because computing molecular energies on quantum hardware (for example via the Variational Quantum Eigensolver, VQE) typically involves measuring a large number of Pauli terms.</p>
+<p>A molecule's Hamiltonian is a sum of many Pauli operators; even modest molecules can have dozens of terms that need expectation values. Traditionally, one would group commuting terms and measure each group separately, or even measure terms one by one – a procedure that can dominate the runtime of VQE. Reducing this measurement overhead is crucial for any quantum advantage in chemistry.</p>
+<p>The Chemistry workstream aims to demonstrate that classical shadows can estimate all Hamiltonian terms simultaneously from a single set of measurements, thereby dramatically reducing the total shots needed. In theory, for k terms, shadows need on the order of <strong>O(k log k) measurements</strong>, whereas even the best grouping methods need O(k) measurements per group (often 3–5 groups for typical molecules). This suggests a potential <strong>3–5× improvement or more</strong> in shot efficiency for molecular energy estimation.</p>
+<p><strong>Phase 1 Aims:</strong></p>
+<ul>
+<li>Demonstrate that using classical shadows (with mitigation) can obtain the molecular ground state energy within chemical accuracy using significantly fewer shots than conventional approaches</li>
+<li>Generate the first "data drop" for the chemistry domain with fully logged experiments including manifests and shot data for H₂</li>
+<li>Establish a workflow for Shadow-VQE, where the measurement stage of VQE is powered by shadows</li>
+<li>Assess how hardware noise impacts the accuracy of energy estimates using v1 shadow protocol with measurement error mitigation (MEM)</li>
+</ul>
+<p><strong>Success Criteria:</strong></p>
+<ul>
+<li>Energy estimation error ≤ 0.02–0.05 Hartree</li>
+<li>Shot-Savings Ratio (SSR) ≥ 1.1× vs. best Pauli grouping baseline</li>
+</ul>
+<h2 id="relevance">Relevance<a class="headerlink" href="#relevance" title="Permanent link">&para;</a></h2>
+<p>Workstream C validates that the shot-frugal measurement techniques proven in the <a href="../shadows-overview/">Shadows workstream</a> translate effectively to a real-world quantum chemistry application. Molecular energy estimation is one of the most anticipated use cases for quantum computers, and reducing measurement overhead directly impacts the feasibility of quantum chemistry on NISQ devices.</p>
+<p>The integration with the <a href="../optimization-overview/">Optimization workstream</a> is natural – both VQE and QAOA involve iterative cost function evaluation, and shadow-based measurement reduction benefits both. By demonstrating chemical accuracy with reduced shots, this workstream provides evidence that quantum chemistry calculations can be made more practical and cost-effective on current hardware.</p>
+<h2 id="roadmap">Roadmap<a class="headerlink" href="#roadmap" title="Permanent link">&para;</a></h2>
+<p>The Chemistry workflow in Phase 1 consists of one main experiment and planning for follow-ups:</p>
+<h3 id="completed-experiments">Completed Experiments<a class="headerlink" href="#completed-experiments" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><a href="../../experiments/C/C-T01/01-rationale/">C-T01</a> - H₂ Hamiltonian</strong> ✅
+  Full end-to-end run on a 4-qubit H₂ molecular Hamiltonian (STO-3G basis). Prepared an H₂ ground state ansatz and measured all 12 Pauli terms using 300 shadow shots with v1 mitigation. Achieved ground state energy E = -1.517 Ha, demonstrating shot-efficient molecular energy estimation. Fulfilled Phase 1 requirement of producing the first chemistry dataset and report.</li>
+</ul>
+<h3 id="planned-experiments">Planned Experiments<a class="headerlink" href="#planned-experiments" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Shadow-VQE Integration</strong>
+  Integrate classical shadows into a full VQE optimization loop, where after each variational circuit execution, a shadow is taken to evaluate the energy. C-T01 tested the "readout" part; combining it with an optimizer in Phase 2 or 3 will complete the Shadow-VQE vision. Aligned with planned QuartumSE patent on "Shot-Efficient VQE via Shadows" and expected publications in 2026.</li>
+</ul>
+<h3 id="phase-2-preparations">Phase 2 Preparations<a class="headerlink" href="#phase-2-preparations" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><strong>C-T02 - LiH Molecule</strong> 📋
+  Scale up to 6-qubit system with 2× more Hamiltonian terms. Results from H₂ inform parameter choices and mitigation strategies.</p>
+</li>
+<li>
+<p><strong>C-T03 - BeH₂ Molecule</strong> 📋
+  Further scaling to 8-qubit system with 3× more Hamiltonian terms than H₂.</p>
+</li>
+<li>
+<p><strong>S-T03 - Fermionic Shadows</strong> 📋
+  Exploratory experiment to bypass explicit Pauli decomposition by directly estimating 2-RDM elements – a more direct method for chemistry that could further improve efficiency.</p>
+</li>
+</ul>
+<h2 id="state-of-the-art">State of the Art<a class="headerlink" href="#state-of-the-art" title="Permanent link">&para;</a></h2>
+<p>The Chemistry workstream draws on several strands of cutting-edge research at the intersection of measurement reduction techniques and practical quantum chemistry experimentation on NISQ devices.</p>
+<p><strong>Classical Shadows for Chemistry:</strong></p>
+<ul>
+<li><strong>Hadfield et al. (2022)</strong> - Demonstrated that tailoring measurement bases (locally-biased shadows) can significantly cut down samples for molecular Hamiltonians. Their simulation results provided a theoretical foundation that influenced our parameter choices (~300–500 shadows for ~12 terms).</li>
+</ul>
+<p><strong>Traditional Measurement Approaches:</strong></p>
+<ul>
+<li><strong>Zhao et al. (2021)</strong> - Showed that even with optimal Pauli grouping, typical small molecules require 3–5 distinct measurement settings – which becomes impractical as molecules grow. This represents the baseline that our shadow approach seeks to beat in terms of total shot count.</li>
+</ul>
+<p><strong>VQE Foundations:</strong></p>
+<ul>
+<li>
+<p><strong>Peruzzo et al. (2014)</strong> - Introduced the Variational Quantum Eigensolver algorithm.</p>
+</li>
+<li>
+<p><strong>McClean et al. (2016)</strong> - Provided comprehensive VQE theory and quantified how shot noise scales with number of Hamiltonian terms, motivating methods like ours to reduce shots needed for each term.</p>
+</li>
+</ul>
+<p><strong>Error Mitigation:</strong></p>
+<ul>
+<li><strong>Kandala et al. (2019)</strong> - Showed that measurement error mitigation (MEM) and zero-noise extrapolation can improve the effective fidelity of VQE experiments on IBM hardware. In <a href="../../experiments/C/C-T01/01-rationale/">C-T01</a> we used simple MEM calibration (128 extra calibration circuits) to correct readout error, guided by techniques from this work.</li>
+</ul>
+<p>Workstream C stands at the intersection of these advances, validating shadow-based measurement reduction for quantum chemistry on real quantum hardware.</p>
 
 
 

@@ -49,8 +49,8 @@ nav:
           - IBM Runtime Runbook: ops/runtime_runbook.md
   - Research:
       - Overview: research/index.md
-      - Completed Experiments:
-          - Shadows Workstream:
+      - Workflows:
+          - Shadows:
               - SMOKE-SIM - Simulator Validation:
                   - Rationale: research/experiments/S/SMOKE-SIM/01-rationale.md
                   - Setup & Methods: research/experiments/S/SMOKE-SIM/02-setup-methods.md
@@ -61,14 +61,6 @@ nav:
                   - Setup & Methods: research/experiments/S/SMOKE-HW/02-setup-methods.md
                   - Results & Analysis: research/experiments/S/SMOKE-HW/03-results-analysis.md
                   - Conclusions: research/experiments/S/SMOKE-HW/04-conclusions.md
-          - Chemistry Workstream:
-              - C-T01 - H₂ Hamiltonian:
-                  - Rationale: research/experiments/C/C-T01/01-rationale.md
-                  - Setup & Methods: research/experiments/C/C-T01/02-setup-methods.md
-                  - Results & Analysis: research/experiments/C/C-T01/03-results-analysis.md
-                  - Conclusions: research/experiments/C/C-T01/04-conclusions.md
-      - Planned Experiments:
-          - Shadows Workstream:
               - S-T01 - Extended GHZ:
                   - Rationale: research/experiments/S/S-T01/01-rationale.md
                   - Setup & Methods: research/experiments/S/S-T01/02-setup-methods.md
@@ -84,15 +76,21 @@ nav:
               - S-ISING - Ising Chain:
                   - Rationale: research/experiments/S/S-ISING/01-rationale.md
                   - Setup & Methods: research/experiments/S/S-ISING/02-setup-methods.md
-          - Optimization Workstream:
+          - Chemistry:
+              - C-T01 - H₂ Hamiltonian:
+                  - Rationale: research/experiments/C/C-T01/01-rationale.md
+                  - Setup & Methods: research/experiments/C/C-T01/02-setup-methods.md
+                  - Results & Analysis: research/experiments/C/C-T01/03-results-analysis.md
+                  - Conclusions: research/experiments/C/C-T01/04-conclusions.md
+          - Optimization:
               - O-T01 - QAOA MAX-CUT:
                   - Rationale: research/experiments/O/O-T01/01-rationale.md
                   - Setup & Methods: research/experiments/O/O-T01/02-setup-methods.md
-          - Benchmarking Workstream:
+          - Benchmarking:
               - B-T01 - RB/XEB:
                   - Rationale: research/experiments/B/B-T01/01-rationale.md
                   - Setup & Methods: research/experiments/B/B-T01/02-setup-methods.md
-          - Metrology Workstream:
+          - Metrology:
               - M-T01 - GHZ Phase Sensing:
                   - Rationale: research/experiments/M/M-T01/01-rationale.md
                   - Setup & Methods: research/experiments/M/M-T01/02-setup-methods.md

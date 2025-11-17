@@ -4184,9 +4184,15 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <span class="c"># Core SDK + development tooling (pytest, black, ruff, mypy, jupyter)</span>
 <span class="n">pip</span> <span class="n">install</span> <span class="n">-e</span> <span class="s2">&quot;.[dev]&quot;</span>
 
-<span class="c"># With optional mitigation / chemistry dependencies (Python &lt; 3.13)</span>
+<span class="c"># RECOMMENDED: With mitigation support (works on all Windows systems)</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">-e</span> <span class="s2">&quot;.[dev,mitigation]&quot;</span>
+
+<span class="c"># With chemistry support (challenging on Windows - see note below)</span>
 <span class="n">pip</span> <span class="n">install</span> <span class="n">-e</span> <span class="s2">&quot;.[dev,mitigation,chemistry]&quot;</span>
 </code></pre></div></p>
+<blockquote>
+<p><strong>Windows Users:</strong> The <code>chemistry</code> extras (<code>pyscf</code>, <code>qiskit-nature</code>) are difficult to install on Windows due to missing pre-built binaries. <strong>We recommend <code>pip install -e ".[dev,mitigation]"</code></strong> for most Windows users. This includes all core features and error mitigation. Chemistry experiments will use placeholder Hamiltonians. For full chemistry support options (WSL, conda), see <a href="../windows-installation-notes/">Windows Installation Notes</a> or <a href="../../INSTALL.md">INSTALL.md</a>.</p>
+</blockquote>
 <p>Upgrading <code>pip</code> before installation often avoids wheel build issues:</p>
 <p><strong>Unix/macOS:</strong>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>pip

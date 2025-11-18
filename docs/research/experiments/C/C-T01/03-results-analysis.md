@@ -240,4 +240,4 @@ C-T01 successfully demonstrates QuartumSE's classical shadows approach for quant
 
 **Phase 1 Status:** Chemistry workstream data drop ✅ COMPLETE.
 
-**See Full Report:** `H2_EXPERIMENT_REPORT.md` in project root.
+**See Full Report:** [H2_EXPERIMENT_REPORT.md](../../H2_EXPERIMENT_REPORT.md)

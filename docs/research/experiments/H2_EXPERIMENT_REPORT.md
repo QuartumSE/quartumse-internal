@@ -254,7 +254,7 @@ Observables sorted by variance (high to low):
 
 ### Analysis Artifacts:
 - **This report:** `H2_EXPERIMENT_REPORT.md`
-- **Strategic analysis:** `STRATEGIC_ANALYSIS.md`
+- **Strategic analysis:** [STRATEGIC_ANALYSIS.md](../../strategy/STRATEGIC_ANALYSIS.md)
 
 ---
 

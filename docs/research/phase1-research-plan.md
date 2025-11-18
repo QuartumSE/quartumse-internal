@@ -459,4 +459,4 @@ If shadows work for GHZ (S-T01), they should work for:
 - `docs/strategy/roadmap.md` - Overall project roadmap
 - `docs/strategy/phase1_task_checklist.md` - Detailed task tracking
 - `docs/research/experiments/` - Individual experiment documentation
-- `STRATEGIC_ANALYSIS.md` - Current status and next actions
+- `docs/strategy/STRATEGIC_ANALYSIS.md` - Current status and next actions

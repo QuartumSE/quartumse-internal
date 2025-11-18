@@ -32,6 +32,7 @@ ENV/
 # IDE
 .vscode/
 .idea/
+.claude/
 *.swp
 *.swo
 *~
@@ -47,6 +48,9 @@ coverage.xml
 *.cover
 .hypothesis/
 docs/_build/
+
+# Documentation build output
+site/
 
 # Jupyter
 .ipynb_checkpoints/

@@ -177,7 +177,7 @@
 **Documentation:** [C/C-T01/](C/C-T01/)
 **Manifest:** `data/manifests/2a89df46-3c81-4638-9ff4-2f60ecf3325d.json` (37 KB)
 **Shot Data:** `data/shots/2a89df46-3c81-4638-9ff4-2f60ecf3325d.parquet`
-**Full Report:** See `H2_EXPERIMENT_REPORT.md` in project root
+**Full Report:** See [H2_EXPERIMENT_REPORT.md](H2_EXPERIMENT_REPORT.md)
 
 ---
 
@@ -398,8 +398,8 @@
 - [Phase 1 Task Checklist](../../strategy/phase1_task_checklist.md) - Detailed task tracking
 
 ### Reports and Analysis
-- [Strategic Analysis](../../../STRATEGIC_ANALYSIS.md) - Current status and next steps
-- [H₂ Experiment Report](../../../H2_EXPERIMENT_REPORT.md) - Detailed C-T01 analysis
+- [Strategic Analysis](../../strategy/STRATEGIC_ANALYSIS.md) - Current status and next steps
+- [H₂ Experiment Report](H2_EXPERIMENT_REPORT.md) - Detailed C-T01 analysis
 
 ### Technical Documentation
 - [Experiment Tracker](../experiment-tracker.md) - Lightweight experiment log

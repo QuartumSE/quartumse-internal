@@ -1,6 +1,6 @@
 # QuartumSE Documentation
 
-Welcome to the QuartumSE documentation hub. The site is organised into four major sections so you can move from first contact to deep experimentation without losing context.
+Welcome to the QuartumSE public documentation hub. The site is organised into four major sections so you can move from first contact to deep experimentation without losing context.
 
 ## Home
 

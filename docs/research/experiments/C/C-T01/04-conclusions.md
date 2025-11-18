@@ -206,4 +206,4 @@ C-T01 successfully demonstrates QuartumSE's classical shadows approach for quant
 **Document Version:** 1.0
 **Last Updated:** November 3, 2025
 **Next Review:** After real Hamiltonian re-run and C-T02 completion
-**Detailed Report:** See `H2_EXPERIMENT_REPORT.md` in project root
+**Detailed Report:** See [H2_EXPERIMENT_REPORT.md](../../H2_EXPERIMENT_REPORT.md)

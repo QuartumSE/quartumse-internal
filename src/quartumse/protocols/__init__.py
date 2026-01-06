@@ -52,6 +52,16 @@ from .state import (
     RawDatasetChunk,
 )
 
+# Import baseline protocols (triggers registration)
+from .baselines import (
+    DirectGroupedProtocol,
+    DirectGroupedState,
+    DirectNaiveProtocol,
+    DirectNaiveState,
+    DirectOptimizedProtocol,
+    DirectOptimizedState,
+)
+
 __all__ = [
     # Base classes
     "Protocol",
@@ -72,4 +82,11 @@ __all__ = [
     "get_protocol",
     "list_protocols",
     "get_registry",
+    # Baseline protocols
+    "DirectNaiveProtocol",
+    "DirectNaiveState",
+    "DirectGroupedProtocol",
+    "DirectGroupedState",
+    "DirectOptimizedProtocol",
+    "DirectOptimizedState",
 ]

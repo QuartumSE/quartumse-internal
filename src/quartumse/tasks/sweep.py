@@ -1,0 +1,356 @@
+"""Benchmark sweep orchestrator (Measurements Bible §9).
+
+This module provides utilities for orchestrating benchmark sweeps
+across protocols, circuits, shot budgets, and replicates.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from datetime import datetime
+from typing import Any, Callable
+from uuid import uuid4
+
+import numpy as np
+
+from ..io.schemas import LongFormRow, RunManifest, TaskResult
+from ..io.long_form import LongFormResultBuilder, LongFormResultSet
+from ..observables import ObservableSet
+from ..protocols import Estimates, Protocol
+
+
+@dataclass
+class SweepConfig:
+    """Configuration for a benchmark sweep.
+
+    Attributes:
+        run_id: Unique identifier for this run.
+        methodology_version: Version of the methodology.
+        protocols: List of protocol instances to evaluate.
+        circuits: List of (circuit_id, circuit) tuples.
+        observable_sets: List of (obs_set_id, ObservableSet) tuples.
+        n_grid: Shot budget grid.
+        n_replicates: Number of replicates per configuration.
+        noise_profiles: List of noise profile IDs.
+        seeds: Seed configuration.
+        tasks: List of task IDs to run.
+    """
+
+    run_id: str = field(default_factory=lambda: f"run_{uuid4().hex[:12]}")
+    methodology_version: str = "3.0.0"
+    protocols: list[Protocol] = field(default_factory=list)
+    circuits: list[tuple[str, Any]] = field(default_factory=list)
+    observable_sets: list[tuple[str, ObservableSet]] = field(default_factory=list)
+    n_grid: list[int] = field(default_factory=lambda: [100, 500, 1000, 5000, 10000])
+    n_replicates: int = 10
+    noise_profiles: list[str] = field(default_factory=lambda: ["ideal"])
+    seeds: dict[str, int] = field(default_factory=lambda: {"base": 42})
+    tasks: list[str] = field(default_factory=list)
+
+
+@dataclass
+class SweepProgress:
+    """Progress tracking for a sweep.
+
+    Attributes:
+        total_configs: Total number of configurations.
+        completed_configs: Number of completed configurations.
+        current_protocol: Currently running protocol.
+        current_circuit: Currently running circuit.
+        current_n: Currently running shot budget.
+        current_replicate: Currently running replicate.
+        start_time: Sweep start time.
+        errors: List of errors encountered.
+    """
+
+    total_configs: int = 0
+    completed_configs: int = 0
+    current_protocol: str = ""
+    current_circuit: str = ""
+    current_n: int = 0
+    current_replicate: int = 0
+    start_time: datetime = field(default_factory=datetime.now)
+    errors: list[dict[str, Any]] = field(default_factory=list)
+
+    @property
+    def progress_fraction(self) -> float:
+        """Fraction of sweep completed."""
+        if self.total_configs == 0:
+            return 0.0
+        return self.completed_configs / self.total_configs
+
+    @property
+    def elapsed_seconds(self) -> float:
+        """Elapsed time in seconds."""
+        return (datetime.now() - self.start_time).total_seconds()
+
+
+class SweepOrchestrator:
+    """Orchestrator for running benchmark sweeps.
+
+    Manages the execution of protocols across the sweep grid
+    and collects results.
+    """
+
+    def __init__(
+        self,
+        config: SweepConfig,
+        executor: Callable | None = None,
+    ) -> None:
+        """Initialize sweep orchestrator.
+
+        Args:
+            config: Sweep configuration.
+            executor: Optional custom executor for running protocols.
+        """
+        self.config = config
+        self.executor = executor or self._default_executor
+        self.results = LongFormResultSet()
+        self.progress = SweepProgress()
+
+    def _default_executor(
+        self,
+        protocol: Protocol,
+        circuit: Any,
+        observable_set: ObservableSet,
+        n_shots: int,
+        seed: int,
+        noise_profile: str,
+    ) -> Estimates:
+        """Default protocol executor (simulation).
+
+        Subclasses can override for hardware execution.
+        """
+        # Initialize protocol
+        state = protocol.initialize(observable_set, n_shots, seed)
+
+        # Get measurement plan
+        plan = protocol.plan(state)
+
+        # Simulate acquisition (placeholder - real implementation would execute)
+        from ..protocols.state import RawDatasetChunk
+
+        # Generate simulated bitstrings
+        rng = np.random.default_rng(seed)
+        bitstrings = {}
+        for i, (setting, n) in enumerate(zip(plan.settings, plan.shots_per_setting)):
+            # Generate random bitstrings (placeholder)
+            bs = [
+                "".join(str(rng.integers(0, 2)) for _ in range(observable_set.n_qubits))
+                for _ in range(n)
+            ]
+            bitstrings[setting.setting_id] = bs
+
+        chunk = RawDatasetChunk(
+            bitstrings=bitstrings,
+            settings_executed=[s.setting_id for s in plan.settings],
+        )
+
+        # Update state
+        state = protocol.update(state, chunk)
+
+        # Finalize
+        estimates = protocol.finalize(state, observable_set)
+
+        return estimates
+
+    def compute_total_configs(self) -> int:
+        """Compute total number of configurations."""
+        n_protocols = len(self.config.protocols)
+        n_circuits = len(self.config.circuits)
+        n_obs_sets = len(self.config.observable_sets)
+        n_budgets = len(self.config.n_grid)
+        n_replicates = self.config.n_replicates
+        n_noise = len(self.config.noise_profiles)
+
+        return n_protocols * n_circuits * n_obs_sets * n_budgets * n_replicates * n_noise
+
+    def generate_seeds(self, replicate_id: int, config_id: int) -> dict[str, int]:
+        """Generate reproducible seeds for a configuration.
+
+        Args:
+            replicate_id: Replicate number.
+            config_id: Configuration index.
+
+        Returns:
+            Dict with seed_protocol, seed_acquire, seed_bootstrap.
+        """
+        base = self.config.seeds.get("base", 42)
+        rng = np.random.default_rng(base + replicate_id * 1000 + config_id)
+
+        return {
+            "seed_protocol": int(rng.integers(0, 2**31)),
+            "seed_acquire": int(rng.integers(0, 2**31)),
+            "seed_bootstrap": int(rng.integers(0, 2**31)),
+        }
+
+    def run(
+        self,
+        progress_callback: Callable[[SweepProgress], None] | None = None,
+    ) -> LongFormResultSet:
+        """Run the benchmark sweep.
+
+        Args:
+            progress_callback: Optional callback for progress updates.
+
+        Returns:
+            LongFormResultSet with all results.
+        """
+        self.progress = SweepProgress(
+            total_configs=self.compute_total_configs(),
+            start_time=datetime.now(),
+        )
+
+        config_id = 0
+
+        for protocol in self.config.protocols:
+            self.progress.current_protocol = protocol.protocol_id
+
+            for circuit_id, circuit in self.config.circuits:
+                self.progress.current_circuit = circuit_id
+
+                for obs_set_id, observable_set in self.config.observable_sets:
+                    for n in self.config.n_grid:
+                        self.progress.current_n = n
+
+                        for noise_profile in self.config.noise_profiles:
+                            for rep in range(self.config.n_replicates):
+                                self.progress.current_replicate = rep
+
+                                try:
+                                    seeds = self.generate_seeds(rep, config_id)
+
+                                    estimates = self.executor(
+                                        protocol=protocol,
+                                        circuit=circuit,
+                                        observable_set=observable_set,
+                                        n_shots=n,
+                                        seed=seeds["seed_protocol"],
+                                        noise_profile=noise_profile,
+                                    )
+
+                                    # Convert to LongFormRows
+                                    rows = self._estimates_to_rows(
+                                        estimates=estimates,
+                                        circuit_id=circuit_id,
+                                        obs_set_id=obs_set_id,
+                                        observable_set=observable_set,
+                                        n=n,
+                                        replicate_id=rep,
+                                        noise_profile=noise_profile,
+                                        seeds=seeds,
+                                    )
+                                    self.results.add_many(rows)
+
+                                except Exception as e:
+                                    self.progress.errors.append({
+                                        "protocol": protocol.protocol_id,
+                                        "circuit": circuit_id,
+                                        "n": n,
+                                        "replicate": rep,
+                                        "error": str(e),
+                                    })
+
+                                self.progress.completed_configs += 1
+                                config_id += 1
+
+                                if progress_callback:
+                                    progress_callback(self.progress)
+
+        return self.results
+
+    def _estimates_to_rows(
+        self,
+        estimates: Estimates,
+        circuit_id: str,
+        obs_set_id: str,
+        observable_set: ObservableSet,
+        n: int,
+        replicate_id: int,
+        noise_profile: str,
+        seeds: dict[str, int],
+    ) -> list[LongFormRow]:
+        """Convert Estimates to LongFormRows."""
+        rows = []
+        builder = LongFormResultBuilder()
+
+        for est in estimates.estimates:
+            obs = observable_set.get_by_id(est.observable_id)
+
+            row = (
+                builder.reset()
+                .with_run_id(self.config.run_id)
+                .with_methodology_version(self.config.methodology_version)
+                .with_circuit(circuit_id, n_qubits=observable_set.n_qubits)
+                .with_observable(
+                    observable_id=est.observable_id,
+                    observable_type=obs.observable_type.value,
+                    locality=obs.locality,
+                    coefficient=obs.coefficient,
+                    observable_set_id=obs_set_id,
+                    group_id=obs.group_id,
+                    M_total=len(observable_set),
+                )
+                .with_protocol(estimates.protocol_id, estimates.protocol_version)
+                .with_backend("simulator", noise_profile_id=noise_profile)
+                .with_replicate(replicate_id)
+                .with_seeds(
+                    seed_protocol=seeds["seed_protocol"],
+                    seed_acquire=seeds["seed_acquire"],
+                    seed_bootstrap=seeds.get("seed_bootstrap"),
+                )
+                .with_budget(N_total=n, n_settings=est.n_settings)
+                .with_estimate(
+                    estimate=est.estimate,
+                    se=est.se,
+                    ci_low=est.ci.ci_low if est.ci else None,
+                    ci_high=est.ci.ci_high if est.ci else None,
+                )
+                .build()
+            )
+            rows.append(row)
+
+        return rows
+
+    def create_manifest(self) -> RunManifest:
+        """Create run manifest for this sweep."""
+        return RunManifest(
+            run_id=self.config.run_id,
+            methodology_version=self.config.methodology_version,
+            created_at=self.progress.start_time,
+            circuits=[c[0] for c in self.config.circuits],
+            observable_sets=[o[0] for o in self.config.observable_sets],
+            protocols=[p.protocol_id for p in self.config.protocols],
+            N_grid=self.config.n_grid,
+            n_replicates=self.config.n_replicates,
+            noise_profiles=self.config.noise_profiles,
+            status="completed" if not self.progress.errors else "partial_success",
+            completed_at=datetime.now(),
+            config={
+                "seeds": self.config.seeds,
+                "tasks": self.config.tasks,
+            },
+        )
+
+
+def generate_n_grid(
+    n_min: int = 100,
+    n_max: int = 100000,
+    ratio: float = 2.0,
+) -> list[int]:
+    """Generate geometric shot budget grid.
+
+    Args:
+        n_min: Minimum shot count.
+        n_max: Maximum shot count.
+        ratio: Geometric ratio between consecutive values.
+
+    Returns:
+        List of shot counts.
+    """
+    grid = []
+    n = n_min
+    while n <= n_max:
+        grid.append(int(n))
+        n *= ratio
+    return grid

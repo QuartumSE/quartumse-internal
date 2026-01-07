@@ -17,6 +17,12 @@ from ..io.schemas import LongFormRow, RunManifest, TaskResult
 from ..io.long_form import LongFormResultBuilder, LongFormResultSet
 from ..observables import ObservableSet
 from ..protocols import Estimates, Protocol
+from ..utils.provenance import (
+    get_environment_lock,
+    get_git_commit_hash,
+    get_python_version,
+    get_quartumse_version,
+)
 
 
 @dataclass
@@ -321,6 +327,10 @@ class SweepOrchestrator:
             run_id=self.config.run_id,
             methodology_version=self.config.methodology_version,
             created_at=self.progress.start_time,
+            git_commit_hash=get_git_commit_hash(),
+            quartumse_version=get_quartumse_version(),
+            python_version=get_python_version(),
+            environment_lock=get_environment_lock(),
             circuits=[c[0] for c in self.config.circuits],
             observable_sets=[o[0] for o in self.config.observable_sets],
             protocols=[p.protocol_id for p in self.config.protocols],

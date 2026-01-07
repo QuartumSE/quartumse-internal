@@ -165,6 +165,9 @@ class ParquetWriter:
         """
         output_path = self.output_dir / "manifest.json"
 
+        self._populate_manifest_paths(manifest)
+        manifest.validate_required_fields()
+
         # Convert to dict and handle datetime
         data = manifest.model_dump()
         for key in ["created_at", "completed_at"]:
@@ -175,6 +178,21 @@ class ParquetWriter:
             json.dump(data, f, indent=2)
 
         return output_path
+
+    def _populate_manifest_paths(self, manifest: RunManifest) -> None:
+        long_form_dir = self.output_dir / "long_form"
+        summary_path = self.output_dir / "summary.parquet"
+        task_results_path = self.output_dir / "task_results.parquet"
+        plots_dir = self.output_dir / "plots"
+
+        if manifest.long_form_path is None and long_form_dir.exists():
+            manifest.long_form_path = str(long_form_dir)
+        if manifest.summary_path is None and summary_path.exists():
+            manifest.summary_path = str(summary_path)
+        if manifest.task_results_path is None and task_results_path.exists():
+            manifest.task_results_path = str(task_results_path)
+        if manifest.plots_dir is None and plots_dir.exists():
+            manifest.plots_dir = str(plots_dir)
 
 
 class ParquetReader:

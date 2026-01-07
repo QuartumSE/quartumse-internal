@@ -305,3 +305,30 @@ class RunManifest(BaseModel):
     status: str = "running"  # running, completed, failed
     completed_at: datetime | None = None
     error_message: str | None = None
+
+    def validate_required_fields(self) -> None:
+        """Validate required manifest fields from §0.1 and §0.2."""
+        missing: list[str] = []
+
+        if not self.methodology_version:
+            missing.append("methodology_version")
+        if not self.git_commit_hash:
+            missing.append("git_commit_hash")
+        if not self.quartumse_version:
+            missing.append("quartumse_version")
+        if not self.python_version:
+            missing.append("python_version")
+        if not self.environment_lock:
+            missing.append("environment_lock")
+        if not self.config.get("seeds"):
+            missing.append("config.seeds")
+        if not self.long_form_path:
+            missing.append("long_form_path")
+        if not self.summary_path:
+            missing.append("summary_path")
+        if not self.plots_dir:
+            missing.append("plots_dir")
+
+        if missing:
+            missing_fields = ", ".join(missing)
+            raise ValueError(f"RunManifest missing required fields: {missing_fields}")

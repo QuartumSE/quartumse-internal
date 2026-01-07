@@ -25200,7 +25200,12 @@ and collects results.</p>
 <span class="normal">344</span>
 <span class="normal">345</span>
 <span class="normal">346</span>
-<span class="normal">347</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SweepOrchestrator</span><span class="p">:</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SweepOrchestrator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Orchestrator for running benchmark sweeps.</span>
 
 <span class="sd">    Manages the execution of protocols across the sweep grid</span>
@@ -25232,42 +25237,47 @@ and collects results.</p>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">noise_profile</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Estimates</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Default protocol executor (simulation).</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Default protocol executor using physical measurement paths.&quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">qiskit</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantumCircuit</span>
 
-<span class="sd">        Subclasses can override for hardware execution.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Initialize protocol</span>
-        <span class="n">state</span> <span class="o">=</span> <span class="n">protocol</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">observable_set</span><span class="p">,</span> <span class="n">n_shots</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
+        <span class="n">backend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_backend</span><span class="p">(</span><span class="n">noise_profile</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">circuit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">circuit</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">observable_set</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">)</span>
 
-        <span class="c1"># Get measurement plan</span>
-        <span class="n">plan</span> <span class="o">=</span> <span class="n">protocol</span><span class="o">.</span><span class="n">plan</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-
-        <span class="c1"># Simulate acquisition (placeholder - real implementation would execute)</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">..protocols.state</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawDatasetChunk</span>
-
-        <span class="c1"># Generate simulated bitstrings</span>
-        <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-        <span class="n">bitstrings</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">setting</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">plan</span><span class="o">.</span><span class="n">settings</span><span class="p">,</span> <span class="n">plan</span><span class="o">.</span><span class="n">shots_per_setting</span><span class="p">)):</span>
-            <span class="c1"># Generate random bitstrings (placeholder)</span>
-            <span class="n">bs</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">observable_set</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">))</span>
-                <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-            <span class="p">]</span>
-            <span class="n">bitstrings</span><span class="p">[</span><span class="n">setting</span><span class="o">.</span><span class="n">setting_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">bs</span>
-
-        <span class="n">chunk</span> <span class="o">=</span> <span class="n">RawDatasetChunk</span><span class="p">(</span>
-            <span class="n">bitstrings</span><span class="o">=</span><span class="n">bitstrings</span><span class="p">,</span>
-            <span class="n">settings_executed</span><span class="o">=</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">setting_id</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">plan</span><span class="o">.</span><span class="n">settings</span><span class="p">],</span>
+        <span class="k">return</span> <span class="n">protocol</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="n">circuit</span><span class="o">=</span><span class="n">circuit</span><span class="p">,</span>
+            <span class="n">observable_set</span><span class="o">=</span><span class="n">observable_set</span><span class="p">,</span>
+            <span class="n">total_budget</span><span class="o">=</span><span class="n">n_shots</span><span class="p">,</span>
+            <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span>
+            <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># Update state</span>
-        <span class="n">state</span> <span class="o">=</span> <span class="n">protocol</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">chunk</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_backend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">noise_profile</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve a backend sampler from a noise profile identifier.&quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..backends.sampler</span><span class="w"> </span><span class="kn">import</span> <span class="n">IdealSampler</span><span class="p">,</span> <span class="n">NoisySampler</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..noise.profiles</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoiseType</span><span class="p">,</span> <span class="n">get_profile</span>
 
-        <span class="c1"># Finalize</span>
-        <span class="n">estimates</span> <span class="o">=</span> <span class="n">protocol</span><span class="o">.</span><span class="n">finalize</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">observable_set</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">noise_profile</span> <span class="o">==</span> <span class="s2">&quot;ideal&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">IdealSampler</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="n">estimates</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">profile</span> <span class="o">=</span> <span class="n">get_profile</span><span class="p">(</span><span class="n">noise_profile</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">NoisySampler</span><span class="p">(</span><span class="n">noise_profile_id</span><span class="o">=</span><span class="n">noise_profile</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">profile</span><span class="o">.</span><span class="n">noise_type</span> <span class="o">==</span> <span class="n">NoiseType</span><span class="o">.</span><span class="n">READOUT_BITFLIP</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">NoisySampler</span><span class="p">(</span>
+                <span class="n">noise_profile_id</span><span class="o">=</span><span class="n">profile</span><span class="o">.</span><span class="n">profile_id</span><span class="p">,</span>
+                <span class="n">readout_error</span><span class="o">=</span><span class="n">profile</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">profile</span><span class="o">.</span><span class="n">noise_type</span> <span class="o">==</span> <span class="n">NoiseType</span><span class="o">.</span><span class="n">DEPOLARIZING</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">NoisySampler</span><span class="p">(</span>
+                <span class="n">noise_profile_id</span><span class="o">=</span><span class="n">profile</span><span class="o">.</span><span class="n">profile_id</span><span class="p">,</span>
+                <span class="n">depol_1q</span><span class="o">=</span><span class="n">profile</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;p1&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+                <span class="n">depol_2q</span><span class="o">=</span><span class="n">profile</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;p2&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">NoisySampler</span><span class="p">(</span><span class="n">noise_profile_id</span><span class="o">=</span><span class="n">profile</span><span class="o">.</span><span class="n">profile_id</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_total_configs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute total number of configurations.&quot;&quot;&quot;</span>
@@ -25588,16 +25598,16 @@ and collects results.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/quartumse/tasks/sweep.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">164</span>
-<span class="normal">165</span>
-<span class="normal">166</span>
-<span class="normal">167</span>
-<span class="normal">168</span>
-<span class="normal">169</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">169</span>
 <span class="normal">170</span>
 <span class="normal">171</span>
 <span class="normal">172</span>
-<span class="normal">173</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">compute_total_configs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">compute_total_configs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute total number of configurations.&quot;&quot;&quot;</span>
     <span class="n">n_protocols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">protocols</span><span class="p">)</span>
     <span class="n">n_circuits</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">circuits</span><span class="p">)</span>
@@ -25629,12 +25639,7 @@ and collects results.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/quartumse/tasks/sweep.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">324</span>
-<span class="normal">325</span>
-<span class="normal">326</span>
-<span class="normal">327</span>
-<span class="normal">328</span>
-<span class="normal">329</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">329</span>
 <span class="normal">330</span>
 <span class="normal">331</span>
 <span class="normal">332</span>
@@ -25652,7 +25657,12 @@ and collects results.</p>
 <span class="normal">344</span>
 <span class="normal">345</span>
 <span class="normal">346</span>
-<span class="normal">347</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_manifest</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunManifest</span><span class="p">:</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_manifest</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunManifest</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create run manifest for this sweep.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">RunManifest</span><span class="p">(</span>
         <span class="n">run_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">run_id</span><span class="p">,</span>
@@ -25768,12 +25778,7 @@ and collects results.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/quartumse/tasks/sweep.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">175</span>
-<span class="normal">176</span>
-<span class="normal">177</span>
-<span class="normal">178</span>
-<span class="normal">179</span>
-<span class="normal">180</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">180</span>
 <span class="normal">181</span>
 <span class="normal">182</span>
 <span class="normal">183</span>
@@ -25786,7 +25791,12 @@ and collects results.</p>
 <span class="normal">190</span>
 <span class="normal">191</span>
 <span class="normal">192</span>
-<span class="normal">193</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_seeds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">replicate_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">config_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_seeds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">replicate_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">config_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate reproducible seeds for a configuration.</span>
 
 <span class="sd">    Args:</span>
@@ -25881,12 +25891,7 @@ and collects results.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/quartumse/tasks/sweep.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">195</span>
-<span class="normal">196</span>
-<span class="normal">197</span>
-<span class="normal">198</span>
-<span class="normal">199</span>
-<span class="normal">200</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">200</span>
 <span class="normal">201</span>
 <span class="normal">202</span>
 <span class="normal">203</span>
@@ -25954,7 +25959,12 @@ and collects results.</p>
 <span class="normal">265</span>
 <span class="normal">266</span>
 <span class="normal">267</span>
-<span class="normal">268</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">progress_callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">SweepProgress</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LongFormResultSet</span><span class="p">:</span>

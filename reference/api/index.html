@@ -7465,7 +7465,7 @@
 - Rigorous error mitigation and confidence intervals
 - Full provenance tracking and reproducibility
 - Cross-platform backend support (IBM, AWS, and more)
-- Publication-grade benchmarking per Measurements Bible v3</p>
+- Publication-grade benchmarking per Measurements Bible</p>
 <p>License: Apache 2.0</p>
 
 
@@ -22134,8 +22134,8 @@ or other internal state used for planning.</p>
     <span class="n">fermionic_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Enable fermionic shadows (v2+)&quot;</span><span class="p">)</span>
     <span class="n">rdm_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;RDM order for fermionic mode (1 or 2)&quot;</span><span class="p">)</span>
 
-    <span class="c1"># v3+ (adaptive)</span>
-    <span class="n">adaptive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Use adaptive measurement selection (v3+)&quot;</span><span class="p">)</span>
+    <span class="c1"># Adaptive</span>
+    <span class="n">adaptive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Use adaptive measurement selection&quot;</span><span class="p">)</span>
     <span class="n">target_observables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Observable strings for adaptive prioritization&quot;</span>
     <span class="p">)</span>
@@ -22935,8 +22935,8 @@ or other internal state used for planning.</p>
             <span class="c1"># TODO: Implement v2</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Shadows v2 (fermionic) not yet implemented&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="n">ShadowVersion</span><span class="o">.</span><span class="n">V3_ADAPTIVE</span><span class="p">:</span>
-            <span class="c1"># TODO: Implement v3</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Shadows v3 (adaptive) not yet implemented&quot;</span><span class="p">)</span>
+            <span class="c1"># TODO: Implement adaptive shadows</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Adaptive shadows not yet implemented&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="n">ShadowVersion</span><span class="o">.</span><span class="n">V4_ROBUST</span><span class="p">:</span>
             <span class="c1"># TODO: Implement v4</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Shadows v4 (robust) not yet implemented&quot;</span><span class="p">)</span>

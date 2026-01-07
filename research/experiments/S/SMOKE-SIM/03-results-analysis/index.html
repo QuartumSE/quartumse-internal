@@ -4983,7 +4983,7 @@
 1. <strong>Finite sampling variance:</strong> 500 shadows may be insufficient for 5-qubit stabilizer observables
 2. <strong>Reconstruction fidelity:</strong> Classical shadow reconstruction becomes less efficient with system size
 3. <strong>Random seed effects:</strong> Particular seed (42) may have been unlucky for this state</p>
-<p><strong>Mitigation:</strong> Increase shadow_size to 1000+ for 5-qubit systems, or use more sophisticated sampling strategies (v3 adaptive).</p>
+<p><strong>Mitigation:</strong> Increase shadow_size to 1000+ for 5-qubit systems, or use more sophisticated adaptive sampling strategies.</p>
 <h2 id="visualizations">Visualizations<a class="headerlink" href="#visualizations" title="Permanent link">&para;</a></h2>
 <h3 id="ssr-comparison-across-system-sizes">SSR Comparison Across System Sizes<a class="headerlink" href="#ssr-comparison-across-system-sizes" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code>SSR Performance (log scale):
@@ -5133,7 +5133,7 @@
 <p><strong>Scaling Challenge Identified:</strong> Performance degrades at 5 qubits with fixed 500-shadow budget. Suggests need for:</p>
 </li>
 <li>Larger shadow sizes for ≥5 qubits</li>
-<li>Adaptive sampling (v3) for efficiency</li>
+<li>Adaptive sampling for efficiency</li>
 <li>
 <p>Observable-dependent shadow allocation</p>
 </li>
@@ -5191,7 +5191,7 @@
 </ol>
 <h3 id="phase-2-enhancements">Phase 2 Enhancements<a class="headerlink" href="#phase-2-enhancements" title="Permanent link">&para;</a></h3>
 <ol>
-<li><strong>Adaptive Sampling (v3):</strong> Allocate shadows based on observable complexity</li>
+<li><strong>Adaptive Sampling:</strong> Allocate shadows based on observable complexity</li>
 <li><strong>Fermionic Shadows (v2):</strong> Test on molecular Hamiltonians (C-T01)</li>
 <li><strong>Multi-Seed Validation:</strong> Test robustness to random seed choices</li>
 </ol>

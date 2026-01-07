@@ -14070,7 +14070,8 @@ Each row corresponds to one observable estimate from one protocol run.</p>
 <span class="normal">161</span>
 <span class="normal">162</span>
 <span class="normal">163</span>
-<span class="normal">164</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LongFormRow</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">164</span>
+<span class="normal">165</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LongFormRow</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A single row in the long-form results table (§10.1).</span>
 
 <span class="sd">    This schema defines all required columns for the tidy long-form output.</span>
@@ -14094,6 +14095,7 @@ Each row corresponds to one observable estimate from one protocol run.</p>
     <span class="n">replicate_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Replicate number (0-indexed)&quot;</span><span class="p">)</span>
 
     <span class="c1"># === Seeds ===</span>
+    <span class="n">seed_policy</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Policy used to derive run seeds&quot;</span><span class="p">)</span>
     <span class="n">seed_protocol</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Seed for protocol planning randomness&quot;</span><span class="p">)</span>
     <span class="n">seed_acquire</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Seed for measurement sampling&quot;</span><span class="p">)</span>
     <span class="n">seed_bootstrap</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
@@ -14244,10 +14246,10 @@ Each row corresponds to one observable estimate from one protocol run.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/quartumse/io/schemas.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">161</span>
-<span class="normal">162</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">162</span>
 <span class="normal">163</span>
-<span class="normal">164</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Config</span><span class="p">:</span>
+<span class="normal">164</span>
+<span class="normal">165</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Config</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Pydantic configuration.&quot;&quot;&quot;</span>
 
     <span class="n">use_enum_values</span> <span class="o">=</span> <span class="kc">True</span>
@@ -14292,11 +14294,11 @@ Each row corresponds to one observable estimate from one protocol run.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/quartumse/io/schemas.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">155</span>
-<span class="normal">156</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">156</span>
 <span class="normal">157</span>
 <span class="normal">158</span>
-<span class="normal">159</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">compute_derived_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">159</span>
+<span class="normal">160</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">compute_derived_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute derived metrics from truth if available.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">truth_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abs_err</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">estimate</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">truth_value</span><span class="p">)</span>
@@ -24529,8 +24531,7 @@ without re-executing circuits on the backend.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/quartumse/io/schemas.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">167</span>
-<span class="normal">168</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">168</span>
 <span class="normal">169</span>
 <span class="normal">170</span>
 <span class="normal">171</span>
@@ -24571,7 +24572,8 @@ without re-executing circuits on the backend.</p>
 <span class="normal">206</span>
 <span class="normal">207</span>
 <span class="normal">208</span>
-<span class="normal">209</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SummaryRow</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">209</span>
+<span class="normal">210</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SummaryRow</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Summary statistics for (protocol, circuit, N) combination (§10.3).</span>
 
 <span class="sd">    This schema defines aggregated metrics across observables and replicates.</span>
@@ -24823,7 +24825,8 @@ without re-executing circuits on the backend.</p>
 <span class="normal">45</span>
 <span class="normal">46</span>
 <span class="normal">47</span>
-<span class="normal">48</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="normal">48</span>
+<span class="normal">49</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">SweepConfig</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Configuration for a benchmark sweep.</span>
 
@@ -24849,6 +24852,7 @@ without re-executing circuits on the backend.</p>
     <span class="n">n_replicates</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span>
     <span class="n">noise_profiles</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;ideal&quot;</span><span class="p">])</span>
     <span class="n">seeds</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;base&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">})</span>
+    <span class="n">seed_policy</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;base_replicate_config&quot;</span>
     <span class="n">tasks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -24902,8 +24906,7 @@ and collects results.</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/quartumse/tasks/sweep.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 88</span>
-<span class="normal"> 89</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 89</span>
 <span class="normal"> 90</span>
 <span class="normal"> 91</span>
 <span class="normal"> 92</span>
@@ -25147,7 +25150,11 @@ and collects results.</p>
 <span class="normal">330</span>
 <span class="normal">331</span>
 <span class="normal">332</span>
-<span class="normal">333</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SweepOrchestrator</span><span class="p">:</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SweepOrchestrator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Orchestrator for running benchmark sweeps.</span>
 
 <span class="sd">    Manages the execution of protocols across the sweep grid</span>
@@ -25235,12 +25242,13 @@ and collects results.</p>
 <span class="sd">            config_id: Configuration index.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            Dict with seed_protocol, seed_acquire, seed_bootstrap.</span>
+<span class="sd">            Dict with seed_policy, seed_protocol, seed_acquire, seed_bootstrap.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">seeds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;base&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="p">)</span>
         <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">base</span> <span class="o">+</span> <span class="n">replicate_id</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">+</span> <span class="n">config_id</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;seed_policy&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">seed_policy</span><span class="p">,</span>
             <span class="s2">&quot;seed_protocol&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">31</span><span class="p">)),</span>
             <span class="s2">&quot;seed_acquire&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">31</span><span class="p">)),</span>
             <span class="s2">&quot;seed_bootstrap&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">31</span><span class="p">)),</span>
@@ -25357,6 +25365,7 @@ and collects results.</p>
                 <span class="o">.</span><span class="n">with_backend</span><span class="p">(</span><span class="s2">&quot;simulator&quot;</span><span class="p">,</span> <span class="n">noise_profile_id</span><span class="o">=</span><span class="n">noise_profile</span><span class="p">)</span>
                 <span class="o">.</span><span class="n">with_replicate</span><span class="p">(</span><span class="n">replicate_id</span><span class="p">)</span>
                 <span class="o">.</span><span class="n">with_seeds</span><span class="p">(</span>
+                    <span class="n">seed_policy</span><span class="o">=</span><span class="n">seeds</span><span class="p">[</span><span class="s2">&quot;seed_policy&quot;</span><span class="p">],</span>
                     <span class="n">seed_protocol</span><span class="o">=</span><span class="n">seeds</span><span class="p">[</span><span class="s2">&quot;seed_protocol&quot;</span><span class="p">],</span>
                     <span class="n">seed_acquire</span><span class="o">=</span><span class="n">seeds</span><span class="p">[</span><span class="s2">&quot;seed_acquire&quot;</span><span class="p">],</span>
                     <span class="n">seed_bootstrap</span><span class="o">=</span><span class="n">seeds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;seed_bootstrap&quot;</span><span class="p">),</span>
@@ -25390,6 +25399,7 @@ and collects results.</p>
             <span class="n">completed_at</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
             <span class="n">config</span><span class="o">=</span><span class="p">{</span>
                 <span class="s2">&quot;seeds&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">seeds</span><span class="p">,</span>
+                <span class="s2">&quot;seed_policy&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">seed_policy</span><span class="p">,</span>
                 <span class="s2">&quot;tasks&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tasks</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">)</span>
@@ -25477,8 +25487,7 @@ and collects results.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/quartumse/tasks/sweep.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 95</span>
-<span class="normal"> 96</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 96</span>
 <span class="normal"> 97</span>
 <span class="normal"> 98</span>
 <span class="normal"> 99</span>
@@ -25491,7 +25500,8 @@ and collects results.</p>
 <span class="normal">106</span>
 <span class="normal">107</span>
 <span class="normal">108</span>
-<span class="normal">109</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<span class="normal">109</span>
+<span class="normal">110</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">config</span><span class="p">:</span> <span class="n">SweepConfig</span><span class="p">,</span>
     <span class="n">executor</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -25528,8 +25538,7 @@ and collects results.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/quartumse/tasks/sweep.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">157</span>
-<span class="normal">158</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">158</span>
 <span class="normal">159</span>
 <span class="normal">160</span>
 <span class="normal">161</span>
@@ -25537,7 +25546,8 @@ and collects results.</p>
 <span class="normal">163</span>
 <span class="normal">164</span>
 <span class="normal">165</span>
-<span class="normal">166</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">compute_total_configs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="normal">166</span>
+<span class="normal">167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">compute_total_configs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute total number of configurations.&quot;&quot;&quot;</span>
     <span class="n">n_protocols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">protocols</span><span class="p">)</span>
     <span class="n">n_circuits</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">circuits</span><span class="p">)</span>
@@ -25569,10 +25579,7 @@ and collects results.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/quartumse/tasks/sweep.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">315</span>
-<span class="normal">316</span>
-<span class="normal">317</span>
-<span class="normal">318</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">318</span>
 <span class="normal">319</span>
 <span class="normal">320</span>
 <span class="normal">321</span>
@@ -25587,7 +25594,11 @@ and collects results.</p>
 <span class="normal">330</span>
 <span class="normal">331</span>
 <span class="normal">332</span>
-<span class="normal">333</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_manifest</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunManifest</span><span class="p">:</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_manifest</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunManifest</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create run manifest for this sweep.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">RunManifest</span><span class="p">(</span>
         <span class="n">run_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">run_id</span><span class="p">,</span>
@@ -25603,6 +25614,7 @@ and collects results.</p>
         <span class="n">completed_at</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
         <span class="n">config</span><span class="o">=</span><span class="p">{</span>
             <span class="s2">&quot;seeds&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">seeds</span><span class="p">,</span>
+            <span class="s2">&quot;seed_policy&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">seed_policy</span><span class="p">,</span>
             <span class="s2">&quot;tasks&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tasks</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">)</span>
@@ -25688,7 +25700,7 @@ and collects results.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Dict with seed_protocol, seed_acquire, seed_bootstrap.</p>
+                <p>Dict with seed_policy, seed_protocol, seed_acquire, seed_bootstrap.</p>
               </div>
             </td>
           </tr>
@@ -25698,8 +25710,7 @@ and collects results.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/quartumse/tasks/sweep.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">168</span>
-<span class="normal">169</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">169</span>
 <span class="normal">170</span>
 <span class="normal">171</span>
 <span class="normal">172</span>
@@ -25715,7 +25726,9 @@ and collects results.</p>
 <span class="normal">182</span>
 <span class="normal">183</span>
 <span class="normal">184</span>
-<span class="normal">185</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_seeds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">replicate_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">config_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">generate_seeds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">replicate_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">config_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate reproducible seeds for a configuration.</span>
 
 <span class="sd">    Args:</span>
@@ -25723,12 +25736,13 @@ and collects results.</p>
 <span class="sd">        config_id: Configuration index.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        Dict with seed_protocol, seed_acquire, seed_bootstrap.</span>
+<span class="sd">        Dict with seed_policy, seed_protocol, seed_acquire, seed_bootstrap.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">seeds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;base&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="p">)</span>
     <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">base</span> <span class="o">+</span> <span class="n">replicate_id</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">+</span> <span class="n">config_id</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;seed_policy&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">seed_policy</span><span class="p">,</span>
         <span class="s2">&quot;seed_protocol&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">31</span><span class="p">)),</span>
         <span class="s2">&quot;seed_acquire&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">31</span><span class="p">)),</span>
         <span class="s2">&quot;seed_bootstrap&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">31</span><span class="p">)),</span>
@@ -25809,9 +25823,7 @@ and collects results.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/quartumse/tasks/sweep.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">187</span>
-<span class="normal">188</span>
-<span class="normal">189</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">189</span>
 <span class="normal">190</span>
 <span class="normal">191</span>
 <span class="normal">192</span>
@@ -25882,7 +25894,9 @@ and collects results.</p>
 <span class="normal">257</span>
 <span class="normal">258</span>
 <span class="normal">259</span>
-<span class="normal">260</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">progress_callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">SweepProgress</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LongFormResultSet</span><span class="p">:</span>

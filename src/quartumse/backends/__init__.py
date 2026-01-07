@@ -9,6 +9,7 @@ Ground truth is critical for publication-grade benchmarking (Measurements Bible 
 """
 
 from quartumse.backends.truth import (
+    GroundTruthConfig,
     StatevectorBackend,
     compute_ground_truth,
     compute_observable_expectation,
@@ -21,6 +22,7 @@ from quartumse.backends.sampler import (
 
 __all__ = [
     # Ground truth
+    "GroundTruthConfig",
     "StatevectorBackend",
     "compute_ground_truth",
     "compute_observable_expectation",

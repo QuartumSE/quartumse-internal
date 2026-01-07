@@ -383,6 +383,7 @@ def run_publication_benchmark(
     output_dir: str | None = None,
     epsilon: float = 0.01,
     delta: float = 0.05,
+    ground_truth_config: "GroundTruthConfig | None" = None,
 ) -> dict[str, Any]:
     """Run publication-grade benchmark with ground truth (Measurements Bible).
 
@@ -405,6 +406,8 @@ def run_publication_benchmark(
         output_dir: Directory to save results (optional).
         epsilon: Target precision for tasks.
         delta: Global failure probability.
+        ground_truth_config: Optional configuration for statevector ground truth
+            (including memory_limit_bytes).
 
     Returns:
         Dict with benchmark results including:
@@ -451,7 +454,12 @@ def run_publication_benchmark(
 
     if compute_truth:
         try:
-            ground_truth = _compute_ground_truth(circuit, observable_set, circuit_id)
+            ground_truth = _compute_ground_truth(
+                circuit,
+                observable_set,
+                circuit_id,
+                config=ground_truth_config,
+            )
             truth_values = ground_truth.truth_values
         except Exception as e:
             print(f"Warning: Ground truth computation failed: {e}")

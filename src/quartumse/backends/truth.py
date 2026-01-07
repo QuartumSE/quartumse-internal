@@ -10,7 +10,9 @@ Memory requirements:
 - Statevector: ~16 * 2^n bytes (complex128)
 - Density matrix: ~16 * 4^n bytes (complex128)
 
-For n > ~25 qubits, use reference truth with high-precision sampling instead.
+By default, statevector ground truth enforces a 512 MB memory limit for
+feasibility (configurable via ``GroundTruthConfig`` or ``memory_limit_bytes``).
+For larger systems, use reference truth with high-precision sampling instead.
 """
 
 from __future__ import annotations
@@ -63,34 +65,41 @@ class StatevectorBackend:
         print(truth.truth_values)  # {obs_id: <O>, ...}
     """
 
+    DEFAULT_MEMORY_LIMIT_BYTES = 512 * 1024**2
+
     def __init__(
         self,
-        memory_limit_bytes: int | None = None,
-        max_qubits: int = 25,
+        memory_limit_bytes: int | None = DEFAULT_MEMORY_LIMIT_BYTES,
+        max_qubits: int | None = None,
     ) -> None:
         """Initialize statevector backend.
 
         Args:
-            memory_limit_bytes: Maximum memory for simulation (default: no limit).
-            max_qubits: Maximum qubits supported (default: 25 for ~500MB).
+            memory_limit_bytes: Maximum memory for simulation
+                (default: 512 MB; set to None for no limit).
+            max_qubits: Optional maximum qubits supported as a secondary cap.
         """
         self.memory_limit_bytes = memory_limit_bytes
         self.max_qubits = max_qubits
 
     def _check_feasibility(self, n_qubits: int) -> None:
         """Check if statevector simulation is feasible."""
-        if n_qubits > self.max_qubits:
-            raise ValueError(
-                f"Statevector simulation not feasible for {n_qubits} qubits "
-                f"(max: {self.max_qubits}). Use reference truth instead."
-            )
-
         # Memory estimate: 16 bytes per complex128 amplitude
         memory_required = 16 * (2**n_qubits)
         if self.memory_limit_bytes and memory_required > self.memory_limit_bytes:
             raise ValueError(
-                f"Statevector requires ~{memory_required / 1e9:.2f} GB, "
-                f"exceeds limit of {self.memory_limit_bytes / 1e9:.2f} GB"
+                f"Statevector simulation requires ~{memory_required / 1e9:.2f} GB, "
+                "which exceeds the configured memory limit of "
+                f"{self.memory_limit_bytes / 1e9:.2f} GB. "
+                "Increase memory_limit_bytes or use reference truth instead."
+            )
+
+        if self.max_qubits is not None and n_qubits > self.max_qubits:
+            raise ValueError(
+                "Statevector simulation blocked by max_qubits="
+                f"{self.max_qubits} (n_qubits={n_qubits}). "
+                "Memory_limit_bytes is the primary feasibility rule; adjust "
+                "max_qubits or memory_limit_bytes if you want to override this cap."
             )
 
     def compute_ground_truth(
@@ -192,7 +201,8 @@ def compute_ground_truth(
     circuit: QuantumCircuit,
     observable_set: ObservableSet,
     circuit_id: str = "circuit",
-    max_qubits: int = 25,
+    max_qubits: int | None = None,
+    config: "GroundTruthConfig | None" = None,
 ) -> GroundTruthResult:
     """Convenience function to compute ground truth.
 
@@ -200,12 +210,18 @@ def compute_ground_truth(
         circuit: State preparation circuit.
         observable_set: Set of observables.
         circuit_id: Identifier for the circuit.
-        max_qubits: Maximum qubits for statevector simulation.
+        max_qubits: Optional secondary qubit cap for statevector simulation.
+        config: Optional ground truth configuration. When provided, its
+            memory_limit_bytes is the primary feasibility gate.
 
     Returns:
         GroundTruthResult with exact expectations.
     """
-    backend = StatevectorBackend(max_qubits=max_qubits)
+    resolved_config = config or GroundTruthConfig(max_qubits=max_qubits)
+    backend = StatevectorBackend(
+        memory_limit_bytes=resolved_config.memory_limit_bytes,
+        max_qubits=resolved_config.max_qubits,
+    )
     return backend.compute_ground_truth(circuit, observable_set, circuit_id)
 
 
@@ -226,6 +242,22 @@ def compute_observable_expectation(
     """
     backend = StatevectorBackend()
     return backend.compute_single_expectation(circuit, pauli_string, coefficient)
+
+
+@dataclass(frozen=True)
+class GroundTruthConfig:
+    """Configuration for statevector ground truth computation.
+
+    Attributes:
+        memory_limit_bytes: Maximum memory for simulation. Defaults to 512 MB
+            (matching the historical ~25-qubit limit for complex128 statevectors).
+            Set to None to disable the memory limit.
+        max_qubits: Optional secondary qubit cap. Memory_limit_bytes is the primary
+            feasibility rule.
+    """
+
+    memory_limit_bytes: int | None = StatevectorBackend.DEFAULT_MEMORY_LIMIT_BYTES
+    max_qubits: int | None = None
 
 
 # Reference truth for large systems (when statevector is infeasible)

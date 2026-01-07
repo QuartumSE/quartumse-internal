@@ -323,7 +323,92 @@ class StaticProtocol(Protocol):
     Static protocols execute a single plan consuming the full budget.
     This class provides default implementations that simplify the
     interface for non-adaptive use cases.
+
+    Subclasses should implement:
+    - initialize(): Set up initial state
+    - plan(): Generate the measurement plan (called by next_plan)
+    - finalize(): Produce final estimates
+
+    The next_plan() and acquire() methods have default implementations
+    that delegate to plan() and simulate measurements respectively.
     """
+
+    def next_plan(
+        self,
+        state: ProtocolState,
+        remaining_budget: int,
+    ) -> MeasurementPlan:
+        """Generate next measurement plan by delegating to plan().
+
+        Static protocols return a single plan consuming the full budget.
+        This method bridges the Protocol ABC interface to the simpler
+        plan() method that static protocols implement.
+
+        Args:
+            state: Current protocol state.
+            remaining_budget: Remaining shot budget.
+
+        Returns:
+            MeasurementPlan from plan() method.
+        """
+        return self.plan(state)
+
+    def plan(self, state: ProtocolState) -> MeasurementPlan:
+        """Generate the measurement plan for this protocol.
+
+        Subclasses must override this method.
+
+        Args:
+            state: Current protocol state.
+
+        Returns:
+            MeasurementPlan specifying settings and shot allocation.
+        """
+        raise NotImplementedError("Subclasses must implement plan()")
+
+    def acquire(
+        self,
+        circuit: QuantumCircuit,
+        plan: MeasurementPlan,
+        backend: AerSimulator | Any,
+        seed: int,
+    ) -> RawDatasetChunk:
+        """Execute measurements according to the plan.
+
+        Default implementation uses the backend sampler to execute
+        measurement circuits. For simulation benchmarks, this generates
+        random bitstrings (override for actual backend execution).
+
+        Args:
+            circuit: The state preparation circuit.
+            plan: Measurement plan to execute.
+            backend: Quantum backend for execution.
+            seed: Random seed for measurement randomness.
+
+        Returns:
+            RawDatasetChunk containing measurement outcomes.
+        """
+        import numpy as np
+
+        rng = np.random.default_rng(seed)
+        bitstrings: dict[str, list[str]] = {}
+
+        for setting, n_shots in zip(plan.settings, plan.shots_per_setting):
+            # Get number of qubits from setting
+            n_qubits = len(setting.target_qubits) if setting.target_qubits else len(setting.measurement_basis)
+
+            # Generate random bitstrings for simulation
+            setting_bitstrings = []
+            for _ in range(n_shots):
+                bs = "".join(str(rng.integers(0, 2)) for _ in range(n_qubits))
+                setting_bitstrings.append(bs)
+
+            bitstrings[setting.setting_id] = setting_bitstrings
+
+        return RawDatasetChunk(
+            bitstrings=bitstrings,
+            settings_executed=list(bitstrings.keys()),
+        )
 
     def update(
         self,

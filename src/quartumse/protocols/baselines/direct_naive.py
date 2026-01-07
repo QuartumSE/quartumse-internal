@@ -87,7 +87,7 @@ class DirectNaiveProtocol(StaticProtocol):
             total_budget=total_budget,
             remaining_budget=total_budget,
             seed=seed,
-            round_number=0,
+            n_rounds=0,
             shots_per_observable=shots_per_observable,
             observable_bitstrings=observable_bitstrings,
             metadata={"protocol_id": self.protocol_id},

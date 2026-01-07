@@ -120,7 +120,7 @@ class DirectOptimizedProtocol(StaticProtocol):
             total_budget=total_budget,
             remaining_budget=total_budget,
             seed=seed,
-            round_number=0,
+            n_rounds=0,
             groups=groups,
             shots_per_group=shots_per_group,
             group_bitstrings=group_bitstrings,

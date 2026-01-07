@@ -32,18 +32,35 @@ class CIMethod(Enum):
 class MeasurementSetting:
     """A single measurement setting specification (§3.3).
 
+    Supports both string-based and array-based basis representations.
+
     Attributes:
         setting_id: Unique identifier for this setting.
-        basis_choices: Per-qubit basis choices. For Pauli measurements:
+        measurement_basis: String representation of measurement basis (e.g., "ZXZY").
+        basis_choices: Per-qubit basis choices as array. For Pauli measurements:
             0 = Z (computational), 1 = X, 2 = Y.
+            If not provided, computed from measurement_basis.
+        target_qubits: List of qubit indices this setting applies to.
         pre_rotations: Optional pre-rotation specification (e.g., for global Clifford).
         metadata: Additional setting-specific metadata.
     """
 
     setting_id: str
-    basis_choices: NDArray[np.int_]  # Shape: (n_qubits,)
+    measurement_basis: str = ""
+    basis_choices: NDArray[np.int_] | None = None
+    target_qubits: list[int] | None = None
     pre_rotations: dict[str, Any] | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        """Compute basis_choices from measurement_basis if not provided."""
+        if self.basis_choices is None and self.measurement_basis:
+            basis_map = {"Z": 0, "X": 1, "Y": 2, "I": 0}
+            self.basis_choices = np.array(
+                [basis_map.get(b, 0) for b in self.measurement_basis], dtype=np.int_
+            )
+        if self.target_qubits is None and self.measurement_basis:
+            self.target_qubits = list(range(len(self.measurement_basis)))
 
 
 @dataclass
@@ -79,24 +96,39 @@ class MeasurementPlan:
 class RawDatasetChunk:
     """Raw measurement outcomes from one acquisition round (§5.2).
 
+    Supports two data formats:
+    1. Dict-based: bitstrings mapping setting_id -> list[str]
+    2. Array-based: setting_indices, outcomes, basis_choices as NDArrays
+
     Attributes:
+        bitstrings: Dict mapping setting_id to list of bitstring outcomes.
+        settings_executed: List of setting IDs that were executed.
         setting_indices: Which setting produced each shot. Shape: (n_shots,).
-        outcomes: Measurement outcomes as bitstrings. Shape: (n_shots, n_qubits).
+        outcomes: Measurement outcomes as array. Shape: (n_shots, n_qubits).
         basis_choices: Basis choice for each shot. Shape: (n_shots, n_qubits).
         n_qubits: Number of qubits measured.
         metadata: Additional per-chunk metadata (timestamps, backend info).
     """
 
-    setting_indices: NDArray[np.int_]  # Shape: (n_shots,)
-    outcomes: NDArray[np.int_]  # Shape: (n_shots, n_qubits), values in {0, 1}
-    basis_choices: NDArray[np.int_]  # Shape: (n_shots, n_qubits), values in {0, 1, 2}
-    n_qubits: int
+    # Dict-based format (used by baseline protocols)
+    bitstrings: dict[str, list[str]] = field(default_factory=dict)
+    settings_executed: list[str] = field(default_factory=list)
+
+    # Array-based format (optional, for advanced use)
+    setting_indices: NDArray[np.int_] | None = None
+    outcomes: NDArray[np.int_] | None = None
+    basis_choices: NDArray[np.int_] | None = None
+    n_qubits: int = 0
     metadata: dict[str, Any] = field(default_factory=dict)
 
     @property
     def n_shots(self) -> int:
         """Number of shots in this chunk."""
-        return len(self.setting_indices)
+        if self.bitstrings:
+            return sum(len(bs) for bs in self.bitstrings.values())
+        elif self.setting_indices is not None:
+            return len(self.setting_indices)
+        return 0
 
 
 @dataclass
@@ -108,22 +140,50 @@ class ProtocolState:
     based on accumulated data.
 
     Attributes:
+        observable_set: The set of observables being estimated.
+        total_budget: Total shot budget allocated for estimation.
+        remaining_budget: Remaining shots not yet used.
+        seed: Random seed for reproducibility.
         accumulated_data: List of RawDatasetChunk from all rounds.
         total_shots_used: Running total of shots consumed.
         n_rounds: Number of acquisition rounds completed.
+        round_number: Alias for n_rounds for backwards compatibility.
         round_metadata: Per-round metadata (classical time, settings used).
         adaptive_state: Protocol-specific adaptive state (e.g., variance estimates).
         converged: Whether the protocol has determined convergence.
         early_stopped: Whether early stopping was triggered.
+        metadata: Additional protocol-specific metadata.
     """
 
+    # Required fields (set by initialize)
+    observable_set: Any = None  # ObservableSet, but Any to avoid circular import
+    total_budget: int = 0
+    remaining_budget: int = 0
+    seed: int = 42
+
+    # Accumulation state
     accumulated_data: list[RawDatasetChunk] = field(default_factory=list)
     total_shots_used: int = 0
     n_rounds: int = 0
     round_metadata: list[dict[str, Any]] = field(default_factory=list)
+
+    # Adaptive state
     adaptive_state: dict[str, Any] = field(default_factory=dict)
     converged: bool = False
     early_stopped: bool = False
+
+    # Additional metadata
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+    @property
+    def round_number(self) -> int:
+        """Alias for n_rounds for backwards compatibility."""
+        return self.n_rounds
+
+    @round_number.setter
+    def round_number(self, value: int) -> None:
+        """Set n_rounds via round_number alias."""
+        self.n_rounds = value
 
     def add_chunk(
         self, chunk: RawDatasetChunk, round_meta: dict[str, Any] | None = None
@@ -226,6 +286,8 @@ class ObservableEstimate:
         observable_id: Unique identifier for the observable.
         estimate: Point estimate of the expectation value.
         se: Standard error of the estimate.
+        n_shots: Number of shots used for this observable.
+        n_settings: Number of measurement settings used.
         ci: Confidence interval result (if computed).
         variance: Variance of the estimator.
         effective_sample_size: Effective sample size proxy.
@@ -236,20 +298,25 @@ class ObservableEstimate:
     observable_id: str
     estimate: float
     se: float
+    n_shots: int = 0
+    n_settings: int = 0
     ci: CIResult | None = None
     variance: float | None = None
     effective_sample_size: float | None = None
     bias_estimate: float | None = None
     diagnostics: dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
 class Estimates:
     """Complete estimation results for all observables (§5.3).
 
+    Supports both list-based and dict-based storage of estimates.
+
     Attributes:
-        observable_estimates: Dict mapping observable_id to ObservableEstimate.
-        n_observables: Number of observables estimated.
+        estimates: List of ObservableEstimate objects.
+        observable_estimates: Dict mapping observable_id to ObservableEstimate (computed).
         total_shots: Total shots used for estimation.
         n_settings: Number of distinct measurement settings used.
         time_quantum_s: Quantum execution time in seconds.
@@ -260,26 +327,45 @@ class Estimates:
         metadata: Additional metadata.
     """
 
-    observable_estimates: dict[str, ObservableEstimate]
-    n_observables: int
-    total_shots: int
-    n_settings: int
+    # Primary storage as list (used by protocols)
+    estimates: list[ObservableEstimate] = field(default_factory=list)
+
+    # Optional: total shots and settings
+    total_shots: int = 0
+    n_settings: int = 0
+
+    # Timing
     time_quantum_s: float | None = None
     time_classical_s: float | None = None
+
+    # Protocol info
     protocol_id: str | None = None
     protocol_version: str | None = None
     ci_method_id: str | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
 
+    @property
+    def observable_estimates(self) -> dict[str, ObservableEstimate]:
+        """Dict view mapping observable_id to ObservableEstimate."""
+        return {est.observable_id: est for est in self.estimates}
+
+    @property
+    def n_observables(self) -> int:
+        """Number of observables estimated."""
+        return len(self.estimates)
+
     def get_estimate(self, observable_id: str) -> ObservableEstimate:
         """Get estimate for a specific observable."""
-        if observable_id not in self.observable_estimates:
-            raise KeyError(f"Observable {observable_id} not found in estimates")
-        return self.observable_estimates[observable_id]
+        for est in self.estimates:
+            if est.observable_id == observable_id:
+                return est
+        raise KeyError(f"Observable {observable_id} not found in estimates")
 
     def max_se(self) -> float:
         """Maximum standard error across all observables."""
-        return max(est.se for est in self.observable_estimates.values())
+        if not self.estimates:
+            return float("inf")
+        return max(est.se for est in self.estimates)
 
     def mean_se(self) -> float:
         """Mean standard error across all observables."""

@@ -1,0 +1,367 @@
+{
+  "manifest_version": "1.0.0",
+  "experiment_id": "f98f9d73-b414-468d-8c5b-fe25f59ec51c",
+  "experiment_name": null,
+  "created_at": "2025-12-17T14:24:13.003175",
+  "circuit": {
+    "qasm3": "OPENQASM 3.0;\ninclude \"stdgates.inc\";\nqubit[4] q;\nh q[0];\ncx q[0], q[1];\ncx q[0], q[2];\ncx q[0], q[3];\n",
+    "num_qubits": 4,
+    "depth": 4,
+    "gate_counts": {
+      "h": 1,
+      "cx": 3
+    },
+    "circuit_hash": "501f755273fcd40e"
+  },
+  "observables": [
+    {
+      "pauli": "ZIII",
+      "coefficient": 1.0
+    },
+    {
+      "pauli": "IZII",
+      "coefficient": 1.0
+    },
+    {
+      "pauli": "IIZI",
+      "coefficient": 1.0
+    },
+    {
+      "pauli": "IIIZ",
+      "coefficient": 1.0
+    },
+    {
+      "pauli": "ZZII",
+      "coefficient": 1.0
+    },
+    {
+      "pauli": "ZIZI",
+      "coefficient": 1.0
+    },
+    {
+      "pauli": "ZIIZ",
+      "coefficient": 1.0
+    },
+    {
+      "pauli": "IZZI",
+      "coefficient": 1.0
+    },
+    {
+      "pauli": "IZIZ",
+      "coefficient": 1.0
+    },
+    {
+      "pauli": "IIZZ",
+      "coefficient": 1.0
+    },
+    {
+      "pauli": "ZZZI",
+      "coefficient": 1.0
+    },
+    {
+      "pauli": "ZZIZ",
+      "coefficient": 1.0
+    },
+    {
+      "pauli": "ZIZZ",
+      "coefficient": 1.0
+    },
+    {
+      "pauli": "IZZZ",
+      "coefficient": 1.0
+    },
+    {
+      "pauli": "ZZZZ",
+      "coefficient": 1.0
+    }
+  ],
+  "backend": {
+    "backend_name": "aer_simulator",
+    "backend_version": "2",
+    "num_qubits": 29,
+    "coupling_map": null,
+    "basis_gates": [
+      "ccx",
+      "ccz",
+      "cp",
+      "crx",
+      "cry",
+      "crz",
+      "cswap",
+      "csx",
+      "cu",
+      "cu1",
+      "cu2",
+      "cu3",
+      "cx",
+      "cy",
+      "cz",
+      "diagonal",
+      "ecr",
+      "h",
+      "id",
+      "mcp",
+      "mcphase",
+      "mcr",
+      "mcrx",
+      "mcry",
+      "mcrz",
+      "mcswap",
+      "mcsx",
+      "mcu",
+      "mcu1",
+      "mcu2",
+      "mcu3",
+      "mcx",
+      "mcx_gray",
+      "mcy",
+      "mcz",
+      "multiplexer",
+      "p",
+      "pauli",
+      "r",
+      "roerror",
+      "rx",
+      "rxx",
+      "ry",
+      "ryy",
+      "rz",
+      "rzx",
+      "rzz",
+      "s",
+      "sdg",
+      "store",
+      "swap",
+      "sx",
+      "sxdg",
+      "t",
+      "tdg",
+      "u",
+      "u1",
+      "u2",
+      "u3",
+      "unitary",
+      "x",
+      "y",
+      "z",
+      "break_loop",
+      "continue_loop",
+      "delay",
+      "for_loop",
+      "if_else",
+      "initialize",
+      "kraus",
+      "qerror_loc",
+      "quantum_channel",
+      "reset",
+      "roerror",
+      "save_amplitudes",
+      "save_amplitudes_sq",
+      "save_clifford",
+      "save_density_matrix",
+      "save_expval",
+      "save_expval_var",
+      "save_matrix_product_state",
+      "save_probabilities",
+      "save_probabilities_dict",
+      "save_stabilizer",
+      "save_state",
+      "save_statevector",
+      "save_statevector_dict",
+      "save_superop",
+      "save_unitary",
+      "set_density_matrix",
+      "set_matrix_product_state",
+      "set_stabilizer",
+      "set_statevector",
+      "set_superop",
+      "set_unitary",
+      "superop",
+      "switch_case",
+      "while_loop"
+    ],
+    "t1_times": null,
+    "t2_times": null,
+    "gate_errors": null,
+    "readout_errors": null,
+    "calibration_timestamp": "2025-12-17T14:24:12.994790Z",
+    "properties_hash": ""
+  },
+  "mitigation": {
+    "techniques": [],
+    "parameters": {},
+    "confusion_matrix_path": null,
+    "confusion_matrix_checksum": null,
+    "zne_scale_factors": null,
+    "zne_extrapolator": null,
+    "rc_num_samples": null
+  },
+  "shadows": {
+    "version": "v0",
+    "shadow_size": 1000,
+    "measurement_ensemble": "random_local_clifford",
+    "noise_model_path": null,
+    "inverse_channel_applied": false,
+    "fermionic_mode": false,
+    "rdm_order": 1,
+    "adaptive": false,
+    "target_observables": null,
+    "bayesian_inference": false,
+    "bootstrap_samples": 1000
+  },
+  "shot_data_path": "tutorial_data\\shots\\f98f9d73-b414-468d-8c5b-fe25f59ec51c.parquet",
+  "shot_data_checksum": "996eb1e0f1506a7f4f226d912707a2a5a78c84f6519dcb43eecc32ab40ea5d9d",
+  "results_summary": {
+    "1.0*ZIII": {
+      "expectation_value": -0.021,
+      "variance": 2.834559,
+      "ci_95": [
+        -0.1253496127128794,
+        0.08334961271287938
+      ],
+      "ci_width": 0.20869922542575878
+    },
+    "1.0*IZII": {
+      "expectation_value": 0.036,
+      "variance": 3.1487040000000013,
+      "ci_95": [
+        -0.0739800743523793,
+        0.1459800743523793
+      ],
+      "ci_width": 0.2199601487047586
+    },
+    "1.0*IIZI": {
+      "expectation_value": 0.036,
+      "variance": 3.1307040000000006,
+      "ci_95": [
+        -0.07366526567597592,
+        0.14566526567597593
+      ],
+      "ci_width": 0.21933053135195185
+    },
+    "1.0*IIIZ": {
+      "expectation_value": 0.114,
+      "variance": 2.885004,
+      "ci_95": [
+        0.008725957313600638,
+        0.21927404268639938
+      ],
+      "ci_width": 0.21054808537279873
+    },
+    "1.0*ZZII": {
+      "expectation_value": 0.99,
+      "variance": 7.929899999999996,
+      "ci_95": [
+        0.8154652346888382,
+        1.1645347653111617
+      ],
+      "ci_width": 0.3490695306223235
+    },
+    "1.0*ZIZI": {
+      "expectation_value": 0.936,
+      "variance": 7.547904000000001,
+      "ci_95": [
+        0.7657209278902646,
+        1.1062790721097355
+      ],
+      "ci_width": 0.34055814421947095
+    },
+    "1.0*ZIIZ": {
+      "expectation_value": 0.882,
+      "variance": 7.160076000000003,
+      "ci_95": [
+        0.7161532722450024,
+        1.0478467277549977
+      ],
+      "ci_width": 0.3316934555099953
+    },
+    "1.0*IZZI": {
+      "expectation_value": 1.107,
+      "variance": 8.737550999999998,
+      "ci_95": [
+        0.9237926247111903,
+        1.2902073752888097
+      ],
+      "ci_width": 0.3664147505776194
+    },
+    "1.0*IZIZ": {
+      "expectation_value": 1.08,
+      "variance": 8.553600000000003,
+      "ci_95": [
+        0.8987314087639857,
+        1.2612685912360144
+      ],
+      "ci_width": 0.3625371824720287
+    },
+    "1.0*IIZZ": {
+      "expectation_value": 1.071,
+      "variance": 8.491959000000001,
+      "ci_95": [
+        0.8903857403040312,
+        1.2516142596959687
+      ],
+      "ci_width": 0.36122851939193756
+    },
+    "1.0*ZZZI": {
+      "expectation_value": -0.054,
+      "variance": 26.241084000000004,
+      "ci_95": [
+        -0.3714965253296097,
+        0.2634965253296097
+      ],
+      "ci_width": 0.6349930506592194
+    },
+    "1.0*ZZIZ": {
+      "expectation_value": 0.135,
+      "variance": 26.95477500000001,
+      "ci_95": [
+        -0.18678511181155588,
+        0.4567851118115559
+      ],
+      "ci_width": 0.6435702236231118
+    },
+    "1.0*ZIZZ": {
+      "expectation_value": 0.162,
+      "variance": 26.217756,
+      "ci_95": [
+        -0.1553553687036133,
+        0.4793553687036133
+      ],
+      "ci_width": 0.6347107374072266
+    },
+    "1.0*IZZZ": {
+      "expectation_value": 0.162,
+      "variance": 32.049756,
+      "ci_95": [
+        -0.18888148695434823,
+        0.5128814869543482
+      ],
+      "ci_width": 0.7017629739086965
+    },
+    "1.0*ZZZZ": {
+      "expectation_value": 1.134,
+      "variance": 90.56804399999997,
+      "ci_95": [
+        0.5441581470454867,
+        1.723841852954513
+      ],
+      "ci_width": 1.1796837059090262
+    }
+  },
+  "resource_usage": {
+    "total_shots": 1000,
+    "execution_time_seconds": 2.185824155807495,
+    "queue_time_seconds": null,
+    "estimated_cost_usd": null,
+    "credits_used": null,
+    "classical_compute_seconds": null
+  },
+  "random_seed": 42,
+  "quartumse_version": "0.1.0",
+  "qiskit_version": "2.2.1",
+  "python_version": "3.13.9",
+  "metadata": {
+    "backend_descriptor": "aer_simulator"
+  },
+  "tags": []
+}

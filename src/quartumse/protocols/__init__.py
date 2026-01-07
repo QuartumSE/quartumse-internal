@@ -62,6 +62,13 @@ from .baselines import (
     DirectOptimizedState,
 )
 
+# Import shadows protocols (triggers registration)
+from .shadows import (
+    ClassicalShadowsProtocol,
+    ShadowsV0Protocol,
+    ShadowsV1Protocol,
+)
+
 __all__ = [
     # Base classes
     "Protocol",
@@ -89,4 +96,8 @@ __all__ = [
     "DirectGroupedState",
     "DirectOptimizedProtocol",
     "DirectOptimizedState",
+    # Shadows protocols
+    "ClassicalShadowsProtocol",
+    "ShadowsV0Protocol",
+    "ShadowsV1Protocol",
 ]

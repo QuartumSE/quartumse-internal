@@ -375,9 +375,8 @@ class StaticProtocol(Protocol):
     ) -> RawDatasetChunk:
         """Execute measurements according to the plan.
 
-        Default implementation uses the backend sampler to execute
-        measurement circuits. For simulation benchmarks, this generates
-        random bitstrings (override for actual backend execution).
+        Default implementation executes measurement circuits using the
+        provided backend or sampler.
 
         Args:
             circuit: The state preparation circuit.
@@ -388,27 +387,107 @@ class StaticProtocol(Protocol):
         Returns:
             RawDatasetChunk containing measurement outcomes.
         """
-        import numpy as np
+        from qiskit_aer import AerSimulator
 
-        rng = np.random.default_rng(seed)
         bitstrings: dict[str, list[str]] = {}
+        backend = backend or AerSimulator()
 
         for setting, n_shots in zip(plan.settings, plan.shots_per_setting):
-            # Get number of qubits from setting
-            n_qubits = len(setting.target_qubits) if setting.target_qubits else len(setting.measurement_basis)
+            measurement_circuit = self._build_measurement_circuit(
+                circuit=circuit,
+                measurement_basis=setting.measurement_basis,
+                target_qubits=setting.target_qubits,
+            )
 
-            # Generate random bitstrings for simulation
-            setting_bitstrings = []
-            for _ in range(n_shots):
-                bs = "".join(str(rng.integers(0, 2)) for _ in range(n_qubits))
-                setting_bitstrings.append(bs)
+            setting_bitstrings = self._execute_measurement_circuit(
+                circuit=measurement_circuit,
+                backend=backend,
+                n_shots=n_shots,
+                seed=seed,
+            )
 
             bitstrings[setting.setting_id] = setting_bitstrings
 
         return RawDatasetChunk(
             bitstrings=bitstrings,
             settings_executed=list(bitstrings.keys()),
+            n_qubits=circuit.num_qubits,
         )
+
+    def _build_measurement_circuit(
+        self,
+        circuit: QuantumCircuit,
+        measurement_basis: str,
+        target_qubits: list[int] | None,
+    ) -> QuantumCircuit:
+        """Construct a measurement circuit matching the requested basis."""
+        base_circuit = circuit.remove_final_measurements(inplace=False)
+        basis = self._expand_basis(
+            measurement_basis,
+            base_circuit.num_qubits,
+            target_qubits,
+        )
+        measurement_circuit = base_circuit.copy()
+
+        for qubit, basis_char in enumerate(basis):
+            if basis_char == "X":
+                measurement_circuit.h(qubit)
+            elif basis_char == "Y":
+                measurement_circuit.sdg(qubit)
+                measurement_circuit.h(qubit)
+
+        measurement_circuit.measure_all()
+        return measurement_circuit
+
+    def _expand_basis(
+        self,
+        measurement_basis: str,
+        n_qubits: int,
+        target_qubits: list[int] | None,
+    ) -> str:
+        """Expand a basis string to cover all qubits."""
+        if not measurement_basis:
+            return "Z" * n_qubits
+
+        if len(measurement_basis) == n_qubits:
+            return measurement_basis.replace("I", "Z")
+
+        basis = ["Z"] * n_qubits
+        if target_qubits:
+            if len(measurement_basis) == len(target_qubits):
+                for basis_char, qubit in zip(measurement_basis, target_qubits):
+                    basis[qubit] = basis_char
+            else:
+                for qubit in target_qubits:
+                    if qubit < len(measurement_basis):
+                        basis[qubit] = measurement_basis[qubit]
+        return "".join(basis).replace("I", "Z")
+
+    def _execute_measurement_circuit(
+        self,
+        circuit: QuantumCircuit,
+        backend: Any,
+        n_shots: int,
+        seed: int,
+    ) -> list[str]:
+        """Execute a measurement circuit and return normalized bitstrings."""
+        if hasattr(backend, "sample"):
+            result = backend.sample(circuit, n_shots=n_shots, seed=seed)
+            bitstrings = result.bitstrings
+        else:
+            from qiskit import transpile
+
+            compiled = transpile(circuit, backend)
+            job = backend.run(compiled, shots=n_shots, seed_simulator=seed)
+            result = job.result()
+            counts = result.get_counts()
+            bitstrings = []
+            for bitstring in sorted(counts.keys()):
+                count = counts[bitstring]
+                cleaned = bitstring.replace(" ", "")
+                bitstrings.extend([cleaned] * count)
+
+        return [bs[::-1] for bs in bitstrings]
 
     def update(
         self,

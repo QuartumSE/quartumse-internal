@@ -124,42 +124,47 @@ class SweepOrchestrator:
         seed: int,
         noise_profile: str,
     ) -> Estimates:
-        """Default protocol executor (simulation).
+        """Default protocol executor using physical measurement paths."""
+        from qiskit import QuantumCircuit
 
-        Subclasses can override for hardware execution.
-        """
-        # Initialize protocol
-        state = protocol.initialize(observable_set, n_shots, seed)
+        backend = self._resolve_backend(noise_profile)
+        if circuit is None:
+            circuit = QuantumCircuit(observable_set.n_qubits)
 
-        # Get measurement plan
-        plan = protocol.plan(state)
-
-        # Simulate acquisition (placeholder - real implementation would execute)
-        from ..protocols.state import RawDatasetChunk
-
-        # Generate simulated bitstrings
-        rng = np.random.default_rng(seed)
-        bitstrings = {}
-        for i, (setting, n) in enumerate(zip(plan.settings, plan.shots_per_setting)):
-            # Generate random bitstrings (placeholder)
-            bs = [
-                "".join(str(rng.integers(0, 2)) for _ in range(observable_set.n_qubits))
-                for _ in range(n)
-            ]
-            bitstrings[setting.setting_id] = bs
-
-        chunk = RawDatasetChunk(
-            bitstrings=bitstrings,
-            settings_executed=[s.setting_id for s in plan.settings],
+        return protocol.run(
+            circuit=circuit,
+            observable_set=observable_set,
+            total_budget=n_shots,
+            backend=backend,
+            seed=seed,
         )
 
-        # Update state
-        state = protocol.update(state, chunk)
+    def _resolve_backend(self, noise_profile: str) -> Any:
+        """Resolve a backend sampler from a noise profile identifier."""
+        from ..backends.sampler import IdealSampler, NoisySampler
+        from ..noise.profiles import NoiseType, get_profile
 
-        # Finalize
-        estimates = protocol.finalize(state, observable_set)
+        if noise_profile == "ideal":
+            return IdealSampler()
 
-        return estimates
+        try:
+            profile = get_profile(noise_profile)
+        except KeyError:
+            return NoisySampler(noise_profile_id=noise_profile)
+
+        if profile.noise_type == NoiseType.READOUT_BITFLIP:
+            return NoisySampler(
+                noise_profile_id=profile.profile_id,
+                readout_error=profile.parameters.get("p", 0.0),
+            )
+        if profile.noise_type == NoiseType.DEPOLARIZING:
+            return NoisySampler(
+                noise_profile_id=profile.profile_id,
+                depol_1q=profile.parameters.get("p1", 0.0),
+                depol_2q=profile.parameters.get("p2", 0.0),
+            )
+
+        return NoisySampler(noise_profile_id=profile.profile_id)
 
     def compute_total_configs(self) -> int:
         """Compute total number of configurations."""

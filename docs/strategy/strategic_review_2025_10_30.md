@@ -413,8 +413,8 @@ Compare to **current allocation**:
 **Focus**: Hardware-first iteration & patent drafts (Nov-Dec 2025)
 
 **Key deliverables**:
-- Shadows v2 (Fermionic) for 2-RDM
-- Shadows v3 (Adaptive/Derandomized)
+- Fermionic shadows for 2-RDM
+- Adaptive/derandomized shadows
 - MEM + RC + ZNE combinations
 - IBM hardware campaign #1 dataset
 - Provisional patent draft(s)
@@ -429,7 +429,7 @@ Compare to **current allocation**:
 
 **If Phase 1 extends to Dec 2025** (likely):
 - Merge Phase 1/2 into "Phase 1 Extended" (Nov-Dec)
-- Defer Shadows v2/v3 to Phase 2 (Jan-Feb 2026)
+- Defer fermionic/adaptive shadows to Phase 2 (Jan-Feb 2026)
 - Keep patent/publication targets in Phase 2
 
 **Rationale**: Better to complete Phase 1 properly than rush into Phase 2 with incomplete data.
@@ -503,7 +503,7 @@ Compare to **current allocation**:
    - [ ] Update roadmap based on learnings
 
 9. **🏗️ Phase 2 Planning**
-   - [ ] Design Shadows v2/v3 implementations
+   - [ ] Design fermionic/adaptive shadows implementations
    - [ ] Draft Phase 2 hardware campaign plan
    - [ ] Identify Phase 2 quick wins
 

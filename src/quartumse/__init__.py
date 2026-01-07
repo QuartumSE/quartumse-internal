@@ -6,7 +6,7 @@ A vendor-neutral framework for running quantum experiments with:
 - Rigorous error mitigation and confidence intervals
 - Full provenance tracking and reproducibility
 - Cross-platform backend support (IBM, AWS, and more)
-- Publication-grade benchmarking per Measurements Bible v3
+- Publication-grade benchmarking per Measurements Bible
 
 License: Apache 2.0
 """
@@ -19,7 +19,7 @@ from quartumse.estimator import Estimator, ShadowEstimator
 from quartumse.reporting import ProvenanceManifest, Report
 from quartumse.shadows import ClassicalShadows, ShadowConfig
 
-# Benchmarking API exports (Measurements Bible v3)
+# Benchmarking API exports (Measurements Bible)
 from quartumse.observables import Observable, ObservableSet, generate_observable_set
 from quartumse.protocols import (
     Protocol,

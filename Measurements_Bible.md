@@ -1,4 +1,4 @@
-# Measurements Bible v3
+# Measurements Bible
 *A publication-grade methodology and implementation blueprint for benchmarking quantum measurement protocols in QuartumSE*
 
 **Status:** normative specification for QuartumSE benchmarking and reporting  

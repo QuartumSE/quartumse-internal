@@ -1,4 +1,4 @@
-"""High-level benchmarking API (Measurements Bible v3).
+"""High-level benchmarking API (Measurements Bible).
 
 This module provides a simplified interface for running benchmarks
 following the Measurements Bible methodology.

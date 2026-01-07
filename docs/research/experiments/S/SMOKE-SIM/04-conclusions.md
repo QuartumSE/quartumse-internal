@@ -57,7 +57,7 @@
 
 ⚠️ 5-qubit performance: Below target, requires parameter tuning
 ⚠️ X/Y observables: Not tested (Z-basis only in v0)
-🔄 Adaptive sampling: Deferred to v3 (Phase 2)
+🔄 Adaptive sampling: Deferred to Phase 2
 
 ## Limitations and Caveats
 
@@ -127,7 +127,7 @@
 - Multi-observable efficiency (5-9 ZZ correlations from same dataset) validates approach for chemistry
 - H₂ Hamiltonian (12 terms) should benefit from same shot-reuse advantage
 
-**v3 Adaptive Sampling:**
+**Adaptive Sampling:**
 - 5-qubit degradation motivates importance of observable-aware allocation
 - Theoretical target: recover SSR ≥ 1.5× for 5+ qubits by intelligent basis selection
 
@@ -140,7 +140,7 @@
 **Patent Themes Supported:**
 1. ✅ **Shot-Efficient Observable Estimation:** SSR 17× demonstrates clear advantage
 2. ✅ **Multi-Observable Reuse:** 5-9 observables from single shadow dataset
-3. 🔄 **Variance-Aware Adaptive Classical Shadows (VACS):** Need v3 implementation for claims
+3. 🔄 **Variance-Aware Adaptive Classical Shadows (VACS):** Need adaptive implementation for claims
 
 **Publication Readiness:**
 - Methods validated, ready for arXiv preprint draft
@@ -183,7 +183,7 @@
    - Compare to grouped Pauli measurement for molecular Hamiltonians
    - Target: SSR ≥ 1.3× on IBM for H₂/LiH
 
-3. **Adaptive Sampling Prototype (v3)**
+3. **Adaptive Sampling Prototype**
    - Implement greedy basis selection for target observables
    - Validate on 5-qubit GHZ (recover SSR ≥ 1.2×)
    - Compare to v0 fixed-basis performance

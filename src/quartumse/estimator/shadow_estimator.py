@@ -140,8 +140,8 @@ class ShadowEstimator(Estimator):
             # TODO: Implement v2
             raise NotImplementedError("Shadows v2 (fermionic) not yet implemented")
         elif version == ShadowVersion.V3_ADAPTIVE:
-            # TODO: Implement v3
-            raise NotImplementedError("Shadows v3 (adaptive) not yet implemented")
+            # TODO: Implement adaptive shadows
+            raise NotImplementedError("Adaptive shadows not yet implemented")
         elif version == ShadowVersion.V4_ROBUST:
             # TODO: Implement v4
             raise NotImplementedError("Shadows v4 (robust) not yet implemented")

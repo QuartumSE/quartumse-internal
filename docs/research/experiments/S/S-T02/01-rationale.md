@@ -29,7 +29,7 @@ S-T02 demonstrates noise-aware classical shadows (v1) with measurement error mit
 
 **Mitigation Chain:**
 ```
-S-T01 (v0 baseline) ──> S-T02 (v1 + MEM) ──> Phase 2 v2/v3/v4
+S-T01 (v0 baseline) ──> S-T02 (v1 + MEM) ──> Phase 2 advanced variants
          │                     │                      │
          └─> SSR_v0       └─> SSR_v1          └─> Advanced mitigation
               (lower bound)      (Phase 1 target)        (Phase 2+)
@@ -62,7 +62,7 @@ S-T01 (v0 baseline) ──> S-T02 (v1 + MEM) ──> Phase 2 v2/v3/v4
 S-T02 completes the shadows mitigation validation:
 - ✅ v0 validated (S-T01)
 - 🔄 v1 validation (S-T02 - this experiment)
-- ⏳ v2/v3/v4 development (Phase 2)
+- ⏳ Advanced-variant development (Phase 2)
 
 **Timeline:** Nov 2025
 **Priority:** HIGH (Phase 1 exit criterion)

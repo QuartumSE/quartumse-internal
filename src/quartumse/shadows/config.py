@@ -49,8 +49,8 @@ class ShadowConfig(BaseModel):
     fermionic_mode: bool = Field(default=False, description="Enable fermionic shadows (v2+)")
     rdm_order: int = Field(default=1, description="RDM order for fermionic mode (1 or 2)")
 
-    # v3+ (adaptive)
-    adaptive: bool = Field(default=False, description="Use adaptive measurement selection (v3+)")
+    # Adaptive
+    adaptive: bool = Field(default=False, description="Use adaptive measurement selection")
     target_observables: list[str] | None = Field(
         None, description="Observable strings for adaptive prioritization"
     )

@@ -3,7 +3,7 @@
 
 This script demonstrates a rigorous comparison between the classical shadows
 v0 protocol and the direct measurement baselines, following the Measurements
-Bible v3 methodology.
+Bible methodology.
 
 Methodology:
 - Generate random Pauli observables
@@ -101,7 +101,7 @@ def main():
     """Run the benchmark comparison."""
     print("=" * 70)
     print("CLASSICAL SHADOWS VS DIRECT BASELINES BENCHMARK")
-    print("Measurements Bible v3 Methodology")
+    print("Measurements Bible Methodology")
     print("=" * 70)
     print()
 

@@ -84,7 +84,7 @@ Multiple experiment IDs generated during validation runs (Oct 20-21, Nov 3, 2025
 2. **Reconstruction fidelity:** Classical shadow reconstruction becomes less efficient with system size
 3. **Random seed effects:** Particular seed (42) may have been unlucky for this state
 
-**Mitigation:** Increase shadow_size to 1000+ for 5-qubit systems, or use more sophisticated sampling strategies (v3 adaptive).
+**Mitigation:** Increase shadow_size to 1000+ for 5-qubit systems, or use more sophisticated adaptive sampling strategies.
 
 ## Visualizations
 
@@ -190,7 +190,7 @@ Shadows underperform baseline for:
 
 3. **Scaling Challenge Identified:** Performance degrades at 5 qubits with fixed 500-shadow budget. Suggests need for:
    - Larger shadow sizes for ≥5 qubits
-   - Adaptive sampling (v3) for efficiency
+   - Adaptive sampling for efficiency
    - Observable-dependent shadow allocation
 
 4. **Provenance System Works:** All experiments generate complete manifests with circuit hashes, seeds, and configuration for full reproducibility.
@@ -255,7 +255,7 @@ print(f"⟨ZZZ⟩ = {result.observables['ZZZ']['expectation_value']:.4f}")
 
 ### Phase 2 Enhancements
 
-1. **Adaptive Sampling (v3):** Allocate shadows based on observable complexity
+1. **Adaptive Sampling:** Allocate shadows based on observable complexity
 2. **Fermionic Shadows (v2):** Test on molecular Hamiltonians (C-T01)
 3. **Multi-Seed Validation:** Test robustness to random seed choices
 

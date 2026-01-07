@@ -88,7 +88,7 @@
 - Observable-dependent noise (ZZI vs. ZIZ) suggests fermionic basis selection strategies
 - Chemistry Hamiltonians may benefit from topology-aware measurement allocation
 
-**v3 Adaptive Sampling:**
+**Adaptive Sampling:**
 - ZIZ (1% error) vs. ZZI (46% error) motivates adaptive allocation: more shots for noisy observables
 - Qubit-pair quality should inform sampling policy
 
@@ -132,7 +132,7 @@
 2. **Noise Model Validation:**
    - Compare observed errors to IBM calibration predictions
    - Develop predictive model: estimated_error(observable, qubits, calibration_data)
-   - Use for shot allocation in v3 adaptive sampling
+   - Use for shot allocation in adaptive sampling
 
 3. **Cross-Provider Comparison (Phase 4):**
    - Run identical 3-qubit GHZ on AWS Braket

@@ -2,7 +2,7 @@
 """Publication-Ready Benchmark: Shadows vs Direct Baselines.
 
 This script demonstrates a rigorous, publication-grade benchmark following
-the Measurements Bible v3 methodology. It includes:
+the Measurements Bible methodology. It includes:
 
 1. Ground truth computation via statevector simulation
 2. Multiple protocols: Direct baselines + Classical Shadows v0
@@ -91,7 +91,7 @@ def run_benchmark():
     """Run the publication-ready benchmark."""
     print("=" * 80)
     print("PUBLICATION-READY BENCHMARK")
-    print("Measurements Bible v3 Methodology")
+    print("Measurements Bible Methodology")
     print(f"Timestamp: {datetime.now().isoformat()}")
     print("=" * 80)
     print()

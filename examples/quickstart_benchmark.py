@@ -2,7 +2,7 @@
 """QuartumSE Benchmarking Quick Start.
 
 This script demonstrates the basic benchmarking workflow following
-the Measurements Bible v3 methodology.
+the Measurements Bible methodology.
 
 Usage:
     python quickstart_benchmark.py
@@ -29,7 +29,7 @@ def main():
     """Run quick start benchmark demonstration."""
     print("=" * 60)
     print("QuartumSE Benchmarking Quick Start")
-    print("Measurements Bible v3 Methodology")
+    print("Measurements Bible Methodology")
     print("=" * 60)
 
     # Configuration

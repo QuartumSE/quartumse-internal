@@ -18,7 +18,7 @@ To run as a notebook:
 # # Notebook A: Protocol Comparison
 #
 # This notebook compares baseline measurement protocols following the
-# Measurements Bible v3 methodology.
+# Measurements Bible methodology.
 
 # %% Setup
 import numpy as np
@@ -205,5 +205,5 @@ print("=" * 70)
 # 4. FWER-controlled simultaneous confidence intervals
 # 5. Shot-savings factor computation
 #
-# The methodology follows Measurements Bible v3 requirements for
+# The methodology follows Measurements Bible requirements for
 # reproducibility, strong baselines, and proper statistical inference.

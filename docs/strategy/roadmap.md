@@ -87,8 +87,8 @@ Each phase below enumerates **Experiments & Tests** with IDs that recur across p
 **Focus:** Iterate **on hardware**. Elevate shadows & domain demos; lock initial patent filings; prep first papers.
 
 ### Objectives
-- Implement **Shadows v2 (Fermionic)** for 2‑RDM estimation; integrate with VQE readout.
-- Prototype **Shadows v3 (Adaptive/Derandomized)**: choose measurement ensembles to minimize estimator variance given target observable set.
+- Implement **Fermionic shadows** for 2‑RDM estimation; integrate with VQE readout.
+- Prototype **adaptive/derandomized shadows**: choose measurement ensembles to minimize estimator variance given target observable set.
 - Harden error mitigation combinations (**MEM + RC + ZNE**) with ablation studies.
 - Run structured **hardware campaigns** (blocked time windows) to control drift.
 
@@ -204,7 +204,7 @@ Each phase below enumerates **Experiments & Tests** with IDs that recur across p
 | S‑T01 | Shadows | v0 (random local Clifford) | Bell, GHZ(3–5) | Aer, IBM free‑tier | SSR, CI coverage | Manifest, notebook, PDF |
 | S‑T02 | Shadows | v1 (noise‑aware + MEM) | As above | Aer, IBM | Var. reduction, bias | Manifest, ablation table |
 | S‑T03 | Shadows | v2 (fermionic) | H₂/LiH 2‑RDM | Aer, IBM | Energy error, SSR | Manifest, data parquet |
-| S‑T04 | Shadows | v3 (adaptive/derand) | Target Pauli sets | Aer, IBM | Variance ↓ | Manifest, policy snapshot |
+| S‑T04 | Shadows | adaptive/derand | Target Pauli sets | Aer, IBM | Variance ↓ | Manifest, policy snapshot |
 | S‑T05 | Shadows | v4 (robust/Bayesian) | GHZ + chemistry | Aer, IBM | CI coverage, width | Manifest, bootstrap logs |
 | C‑T01 | Chemistry | VQE + Shadow readout | H₂@STO‑3G | Aer, IBM | Energy error, RMSE@$ | Manifest, report |
 | C‑T02 | Chemistry | Shadow‑VQE vs grouped | LiH@minimal | Aer, IBM | RMSE@$ ↓ | Notebook, plot |

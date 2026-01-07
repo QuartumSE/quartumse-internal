@@ -214,8 +214,8 @@ Phase 1 research is organized into 5 parallel workstreams, each with specific ex
 ### Phase 2 Roadmap (Dec 2025)
 
 **Enabled by Phase 1:**
-- S-T03 (Fermionic Shadows v2): Depends on C-T01 validation
-- S-T04 (Adaptive Shadows v3): Depends on S-T01/S-T02 performance data
+- S-T03 (Fermionic Shadows): Depends on C-T01 validation
+- S-T04 (Adaptive Shadows): Depends on S-T01/S-T02 performance data
 - C-T02 (LiH): Depends on C-T01 methodology
 - IBM Campaign #1: Depends on operational workflows (S-T01 multi-trial)
 
@@ -271,7 +271,7 @@ If shadows work for GHZ (S-T01), they should work for:
 **1. Variance-Aware Adaptive Classical Shadows (VACS)**
 - **Evidence:** S-T01/S-T02 variance characterization, observable-dependent performance
 - **Claim:** Adaptive shadow allocation based on observable complexity and device calibration
-- **Status:** Requires S-T04 (v3) implementation (Phase 2)
+- **Status:** Requires S-T04 adaptive implementation (Phase 2)
 
 **2. Shadow-VQE Readout Integration**
 - **Evidence:** C-T01 demonstrates multi-term Hamiltonian estimation from single dataset

@@ -135,7 +135,7 @@ class ShadowsConfig(BaseModel):
     fermionic_mode: bool = False
     rdm_order: int | None = Field(None, description="Reduced density matrix order (1 or 2)")
 
-    # v3+ (adaptive)
+    # Adaptive settings
     adaptive: bool = False
     target_observables: list[str] | None = Field(None, description="Observable prioritization")
 

@@ -148,8 +148,8 @@ While completing Phase 1, prepare for Phase 2 transition:
 - [ ] Draft provisional patent themes (VACS, Shadow-VQE, Shadow-Benchmarking)
 - [ ] Prepare arXiv preprint outlines based on Phase 1 data
 - [ ] Plan IBM hardware campaign #1 (blocked time windows)
-- [ ] Design Shadows v2 (Fermionic) experiments
-- [ ] Outline Shadows v3 (Adaptive) prototype
+- [ ] Design fermionic shadows experiments
+- [ ] Outline adaptive shadows prototype
 
 ---
 

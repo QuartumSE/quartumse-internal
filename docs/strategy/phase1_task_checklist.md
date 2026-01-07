@@ -61,7 +61,7 @@ This checklist aggregates the outstanding Phase 1 tasks called out across the ro
 
 ---
 
-**Note:** Advanced shadow variants (v2 Fermionic, v3 Adaptive, v4 Robust) are Phase 2+ scope and intentionally excluded from this checklist to keep Phase 1 focused on v0/v1 hardware validation.
+**Note:** Advanced shadow variants (fermionic, adaptive, robust) are Phase 2+ scope and intentionally excluded from this checklist to keep Phase 1 focused on v0/v1 hardware validation.
 
 ---
 

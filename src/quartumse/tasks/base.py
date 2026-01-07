@@ -92,6 +92,11 @@ class TaskOutput:
     circuit_id: str
     n_star: int | None = None
     ssf: float | None = None
+    baseline_protocol_id: str | None = None
+    worst_observable_id: str | None = None
+    crossover_n: int | None = None
+    selection_accuracy: float | None = None
+    regret: float | None = None
     metrics: dict[str, float] = field(default_factory=dict)
     details: dict[str, Any] = field(default_factory=dict)
     metadata: dict[str, Any] = field(default_factory=dict)
@@ -106,8 +111,16 @@ class TaskOutput:
             protocol_id=self.protocol_id,
             epsilon=self.metrics.get("epsilon"),
             delta=self.metrics.get("delta"),
+            fwer_method=self.metrics.get("fwer_method"),
             N_star=self.n_star,
             ssf=self.ssf,
+            baseline_protocol_id=self.baseline_protocol_id,
+            worst_observable_id=self.worst_observable_id,
+            crossover_N=self.crossover_n,
+            selection_accuracy=self.selection_accuracy
+            if self.selection_accuracy is not None
+            else self.metrics.get("selection_accuracy"),
+            regret=self.regret if self.regret is not None else self.metrics.get("regret"),
             outputs={
                 "metrics": self.metrics,
                 "details": self.details,

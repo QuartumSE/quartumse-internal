@@ -53,6 +53,7 @@ class LongFormRow(BaseModel):
     replicate_id: int = Field(description="Replicate number (0-indexed)")
 
     # === Seeds ===
+    seed_policy: str = Field(description="Policy used to derive run seeds")
     seed_protocol: int = Field(description="Seed for protocol planning randomness")
     seed_acquire: int = Field(description="Seed for measurement sampling")
     seed_bootstrap: int | None = Field(

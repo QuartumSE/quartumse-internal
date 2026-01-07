@@ -162,6 +162,7 @@ class LongFormResultBuilder:
 
     def with_seeds(
         self,
+        seed_policy: str,
         seed_protocol: int,
         seed_acquire: int,
         seed_bootstrap: int | None = None,
@@ -169,10 +170,12 @@ class LongFormResultBuilder:
         """Set random seeds for reproducibility.
 
         Args:
+            seed_policy: Policy used to derive run seeds.
             seed_protocol: Seed for protocol planning.
             seed_acquire: Seed for measurement sampling.
             seed_bootstrap: Seed for bootstrap CI (optional).
         """
+        self._data["seed_policy"] = seed_policy
         self._data["seed_protocol"] = seed_protocol
         self._data["seed_acquire"] = seed_acquire
         self._data["seed_bootstrap"] = seed_bootstrap
@@ -330,6 +333,7 @@ class LongFormResultBuilder:
             "protocol_id",
             "protocol_version",
             "backend_id",
+            "seed_policy",
             "seed_protocol",
             "seed_acquire",
             "n_qubits",

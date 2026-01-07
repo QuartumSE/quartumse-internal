@@ -45,6 +45,7 @@ class SweepConfig:
     n_replicates: int = 10
     noise_profiles: list[str] = field(default_factory=lambda: ["ideal"])
     seeds: dict[str, int] = field(default_factory=lambda: {"base": 42})
+    seed_policy: str = "base_replicate_config"
     tasks: list[str] = field(default_factory=list)
 
 
@@ -173,12 +174,13 @@ class SweepOrchestrator:
             config_id: Configuration index.
 
         Returns:
-            Dict with seed_protocol, seed_acquire, seed_bootstrap.
+            Dict with seed_policy, seed_protocol, seed_acquire, seed_bootstrap.
         """
         base = self.config.seeds.get("base", 42)
         rng = np.random.default_rng(base + replicate_id * 1000 + config_id)
 
         return {
+            "seed_policy": self.config.seed_policy,
             "seed_protocol": int(rng.integers(0, 2**31)),
             "seed_acquire": int(rng.integers(0, 2**31)),
             "seed_bootstrap": int(rng.integers(0, 2**31)),
@@ -295,6 +297,7 @@ class SweepOrchestrator:
                 .with_backend("simulator", noise_profile_id=noise_profile)
                 .with_replicate(replicate_id)
                 .with_seeds(
+                    seed_policy=seeds["seed_policy"],
                     seed_protocol=seeds["seed_protocol"],
                     seed_acquire=seeds["seed_acquire"],
                     seed_bootstrap=seeds.get("seed_bootstrap"),
@@ -328,6 +331,7 @@ class SweepOrchestrator:
             completed_at=datetime.now(),
             config={
                 "seeds": self.config.seeds,
+                "seed_policy": self.config.seed_policy,
                 "tasks": self.config.tasks,
             },
         )

@@ -28,7 +28,7 @@ Usage:
         .with_observable("obs_001", "pauli_string", locality=2)
         .with_protocol("direct_naive", "1.0.0")
         .with_backend("aer_simulator")
-        .with_seeds(seed_protocol=42, seed_acquire=43)
+        .with_seeds(seed_policy="base_replicate_config", seed_protocol=42, seed_acquire=43)
         .with_budget(N_total=1000, n_settings=1)
         .with_estimate(0.75, se=0.02)
         .build()

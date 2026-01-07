@@ -273,10 +273,15 @@ def run_benchmark(
         output_path.mkdir(parents=True, exist_ok=True)
 
         writer = ParquetWriter(output_path)
-        writer.write_long_form(results)
-        writer.write_summary(summaries)
+        long_form_path = writer.write_long_form(results)
+        summary_path = writer.write_summary(summaries)
 
         manifest = orchestrator.create_manifest()
+        manifest.long_form_path = str(long_form_path)
+        manifest.summary_path = str(summary_path)
+        plots_dir = output_path / "plots"
+        plots_dir.mkdir(parents=True, exist_ok=True)
+        manifest.plots_dir = str(plots_dir)
         writer.write_manifest(manifest)
 
     # Return summary

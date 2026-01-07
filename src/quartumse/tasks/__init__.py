@@ -64,9 +64,13 @@ from .sweep import (
     generate_n_grid,
 )
 from .task1_worstcase import WorstCaseTask
+from .task2_average_target import AverageTargetTask
 from .task3_distribution import DistributionStats, FixedBudgetDistributionTask
 from .task4_dominance import DominanceTask
+from .task5_pilot_selection import PilotSelectionTask
 from .task6_biasvar import BiasVarianceStats, BiasVarianceTask
+from .task7_noise_sensitivity import NoiseSensitivityTask
+from .task8_adaptive_efficiency import AdaptiveEfficiencyTask
 
 __all__ = [
     # Base classes
@@ -86,9 +90,13 @@ __all__ = [
     "generate_n_grid",
     # Task implementations
     "WorstCaseTask",
+    "AverageTargetTask",
     "FixedBudgetDistributionTask",
     "DominanceTask",
+    "PilotSelectionTask",
     "BiasVarianceTask",
+    "NoiseSensitivityTask",
+    "AdaptiveEfficiencyTask",
     # Data classes
     "DistributionStats",
     "BiasVarianceStats",

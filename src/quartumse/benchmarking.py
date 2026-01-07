@@ -45,7 +45,6 @@ from .protocols import (
     Protocol,
     get_protocol,
 )
-from .protocols.state import RawDatasetChunk
 from .stats import construct_simultaneous_cis, FWERMethod
 from .tasks import SweepConfig, SweepOrchestrator, TaskConfig, TaskType, WorstCaseTask
 from .viz import ReportBuilder, create_benchmark_report
@@ -72,18 +71,17 @@ def simulate_protocol_execution(
     true_expectations: dict[str, float] | None = None,
     circuit: Any = None,
 ) -> Estimates:
-    """Simulate protocol execution with synthetic data.
+    """Execute protocol using a physical measurement path.
 
-    This function simulates measurement outcomes. For protocols with custom
-    acquire() methods (like shadows), it uses those. Otherwise, it generates
-    random bitstrings.
+    This function runs the protocol against a backend to generate
+    measurement outcomes that respect the protocol's measurement plan.
 
     Args:
         protocol: Protocol to execute.
         observable_set: Observables to estimate.
         n_shots: Number of shots.
         seed: Random seed.
-        true_expectations: True expectation values (default: random).
+        true_expectations: True expectation values (unused in physical execution).
         circuit: Optional circuit for protocols that need it (e.g., shadows).
 
     Returns:
@@ -93,13 +91,6 @@ def simulate_protocol_execution(
 
     rng = np.random.default_rng(seed)
 
-    # Generate true expectations if not provided
-    if true_expectations is None:
-        true_expectations = {
-            obs.observable_id: rng.uniform(-0.5, 0.5)
-            for obs in observable_set.observables
-        }
-
     # Create default circuit if not provided
     if circuit is None:
         n_qubits = observable_set.n_qubits
@@ -108,51 +99,16 @@ def simulate_protocol_execution(
         for q in range(n_qubits):
             circuit.ry(rng.uniform(0, np.pi), q)
 
-    # Initialize protocol
-    state = protocol.initialize(observable_set, n_shots, seed)
+    from qiskit_aer import AerSimulator
 
-    # Get measurement plan
-    plan = protocol.plan(state)
-
-    # Check if protocol has a custom acquire method (shadows protocols do)
-    is_shadows_protocol = "shadows" in protocol.protocol_id.lower()
-
-    if is_shadows_protocol:
-        # Use protocol's acquire method for shadows
-        from qiskit_aer import AerSimulator
-        backend = AerSimulator()
-        chunk = protocol.acquire(circuit, plan, backend, seed)
-    else:
-        # Simulate measurements for baseline protocols
-        bitstrings: dict[str, list[str]] = {}
-        n_qubits = observable_set.n_qubits
-
-        for setting, n_setting_shots in zip(plan.settings, plan.shots_per_setting):
-            setting_bitstrings = []
-
-            for _ in range(n_setting_shots):
-                # Generate bitstring based on measurement basis and true expectations
-                bs = []
-                for q in range(n_qubits):
-                    # Simplified: each qubit measured in Z basis
-                    # In reality, this depends on the measurement basis
-                    p_one = 0.5  # Default to random
-                    bs.append("1" if rng.random() < p_one else "0")
-                setting_bitstrings.append("".join(bs))
-
-            bitstrings[setting.setting_id] = setting_bitstrings
-
-        chunk = RawDatasetChunk(
-            bitstrings=bitstrings,
-            settings_executed=list(bitstrings.keys()),
-            n_qubits=n_qubits,
-        )
-
-    # Update state with data
-    state = protocol.update(state, chunk)
-
-    # Finalize and return estimates
-    return protocol.finalize(state, observable_set)
+    backend = AerSimulator()
+    return protocol.run(
+        circuit=circuit,
+        observable_set=observable_set,
+        total_budget=n_shots,
+        backend=backend,
+        seed=seed,
+    )
 
 
 def quick_comparison(
@@ -367,6 +323,58 @@ def generate_test_observables(
     )
 
 
+def _build_plot_summary(
+    result_set: LongFormResultSet,
+    summary_rows: list[Any],
+    baseline_id: str,
+    epsilon: float,
+) -> dict[str, Any]:
+    """Build a summary dictionary for standard benchmark plots."""
+    from .io.summary import compute_shot_savings_factor
+
+    attainment: dict[str, dict[int, float]] = {}
+    coverage: dict[str, dict[int, float]] = {}
+    se_distribution: dict[int, dict[str, list[float]]] = {}
+
+    for row in summary_rows:
+        if row.attainment_fraction is not None:
+            attainment.setdefault(row.protocol_id, {})[row.N_total] = row.attainment_fraction
+        if row.coverage_per_observable is not None:
+            coverage.setdefault(row.protocol_id, {})[row.N_total] = row.coverage_per_observable
+
+    for row in result_set:
+        se_distribution.setdefault(row.N_total, {}).setdefault(row.protocol_id, []).append(row.se)
+
+    ssf_data: dict[str, float] = {}
+    for protocol_id in result_set.get_unique_protocols():
+        if protocol_id == baseline_id:
+            ssf_data[protocol_id] = 1.0
+            continue
+        ssf_by_circuit = compute_shot_savings_factor(
+            summary_rows,
+            protocol_id=protocol_id,
+            baseline_protocol_id=baseline_id,
+        )
+        if ssf_by_circuit:
+            ssf_data[protocol_id] = next(iter(ssf_by_circuit.values()))
+
+    summary: dict[str, Any] = {
+        "epsilon": epsilon,
+        "baseline": baseline_id,
+        "confidence_level": 0.95,
+    }
+    if attainment:
+        summary["attainment"] = attainment
+    if ssf_data:
+        summary["ssf"] = ssf_data
+    if se_distribution:
+        summary["se_distribution"] = se_distribution
+    if coverage:
+        summary["coverage"] = coverage
+
+    return summary
+
+
 # =============================================================================
 # Publication-Grade Benchmarking with Ground Truth
 # =============================================================================
@@ -376,7 +384,7 @@ def run_publication_benchmark(
     observable_set: ObservableSet,
     protocols: list[str | Protocol] | None = None,
     n_shots_grid: list[int] | None = None,
-    n_replicates: int = 10,
+    n_replicates: int = 20,
     seed: int = 42,
     compute_truth: bool = True,
     circuit_id: str = "circuit",
@@ -399,7 +407,7 @@ def run_publication_benchmark(
         observable_set: Set of observables to estimate.
         protocols: Protocol IDs or instances (default: all baselines + shadows).
         n_shots_grid: Shot budgets to evaluate (default: [100, 500, 1000, 5000]).
-        n_replicates: Number of replicates per configuration.
+        n_replicates: Number of replicates per configuration (publication-grade default).
         seed: Base random seed for reproducibility.
         compute_truth: Whether to compute ground truth via statevector.
         circuit_id: Identifier for the circuit.
@@ -418,9 +426,28 @@ def run_publication_benchmark(
     """
     from qiskit import QuantumCircuit
 
-    from .backends import StatevectorBackend, compute_ground_truth as _compute_ground_truth
-    from .io import LongFormResultBuilder, LongFormRow
-    from .tasks import WorstCaseTask, FixedBudgetDistributionTask, BiasVarianceTask, TaskConfig, TaskType
+    from .backends import compute_ground_truth as _compute_ground_truth
+    from qiskit_aer import AerSimulator
+
+    from .io import (
+        LongFormResultBuilder,
+        LongFormResultSet,
+        ParquetWriter,
+        SummaryAggregator,
+    )
+    from .tasks import (
+        WorstCaseTask,
+        FixedBudgetDistributionTask,
+        BiasVarianceTask,
+        TaskConfig,
+        TaskType,
+    )
+    from .utils.provenance import (
+        get_environment_lock,
+        get_git_commit_hash,
+        get_python_version,
+        get_quartumse_version,
+    )
 
     # Default protocols: baselines + shadows v0
     if protocols is None:
@@ -466,63 +493,106 @@ def run_publication_benchmark(
             print("Proceeding without ground truth (some tasks will be limited)")
 
     # Step 2: Run protocols at each shot budget with replicates
-    long_form_rows: list[LongFormRow] = []
     run_id = f"publication_benchmark_{uuid4().hex[:8]}"
+    methodology_version = "3.0.0"
+    observable_set_id = f"{circuit_id}_observables"
+    result_set = LongFormResultSet()
+    builder = LongFormResultBuilder()
+
+    circuit_depth = circuit.depth() if isinstance(circuit, QuantumCircuit) else None
+    twoq_gate_count = None
+    if isinstance(circuit, QuantumCircuit):
+        twoq_gate_count = sum(1 for instr, qargs, _ in circuit.data if len(qargs) == 2)
+
+    backend_id = "aer_simulator"
+    execution_backend = AerSimulator()
+
+    def _generate_seeds(rep: int, n_shots: int, protocol_index: int) -> dict[str, int]:
+        rng = np.random.default_rng(seed + rep * 1000 + n_shots + protocol_index * 17)
+        seed_protocol = int(rng.integers(0, 2**31))
+        return {
+            "seed_policy": "publication_benchmark",
+            "seed_protocol": seed_protocol,
+            "seed_acquire": seed_protocol,
+            "seed_bootstrap": int(rng.integers(0, 2**31)),
+        }
 
     for n_shots in n_shots_grid:
         for rep in range(n_replicates):
-            rep_seed = seed + rep * 1000 + n_shots
+            for protocol_index, protocol in enumerate(protocol_instances):
+                seeds = _generate_seeds(rep, n_shots, protocol_index)
 
-            for protocol in protocol_instances:
-                # Run protocol
-                estimates = simulate_protocol_execution(
-                    protocol=protocol,
+                estimates = protocol.run(
+                    circuit=circuit,
                     observable_set=observable_set,
-                    n_shots=n_shots,
-                    seed=rep_seed,
-                    true_expectations=truth_values if truth_values else None,
+                    total_budget=n_shots,
+                    backend=execution_backend,
+                    seed=seeds["seed_protocol"],
                 )
 
-                # Build long-form rows
                 for est in estimates.estimates:
-                    builder = LongFormResultBuilder()
-                    builder.with_ids(
-                        run_id=run_id,
-                        protocol_id=protocol.protocol_id,
-                        circuit_id=circuit_id,
-                        observable_id=est.observable_id,
-                    )
-                    builder.with_estimate(
-                        estimate=est.estimate,
-                        se=est.se,
-                        variance=est.variance,
-                    )
-                    builder.with_budget(
-                        N_total=n_shots,
-                        n_settings=estimates.n_settings,
-                    )
-                    builder.with_replicate(rep)
-
-                    # Add CI if available
-                    if est.ci:
-                        builder.with_ci(
-                            ci_low=est.ci.ci_low,
-                            ci_high=est.ci.ci_high,
-                            ci_method=est.ci.method.value,
+                    obs = observable_set.get_by_id(est.observable_id)
+                    row_builder = (
+                        builder.reset()
+                        .with_run_id(run_id)
+                        .with_methodology_version(methodology_version)
+                        .with_circuit(
+                            circuit_id=circuit_id,
+                            n_qubits=observable_set.n_qubits,
+                            depth=circuit_depth,
+                            twoq_gate_count=twoq_gate_count,
                         )
+                        .with_observable(
+                            observable_id=est.observable_id,
+                            observable_type=obs.observable_type.value,
+                            locality=obs.locality,
+                            coefficient=obs.coefficient,
+                            observable_set_id=observable_set_id,
+                            group_id=obs.group_id,
+                            M_total=len(observable_set),
+                        )
+                        .with_protocol(
+                            protocol_id=estimates.protocol_id or protocol.protocol_id,
+                            protocol_version=estimates.protocol_version or protocol.protocol_version,
+                        )
+                        .with_backend(backend_id, noise_profile_id="ideal")
+                        .with_replicate(rep)
+                        .with_seeds(
+                            seed_policy=seeds["seed_policy"],
+                            seed_protocol=seeds["seed_protocol"],
+                            seed_acquire=seeds["seed_acquire"],
+                            seed_bootstrap=seeds["seed_bootstrap"],
+                        )
+                        .with_budget(
+                            N_total=n_shots,
+                            n_settings=est.n_settings or estimates.n_settings,
+                        )
+                        .with_estimate(
+                            estimate=est.estimate,
+                            se=est.se,
+                            ci_low=est.ci.ci_low if est.ci else None,
+                            ci_high=est.ci.ci_high if est.ci else None,
+                            ci_low_raw=est.ci.ci_low_raw if est.ci else None,
+                            ci_high_raw=est.ci.ci_high_raw if est.ci else None,
+                            ci_method_id=est.ci.method.value if est.ci else None,
+                        )
+                        .with_timing(
+                            time_quantum_s=estimates.time_quantum_s,
+                            time_classical_s=estimates.time_classical_s,
+                        )
+                    )
 
-                    # Add truth if available
                     if est.observable_id in truth_values:
-                        builder.with_truth(
+                        row_builder.with_truth(
                             truth_values[est.observable_id],
                             mode="exact_statevector" if ground_truth else "simulated",
                         )
 
-                    row = builder.build()
-                    long_form_rows.append(row)
+                    result_set.add(row_builder.build())
 
     # Step 3: Evaluate tasks
     task_results = {}
+    long_form_rows = list(result_set)
 
     # Task 1: Worst-case
     task1_config = TaskConfig(
@@ -592,6 +662,7 @@ def run_publication_benchmark(
             pass
 
     # Step 4: Compute summary statistics
+    summary_rows = SummaryAggregator(result_set, epsilon=epsilon).compute_summaries()
     summary = {
         "run_id": run_id,
         "n_protocols": len(protocol_instances),
@@ -599,7 +670,7 @@ def run_publication_benchmark(
         "n_replicates": n_replicates,
         "n_observables": len(observable_set),
         "has_ground_truth": ground_truth is not None,
-        "n_long_form_rows": len(long_form_rows),
+        "n_long_form_rows": len(result_set),
         "protocols": [p.protocol_id for p in protocol_instances],
     }
 
@@ -636,13 +707,14 @@ def run_publication_benchmark(
         output_path = Path(output_dir)
         output_path.mkdir(parents=True, exist_ok=True)
 
-        # Save long-form results
         writer = ParquetWriter(output_path)
-        writer.write_long_form(long_form_rows)
+        long_form_path = writer.write_long_form(result_set)
+        summary_path = writer.write_summary(summary_rows)
+
+        import json
 
         # Save ground truth
         if ground_truth:
-            import json
             truth_path = output_path / "ground_truth.json"
             with open(truth_path, "w") as f:
                 json.dump({
@@ -652,24 +724,76 @@ def run_publication_benchmark(
                     "circuit_id": ground_truth.circuit_id,
                 }, f, indent=2)
 
-        # Save summary
-        summary_path = output_path / "summary.json"
-        with open(summary_path, "w") as f:
-            # Convert numpy types to Python types for JSON
+        summary_json_path = output_path / "summary.json"
+        with open(summary_json_path, "w") as f:
             def convert(obj):
                 if isinstance(obj, np.ndarray):
                     return obj.tolist()
-                elif isinstance(obj, (np.float32, np.float64)):
+                if isinstance(obj, (np.float32, np.float64)):
                     return float(obj)
-                elif isinstance(obj, (np.int32, np.int64)):
+                if isinstance(obj, (np.int32, np.int64)):
                     return int(obj)
                 return obj
 
             json.dump(summary, f, indent=2, default=convert)
 
+        task_results_payload = [
+            output.to_task_result(run_id)
+            for output in task_results.values()
+        ]
+        task_results_path = None
+        if task_results_payload:
+            task_results_path = writer.write_task_results(task_results_payload)
+
+        plots_dir = output_path / "plots"
+        plots_dir.mkdir(parents=True, exist_ok=True)
+        baseline_id = "direct_grouped"
+        if baseline_id not in [p.protocol_id for p in protocol_instances]:
+            baseline_id = protocol_instances[0].protocol_id
+        results_summary = _build_plot_summary(
+            result_set,
+            summary_rows,
+            baseline_id=baseline_id,
+            epsilon=epsilon,
+        )
+        try:
+            create_benchmark_report(results_summary, str(plots_dir))
+        except ImportError as exc:
+            print(f"Warning: Skipping plots (matplotlib unavailable): {exc}")
+
+        manifest = RunManifest(
+            run_id=run_id,
+            methodology_version=methodology_version,
+            created_at=datetime.now(),
+            git_commit_hash=get_git_commit_hash(),
+            quartumse_version=get_quartumse_version(),
+            python_version=get_python_version(),
+            environment_lock=get_environment_lock(),
+            circuits=[circuit_id],
+            observable_sets=[observable_set_id],
+            protocols=[p.protocol_id for p in protocol_instances],
+            N_grid=n_shots_grid,
+            n_replicates=n_replicates,
+            noise_profiles=["ideal"],
+            long_form_path=str(long_form_path),
+            summary_path=str(summary_path),
+            task_results_path=str(task_results_path) if task_results_path else None,
+            plots_dir=str(plots_dir),
+            completed_at=datetime.now(),
+            status="completed",
+            config={
+                "seed_policy": "publication_benchmark",
+                "seeds": {"base": seed},
+                "epsilon": epsilon,
+                "delta": delta,
+                "compute_truth": compute_truth,
+            },
+        )
+        writer.write_manifest(manifest)
+
     return {
         "ground_truth": ground_truth,
-        "long_form_results": long_form_rows,
+        "long_form_results": list(result_set),
         "task_results": task_results,
         "summary": summary,
         "protocol_summaries": protocol_summaries,

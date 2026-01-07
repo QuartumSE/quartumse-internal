@@ -25,6 +25,7 @@ Requirements:
     pip install numpy qiskit qiskit-aer pydantic
 """
 
+import argparse
 import sys
 sys.path.insert(0, "src")
 
@@ -87,7 +88,7 @@ def create_benchmark_circuit(circuit_type: str, n_qubits: int) -> QuantumCircuit
     return circuit
 
 
-def run_benchmark():
+def run_benchmark(n_replicates: int) -> None:
     """Run the publication-ready benchmark."""
     print("=" * 80)
     print("PUBLICATION-READY BENCHMARK")
@@ -104,7 +105,7 @@ def run_benchmark():
     N_OBSERVABLES = 15
     CIRCUIT_TYPE = "ghz"
     N_SHOTS_GRID = [100, 500, 1000, 2000]
-    N_REPLICATES = 5  # Increase for publication (recommend >= 10)
+    N_REPLICATES = n_replicates
     EPSILON = 0.05  # Target precision
     DELTA = 0.05  # Global failure probability
 
@@ -428,10 +429,19 @@ def run_benchmark():
 
     print()
     print("=" * 80)
-    print("For publication-grade results, increase n_replicates to >= 10")
-    print("and extend n_shots_grid to cover the full regime of interest.")
+    print("For publication-grade results, extend n_shots_grid")
+    print("to cover the full regime of interest.")
     print("=" * 80)
 
 
 if __name__ == "__main__":
-    run_benchmark()
+    parser = argparse.ArgumentParser(description="Publication benchmark demo.")
+    parser.add_argument(
+        "--n-replicates",
+        type=int,
+        default=20,
+        help="Number of replicates per configuration (publication-grade default).",
+    )
+    args = parser.parse_args()
+
+    run_benchmark(args.n_replicates)

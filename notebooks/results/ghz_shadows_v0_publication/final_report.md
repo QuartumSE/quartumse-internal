@@ -30,7 +30,7 @@
 - task7_classical_shadows_v0: {'epsilon': 0.01, 'delta': 0.05, 'baseline_noise_profile': 'ideal', 'failure_rate': 1.0}
 
 ## Conclusions
-- Run ID: publication_benchmark_364c6ed4 with 4 protocols
+- Run ID: publication_benchmark_4226b4a5 with 4 protocols
 - Ground truth computed: True
 - Classical shadows v0 is benchmarked against direct baselines under identical budgets.
 - Task 7 noise sensitivity is evaluated across canonical profiles.

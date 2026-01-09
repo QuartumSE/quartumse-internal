@@ -15,6 +15,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+from math import comb
 from typing import Any
 
 import numpy as np
@@ -126,6 +127,18 @@ class RandomPauliGenerator(ObservableGenerator):
             max_weight = n
         if not allow_identity and min_weight == 0:
             min_weight = 1
+
+        # For fixed weight, check that enough unique observables exist
+        if weight_dist == "fixed":
+            fixed_w = extra.get("fixed_weight", min_weight)
+            # Max unique weight-k Paulis = 3^k * C(n, k)
+            max_possible = (3 ** fixed_w) * comb(n, fixed_w)
+            if m > max_possible:
+                raise ValueError(
+                    f"Cannot generate {m} unique weight-{fixed_w} observables "
+                    f"on {n} qubits (max possible: {max_possible}). "
+                    f"Reduce n_observables to at most {max_possible}."
+                )
 
         observables: list[Observable] = []
         generated_strings: set[str] = set()

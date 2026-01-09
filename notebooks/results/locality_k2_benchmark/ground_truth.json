@@ -1,0 +1,31 @@
+{
+  "truth_values": {
+    "obs_a7f9ead3": 0.0,
+    "obs_03a07478": 0.0,
+    "obs_84844498": 0.9999999999999998,
+    "obs_a777ef7e": 0.0,
+    "obs_e117d2fe": 0.0,
+    "obs_184ffb8b": 0.0,
+    "obs_d5844c1b": 0.0,
+    "obs_d75d5952": 0.0,
+    "obs_9548bfbd": 0.9999999999999998,
+    "obs_a0013301": 0.0,
+    "obs_879308b3": 0.9999999999999998,
+    "obs_edf3774a": 0.0,
+    "obs_61ee1d04": 0.0,
+    "obs_9d4ac2b5": 0.0,
+    "obs_10a76a2a": 0.0,
+    "obs_71118993": 0.0,
+    "obs_94f74467": 0.0,
+    "obs_ca611c19": 0.0,
+    "obs_796c9ba9": 0.0,
+    "obs_b9c9883f": 0.0,
+    "obs_8b5a525d": 0.0,
+    "obs_05b30762": 0.0,
+    "obs_4ba4b97c": 0.0,
+    "obs_d6966bab": 0.9999999999999998
+  },
+  "truth_mode": "exact_statevector",
+  "n_qubits": 4,
+  "circuit_id": "circuit"
+}

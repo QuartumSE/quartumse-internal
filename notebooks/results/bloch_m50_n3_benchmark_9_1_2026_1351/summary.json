@@ -1,0 +1,38 @@
+{
+  "config": {
+    "m_observables": 50,
+    "n_qubits": 3,
+    "n_shots_grid": [
+      100,
+      200,
+      500,
+      1000
+    ],
+    "n_replicates": 20,
+    "seed": 42
+  },
+  "summary": {
+    "100": {
+      "shadows_mean_error": 0.13304664111576314,
+      "direct_mean_error": 0.528,
+      "ratio_direct_over_shadows": 3.9685331066764036
+    },
+    "200": {
+      "shadows_mean_error": 0.09191815539606113,
+      "direct_mean_error": 0.38099999999999995,
+      "ratio_direct_over_shadows": 4.1449917957810385
+    },
+    "500": {
+      "shadows_mean_error": 0.06253945949664438,
+      "direct_mean_error": 0.2432,
+      "ratio_direct_over_shadows": 3.8887448333807417
+    },
+    "1000": {
+      "shadows_mean_error": 0.04319139029995713,
+      "direct_mean_error": 0.17639999999999997,
+      "ratio_direct_over_shadows": 4.084147298221494
+    }
+  },
+  "winner": "shadows",
+  "best_ratio": 4.1449917957810385
+}

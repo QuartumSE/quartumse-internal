@@ -1,0 +1,19 @@
+{
+  "truth_values": {
+    "obs_9d4c1eef": 0.0,
+    "obs_7457cf9c": 0.0,
+    "obs_26790563": 0.0,
+    "obs_db02e502": 0.0,
+    "obs_bf92f15c": 0.0,
+    "obs_bc80c874": 0.0,
+    "obs_142f8605": 0.0,
+    "obs_b1ea3fbb": 0.0,
+    "obs_47747c81": 0.0,
+    "obs_1a944c2e": 0.0,
+    "obs_a4bcde56": 0.0,
+    "obs_ff6f9aba": 0.0
+  },
+  "truth_mode": "exact_statevector",
+  "n_qubits": 4,
+  "circuit_id": "circuit"
+}

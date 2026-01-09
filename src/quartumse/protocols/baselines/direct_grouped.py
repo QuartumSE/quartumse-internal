@@ -79,6 +79,7 @@ class DirectGroupedProtocol(StaticProtocol):
         Args:
             grouping_method: "greedy" or "sorted_insertion"
         """
+        super().__init__()
         self.grouping_method = grouping_method
 
     def initialize(

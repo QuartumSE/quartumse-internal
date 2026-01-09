@@ -281,7 +281,9 @@ class Protocol(ABC):
             state = self.update(state, chunk)
             classical_time = time.time() - classical_start
 
-            # Record round metadata
+            # Record round metadata (append if update() didn't already)
+            if len(state.round_metadata) < state.n_rounds:
+                state.round_metadata.append({})
             state.round_metadata[-1].update(
                 {
                     "quantum_time_s": quantum_time,

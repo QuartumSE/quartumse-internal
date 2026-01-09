@@ -86,6 +86,7 @@ class DirectOptimizedProtocol(StaticProtocol):
                 - "equal_se": Aim for equal SE across observables
                 - "max_min": Maximize minimum shots per observable
         """
+        super().__init__()
         self.allocation_strategy = allocation_strategy
 
     def initialize(

@@ -93,6 +93,13 @@ class ParquetWriter:
             if col in df.columns:
                 df[col] = pd.to_datetime(df[col])
 
+        # Serialize dict columns to JSON strings (Arrow can't handle empty structs)
+        for col in df.columns:
+            if df[col].apply(lambda x: isinstance(x, dict)).any():
+                df[col] = df[col].apply(
+                    lambda x: json.dumps(x) if isinstance(x, dict) else x
+                )
+
         long_form_dir = self.output_dir / "long_form"
 
         if partitioned:
@@ -124,6 +131,13 @@ class ParquetWriter:
             raise ValueError("Cannot write empty summary")
 
         df = pd.DataFrame([row.model_dump() for row in summary_rows])
+
+        # Serialize dict columns to JSON strings (Arrow can't handle empty structs)
+        for col in df.columns:
+            if df[col].apply(lambda x: isinstance(x, dict)).any():
+                df[col] = df[col].apply(
+                    lambda x: json.dumps(x) if isinstance(x, dict) else x
+                )
 
         output_path = self.output_dir / "summary.parquet"
         pq.write_table(pa.Table.from_pandas(df), str(output_path))

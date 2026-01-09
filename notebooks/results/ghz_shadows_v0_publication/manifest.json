@@ -1,0 +1,48 @@
+{
+  "run_id": "publication_benchmark_364c6ed4",
+  "methodology_version": "3.0.0",
+  "created_at": "2026-01-07T18:11:24.802556",
+  "git_commit_hash": "0c8d525ce88373b44e4497604202bea392167514",
+  "quartumse_version": "0.1.0",
+  "python_version": "3.13.9",
+  "environment_lock": "annotated-doc==0.0.4\nannotated-types==0.7.0\nanyio==4.8.0\nargcomplete==3.6.2\nargon2-cffi==25.1.0\nargon2-cffi-bindings==25.1.0\narrow==1.4.0\nasttokens==3.0.0\nasync-lru==2.0.5\nattrs==25.4.0\nbabel==2.17.0\nbackrefs==5.9\nbeautifulsoup4==4.14.2\nblack==25.9.0\nbleach==6.2.0\nCacheControl==0.14.2\ncachetools==5.5.1\ncertifi==2024.12.14\ncffi==1.17.1\ncfgv==3.4.0\ncharset-normalizer==3.4.1\nclick==8.3.0\ncolorama==0.4.6\ncomm==0.2.3\ncontourpy==1.3.3\ncoverage==7.11.0\ncryptography==44.0.0\ncycler==0.12.1\ndebugpy==1.8.17\ndecorator==5.2.1\ndefusedxml==0.7.1\ndill==0.4.0\ndistlib==0.4.0\nduckdb==1.4.1\nexecnet==2.1.1\nexecuting==2.2.1\nfastapi==0.121.2\nfastjsonschema==2.21.2\nfilelock==3.20.0\nfirebase-admin==6.1.0\nfonttools==4.60.1\nfqdn==1.5.1\nghp-import==2.1.0\ngoogle-api-core==2.24.0\ngoogle-api-python-client==2.159.0\ngoogle-auth==2.38.0\ngoogle-auth-httplib2==0.2.0\ngoogle-cloud-core==2.4.1\ngoogle-cloud-firestore==2.20.0\ngoogle-cloud-secret-manager==2.25.0\ngoogle-cloud-storage==2.19.0\ngoogle-crc32c==1.6.0\ngoogle-resumable-media==2.7.2\ngoogleapis-common-protos==1.66.0\ngriffe==1.14.0\ngrpc-google-iam-v1==0.14.3\ngrpcio==1.70.0\ngrpcio-status==1.70.0\nh11==0.16.0\nhttpcore==1.0.9\nhttplib2==0.22.0\nhttptools==0.7.1\nhttpx==0.28.1\nibm-cloud-sdk-core==3.24.2\nibm-platform-services==0.69.0\nidentify==2.6.15\nidna==3.10\niniconfig==2.3.0\nipykernel==7.0.1\nipython==9.6.0\nipython_pygments_lexers==1.1.1\nipywidgets==8.1.7\nisoduration==20.11.0\njedi==0.19.2\nJinja2==3.1.6\njson5==0.12.1\njsonpointer==3.0.0\njsonschema==4.25.1\njsonschema-specifications==2025.9.1\njupyter==1.1.1\njupyter-console==6.6.3\njupyter-events==0.12.0\njupyter-lsp==2.3.0\njupyter_client==8.6.3\njupyter_core==5.9.1\njupyter_server==2.17.0\njupyter_server_terminals==0.5.3\njupyterlab==4.4.9\njupyterlab_pygments==0.3.0\njupyterlab_server==2.27.3\njupyterlab_widgets==3.0.15\nkiwisolver==1.4.9\nlark==1.3.0\nlychee==0.2.2\nMarkdown==3.9\nmarkdown-include==0.8.1\nmarkdown-it-py==4.0.0\nMarkupSafe==3.0.3\nmatplotlib==3.10.7\nmatplotlib-inline==0.1.7\nmdurl==0.1.2\nmergedeep==1.3.4\nmistune==3.1.4\nmkdocs==1.6.1\nmkdocs-autorefs==1.4.3\nmkdocs-get-deps==0.2.0\nmkdocs-material==9.6.22\nmkdocs-material-extensions==1.3.1\nmkdocs-section-index==0.3.10\nmkdocstrings==0.30.1\nmkdocstrings-python==1.18.2\nmsgpack==1.1.0\nmypy==1.18.2\nmypy_extensions==1.1.0\nnbclient==0.10.2\nnbconvert==7.16.6\nnbformat==5.10.4\nnbmake==1.5.5\nnest-asyncio==1.6.0\nnodeenv==1.9.1\nnotebook==7.4.7\nnotebook_shim==0.2.4\nnumpy==2.3.4\npackaging==25.0\npaginate==0.5.7\npandas==2.3.3\npandocfilters==1.5.1\nparso==0.8.5\npathspec==0.12.1\npillow==12.0.0\npipx==1.8.0\nplatformdirs==4.5.0\npluggy==1.6.0\npre_commit==4.3.0\nprometheus_client==0.23.1\nprompt_toolkit==3.0.52\nproto-plus==1.25.0\nprotobuf==5.29.3\npsutil==7.1.1\npsycopg2-binary==2.9.11\npure_eval==0.2.3\npyarrow==21.0.0\npyasn1==0.6.1\npyasn1_modules==0.4.1\npycparser==2.22\npydantic==2.12.3\npydantic_core==2.41.4\nPygments==2.19.2\nPyJWT==2.10.1\npymdown-extensions==10.16.1\npyparsing==3.2.1\nPyPDF2==3.0.1\npyspnego==0.12.0\npytest==8.4.2\npytest-cov==7.0.0\npytest-xdist==3.8.0\npython-dateutil==2.9.0.post0\npython-dotenv==1.1.1\npython-json-logger==4.0.0\npython-telegram-bot==20.3\npytokens==0.2.0\npytz==2025.2\npywinpty==3.0.2\nPyYAML==6.0.3\npyyaml_env_tag==1.1\npyzmq==27.1.0\nqiskit==2.2.1\nqiskit-aer==0.17.2\nqiskit-ibm-runtime==0.43.0\n-e git+https://github.com/QuartumSE/quartumse-internal.git@0c8d525ce88373b44e4497604202bea392167514#egg=quartumse\nreferencing==0.37.0\nrequests==2.32.5\nrequests_ntlm==1.3.0\nrfc3339-validator==0.1.4\nrfc3986-validator==0.1.1\nrfc3987-syntax==1.1.0\nrich==14.2.0\nrpds-py==0.27.1\nrsa==4.9\nruff==0.14.1\nrustworkx==0.17.1\nscipy==1.16.2\nseaborn==0.13.2\nSend2Trash==1.8.3\nsetuptools==80.9.0\nshellingham==1.5.4\nsix==1.17.0\nsniffio==1.3.1\nsoupsieve==2.8\nsspilib==0.4.0\nstack-data==0.6.3\nstarlette==0.49.3\nstevedore==5.5.0\nterminado==0.18.1\ntinycss2==1.4.0\ntornado==6.5.2\ntraitlets==5.14.3\ntyper==0.19.2\ntyping-inspection==0.4.2\ntyping_extensions==4.15.0\ntzdata==2025.2\nuri-template==1.3.0\nuritemplate==4.1.1\nurllib3==2.5.0\nuserpath==1.9.2\nuvicorn==0.38.0\nvirtualenv==20.35.3\nwatchdog==6.0.0\nwatchfiles==1.1.1\nwcwidth==0.2.14\nwebcolors==24.11.1\nwebencodings==0.5.1\nwebsocket-client==1.9.0\nwebsockets==15.0.1\nwidgetsnbextension==4.0.14",
+  "config_file": null,
+  "config": {
+    "seed_policy": "publication_benchmark",
+    "seeds": {
+      "base": 42
+    },
+    "epsilon": 0.01,
+    "delta": 0.05,
+    "compute_truth": true
+  },
+  "circuits": [
+    "circuit"
+  ],
+  "observable_sets": [
+    "circuit_observables"
+  ],
+  "protocols": [
+    "direct_naive",
+    "direct_grouped",
+    "direct_optimized",
+    "classical_shadows_v0"
+  ],
+  "N_grid": [
+    100,
+    500,
+    1000,
+    5000
+  ],
+  "n_replicates": 20,
+  "noise_profiles": [
+    "ideal"
+  ],
+  "long_form_path": "results\\ghz_shadows_v0_publication\\long_form",
+  "summary_path": "results\\ghz_shadows_v0_publication\\summary.parquet",
+  "task_results_path": "results\\ghz_shadows_v0_publication\\task_results.parquet",
+  "plots_dir": "results\\ghz_shadows_v0_publication\\plots",
+  "status": "completed",
+  "completed_at": "2026-01-07T18:11:25.661805",
+  "error_message": null
+}

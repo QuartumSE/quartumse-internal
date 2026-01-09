@@ -59,6 +59,22 @@ from quartumse.viz import (
     ReportBuilder,
 )
 
+# Enhanced Analysis (Benchmarking Improvements)
+from quartumse.analysis import (
+    run_comprehensive_analysis,
+    ComprehensiveBenchmarkAnalysis,
+    interpolate_n_star,
+    fit_power_law,
+    per_observable_crossover,
+    analyze_by_locality,
+    bootstrap_ci,
+    bootstrap_hypothesis_test,
+    ks_test_protocols,
+    compute_cost_normalized_metrics,
+    CostModel,
+    multi_pilot_analysis,
+)
+
 __all__ = [
     # Version
     "__version__",
@@ -105,4 +121,17 @@ __all__ = [
     "plot_attainment_curves",
     "plot_ssf_comparison",
     "ReportBuilder",
+    # Analysis (Enhanced Benchmarking)
+    "run_comprehensive_analysis",
+    "ComprehensiveBenchmarkAnalysis",
+    "interpolate_n_star",
+    "fit_power_law",
+    "per_observable_crossover",
+    "analyze_by_locality",
+    "bootstrap_ci",
+    "bootstrap_hypothesis_test",
+    "ks_test_protocols",
+    "compute_cost_normalized_metrics",
+    "CostModel",
+    "multi_pilot_analysis",
 ]

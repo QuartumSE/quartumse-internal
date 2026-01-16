@@ -29828,9 +29828,7 @@ and collects results.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/quartumse/analysis/statistical_tests.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">362</span>
-<span class="normal">363</span>
-<span class="normal">364</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">364</span>
 <span class="normal">365</span>
 <span class="normal">366</span>
 <span class="normal">367</span>
@@ -29881,7 +29879,9 @@ and collects results.</p>
 <span class="normal">412</span>
 <span class="normal">413</span>
 <span class="normal">414</span>
-<span class="normal">415</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">compare_protocols_statistically</span><span class="p">(</span>
+<span class="normal">415</span>
+<span class="normal">416</span>
+<span class="normal">417</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">compare_protocols_statistically</span><span class="p">(</span>
     <span class="n">results_a</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>  <span class="c1"># LongFormRow</span>
     <span class="n">results_b</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>  <span class="c1"># LongFormRow</span>
     <span class="n">n_total</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -31540,7 +31540,13 @@ to ensure family-wise coverage.</p>
 <span class="normal">190</span>
 <span class="normal">191</span>
 <span class="normal">192</span>
-<span class="normal">193</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">interpolate_n_star</span><span class="p">(</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">interpolate_n_star</span><span class="p">(</span>
     <span class="n">ns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
     <span class="n">se_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -31590,9 +31596,15 @@ to ensure family-wise coverage.</p>
         <span class="c1"># Find where SE crosses epsilon</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ns_arr</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">se_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">epsilon</span> <span class="o">&gt;=</span> <span class="n">se_arr</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]:</span>
-                <span class="c1"># Linear interpolation</span>
-                <span class="n">frac</span> <span class="o">=</span> <span class="p">(</span><span class="n">se_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">se_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">se_arr</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
-                <span class="n">n_star</span> <span class="o">=</span> <span class="n">ns_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">frac</span> <span class="o">*</span> <span class="p">(</span><span class="n">ns_arr</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ns_arr</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="c1"># Handle case where consecutive SE values are equal (avoid division by zero)</span>
+                <span class="n">denom</span> <span class="o">=</span> <span class="n">se_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">se_arr</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">denom</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+                    <span class="c1"># SE values are effectively equal - return the lower N</span>
+                    <span class="n">n_star</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ns_arr</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Linear interpolation</span>
+                    <span class="n">frac</span> <span class="o">=</span> <span class="p">(</span><span class="n">se_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">)</span> <span class="o">/</span> <span class="n">denom</span>
+                    <span class="n">n_star</span> <span class="o">=</span> <span class="n">ns_arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">frac</span> <span class="o">*</span> <span class="p">(</span><span class="n">ns_arr</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ns_arr</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
                 <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_star</span><span class="p">),</span> <span class="kc">None</span>
 
         <span class="c1"># Check if already below threshold</span>
@@ -32683,7 +32695,12 @@ to ensure family-wise coverage.</p>
 <span class="normal">283</span>
 <span class="normal">284</span>
 <span class="normal">285</span>
-<span class="normal">286</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">per_observable_crossover</span><span class="p">(</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">per_observable_crossover</span><span class="p">(</span>
     <span class="n">results_a</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">LongFormRow</span><span class="p">],</span>
     <span class="n">results_b</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">LongFormRow</span><span class="p">],</span>
     <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;se&quot;</span><span class="p">,</span>
@@ -32773,9 +32790,14 @@ to ensure family-wise coverage.</p>
                         <span class="c1"># Linear interpolation</span>
                         <span class="n">ratio1</span> <span class="o">=</span> <span class="n">mean_a</span><span class="p">[</span><span class="n">n1</span><span class="p">]</span> <span class="o">/</span> <span class="n">mean_b</span><span class="p">[</span><span class="n">n1</span><span class="p">]</span> <span class="k">if</span> <span class="n">mean_b</span><span class="p">[</span><span class="n">n1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
                         <span class="n">ratio2</span> <span class="o">=</span> <span class="n">mean_a</span><span class="p">[</span><span class="n">n2</span><span class="p">]</span> <span class="o">/</span> <span class="n">mean_b</span><span class="p">[</span><span class="n">n2</span><span class="p">]</span> <span class="k">if</span> <span class="n">mean_b</span><span class="p">[</span><span class="n">n2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="n">ratio1</span> <span class="o">!=</span> <span class="n">ratio2</span><span class="p">:</span>
-                            <span class="n">frac</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ratio1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">ratio2</span> <span class="o">-</span> <span class="n">ratio1</span><span class="p">)</span>
+                        <span class="n">denom</span> <span class="o">=</span> <span class="n">ratio2</span> <span class="o">-</span> <span class="n">ratio1</span>
+                        <span class="c1"># Check for valid interpolation (finite denominator, not too small)</span>
+                        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">ratio1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">ratio2</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">denom</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+                            <span class="n">frac</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ratio1</span><span class="p">)</span> <span class="o">/</span> <span class="n">denom</span>
                             <span class="n">crossover_n</span> <span class="o">=</span> <span class="n">n1</span> <span class="o">+</span> <span class="n">frac</span> <span class="o">*</span> <span class="p">(</span><span class="n">n2</span> <span class="o">-</span> <span class="n">n1</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="c1"># Fallback to midpoint if interpolation not possible</span>
+                            <span class="n">crossover_n</span> <span class="o">=</span> <span class="p">(</span><span class="n">n1</span> <span class="o">+</span> <span class="n">n2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">crossover_n</span> <span class="o">=</span> <span class="n">n2</span>
                     <span class="k">break</span>

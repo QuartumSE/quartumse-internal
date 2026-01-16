@@ -178,9 +178,15 @@ def interpolate_n_star(
         # Find where SE crosses epsilon
         for i in range(len(ns_arr) - 1):
             if se_arr[i] > epsilon >= se_arr[i + 1]:
-                # Linear interpolation
-                frac = (se_arr[i] - epsilon) / (se_arr[i] - se_arr[i + 1])
-                n_star = ns_arr[i] + frac * (ns_arr[i + 1] - ns_arr[i])
+                # Handle case where consecutive SE values are equal (avoid division by zero)
+                denom = se_arr[i] - se_arr[i + 1]
+                if abs(denom) < 1e-12:
+                    # SE values are effectively equal - return the lower N
+                    n_star = float(ns_arr[i])
+                else:
+                    # Linear interpolation
+                    frac = (se_arr[i] - epsilon) / denom
+                    n_star = ns_arr[i] + frac * (ns_arr[i + 1] - ns_arr[i])
                 return float(n_star), None
 
         # Check if already below threshold

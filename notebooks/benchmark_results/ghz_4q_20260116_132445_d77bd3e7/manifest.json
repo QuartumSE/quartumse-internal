@@ -1,0 +1,55 @@
+{
+  "run_id": "ghz_4q_20260116_132445_d77bd3e7",
+  "timestamp": "2026-01-16T13:24:45.901904",
+  "mode": "analysis",
+  "circuit_id": "ghz_4q",
+  "n_observables": 22,
+  "n_protocols": 3,
+  "protocols": [
+    "direct_grouped",
+    "direct_optimized",
+    "classical_shadows_v0"
+  ],
+  "n_shots_grid": [
+    100,
+    500,
+    1000,
+    5000
+  ],
+  "n_replicates": 20,
+  "n_long_form_rows": 5280,
+  "has_ground_truth": true,
+  "tasks_completed": [
+    "task1_direct_grouped",
+    "task1_direct_optimized",
+    "task1_classical_shadows_v0",
+    "task3_direct_grouped",
+    "task3_direct_optimized",
+    "task3_classical_shadows_v0",
+    "task6_direct_grouped",
+    "task6_direct_optimized",
+    "task6_classical_shadows_v0"
+  ],
+  "all_tasks_completed": [
+    "task1_direct_grouped",
+    "task1_direct_optimized",
+    "task1_classical_shadows_v0",
+    "task2_direct_grouped",
+    "task2_direct_optimized",
+    "task2_classical_shadows_v0",
+    "task3_direct_grouped",
+    "task3_direct_optimized",
+    "task3_classical_shadows_v0",
+    "task6_direct_grouped",
+    "task6_direct_optimized",
+    "task6_classical_shadows_v0"
+  ],
+  "has_analysis": true,
+  "reports": {
+    "basic": "benchmark_results\\ghz_4q_20260116_132445_d77bd3e7\\basic_report.md",
+    "complete": "benchmark_results\\ghz_4q_20260116_132445_d77bd3e7\\complete_report.md",
+    "analysis": "benchmark_results\\ghz_4q_20260116_132445_d77bd3e7\\analysis_report.md",
+    "analysis_json": "benchmark_results\\ghz_4q_20260116_132445_d77bd3e7\\analysis.json",
+    "config": "benchmark_results\\ghz_4q_20260116_132445_d77bd3e7\\config.json"
+  }
+}

@@ -248,9 +248,14 @@ def per_observable_crossover(
                         # Linear interpolation
                         ratio1 = mean_a[n1] / mean_b[n1] if mean_b[n1] > 0 else float('inf')
                         ratio2 = mean_a[n2] / mean_b[n2] if mean_b[n2] > 0 else float('inf')
-                        if ratio1 != ratio2:
-                            frac = (1 - ratio1) / (ratio2 - ratio1)
+                        denom = ratio2 - ratio1
+                        # Check for valid interpolation (finite denominator, not too small)
+                        if np.isfinite(ratio1) and np.isfinite(ratio2) and abs(denom) > 1e-12:
+                            frac = (1 - ratio1) / denom
                             crossover_n = n1 + frac * (n2 - n1)
+                        else:
+                            # Fallback to midpoint if interpolation not possible
+                            crossover_n = (n1 + n2) / 2
                     else:
                         crossover_n = n2
                     break

@@ -1,0 +1,17 @@
+{
+  "mode": "complete",
+  "n_shots_grid": [
+    100,
+    500,
+    1000,
+    5000
+  ],
+  "n_replicates": 10,
+  "seed": 42,
+  "epsilon": 0.1,
+  "delta": 0.2,
+  "compute_truth": true,
+  "shadows_protocol_id": "classical_shadows_v0",
+  "baseline_protocol_id": "direct_grouped",
+  "output_base_dir": "benchmark_results"
+}

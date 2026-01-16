@@ -317,9 +317,11 @@ def bootstrap_ssf(
         # SSF = N*_baseline / N*_protocol = SE_protocol^2 / SE_baseline^2
         mean_se_p = np.mean(se_protocol)
         mean_se_b = np.mean(se_baseline)
-        if mean_se_b > 0:
+        if mean_se_p > 0 and mean_se_b > 0:
             return (mean_se_b / mean_se_p) ** 2
-        return float('inf')
+        elif mean_se_p == 0 and mean_se_b > 0:
+            return float('inf')  # Protocol is perfect, infinite savings
+        return float('nan')  # Can't compute
 
     # Point estimate
     ssf_point = estimate_ssf(se_a, se_b)

@@ -1,0 +1,47 @@
+{
+  "run_id": "publication_benchmark_6a16c88e",
+  "methodology_version": "3.0.0",
+  "created_at": "2026-01-16T15:00:55.625852",
+  "git_commit_hash": "2151564ee8279b3c2885904dba5d3b4314119218",
+  "quartumse_version": "0.1.0",
+  "python_version": "3.11.5",
+  "environment_lock": "annotated-types==0.7.0\nanyio==4.12.1\nargon2-cffi==25.1.0\nargon2-cffi-bindings==25.1.0\narrow==1.4.0\nasttokens==2.4.1\nasync-lru==2.0.5\nattrs==25.4.0\nawscli==1.29.57\nbabel==2.17.0\nbeautifulsoup4==4.14.3\nblack==25.12.0\nbleach==6.3.0\nbotocore==1.31.57\ncachetools==5.5.0\ncertifi==2024.12.14\ncffi==2.0.0\ncfgv==3.5.0\ncharset-normalizer==3.4.1\nclick==8.3.1\ncolorama==0.4.4\ncomm==0.2.0\ncontourpy==1.3.3\ncoverage==7.13.1\ncryptography==46.0.3\ncycler==0.12.1\ndebugpy==1.8.0\ndecorator==5.1.1\ndefusedxml==0.7.1\ndill==0.4.0\ndistlib==0.4.0\ndocutils==0.16\nduckdb==1.4.3\nexecnet==2.1.2\nexecuting==2.0.1\nfastjsonschema==2.21.2\nfilelock==3.20.2\nfonttools==4.61.1\nfortls==3.1.2\nfpdf==1.7.2\nfqdn==1.5.1\ngoogle-api-core==2.24.0\ngoogle-api-python-client==2.159.0\ngoogle-auth==2.37.0\ngoogle-auth-httplib2==0.2.0\ngoogleapis-common-protos==1.66.0\nh11==0.16.0\nhttpcore==1.0.9\nhttplib2==0.22.0\nhttpx==0.28.1\nibm-cloud-sdk-core==3.24.2\nibm-platform-services==0.72.0\nidentify==2.6.15\nidna==3.10\niniconfig==2.3.0\nipykernel==6.27.1\nipython==8.18.1\nipywidgets==8.1.8\nisoduration==20.11.0\njedi==0.19.1\nJinja2==3.1.6\njmespath==1.0.1\njson5==0.9.25\njsonpointer==3.0.0\njsonschema==4.26.0\njsonschema-specifications==2025.9.1\njupyter==1.1.1\njupyter-console==6.6.3\njupyter-events==0.12.0\njupyter-lsp==2.3.0\njupyter_client==8.6.0\njupyter_core==5.5.1\njupyter_server==2.17.0\njupyter_server_terminals==0.5.3\njupyterlab==4.5.1\njupyterlab_pygments==0.3.0\njupyterlab_server==2.28.0\njupyterlab_widgets==3.0.16\nkiwisolver==1.4.9\nlark==1.3.1\nlibrt==0.7.7\nmarkdown-it-py==4.0.0\nMarkupSafe==3.0.3\nmatplotlib==3.10.8\nmatplotlib-inline==0.1.6\nmdurl==0.1.2\nmistune==3.2.0\nmpmath==1.3.0\nmypy==1.19.1\nmypy_extensions==1.1.0\nnbclient==0.10.4\nnbconvert==7.16.6\nnbformat==5.10.4\nnest-asyncio==1.5.8\nninja==1.11.1.1\nnodeenv==1.10.0\nnotebook==7.5.1\nnotebook_shim==0.2.4\nnumpy==1.26.2\nopencv-python-headless==4.8.1.78\noverrides==7.7.0\npackaging==23.2\npandas==2.3.3\npandocfilters==1.5.1\nparso==0.8.3\npathspec==1.0.2\nPillow==10.1.0\nplatformdirs==4.1.0\npluggy==1.6.0\npre_commit==4.5.1\nprometheus_client==0.23.1\nprompt-toolkit==3.0.43\nproto-plus==1.25.0\nprotobuf==5.29.3\npsutil==5.9.7\npure-eval==0.2.2\npyarrow==22.0.0\npyasn1==0.5.0\npyasn1_modules==0.4.1\npyclipper==1.3.0.post5\npycparser==2.23\npydantic==2.12.5\npydantic_core==2.41.5\nPygments==2.17.2\nPyJWT==2.10.1\npyparsing==3.1.1\npyspnego==0.12.0\npytest==9.0.2\npytest-cov==7.0.0\npytest-xdist==3.8.0\npython-bidi==0.4.2\npython-dateutil==2.9.0.post0\npython-dotenv==1.2.1\npython-json-logger==4.0.0\npytokens==0.3.0\npytz==2025.2\npywin32==306\npywinpty==3.0.2\nPyYAML==6.0.1\npyzmq==25.1.2\nqiskit==2.3.0\nqiskit-aer==0.17.2\nqiskit-ibm-runtime==0.45.0\n-e git+https://github.com/quartumse/quartumse-internal.git@2151564ee8279b3c2885904dba5d3b4314119218#egg=quartumse\nreferencing==0.37.0\nrequests==2.32.5\nrequests_ntlm==1.3.0\nrfc3339-validator==0.1.4\nrfc3986-validator==0.1.1\nrfc3987-syntax==1.1.0\nrich==14.2.0\nrpds-py==0.30.0\nrsa==4.7.2\nruff==0.14.11\nrustworkx==0.17.1\ns3transfer==0.7.0\nscipy==1.11.4\nseaborn==0.13.2\nSend2Trash==2.0.0\nshapely==2.0.2\nshellingham==1.5.4\nsix==1.16.0\nsoupsieve==2.6\nsspilib==0.5.0\nstack-data==0.6.3\nstevedore==5.6.0\nsympy==1.12\nterminado==0.18.1\ntifffile==2023.12.9\ntinycss2==1.4.0\ntornado==6.4\ntraitlets==5.14.0\ntyper==0.21.1\ntyping-inspection==0.4.2\ntyping_extensions==4.15.0\ntzdata==2025.3\nuri-template==1.3.0\nuritemplate==4.1.1\nurllib3==2.6.3\nvirtualenv==20.36.0\nwcwidth==0.2.12\nwebcolors==25.10.0\nwebencodings==0.5.1\nwebsocket-client==1.9.0\nwidgetsnbextension==4.0.15",
+  "config_file": null,
+  "config": {
+    "seed_policy": "publication_benchmark",
+    "seeds": {
+      "base": 42
+    },
+    "epsilon": 0.01,
+    "delta": 0.05,
+    "compute_truth": true
+  },
+  "circuits": [
+    "S-SMOKE-3Q"
+  ],
+  "observable_sets": [
+    "S-SMOKE-3Q_observables"
+  ],
+  "protocols": [
+    "direct_grouped",
+    "direct_optimized",
+    "classical_shadows_v0"
+  ],
+  "N_grid": [
+    100,
+    500,
+    1000,
+    5000
+  ],
+  "n_replicates": 10,
+  "noise_profiles": [
+    "ideal"
+  ],
+  "long_form_path": "research_benchmark_results\\S-SMOKE-3Q_20260116_145911_f6824ce8\\base\\long_form",
+  "summary_path": "research_benchmark_results\\S-SMOKE-3Q_20260116_145911_f6824ce8\\base\\summary.parquet",
+  "task_results_path": "research_benchmark_results\\S-SMOKE-3Q_20260116_145911_f6824ce8\\base\\task_results.parquet",
+  "plots_dir": "research_benchmark_results\\S-SMOKE-3Q_20260116_145911_f6824ce8\\base\\plots",
+  "status": "completed",
+  "completed_at": "2026-01-16T15:00:58.207414",
+  "error_message": null
+}

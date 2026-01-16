@@ -1,0 +1,52 @@
+{
+  "timestamp": "2026-01-16T15:03:14.518554",
+  "n_circuits": 1,
+  "circuits": {
+    "S-SMOKE-3Q": {
+      "run_id": "S-SMOKE-3Q_20260116_145911_f6824ce8",
+      "output_dir": "research_benchmark_results\\S-SMOKE-3Q_20260116_145911_f6824ce8",
+      "summary": {
+        "run_id": "publication_benchmark_6a16c88e",
+        "n_protocols": 3,
+        "n_shots_grid": [
+          100,
+          500,
+          1000,
+          5000
+        ],
+        "n_replicates": 10,
+        "n_observables": 7,
+        "has_ground_truth": true,
+        "n_long_form_rows": 840,
+        "protocols": [
+          "direct_grouped",
+          "direct_optimized",
+          "classical_shadows_v0"
+        ],
+        "protocol_summaries": {
+          "direct_grouped": {
+            "mean_se": 0.01142842213522822,
+            "max_se": 0.02000394358879372,
+            "median_se": 0.019992161729343948,
+            "mean_abs_error": 0.009554285714285805,
+            "max_abs_error": 0.0384
+          },
+          "direct_optimized": {
+            "mean_se": 0.00959021416005458,
+            "max_se": 0.01678589565541706,
+            "median_se": 0.016779594278753546,
+            "mean_abs_error": 0.009464788732394461,
+            "max_abs_error": 0.030985915492957747
+          },
+          "classical_shadows_v0": {
+            "mean_se": 0.04274056445960207,
+            "max_se": 0.07693720946330194,
+            "median_se": 0.03956917047194858,
+            "mean_abs_error": 0.029865714285714277,
+            "max_abs_error": 0.1458
+          }
+        }
+      }
+    }
+  }
+}

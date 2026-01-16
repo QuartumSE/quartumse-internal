@@ -1,0 +1,27 @@
+"""Optimized H2 configuration for hardware run."""
+
+import numpy as np
+
+# VQE-optimized ansatz parameters
+OPTIMAL_PARAMS = np.array([np.float64(6.2837006562575395), np.float64(0.24021304649947542), np.float64(3.1413445442651313), np.float64(0.1999999094799164), np.float64(-0.0005855770724825637), np.float64(0.09999956292333705)])
+
+# Real H2 Hamiltonian (STO-3G, 0.735 Angstrom)
+H2_HAMILTONIAN = [
+    ("IIII", -0.8105479805373283),
+    ("IIIZ", 0.17218393261915552),
+    ("IIZI", -0.2257534922240251),
+    ("IIZZ", 0.12091263261776641),
+    ("IZII", -0.2257534922240251),
+    ("IZIZ", 0.16614543256382414),
+    ("IZZI", 0.16614543256382414),
+    ("ZIIZ", 0.17464343068300453),
+    ("ZIZI", 0.17464343068300453),
+    ("ZZII", -0.2427428051314046),
+    ("XXXX", 0.04523279994605788),
+    ("XXYY", 0.04523279994605788),
+    ("YYXX", 0.04523279994605788),
+    ("YYYY", 0.04523279994605788),
+]
+
+# Expected ground state energy
+EXACT_ENERGY = -1.137  # Hartree

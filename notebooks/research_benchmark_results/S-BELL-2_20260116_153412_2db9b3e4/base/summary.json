@@ -1,0 +1,42 @@
+{
+  "run_id": "publication_benchmark_b6f5d2f9",
+  "n_protocols": 3,
+  "n_shots_grid": [
+    100,
+    500,
+    1000,
+    5000
+  ],
+  "n_replicates": 10,
+  "n_observables": 6,
+  "has_ground_truth": true,
+  "n_long_form_rows": 720,
+  "protocols": [
+    "direct_grouped",
+    "direct_optimized",
+    "classical_shadows_v0"
+  ],
+  "protocol_summaries": {
+    "direct_grouped": {
+      "mean_se": 0.008166517242663313,
+      "max_se": 0.024507136410511707,
+      "median_se": 0.0,
+      "mean_abs_error": 0.006722689075630548,
+      "max_abs_error": 0.062424969987995196
+    },
+    "direct_optimized": {
+      "mean_se": 0.008161665923162637,
+      "max_se": 0.024492448305451234,
+      "median_se": 0.0,
+      "mean_abs_error": 0.006594724220623798,
+      "max_abs_error": 0.05635491606714628
+    },
+    "classical_shadows_v0": {
+      "mean_se": 0.040817341850511044,
+      "max_se": 0.04445179357461294,
+      "median_se": 0.04051250632814919,
+      "mean_abs_error": 0.03397333333333328,
+      "max_abs_error": 0.10179999999999956
+    }
+  }
+}

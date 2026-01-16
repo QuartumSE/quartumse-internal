@@ -81,13 +81,13 @@ def main():
     backend_name = "ibm_fez"  # Lowest queue as of Nov 3, 2025
 
     print("=" * 80)
-    print("QuartumSE C-T01: H₂ Chemistry Workstream Starter")
+    print("QuartumSE C-T01: H2 Chemistry Workstream Starter")
     print("Phase 1 Critical Experiment")
     print("=" * 80)
 
     # Create circuit
     circuit = h2_ansatz()
-    print(f"\nCircuit: H₂ ansatz (4 qubits)")
+    print(f"\nCircuit: H2 ansatz (4 qubits)")
     print(f"Depth: {circuit.depth()}")
     print(f"Gate count: {circuit.count_ops()}")
 
@@ -163,15 +163,15 @@ def main():
         print(f"{obs_str:<12} {exp_val:>10.6f}  [{ci[0]:>7.4f}, {ci[1]:>7.4f}]")
 
     print(f"\n{'=' * 60}")
-    print(f"Total H₂ Energy: {total_energy:.6f} Hartree")
+    print(f"Total H2 Energy: {total_energy:.6f} Hartree")
     print(f"{'=' * 60}")
 
-    print("\n⚠️  Note: Using placeholder Hamiltonian coefficients for smoke test.")
+    print("\n[!] Note: Using placeholder Hamiltonian coefficients for smoke test.")
     print("   For production, update h2_hamiltonian_observables() with actual")
     print("   qubit-mapped coefficients from qiskit-nature.")
 
     print("\n" + "=" * 80)
-    print("✅ C-T01 Chemistry Workstream Starter COMPLETED")
+    print("[OK] C-T01 Chemistry Workstream Starter COMPLETED")
     print("   Phase 1 chemistry data drop generated!")
     print("=" * 80)
 
@@ -179,7 +179,7 @@ def main():
     print("\nNext Steps:")
     print("  1. Compare energy to direct measurement baseline")
     print("  2. Compute SSR for Hamiltonian estimation")
-    print("  3. Update with real H₂@STO-3G coefficients for validation")
+    print("  3. Update with real H2@STO-3G coefficients for validation")
     print("  4. Run comparative experiment with grouped Pauli measurements")
 
     return 0

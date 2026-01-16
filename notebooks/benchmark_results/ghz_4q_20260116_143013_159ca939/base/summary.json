@@ -1,0 +1,42 @@
+{
+  "run_id": "publication_benchmark_bbc56041",
+  "n_protocols": 3,
+  "n_shots_grid": [
+    100,
+    500,
+    1000,
+    5000
+  ],
+  "n_replicates": 10,
+  "n_observables": 17,
+  "has_ground_truth": true,
+  "n_long_form_rows": 2040,
+  "protocols": [
+    "direct_grouped",
+    "direct_optimized",
+    "classical_shadows_v0"
+  ],
+  "protocol_summaries": {
+    "direct_grouped": {
+      "mean_se": 0.041402771354484794,
+      "max_se": 0.046984098573493956,
+      "median_se": 0.04694715618435733,
+      "mean_abs_error": 0.03516455040165849,
+      "max_abs_error": 0.11894273127753303
+    },
+    "direct_optimized": {
+      "mean_se": 0.038591868702842265,
+      "max_se": 0.05136583824076773,
+      "median_se": 0.03901299485776903,
+      "mean_abs_error": 0.031390878872459636,
+      "max_abs_error": 0.14210526315789473
+    },
+    "classical_shadows_v0": {
+      "mean_se": 0.0500004196393698,
+      "max_se": 0.07954693060074663,
+      "median_se": 0.042970288701965155,
+      "mean_abs_error": 0.0390964705882353,
+      "max_abs_error": 0.1674
+    }
+  }
+}

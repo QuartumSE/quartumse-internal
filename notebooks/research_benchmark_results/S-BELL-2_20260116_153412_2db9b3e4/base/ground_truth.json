@@ -1,0 +1,13 @@
+{
+  "truth_values": {
+    "obs_b36f2fc4": 0.9999999999999996,
+    "obs_94f74467": 0.9999999999999996,
+    "obs_f2ee918e": 0.0,
+    "obs_5c017d3d": 0.9999999999999996,
+    "obs_a2dae311": 0.9999999999999996,
+    "obs_481854f8": 0.0
+  },
+  "truth_mode": "exact_statevector",
+  "n_qubits": 4,
+  "circuit_id": "S-BELL-2"
+}

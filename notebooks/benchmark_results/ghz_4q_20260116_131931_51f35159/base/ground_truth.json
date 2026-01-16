@@ -1,0 +1,29 @@
+{
+  "truth_values": {
+    "obs_7457cf9c": 0.0,
+    "obs_b1ea3fbb": 0.0,
+    "obs_bc80c874": 0.0,
+    "obs_26790563": 0.0,
+    "obs_ff6f9aba": 0.0,
+    "obs_6dfae44e": 0.0,
+    "obs_f2ee918e": 0.0,
+    "obs_a2dae311": 0.0,
+    "obs_61ee1d04": 0.0,
+    "obs_e117d2fe": 0.0,
+    "obs_6116feec": 0.0,
+    "obs_651799fd": 0.0,
+    "obs_a89519a3": 0.0,
+    "obs_997d4453": 0.0,
+    "obs_3fef0360": 0.0,
+    "obs_9100eb08": 0.0,
+    "obs_10f9390d": 0.0,
+    "obs_ff99298b": 0.0,
+    "obs_a597b999": 0.0,
+    "obs_85a1cab4": -0.9999999999999998,
+    "obs_b3f1d11a": 0.9999999999999998,
+    "obs_c022ce9f": 0.9999999999999998
+  },
+  "truth_mode": "exact_statevector",
+  "n_qubits": 4,
+  "circuit_id": "ghz_4q"
+}

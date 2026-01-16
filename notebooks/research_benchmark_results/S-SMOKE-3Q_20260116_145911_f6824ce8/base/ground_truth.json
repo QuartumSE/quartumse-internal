@@ -1,0 +1,14 @@
+{
+  "truth_values": {
+    "obs_d28d6964": 0.0,
+    "obs_8ed9d79b": 0.0,
+    "obs_07c6d775": 0.0,
+    "obs_648d0811": 0.9999999999999998,
+    "obs_b98eecab": 0.9999999999999998,
+    "obs_8a84c638": 0.0,
+    "obs_a47fdc37": 0.9999999999999998
+  },
+  "truth_mode": "exact_statevector",
+  "n_qubits": 3,
+  "circuit_id": "S-SMOKE-3Q"
+}

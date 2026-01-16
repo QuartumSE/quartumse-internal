@@ -327,8 +327,13 @@ def _interpolate_N_for_precision(
         if (precisions[i] >= target_precision >= precisions[i + 1]) or (
             precisions[i] <= target_precision <= precisions[i + 1]
         ):
+            # Handle case where consecutive precisions are equal (avoid division by zero)
+            denom = precisions[i + 1] - precisions[i]
+            if abs(denom) < 1e-12:
+                # Precisions are effectively equal - return the lower N
+                return float(Ns[i])
             # Linear interpolation
-            frac = (target_precision - precisions[i]) / (precisions[i + 1] - precisions[i])
+            frac = (target_precision - precisions[i]) / denom
             return Ns[i] + frac * (Ns[i + 1] - Ns[i])
 
     # Extrapolate if precision is better than all points

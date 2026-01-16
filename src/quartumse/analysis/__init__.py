@@ -30,6 +30,7 @@ from .statistical_tests import (
     bootstrap_ci,
     bootstrap_hypothesis_test,
     ks_test_protocols,
+    compare_protocols_statistically,
     StatisticalComparison,
 )
 from .cost_normalized import (
@@ -63,6 +64,7 @@ __all__ = [
     "bootstrap_ci",
     "bootstrap_hypothesis_test",
     "ks_test_protocols",
+    "compare_protocols_statistically",
     "StatisticalComparison",
     # Cost normalized
     "compute_cost_normalized_metrics",

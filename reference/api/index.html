@@ -5505,6 +5505,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#quartumse.compare_protocols_statistically" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        compare_protocols_statistically
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#quartumse.compute_cost_normalized_metrics" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7579,6 +7590,17 @@
     <span class="md-ellipsis">
       
         bootstrap_hypothesis_test
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quartumse.compare_protocols_statistically" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        compare_protocols_statistically
       
     </span>
   </a>
@@ -28877,6 +28899,285 @@ and collects results.</p>
         <span class="n">reject_null</span><span class="o">=</span><span class="n">p_value</span> <span class="o">&lt;</span> <span class="n">alpha</span><span class="p">,</span>
         <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
         <span class="n">test_name</span><span class="o">=</span><span class="s2">&quot;bootstrap_permutation&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="quartumse.compare_protocols_statistically" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">compare_protocols_statistically</span><span class="p">(</span><span class="n">results_a</span><span class="p">,</span> <span class="n">results_b</span><span class="p">,</span> <span class="n">n_total</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">n_bootstrap</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span></code>
+
+<a href="#quartumse.compare_protocols_statistically" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Complete statistical comparison between two protocols.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>results_a</code>
+            </td>
+            <td>
+                  <code><span title="list">list</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Long-form results from protocol A</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>results_b</code>
+            </td>
+            <td>
+                  <code><span title="list">list</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Long-form results from protocol B</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>n_total</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Shot budget to compare at</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>epsilon</code>
+            </td>
+            <td>
+                  <code><span title="float">float</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Target precision for SSF</p>
+              </div>
+            </td>
+            <td>
+                  <code>0.01</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>alpha</code>
+            </td>
+            <td>
+                  <code><span title="float">float</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Significance level</p>
+              </div>
+            </td>
+            <td>
+                  <code>0.05</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>n_bootstrap</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Number of bootstrap samples</p>
+              </div>
+            </td>
+            <td>
+                  <code>10000</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>seed</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Random seed</p>
+              </div>
+            </td>
+            <td>
+                  <code>42</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="quartumse.analysis.statistical_tests.StatisticalComparison">StatisticalComparison</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>StatisticalComparison with all tests</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/quartumse/analysis/statistical_tests.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span>
+<span class="normal">390</span>
+<span class="normal">391</span>
+<span class="normal">392</span>
+<span class="normal">393</span>
+<span class="normal">394</span>
+<span class="normal">395</span>
+<span class="normal">396</span>
+<span class="normal">397</span>
+<span class="normal">398</span>
+<span class="normal">399</span>
+<span class="normal">400</span>
+<span class="normal">401</span>
+<span class="normal">402</span>
+<span class="normal">403</span>
+<span class="normal">404</span>
+<span class="normal">405</span>
+<span class="normal">406</span>
+<span class="normal">407</span>
+<span class="normal">408</span>
+<span class="normal">409</span>
+<span class="normal">410</span>
+<span class="normal">411</span>
+<span class="normal">412</span>
+<span class="normal">413</span>
+<span class="normal">414</span>
+<span class="normal">415</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">compare_protocols_statistically</span><span class="p">(</span>
+    <span class="n">results_a</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>  <span class="c1"># LongFormRow</span>
+    <span class="n">results_b</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>  <span class="c1"># LongFormRow</span>
+    <span class="n">n_total</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="n">n_bootstrap</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StatisticalComparison</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Complete statistical comparison between two protocols.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        results_a: Long-form results from protocol A</span>
+<span class="sd">        results_b: Long-form results from protocol B</span>
+<span class="sd">        n_total: Shot budget to compare at</span>
+<span class="sd">        epsilon: Target precision for SSF</span>
+<span class="sd">        alpha: Significance level</span>
+<span class="sd">        n_bootstrap: Number of bootstrap samples</span>
+<span class="sd">        seed: Random seed</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        StatisticalComparison with all tests</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Filter to specific N</span>
+    <span class="n">se_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">se</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results_a</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">N_total</span> <span class="o">==</span> <span class="n">n_total</span><span class="p">])</span>
+    <span class="n">se_b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">se</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results_b</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">N_total</span> <span class="o">==</span> <span class="n">n_total</span><span class="p">])</span>
+
+    <span class="n">protocol_a</span> <span class="o">=</span> <span class="n">results_a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">protocol_id</span> <span class="k">if</span> <span class="n">results_a</span> <span class="k">else</span> <span class="s2">&quot;unknown&quot;</span>
+    <span class="n">protocol_b</span> <span class="o">=</span> <span class="n">results_b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">protocol_id</span> <span class="k">if</span> <span class="n">results_b</span> <span class="k">else</span> <span class="s2">&quot;unknown&quot;</span>
+
+    <span class="c1"># Bootstrap test for mean SE difference</span>
+    <span class="n">diff_test</span> <span class="o">=</span> <span class="n">bootstrap_hypothesis_test</span><span class="p">(</span>
+        <span class="n">se_a</span><span class="p">,</span> <span class="n">se_b</span><span class="p">,</span>
+        <span class="n">statistic</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span>
+        <span class="n">n_bootstrap</span><span class="o">=</span><span class="n">n_bootstrap</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+        <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># K-S test for distribution difference</span>
+    <span class="n">ks_result</span> <span class="o">=</span> <span class="n">ks_test_protocols</span><span class="p">(</span><span class="n">se_a</span><span class="p">,</span> <span class="n">se_b</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
+
+    <span class="c1"># Bootstrap SSF</span>
+    <span class="n">ssf_ci</span> <span class="o">=</span> <span class="n">bootstrap_ssf</span><span class="p">(</span><span class="n">se_a</span><span class="p">,</span> <span class="n">se_b</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">,</span> <span class="n">n_bootstrap</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">StatisticalComparison</span><span class="p">(</span>
+        <span class="n">protocol_a</span><span class="o">=</span><span class="n">protocol_a</span><span class="p">,</span>
+        <span class="n">protocol_b</span><span class="o">=</span><span class="n">protocol_b</span><span class="p">,</span>
+        <span class="n">n_total</span><span class="o">=</span><span class="n">n_total</span><span class="p">,</span>
+        <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;mean_se&quot;</span><span class="p">,</span>
+        <span class="n">difference_test</span><span class="o">=</span><span class="n">diff_test</span><span class="p">,</span>
+        <span class="n">ks_test</span><span class="o">=</span><span class="n">ks_result</span><span class="p">,</span>
+        <span class="n">ssf_ci</span><span class="o">=</span><span class="n">ssf_ci</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>

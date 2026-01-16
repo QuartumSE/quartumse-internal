@@ -76,6 +76,14 @@ from quartumse.analysis import (
     multi_pilot_analysis,
 )
 
+# Unified Benchmark Suite
+from quartumse.benchmark_suite import (
+    run_benchmark_suite,
+    BenchmarkMode,
+    BenchmarkSuiteConfig,
+    BenchmarkSuiteResult,
+)
+
 __all__ = [
     # Version
     "__version__",
@@ -136,4 +144,9 @@ __all__ = [
     "compute_cost_normalized_metrics",
     "CostModel",
     "multi_pilot_analysis",
+    # Unified Benchmark Suite
+    "run_benchmark_suite",
+    "BenchmarkMode",
+    "BenchmarkSuiteConfig",
+    "BenchmarkSuiteResult",
 ]

@@ -439,6 +439,15 @@ class StaticProtocol(Protocol):
                 measurement_circuit.h(qubit)
 
         measurement_circuit.measure_all()
+
+        # Verify measurements were added
+        if measurement_circuit.num_clbits == 0:
+            raise RuntimeError(
+                f"measure_all() did not add classical bits. "
+                f"Circuit: {circuit.name}, basis={basis}, "
+                f"num_qubits={measurement_circuit.num_qubits}"
+            )
+
         return measurement_circuit
 
     def _expand_basis(
@@ -479,10 +488,28 @@ class StaticProtocol(Protocol):
         else:
             from qiskit import transpile
 
+            # Verify circuit has measurements before running
+            if circuit.num_clbits == 0:
+                raise ValueError(
+                    f"Circuit has no classical bits for measurement. "
+                    f"name={circuit.name}, num_qubits={circuit.num_qubits}, "
+                    f"num_clbits={circuit.num_clbits}"
+                )
+
             compiled = transpile(circuit, backend)
             job = backend.run(compiled, shots=n_shots, seed_simulator=seed)
             result = job.result()
-            counts = result.get_counts()
+
+            try:
+                counts = result.get_counts()
+            except Exception as e:
+                raise RuntimeError(
+                    f"No counts from circuit execution. "
+                    f"name={circuit.name}, num_qubits={circuit.num_qubits}, "
+                    f"num_clbits={circuit.num_clbits}, shots={n_shots}. "
+                    f"Original error: {e}"
+                ) from e
+
             bitstrings = []
             for bitstring in sorted(counts.keys()):
                 count = counts[bitstring]

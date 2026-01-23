@@ -46,6 +46,25 @@ from .comprehensive import (
     ComprehensiveBenchmarkAnalysis,
     run_comprehensive_analysis,
 )
+from .objective_metrics import (
+    ObjectiveEstimate,
+    ObjectiveAnalysis,
+    compute_weighted_objective,
+    bootstrap_objective_ci,
+    compute_objective_metrics,
+    format_objective_analysis,
+)
+from .posthoc_benchmark import (
+    QueryRound,
+    PosthocCostAccounting,
+    PosthocBenchmarkResult,
+    CoverageAtBudget,
+    generate_query_rounds,
+    compute_coverage_at_budget,
+    simulate_posthoc_benchmark,
+    format_posthoc_result,
+    run_posthoc_benchmark_from_suite,
+)
 
 __all__ = [
     # Interpolation
@@ -76,4 +95,21 @@ __all__ = [
     # Comprehensive
     "ComprehensiveBenchmarkAnalysis",
     "run_comprehensive_analysis",
+    # Objective metrics
+    "ObjectiveEstimate",
+    "ObjectiveAnalysis",
+    "compute_weighted_objective",
+    "bootstrap_objective_ci",
+    "compute_objective_metrics",
+    "format_objective_analysis",
+    # Post-hoc benchmarking
+    "QueryRound",
+    "PosthocCostAccounting",
+    "PosthocBenchmarkResult",
+    "CoverageAtBudget",
+    "generate_query_rounds",
+    "compute_coverage_at_budget",
+    "simulate_posthoc_benchmark",
+    "format_posthoc_result",
+    "run_posthoc_benchmark_from_suite",
 ]

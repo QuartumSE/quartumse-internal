@@ -75,7 +75,8 @@ class DirectNaiveProtocol(StaticProtocol):
             Initialized DirectNaiveState.
         """
         M = len(observable_set)
-        shots_per_observable = total_budget // M
+        # Ensure at least 1 shot per observable (if budget allows)
+        shots_per_observable = max(1, total_budget // M) if M > 0 else 0
 
         # Initialize storage for each observable
         observable_bitstrings = {

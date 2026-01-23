@@ -14,6 +14,7 @@ Partitioning scheme (§10.2):
 from __future__ import annotations
 
 import json
+import platform
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -22,6 +23,9 @@ import numpy as np
 
 from .long_form import LongFormResultSet
 from .schemas import LongFormRow, RunManifest, SummaryRow, TaskResult
+
+# Windows has path length issues with Hive-style partitioning
+IS_WINDOWS = platform.system() == "Windows"
 
 # Try to import pyarrow/pandas, but provide fallback
 try:
@@ -66,19 +70,24 @@ class ParquetWriter:
     def write_long_form(
         self,
         result_set: LongFormResultSet,
-        partitioned: bool = True,
+        partitioned: bool | None = None,
     ) -> Path:
         """Write long-form results to Parquet.
 
         Args:
             result_set: Collection of LongFormRow objects.
             partitioned: If True, partition by protocol/circuit/N_total.
+                        If None, auto-detect (disabled on Windows due to path length limits).
 
         Returns:
             Path to the written file or directory.
         """
         if len(result_set) == 0:
             raise ValueError("Cannot write empty result set")
+
+        # Auto-detect: disable partitioning on Windows to avoid path length issues
+        if partitioned is None:
+            partitioned = not IS_WINDOWS
 
         # Convert to DataFrame
         df = pd.DataFrame(result_set.to_dicts())

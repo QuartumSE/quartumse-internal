@@ -185,18 +185,23 @@ class DirectOptimizedProtocol(StaticProtocol):
         for gid in weights:
             weights[gid] /= total_weight
 
-        # Allocate shots
+        # Allocate shots (ensuring at least 1 shot per group)
         shots_per_group = {}
         allocated = 0
+        n_groups = len(groups)
 
         for group in groups[:-1]:  # All but last
             shots = int(weights[group.group_id] * total_budget)
+            # Ensure at least 1 shot per group
+            shots = max(1, shots) if total_budget >= n_groups else max(1, shots)
             shots_per_group[group.group_id] = shots
             allocated += shots
 
         # Last group gets remainder to avoid rounding issues
         if groups:
-            shots_per_group[groups[-1].group_id] = total_budget - allocated
+            remaining = total_budget - allocated
+            # Ensure at least 1 shot for last group
+            shots_per_group[groups[-1].group_id] = max(1, remaining)
 
         return shots_per_group, weights
 

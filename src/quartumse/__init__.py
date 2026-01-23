@@ -20,7 +20,28 @@ from quartumse.reporting import ProvenanceManifest, Report
 from quartumse.shadows import ClassicalShadows, ShadowConfig
 
 # Benchmarking API exports (Measurements Bible)
-from quartumse.observables import Observable, ObservableSet, generate_observable_set
+from quartumse.observables import (
+    Observable,
+    ObservableSet,
+    generate_observable_set,
+    # Suite classes
+    ObservableSuite,
+    ObjectiveType,
+    SuiteType,
+    # Suite builders
+    make_ghz_suites,
+    make_bell_suites,
+    make_ising_suites,
+    make_qaoa_ring_suites,
+    make_phase_sensing_suites,
+    make_chemistry_suites,
+    make_stress_suite,
+    make_posthoc_library,
+    make_commuting_suite,
+    # Pauli generators
+    generate_all_k_local,
+    sample_random_paulis,
+)
 from quartumse.protocols import (
     Protocol,
     Estimates,
@@ -74,6 +95,15 @@ from quartumse.analysis import (
     compute_cost_normalized_metrics,
     CostModel,
     multi_pilot_analysis,
+    # Objective metrics (Work Item 4)
+    ObjectiveEstimate,
+    ObjectiveAnalysis,
+    compute_objective_metrics,
+    format_objective_analysis,
+    # Post-hoc benchmarking (Work Item 3)
+    PosthocBenchmarkResult,
+    run_posthoc_benchmark_from_suite,
+    format_posthoc_result,
 )
 
 # Unified Benchmark Suite
@@ -99,6 +129,21 @@ __all__ = [
     "Observable",
     "ObservableSet",
     "generate_observable_set",
+    # Suites (Benchmarking)
+    "ObservableSuite",
+    "ObjectiveType",
+    "SuiteType",
+    "make_ghz_suites",
+    "make_bell_suites",
+    "make_ising_suites",
+    "make_qaoa_ring_suites",
+    "make_phase_sensing_suites",
+    "make_chemistry_suites",
+    "make_stress_suite",
+    "make_posthoc_library",
+    "make_commuting_suite",
+    "generate_all_k_local",
+    "sample_random_paulis",
     # Protocols
     "Protocol",
     "Estimates",
@@ -144,6 +189,15 @@ __all__ = [
     "compute_cost_normalized_metrics",
     "CostModel",
     "multi_pilot_analysis",
+    # Objective metrics
+    "ObjectiveEstimate",
+    "ObjectiveAnalysis",
+    "compute_objective_metrics",
+    "format_objective_analysis",
+    # Post-hoc benchmarking
+    "PosthocBenchmarkResult",
+    "run_posthoc_benchmark_from_suite",
+    "format_posthoc_result",
     # Unified Benchmark Suite
     "run_benchmark_suite",
     "BenchmarkMode",

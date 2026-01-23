@@ -104,7 +104,8 @@ class DirectGroupedProtocol(StaticProtocol):
         )
 
         G = len(groups)
-        shots_per_group = total_budget // G if G > 0 else 0
+        # Ensure at least 1 shot per group (if budget allows)
+        shots_per_group = max(1, total_budget // G) if G > 0 else 0
 
         # Initialize storage for each group
         group_bitstrings = {g.group_id: [] for g in groups}

@@ -23354,11 +23354,7 @@ writer.write_manifest(manifest)</p>
 
               <details class="mkdocstrings-source">
                 <summary>Source code in <code>src/quartumse/analysis/posthoc_benchmark.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">73</span>
 <span class="normal">74</span>
 <span class="normal">75</span>
 <span class="normal">76</span>
@@ -23377,7 +23373,11 @@ writer.write_manifest(manifest)</p>
 <span class="normal">89</span>
 <span class="normal">90</span>
 <span class="normal">91</span>
-<span class="normal">92</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span>
+<span class="normal">96</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">PosthocBenchmarkResult</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Complete results from a post-hoc benchmark.&quot;&quot;&quot;</span>
 
@@ -33739,11 +33739,7 @@ to ensure family-wise coverage.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/quartumse/analysis/posthoc_benchmark.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">371</span>
-<span class="normal">372</span>
-<span class="normal">373</span>
-<span class="normal">374</span>
-<span class="normal">375</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">375</span>
 <span class="normal">376</span>
 <span class="normal">377</span>
 <span class="normal">378</span>
@@ -33794,7 +33790,11 @@ to ensure family-wise coverage.</p>
 <span class="normal">423</span>
 <span class="normal">424</span>
 <span class="normal">425</span>
-<span class="normal">426</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">format_posthoc_result</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">PosthocBenchmarkResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">426</span>
+<span class="normal">427</span>
+<span class="normal">428</span>
+<span class="normal">429</span>
+<span class="normal">430</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">format_posthoc_result</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">PosthocBenchmarkResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Format post-hoc benchmark result for display.&quot;&quot;&quot;</span>
     <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;POST-HOC QUERYING BENCHMARK&quot;</span><span class="p">)</span>
@@ -39275,6 +39275,12 @@ result = run_benchmark_suite(circuit, observables, config=config)</p>
                 <code>posthoc_suite</code>
             </td>
             <td>
+                  <code><a class="autorefs autorefs-internal" title="ObservableSuite
+
+
+  
+      dataclass
+   (quartumse.observables.suites.ObservableSuite)" href="#quartumse.ObservableSuite">ObservableSuite</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -39399,11 +39405,7 @@ result = run_benchmark_suite(circuit, observables, config=config)</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/quartumse/analysis/posthoc_benchmark.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">429</span>
-<span class="normal">430</span>
-<span class="normal">431</span>
-<span class="normal">432</span>
-<span class="normal">433</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">433</span>
 <span class="normal">434</span>
 <span class="normal">435</span>
 <span class="normal">436</span>
@@ -39464,8 +39466,12 @@ result = run_benchmark_suite(circuit, observables, config=config)</p>
 <span class="normal">491</span>
 <span class="normal">492</span>
 <span class="normal">493</span>
-<span class="normal">494</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_posthoc_benchmark_from_suite</span><span class="p">(</span>
-    <span class="n">posthoc_suite</span><span class="p">,</span>  <span class="c1"># ObservableSuite with suite_type=POSTHOC</span>
+<span class="normal">494</span>
+<span class="normal">495</span>
+<span class="normal">496</span>
+<span class="normal">497</span>
+<span class="normal">498</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_posthoc_benchmark_from_suite</span><span class="p">(</span>
+    <span class="n">posthoc_suite</span><span class="p">:</span> <span class="n">ObservableSuite</span><span class="p">,</span>
     <span class="n">n_rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
     <span class="n">observables_per_round</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">shadows_shots</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>

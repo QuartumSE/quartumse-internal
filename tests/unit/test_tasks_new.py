@@ -31,6 +31,7 @@ def make_row(
         backend_id="backend",
         noise_profile_id=noise_profile_id,
         replicate_id=replicate_id,
+        seed_policy="fixed",
         seed_protocol=1,
         seed_acquire=2,
         seed_bootstrap=3,

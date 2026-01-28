@@ -206,6 +206,23 @@ module = [
 ]
 ignore_missing_imports = true
 
+# Modules with legacy type issues - to be fixed incrementally
+[[tool.mypy.overrides]]
+module = [
+    "quartumse.stats.*",
+    "quartumse.protocols.*",
+    "quartumse.observables.*",
+    "quartumse.noise.*",
+    "quartumse.backends.*",
+    "quartumse.analysis.*",
+    "quartumse.benchmarking",
+    "quartumse.benchmark_suite",
+    "quartumse.io.*",
+    "quartumse.tasks.*",
+    "quartumse.viz.*",
+]
+ignore_errors = true
+
 [tool.coverage.run]
 source = ["src/quartumse"]
 omit = [

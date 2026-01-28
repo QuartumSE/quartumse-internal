@@ -13,8 +13,12 @@ This allows us to quantify the "option value" of shadows.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
 
 import numpy as np
+
+if TYPE_CHECKING:
+    from quartumse.observables.suites import ObservableSuite
 
 
 @dataclass
@@ -427,7 +431,7 @@ def format_posthoc_result(result: PosthocBenchmarkResult) -> str:
 
 
 def run_posthoc_benchmark_from_suite(
-    posthoc_suite,  # ObservableSuite with suite_type=POSTHOC
+    posthoc_suite: ObservableSuite,
     n_rounds: int = 5,
     observables_per_round: int | None = None,
     shadows_shots: int = 1000,

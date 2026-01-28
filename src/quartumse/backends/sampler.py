@@ -24,24 +24,24 @@ class SamplingResult:
     """Result from sampling a circuit.
 
     Attributes:
-        _counts: Internal counts dictionary (bitstring -> count).
+        counts_data: Internal counts dictionary (bitstring -> count).
         n_shots: Number of shots sampled.
         metadata: Additional metadata (backend, timing).
     """
 
-    _counts: dict[str, int]
+    counts_data: dict[str, int]
     n_shots: int
     metadata: dict[str, Any] = field(default_factory=dict)
 
     def counts(self) -> dict[str, int]:
         """Return counts dictionary."""
-        return self._counts.copy()
+        return self.counts_data.copy()
 
     @property
     def bitstrings(self) -> list[str]:
         """Lazily generate list of bitstrings from counts."""
         result = []
-        for bitstring, count in self._counts.items():
+        for bitstring, count in self.counts_data.items():
             result.extend([bitstring] * count)
         return result
 
@@ -107,7 +107,7 @@ class IdealSampler(Sampler):
         counts = result.get_counts()
 
         return SamplingResult(
-            _counts=counts,
+            counts_data=counts,
             n_shots=n_shots,
             metadata={"backend": "aer_statevector", "seed": seed},
         )
@@ -201,7 +201,7 @@ class NoisySampler(Sampler):
         counts = result.get_counts()
 
         return SamplingResult(
-            _counts=counts,
+            counts_data=counts,
             n_shots=n_shots,
             metadata={
                 "backend": "aer_noisy",
@@ -256,7 +256,7 @@ class StatevectorSampler(Sampler):
         }
 
         return SamplingResult(
-            _counts=counts,
+            counts_data=counts,
             n_shots=n_shots,
             metadata={"backend": "statevector_sampling", "seed": seed},
         )

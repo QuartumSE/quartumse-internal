@@ -24,20 +24,25 @@ class SamplingResult:
     """Result from sampling a circuit.
 
     Attributes:
-        bitstrings: List of measurement outcome bitstrings.
+        _counts: Internal counts dictionary (bitstring -> count).
         n_shots: Number of shots sampled.
         metadata: Additional metadata (backend, timing).
     """
 
-    bitstrings: list[str]
+    _counts: dict[str, int]
     n_shots: int
     metadata: dict[str, Any] = field(default_factory=dict)
 
     def counts(self) -> dict[str, int]:
-        """Convert to counts dictionary."""
-        result = {}
-        for bs in self.bitstrings:
-            result[bs] = result.get(bs, 0) + 1
+        """Return counts dictionary."""
+        return self._counts.copy()
+
+    @property
+    def bitstrings(self) -> list[str]:
+        """Lazily generate list of bitstrings from counts."""
+        result = []
+        for bitstring, count in self._counts.items():
+            result.extend([bitstring] * count)
         return result
 
 
@@ -101,17 +106,8 @@ class IdealSampler(Sampler):
         result = job.result()
         counts = result.get_counts()
 
-        # Convert counts to list of bitstrings
-        bitstrings = []
-        for bitstring, count in counts.items():
-            bitstrings.extend([bitstring] * count)
-
-        # Shuffle to avoid any ordering artifacts
-        rng = np.random.default_rng(seed)
-        rng.shuffle(bitstrings)
-
         return SamplingResult(
-            bitstrings=bitstrings,
+            _counts=counts,
             n_shots=n_shots,
             metadata={"backend": "aer_statevector", "seed": seed},
         )
@@ -204,16 +200,8 @@ class NoisySampler(Sampler):
         result = job.result()
         counts = result.get_counts()
 
-        # Convert counts to list of bitstrings
-        bitstrings = []
-        for bitstring, count in counts.items():
-            bitstrings.extend([bitstring] * count)
-
-        rng = np.random.default_rng(seed)
-        rng.shuffle(bitstrings)
-
         return SamplingResult(
-            bitstrings=bitstrings,
+            _counts=counts,
             n_shots=n_shots,
             metadata={
                 "backend": "aer_noisy",
@@ -260,11 +248,15 @@ class StatevectorSampler(Sampler):
         n_qubits = circuit.num_qubits
         outcomes = rng.choice(len(probs), size=n_shots, p=probs)
 
-        # Convert to bitstrings
-        bitstrings = [format(outcome, f"0{n_qubits}b") for outcome in outcomes]
+        # Use numpy to count outcomes directly (vectorized)
+        unique, counts_arr = np.unique(outcomes, return_counts=True)
+        counts = {
+            format(outcome, f"0{n_qubits}b"): int(count)
+            for outcome, count in zip(unique, counts_arr)
+        }
 
         return SamplingResult(
-            bitstrings=bitstrings,
+            _counts=counts,
             n_shots=n_shots,
             metadata={"backend": "statevector_sampling", "seed": seed},
         )

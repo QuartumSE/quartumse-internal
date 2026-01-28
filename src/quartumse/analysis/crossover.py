@@ -32,6 +32,7 @@ class ObservableCrossover:
         fit_a: Power-law fit for protocol A
         fit_b: Power-law fit for protocol B
     """
+
     observable_id: str
     pauli_string: str | None
     locality: int
@@ -65,6 +66,7 @@ class CrossoverAnalysis:
         per_observable: Per-observable crossover results
         summary: Aggregate summary statistics
     """
+
     protocol_a: str
     protocol_b: str
     metric: str
@@ -155,6 +157,7 @@ class CrossoverAnalysis:
     def to_dataframe(self):
         """Convert to pandas DataFrame for easy viewing."""
         import pandas as pd
+
         return pd.DataFrame([o.to_dict() for o in self.per_observable])
 
 
@@ -205,7 +208,7 @@ def per_observable_crossover(
     # Get Pauli strings from results
     pauli_strings = {}
     for row in results_a + results_b:
-        if hasattr(row, 'pauli_string') and row.pauli_string:
+        if hasattr(row, "pauli_string") and row.pauli_string:
             pauli_strings[row.observable_id] = row.pauli_string
 
     common_obs = set(grouped_a.keys()) & set(grouped_b.keys())
@@ -225,8 +228,7 @@ def per_observable_crossover(
         mean_b = {n: np.mean(data_b[n]) for n in common_ns}
 
         # Compute SE ratio
-        se_ratio = {n: mean_a[n] / mean_b[n] if mean_b[n] > 0 else float('inf')
-                    for n in common_ns}
+        se_ratio = {n: mean_a[n] / mean_b[n] if mean_b[n] > 0 else float("inf") for n in common_ns}
 
         # Determine crossover
         a_better_at = [n for n in common_ns if mean_a[n] < mean_b[n]]
@@ -246,8 +248,8 @@ def per_observable_crossover(
                 if mean_a[n1] >= mean_b[n1] and mean_a[n2] < mean_b[n2]:
                     if interpolate:
                         # Linear interpolation
-                        ratio1 = mean_a[n1] / mean_b[n1] if mean_b[n1] > 0 else float('inf')
-                        ratio2 = mean_a[n2] / mean_b[n2] if mean_b[n2] > 0 else float('inf')
+                        ratio1 = mean_a[n1] / mean_b[n1] if mean_b[n1] > 0 else float("inf")
+                        ratio2 = mean_a[n2] / mean_b[n2] if mean_b[n2] > 0 else float("inf")
                         denom = ratio2 - ratio1
                         # Check for valid interpolation (finite denominator, not too small)
                         if np.isfinite(ratio1) and np.isfinite(ratio2) and abs(denom) > 1e-12:
@@ -262,7 +264,7 @@ def per_observable_crossover(
 
         # Get Pauli string and locality
         pauli = pauli_strings.get(obs_id, None)
-        locality = sum(1 for c in pauli if c != 'I') if pauli else 0
+        locality = sum(1 for c in pauli if c != "I") if pauli else 0
 
         # Fit power laws if interpolating
         fit_a = None
@@ -271,17 +273,19 @@ def per_observable_crossover(
             fit_a = fit_power_law(common_ns, [mean_a[n] for n in common_ns])
             fit_b = fit_power_law(common_ns, [mean_b[n] for n in common_ns])
 
-        per_obs_results.append(ObservableCrossover(
-            observable_id=obs_id,
-            pauli_string=pauli,
-            locality=locality,
-            crossover_n=crossover_n,
-            a_always_better=a_always_better,
-            b_always_better=b_always_better,
-            se_ratio_by_n=se_ratio,
-            fit_a=fit_a,
-            fit_b=fit_b,
-        ))
+        per_obs_results.append(
+            ObservableCrossover(
+                observable_id=obs_id,
+                pauli_string=pauli,
+                locality=locality,
+                crossover_n=crossover_n,
+                a_always_better=a_always_better,
+                b_always_better=b_always_better,
+                se_ratio_by_n=se_ratio,
+                fit_a=fit_a,
+                fit_b=fit_b,
+            )
+        )
 
     return CrossoverAnalysis(
         protocol_a=protocol_a,

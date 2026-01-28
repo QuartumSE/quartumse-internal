@@ -38,44 +38,30 @@ class LongFormRow(BaseModel):
 
     # === Identifiers ===
     run_id: str = Field(description="Unique identifier for this benchmark run")
-    methodology_version: str = Field(
-        description="Version of the Measurements Bible methodology"
-    )
+    methodology_version: str = Field(description="Version of the Measurements Bible methodology")
     circuit_id: str = Field(description="Identifier for the circuit instance")
     observable_set_id: str = Field(description="Identifier for the observable set")
     observable_id: str = Field(description="Identifier for this specific observable")
     protocol_id: str = Field(description="Protocol identifier")
     protocol_version: str = Field(description="Protocol version")
     backend_id: str = Field(description="Backend identifier")
-    noise_profile_id: str = Field(
-        default="ideal", description="Noise profile identifier"
-    )
+    noise_profile_id: str = Field(default="ideal", description="Noise profile identifier")
     replicate_id: int = Field(description="Replicate number (0-indexed)")
 
     # === Seeds ===
     seed_policy: str = Field(description="Policy used to derive run seeds")
     seed_protocol: int = Field(description="Seed for protocol planning randomness")
     seed_acquire: int = Field(description="Seed for measurement sampling")
-    seed_bootstrap: int | None = Field(
-        default=None, description="Seed for bootstrap CI (if used)"
-    )
+    seed_bootstrap: int | None = Field(default=None, description="Seed for bootstrap CI (if used)")
 
     # === Problem descriptors ===
     n_qubits: int = Field(description="Number of qubits in the circuit")
-    circuit_depth: int | None = Field(
-        default=None, description="Circuit depth (if meaningful)"
-    )
-    twoq_gate_count: int | None = Field(
-        default=None, description="Number of 2-qubit gates"
-    )
-    observable_type: str = Field(
-        description="Observable type: pauli_string, pauli_sum, matrix"
-    )
+    circuit_depth: int | None = Field(default=None, description="Circuit depth (if meaningful)")
+    twoq_gate_count: int | None = Field(default=None, description="Number of 2-qubit gates")
+    observable_type: str = Field(description="Observable type: pauli_string, pauli_sum, matrix")
     locality: int = Field(description="Pauli weight / locality")
     coefficient: float = Field(default=1.0, description="Observable coefficient")
-    group_id: str | None = Field(
-        default=None, description="Commuting group ID (if grouped)"
-    )
+    group_id: str | None = Field(default=None, description="Commuting group ID (if grouped)")
     M_total: int = Field(description="Total number of observables in the set")
 
     # === Budget and resources ===
@@ -91,67 +77,39 @@ class LongFormRow(BaseModel):
 
     # === Cost (optional) ===
     cost_model_id: str | None = Field(default=None, description="Cost model identifier")
-    cost_usd_estimate: float | None = Field(
-        default=None, description="Estimated cost in USD"
-    )
+    cost_usd_estimate: float | None = Field(default=None, description="Estimated cost in USD")
 
     # === Hardware-specific (optional) ===
     job_status: JobStatus | None = Field(default=None, description="Job execution status")
     queue_time_s: float | None = Field(default=None, description="Queue time in seconds")
-    job_submitted_at: datetime | None = Field(
-        default=None, description="Job submission timestamp"
-    )
-    job_started_at: datetime | None = Field(
-        default=None, description="Job start timestamp"
-    )
-    job_completed_at: datetime | None = Field(
-        default=None, description="Job completion timestamp"
-    )
+    job_submitted_at: datetime | None = Field(default=None, description="Job submission timestamp")
+    job_started_at: datetime | None = Field(default=None, description="Job start timestamp")
+    job_completed_at: datetime | None = Field(default=None, description="Job completion timestamp")
 
     # === Estimation results ===
     estimate: float = Field(description="Point estimate of expectation value")
     se: float = Field(description="Standard error of the estimate")
-    ci_low_raw: float | None = Field(
-        default=None, description="CI lower bound (before clamping)"
-    )
-    ci_high_raw: float | None = Field(
-        default=None, description="CI upper bound (before clamping)"
-    )
-    ci_low: float | None = Field(
-        default=None, description="CI lower bound (after clamping)"
-    )
-    ci_high: float | None = Field(
-        default=None, description="CI upper bound (after clamping)"
-    )
+    ci_low_raw: float | None = Field(default=None, description="CI lower bound (before clamping)")
+    ci_high_raw: float | None = Field(default=None, description="CI upper bound (before clamping)")
+    ci_low: float | None = Field(default=None, description="CI lower bound (after clamping)")
+    ci_high: float | None = Field(default=None, description="CI upper bound (after clamping)")
     ci_method_id: str | None = Field(default=None, description="CI construction method")
-    confidence_level: float = Field(
-        default=0.95, description="Confidence level for CI"
-    )
+    confidence_level: float = Field(default=0.95, description="Confidence level for CI")
 
     # === Truth (if available) ===
-    truth_value: float | None = Field(
-        default=None, description="Ground truth expectation value"
-    )
-    truth_se: float | None = Field(
-        default=None, description="SE of truth (if reference truth)"
-    )
+    truth_value: float | None = Field(default=None, description="Ground truth expectation value")
+    truth_se: float | None = Field(default=None, description="SE of truth (if reference truth)")
     truth_mode: str | None = Field(
         default=None,
         description="Truth mode: exact_statevector, exact_density_matrix, reference",
     )
 
     # === Derived metrics ===
-    abs_err: float | None = Field(
-        default=None, description="Absolute error |estimate - truth|"
-    )
-    sq_err: float | None = Field(
-        default=None, description="Squared error (estimate - truth)^2"
-    )
+    abs_err: float | None = Field(default=None, description="Absolute error |estimate - truth|")
+    sq_err: float | None = Field(default=None, description="Squared error (estimate - truth)^2")
 
     # === Additional metadata ===
-    metadata: dict[str, Any] = Field(
-        default_factory=dict, description="Additional metadata"
-    )
+    metadata: dict[str, Any] = Field(default_factory=dict, description="Additional metadata")
 
     def compute_derived_metrics(self) -> None:
         """Compute derived metrics from truth if available."""
@@ -228,42 +186,28 @@ class TaskResult(BaseModel):
 
     # === Task parameters ===
     epsilon: float | None = Field(default=None, description="Target precision")
-    delta: float | None = Field(
-        default=None, description="Global failure probability"
-    )
+    delta: float | None = Field(default=None, description="Global failure probability")
     fwer_method: str | None = Field(
         default=None, description="FWER control method (e.g., 'bonferroni')"
     )
 
     # === Primary outputs ===
-    N_star: int | None = Field(
-        default=None, description="Shots-to-target (minimal N)"
-    )
-    ssf: float | None = Field(
-        default=None, description="Shot-savings factor vs baseline"
-    )
-    baseline_protocol_id: str | None = Field(
-        default=None, description="Baseline protocol for SSF"
-    )
+    N_star: int | None = Field(default=None, description="Shots-to-target (minimal N)")
+    ssf: float | None = Field(default=None, description="Shot-savings factor vs baseline")
+    baseline_protocol_id: str | None = Field(default=None, description="Baseline protocol for SSF")
 
     # === Task-specific outputs ===
     worst_observable_id: str | None = Field(
         default=None, description="Observable with worst metric"
     )
-    crossover_N: int | None = Field(
-        default=None, description="Crossover shot count (Task 4)"
-    )
+    crossover_N: int | None = Field(default=None, description="Crossover shot count (Task 4)")
     selection_accuracy: float | None = Field(
         default=None, description="Pilot selection accuracy (Task 5)"
     )
-    regret: float | None = Field(
-        default=None, description="Regret vs oracle (Task 5)"
-    )
+    regret: float | None = Field(default=None, description="Regret vs oracle (Task 5)")
 
     # === Additional outputs ===
-    outputs: dict[str, Any] = Field(
-        default_factory=dict, description="Task-specific outputs"
-    )
+    outputs: dict[str, Any] = Field(default_factory=dict, description="Task-specific outputs")
 
 
 class RunManifest(BaseModel):

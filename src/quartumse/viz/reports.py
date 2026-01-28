@@ -331,12 +331,14 @@ class ReportBuilder:
         """Add task results section."""
         rows = []
         for result in task_results:
-            rows.append([
-                result.task_id,
-                result.protocol_id,
-                result.N_star or "N/A",
-                f"{result.ssf:.2f}×" if result.ssf else "N/A",
-            ])
+            rows.append(
+                [
+                    result.task_id,
+                    result.protocol_id,
+                    result.N_star or "N/A",
+                    f"{result.ssf:.2f}×" if result.ssf else "N/A",
+                ]
+            )
 
         section = ReportSection(
             title="Task Results",

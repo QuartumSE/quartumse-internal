@@ -20,6 +20,7 @@ import numpy as np
 @dataclass
 class QueryRound:
     """A single round of observable queries."""
+
     round_id: int
     observable_ids: list[str]
     n_observables: int = 0
@@ -31,6 +32,7 @@ class QueryRound:
 @dataclass
 class PosthocCostAccounting:
     """Cost accounting for a single protocol in post-hoc mode."""
+
     protocol_id: str
 
     # Per-round costs
@@ -263,7 +265,9 @@ def simulate_posthoc_benchmark(
             shadows.cumulative_shots.append(shadows.shots_per_round[0])
             shadows.cumulative_observables_answered.append(qr.n_observables)
         else:
-            shadows.cumulative_shots.append(shadows.cumulative_shots[-1] + shadows.shots_per_round[i])
+            shadows.cumulative_shots.append(
+                shadows.cumulative_shots[-1] + shadows.shots_per_round[i]
+            )
             shadows.cumulative_observables_answered.append(
                 shadows.cumulative_observables_answered[-1] + qr.n_observables
             )
@@ -322,13 +326,13 @@ def simulate_posthoc_benchmark(
     shadows_total = shadows.cumulative_shots[-1] if shadows.cumulative_shots else 0
     direct_total = direct.cumulative_shots[-1] if direct.cumulative_shots else 0
 
-    savings = direct_total / shadows_total if shadows_total > 0 else float('inf')
+    savings = direct_total / shadows_total if shadows_total > 0 else float("inf")
 
     # Find break-even round (where shadows becomes cheaper cumulatively)
     breakeven_round = None
     breakeven_obs = None
     for i in range(n_rounds):
-        if (shadows.cumulative_shots[i] < direct.cumulative_shots[i]):
+        if shadows.cumulative_shots[i] < direct.cumulative_shots[i]:
             breakeven_round = i
             breakeven_obs = shadows.cumulative_observables_answered[i]
             break
@@ -336,10 +340,10 @@ def simulate_posthoc_benchmark(
     # Compute coverage at various fixed budgets
     budget_points = [
         shadows_total // 2,  # Half shadows cost
-        shadows_total,        # Full shadows cost
-        shadows_total * 2,    # 2x shadows cost
-        direct_total // 2,    # Half direct cost
-        direct_total,         # Full direct cost
+        shadows_total,  # Full shadows cost
+        shadows_total * 2,  # 2x shadows cost
+        direct_total // 2,  # Half direct cost
+        direct_total,  # Full direct cost
     ]
     # Remove duplicates and sort
     budget_points = sorted({b for b in budget_points if b > 0})
@@ -398,7 +402,9 @@ def format_posthoc_result(result: PosthocBenchmarkResult) -> str:
 
     if result.breakeven_round is not None:
         lines.append("\nBreak-even point:")
-        lines.append(f"  Round {result.breakeven_round} ({result.breakeven_observables} observables)")
+        lines.append(
+            f"  Round {result.breakeven_round} ({result.breakeven_observables} observables)"
+        )
         lines.append("  After this, shadows has lower cumulative quantum cost")
     else:
         lines.append("\nNo break-even: Direct is always cheaper (fully commuting observables?)")
@@ -406,7 +412,9 @@ def format_posthoc_result(result: PosthocBenchmarkResult) -> str:
     # Coverage at fixed budgets
     if result.coverage_at_budgets:
         lines.append("\nCOVERAGE AT FIXED SHOT BUDGETS:")
-        lines.append(f"{'Budget':>12} {'Shadows':>12} {'Direct':>12} {'Shadows %':>12} {'Direct %':>12}")
+        lines.append(
+            f"{'Budget':>12} {'Shadows':>12} {'Direct':>12} {'Shadows %':>12} {'Direct %':>12}"
+        )
         lines.append("-" * 65)
         for cov in result.coverage_at_budgets:
             lines.append(

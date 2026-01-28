@@ -35,8 +35,7 @@ def _check_matplotlib() -> None:
     """Check if matplotlib is available."""
     if not HAS_MATPLOTLIB:
         raise ImportError(
-            "Visualization requires matplotlib. "
-            "Install with: pip install matplotlib"
+            "Visualization requires matplotlib. " "Install with: pip install matplotlib"
         )
 
 
@@ -143,10 +142,7 @@ def plot_ssf_comparison(
 
     protocols = list(ssf_data.keys())
     ssfs = list(ssf_data.values())
-    colors = [
-        config.palette[0] if ssf >= 1 else config.palette[3]
-        for ssf in ssfs
-    ]
+    colors = [config.palette[0] if ssf >= 1 else config.palette[3] for ssf in ssfs]
 
     bars = ax.bar(protocols, ssfs, color=colors, edgecolor="black")
     ax.axhline(y=1.0, color="gray", linestyle="--", linewidth=2, label=f"Baseline ({baseline_id})")

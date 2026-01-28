@@ -31,6 +31,7 @@ class PilotFractionResult:
         protocol_selections: Counter of which protocols were selected
         per_replicate: Detailed results per replicate
     """
+
     pilot_fraction: float
     pilot_n: int
     target_n: int
@@ -63,6 +64,7 @@ class MultiPilotAnalysis:
         optimal_fraction: Fraction with best accuracy-cost tradeoff
         summary: Summary statistics
     """
+
     target_n: int
     fractions: list[float]
     results: dict[float, PilotFractionResult]
@@ -81,15 +83,18 @@ class MultiPilotAnalysis:
     def to_dataframe(self):
         """Convert to pandas DataFrame for easy viewing."""
         import pandas as pd
+
         rows = []
         for frac, result in sorted(self.results.items()):
-            rows.append({
-                "pilot_fraction": frac,
-                "pilot_n": result.pilot_n,
-                "selection_accuracy": result.selection_accuracy,
-                "mean_regret": result.mean_regret,
-                "max_regret": result.max_regret,
-            })
+            rows.append(
+                {
+                    "pilot_fraction": frac,
+                    "pilot_n": result.pilot_n,
+                    "selection_accuracy": result.selection_accuracy,
+                    "mean_regret": result.mean_regret,
+                    "max_regret": result.max_regret,
+                }
+            )
         return pd.DataFrame(rows)
 
 
@@ -99,7 +104,7 @@ def _compute_quality(
 ) -> float:
     """Compute quality metric from rows."""
     if not rows:
-        return float('inf')
+        return float("inf")
 
     se_values = [r.se for r in rows]
 
@@ -179,7 +184,9 @@ def multi_pilot_analysis(
 
             for protocol_id, rows in by_protocol.items():
                 pilot_rows = [r for r in rows if r.N_total == pilot_n and r.replicate_id == rep_id]
-                target_rows = [r for r in rows if r.N_total == target_n and r.replicate_id == rep_id]
+                target_rows = [
+                    r for r in rows if r.N_total == target_n and r.replicate_id == rep_id
+                ]
 
                 pilot_quality[protocol_id] = _compute_quality(pilot_rows, metric)
                 target_quality[protocol_id] = _compute_quality(target_rows, metric)
@@ -197,15 +204,17 @@ def multi_pilot_analysis(
             # Compute regret
             regret = target_quality[selected] - target_quality[oracle]
 
-            selection_results.append({
-                "replicate_id": rep_id,
-                "selected": selected,
-                "oracle": oracle,
-                "correct": selected == oracle,
-                "regret": regret,
-                "pilot_quality": pilot_quality,
-                "target_quality": target_quality,
-            })
+            selection_results.append(
+                {
+                    "replicate_id": rep_id,
+                    "selected": selected,
+                    "oracle": oracle,
+                    "correct": selected == oracle,
+                    "regret": regret,
+                    "pilot_quality": pilot_quality,
+                    "target_quality": target_quality,
+                }
+            )
 
         if not selection_results:
             continue
@@ -235,7 +244,7 @@ def multi_pilot_analysis(
     summary = {
         "n_protocols": len(protocols),
         "protocols": protocols,
-        "n_replicates": len(replicate_ids) if 'replicate_ids' in dir() else 0,
+        "n_replicates": len(replicate_ids) if "replicate_ids" in dir() else 0,
         "accuracy_by_fraction": {f: r.selection_accuracy for f, r in results.items()},
         "regret_by_fraction": {f: r.mean_regret for f, r in results.items()},
     }
@@ -272,13 +281,15 @@ def pilot_cost_benefit(
         # Net benefit: accuracy - pilot cost
         net_benefit = expected_benefit - pilot_cost_frac
 
-        rows.append({
-            "pilot_fraction": frac,
-            "pilot_cost": pilot_cost_frac,
-            "selection_accuracy": result.selection_accuracy,
-            "mean_regret": result.mean_regret,
-            "net_benefit": net_benefit,
-        })
+        rows.append(
+            {
+                "pilot_fraction": frac,
+                "pilot_cost": pilot_cost_frac,
+                "selection_accuracy": result.selection_accuracy,
+                "mean_regret": result.mean_regret,
+                "net_benefit": net_benefit,
+            }
+        )
 
     # Find breakeven point
     breakeven = None
@@ -290,5 +301,7 @@ def pilot_cost_benefit(
     return {
         "analysis": rows,
         "breakeven_fraction": breakeven,
-        "best_fraction": max(rows, key=lambda x: x["net_benefit"])["pilot_fraction"] if rows else None,
+        "best_fraction": (
+            max(rows, key=lambda x: x["net_benefit"])["pilot_fraction"] if rows else None
+        ),
     }

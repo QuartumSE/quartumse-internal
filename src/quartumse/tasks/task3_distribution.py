@@ -61,8 +61,7 @@ class DistributionStats:
         """Compute statistics from a list of values."""
         if not values:
             return cls(
-                mean=0, median=0, std=0, min=0, max=0,
-                p10=0, p25=0, p75=0, p90=0, p95=0, p99=0
+                mean=0, median=0, std=0, min=0, max=0, p10=0, p25=0, p75=0, p90=0, p95=0, p99=0
             )
 
         arr = np.array(values)
@@ -171,8 +170,7 @@ class FixedBudgetDistributionTask(BenchmarkTask):
                 "epsilon_grid", [0.001, 0.005, 0.01, 0.02, 0.05, 0.1]
             )
             attainment_curves[n] = {
-                eps: compute_attainment(rows, eps, use_se=True)
-                for eps in epsilon_grid
+                eps: compute_attainment(rows, eps, use_se=True) for eps in epsilon_grid
             }
 
             # CDF data (for plotting)
@@ -267,6 +265,7 @@ class FixedBudgetDistributionTask(BenchmarkTask):
 
             # Kolmogorov-Smirnov test for distribution difference
             from scipy import stats
+
             ks_stat, ks_pvalue = stats.ks_2samp(se_a, se_b)
 
             comparison[n] = {
@@ -275,7 +274,10 @@ class FixedBudgetDistributionTask(BenchmarkTask):
                 "relative_improvement": improvement,
                 "ks_statistic": ks_stat,
                 "ks_pvalue": ks_pvalue,
-                "a_better_fraction": sum(1 for a, b in zip(sorted(se_a), sorted(se_b), strict=False) if a < b) / min(len(se_a), len(se_b)),
+                "a_better_fraction": sum(
+                    1 for a, b in zip(sorted(se_a), sorted(se_b), strict=False) if a < b
+                )
+                / min(len(se_a), len(se_b)),
             }
 
         return comparison

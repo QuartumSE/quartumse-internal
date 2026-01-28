@@ -159,8 +159,7 @@ class TestShadowsV1Protocol:
     def test_initialization_with_confusion_matrices(self):
         """Test ShadowsV1Protocol with confusion matrices."""
         # Mock 2x2 confusion matrices for 2 qubits
-        cm = np.array([[[0.99, 0.01], [0.01, 0.99]],
-                       [[0.98, 0.02], [0.02, 0.98]]])
+        cm = np.array([[[0.99, 0.01], [0.01, 0.99]], [[0.98, 0.02], [0.02, 0.98]]])
         protocol = ShadowsV1Protocol(confusion_matrices=cm)
         assert protocol.confusion_matrices is not None
         assert protocol.confusion_matrices.shape == (2, 2, 2)
@@ -218,11 +217,15 @@ class TestProtocolIntegration:
         protocol = ShadowsV0Protocol()
 
         # Run with small budget
-        est_small = protocol.run(ghz_circuit_3q, obs_set, total_budget=100, backend=backend, seed=42)
+        est_small = protocol.run(
+            ghz_circuit_3q, obs_set, total_budget=100, backend=backend, seed=42
+        )
         se_small = est_small.estimates[0].se
 
         # Run with larger budget
-        est_large = protocol.run(ghz_circuit_3q, obs_set, total_budget=500, backend=backend, seed=43)
+        est_large = protocol.run(
+            ghz_circuit_3q, obs_set, total_budget=500, backend=backend, seed=43
+        )
         se_large = est_large.estimates[0].se
 
         # SE should decrease with more shots (approximately sqrt(N) scaling)

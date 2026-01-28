@@ -50,7 +50,7 @@ def get_quartumse_version() -> str | None:
     for line in init_path.read_text(encoding="utf-8").splitlines():
         if line.startswith("__version__"):
             _, raw_value = line.split("=", 1)
-            return raw_value.strip().strip("\"").strip("'")
+            return raw_value.strip().strip('"').strip("'")
 
     return None
 

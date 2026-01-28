@@ -33,6 +33,7 @@ class LocalityGroup:
         max_se: Maximum SE
         theoretical_variance_factor: 3^locality for shadows
     """
+
     locality: int
     n_observables: int
     observable_ids: list[str]
@@ -67,6 +68,7 @@ class PropertyAnalysis:
         locality_correlation: Correlation between locality and SE
         locality_regression: Linear regression coefficients
     """
+
     protocol_id: str
     n_total: int
     by_locality: dict[int, LocalityGroup]
@@ -85,6 +87,7 @@ class PropertyAnalysis:
     def to_dataframe(self):
         """Convert to pandas DataFrame."""
         import pandas as pd
+
         rows = []
         for _loc, group in sorted(self.by_locality.items()):
             row = group.to_dict()
@@ -94,7 +97,7 @@ class PropertyAnalysis:
 
 def _get_pauli_weight(pauli_string: str) -> int:
     """Compute Pauli weight (number of non-identity operators)."""
-    return sum(1 for c in pauli_string if c != 'I')
+    return sum(1 for c in pauli_string if c != "I")
 
 
 def _extract_locality_from_rows(rows: list[LongFormRow]) -> dict[str, int]:
@@ -103,7 +106,7 @@ def _extract_locality_from_rows(rows: list[LongFormRow]) -> dict[str, int]:
     for row in rows:
         if row.observable_id not in locality_map:
             # Try to get from pauli_string if available
-            if hasattr(row, 'pauli_string') and row.pauli_string:
+            if hasattr(row, "pauli_string") and row.pauli_string:
                 locality_map[row.observable_id] = _get_pauli_weight(row.pauli_string)
             else:
                 # Default to 0 if unknown
@@ -174,7 +177,7 @@ def analyze_by_locality(
                 std_se=float(np.std(se_values)) if len(se_values) > 1 else 0.0,
                 min_se=float(np.min(se_values)),
                 max_se=float(np.max(se_values)),
-                theoretical_variance_factor=3 ** locality,
+                theoretical_variance_factor=3**locality,
             )
 
             # Collect for correlation
@@ -197,7 +200,7 @@ def analyze_by_locality(
             regression = {
                 "intercept": float(a),
                 "slope": float(b),
-                "r_squared": correlation ** 2,
+                "r_squared": correlation**2,
             }
         else:
             correlation = 0.0
@@ -301,17 +304,19 @@ def compare_locality_performance(
         group_a = analysis_a.by_locality[loc]
         group_b = analysis_b.by_locality[loc]
 
-        ratio = group_a.mean_se / group_b.mean_se if group_b.mean_se > 0 else float('inf')
+        ratio = group_a.mean_se / group_b.mean_se if group_b.mean_se > 0 else float("inf")
         winner = analysis_a.protocol_id if ratio < 1 else analysis_b.protocol_id
 
-        comparison.append({
-            "locality": loc,
-            "variance_factor": 3 ** loc,
-            "se_a": group_a.mean_se,
-            "se_b": group_b.mean_se,
-            "ratio_a_over_b": ratio,
-            "winner": winner,
-        })
+        comparison.append(
+            {
+                "locality": loc,
+                "variance_factor": 3**loc,
+                "se_a": group_a.mean_se,
+                "se_b": group_b.mean_se,
+                "ratio_a_over_b": ratio,
+                "winner": winner,
+            }
+        )
 
     # Summary
     a_wins = sum(1 for c in comparison if c["winner"] == analysis_a.protocol_id)
@@ -324,8 +329,11 @@ def compare_locality_performance(
         "a_wins_localities": a_wins,
         "b_wins_localities": b_wins,
         "crossover_locality": next(
-            (c["locality"] for i, c in enumerate(comparison[1:], 1)
-             if comparison[i-1]["winner"] != c["winner"]),
-            None
+            (
+                c["locality"]
+                for i, c in enumerate(comparison[1:], 1)
+                if comparison[i - 1]["winner"] != c["winner"]
+            ),
+            None,
         ),
     }

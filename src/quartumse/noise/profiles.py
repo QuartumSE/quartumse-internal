@@ -160,8 +160,7 @@ def get_profile(profile_id: str) -> NoiseProfile:
     """
     if profile_id not in CANONICAL_PROFILES:
         raise KeyError(
-            f"Unknown noise profile: {profile_id}. "
-            f"Available: {list(CANONICAL_PROFILES.keys())}"
+            f"Unknown noise profile: {profile_id}. " f"Available: {list(CANONICAL_PROFILES.keys())}"
         )
     return CANONICAL_PROFILES[profile_id]
 

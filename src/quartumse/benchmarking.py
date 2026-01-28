@@ -379,6 +379,7 @@ def _build_plot_summary(
 # Publication-Grade Benchmarking with Ground Truth
 # =============================================================================
 
+
 def run_publication_benchmark(
     circuit: Any,
     observable_set: ObservableSet,
@@ -453,6 +454,7 @@ def run_publication_benchmark(
         # Try to add shadows protocol if available
         try:
             from .protocols.shadows import ShadowsV0Protocol
+
             protocols.append(ShadowsV0Protocol())
         except ImportError:
             pass
@@ -548,7 +550,8 @@ def run_publication_benchmark(
                         )
                         .with_protocol(
                             protocol_id=estimates.protocol_id or protocol.protocol_id,
-                            protocol_version=estimates.protocol_version or protocol.protocol_version,
+                            protocol_version=estimates.protocol_version
+                            or protocol.protocol_version,
                         )
                         .with_backend(backend_id, noise_profile_id="ideal")
                         .with_replicate(rep)
@@ -674,7 +677,8 @@ def run_publication_benchmark(
     protocol_summaries = {}
     for protocol in protocol_instances:
         protocol_rows = [
-            r for r in long_form_rows
+            r
+            for r in long_form_rows
             if r.protocol_id == protocol.protocol_id and r.N_total == max_n
         ]
         if protocol_rows:
@@ -712,15 +716,20 @@ def run_publication_benchmark(
         if ground_truth:
             truth_path = output_path / "ground_truth.json"
             with open(truth_path, "w") as f:
-                json.dump({
-                    "truth_values": ground_truth.truth_values,
-                    "truth_mode": ground_truth.truth_mode,
-                    "n_qubits": ground_truth.n_qubits,
-                    "circuit_id": ground_truth.circuit_id,
-                }, f, indent=2)
+                json.dump(
+                    {
+                        "truth_values": ground_truth.truth_values,
+                        "truth_mode": ground_truth.truth_mode,
+                        "n_qubits": ground_truth.n_qubits,
+                        "circuit_id": ground_truth.circuit_id,
+                    },
+                    f,
+                    indent=2,
+                )
 
         summary_json_path = output_path / "summary.json"
         with open(summary_json_path, "w") as f:
+
             def convert(obj):
                 if isinstance(obj, np.ndarray):
                     return obj.tolist()
@@ -732,10 +741,7 @@ def run_publication_benchmark(
 
             json.dump(summary, f, indent=2, default=convert)
 
-        task_results_payload = [
-            output.to_task_result(run_id)
-            for output in task_results.values()
-        ]
+        task_results_payload = [output.to_task_result(run_id) for output in task_results.values()]
         task_results_path = None
         if task_results_payload:
             task_results_path = writer.write_task_results(task_results_payload)

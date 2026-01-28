@@ -114,9 +114,11 @@ class TaskOutput:
             baseline_protocol_id=self.baseline_protocol_id,
             worst_observable_id=self.worst_observable_id,
             crossover_N=self.crossover_n,
-            selection_accuracy=self.selection_accuracy
-            if self.selection_accuracy is not None
-            else self.metrics.get("selection_accuracy"),
+            selection_accuracy=(
+                self.selection_accuracy
+                if self.selection_accuracy is not None
+                else self.metrics.get("selection_accuracy")
+            ),
             regret=self.regret if self.regret is not None else self.metrics.get("regret"),
             outputs={
                 "metrics": self.metrics,

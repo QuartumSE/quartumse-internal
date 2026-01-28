@@ -139,9 +139,7 @@ class CalibrationData:
             "t2_times": self.t2_times,
             "readout_errors": self.readout_errors,
             "gate_errors_1q": self.gate_errors_1q,
-            "gate_errors_2q": {
-                f"{q1}-{q2}": e for (q1, q2), e in self.gate_errors_2q.items()
-            },
+            "gate_errors_2q": {f"{q1}-{q2}": e for (q1, q2), e in self.gate_errors_2q.items()},
             "coupling_map": self.coupling_map,
             "metadata": self.metadata,
         }
@@ -310,8 +308,12 @@ class HardwareSession:
             "total_execution_time_s": self.total_execution_time_s,
             "drift_detected": self.drift_detected,
             "exceeds_max_duration": self.exceeds_max_duration,
-            "calibration_before": self.calibration_before.to_dict() if self.calibration_before else None,
-            "calibration_after": self.calibration_after.to_dict() if self.calibration_after else None,
+            "calibration_before": (
+                self.calibration_before.to_dict() if self.calibration_before else None
+            ),
+            "calibration_after": (
+                self.calibration_after.to_dict() if self.calibration_after else None
+            ),
             "jobs": [j.to_dict() for j in self.jobs],
         }
 

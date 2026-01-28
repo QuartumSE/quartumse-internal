@@ -42,6 +42,7 @@ from .statistical_tests import StatisticalComparison, compare_protocols_statisti
 @dataclass
 class TaskAnalysis:
     """Analysis for a single task with enhancements."""
+
     task_id: str
     task_type: str
     base_results: dict[str, Any]
@@ -66,6 +67,7 @@ class ComprehensiveBenchmarkAnalysis:
         interpolated_n_star: N* estimates via power-law interpolation
         summary: Executive summary
     """
+
     run_id: str
     protocols: list[str]
     n_observables: int
@@ -85,13 +87,22 @@ class ComprehensiveBenchmarkAnalysis:
             "protocols": self.protocols,
             "n_observables": self.n_observables,
             "n_shots_grid": self.n_shots_grid,
-            "task_analyses": {k: {"task_id": v.task_id, "task_type": v.task_type,
-                                  "base_results": v.base_results,
-                                  "enhanced_results": v.enhanced_results}
-                              for k, v in self.task_analyses.items()},
-            "crossover_analysis": self.crossover_analysis.summary if self.crossover_analysis else None,
+            "task_analyses": {
+                k: {
+                    "task_id": v.task_id,
+                    "task_type": v.task_type,
+                    "base_results": v.base_results,
+                    "enhanced_results": v.enhanced_results,
+                }
+                for k, v in self.task_analyses.items()
+            },
+            "crossover_analysis": (
+                self.crossover_analysis.summary if self.crossover_analysis else None
+            ),
             "locality_analysis": self.locality_analysis,
-            "statistical_comparison": {n: c.to_dict() for n, c in self.statistical_comparison.items()},
+            "statistical_comparison": {
+                n: c.to_dict() for n, c in self.statistical_comparison.items()
+            },
             "cost_analysis": self.cost_analysis,
             "pilot_analysis": self.pilot_analysis.to_dict() if self.pilot_analysis else None,
             "interpolated_n_star": self.interpolated_n_star,
@@ -101,7 +112,7 @@ class ComprehensiveBenchmarkAnalysis:
     def save(self, path: str | Path) -> None:
         """Save analysis to JSON file."""
         path = Path(path)
-        with open(path, 'w') as f:
+        with open(path, "w") as f:
             json.dump(self.to_dict(), f, indent=2, default=str)
 
     def generate_report(self) -> str:
@@ -119,21 +130,25 @@ class ComprehensiveBenchmarkAnalysis:
         ]
 
         # Executive Summary
-        lines.extend([
-            "## Executive Summary",
-            "",
-        ])
+        lines.extend(
+            [
+                "## Executive Summary",
+                "",
+            ]
+        )
         for key, value in self.summary.items():
             lines.append(f"- **{key}:** {value}")
         lines.append("")
 
         # Task Results
-        lines.extend([
-            "---",
-            "",
-            "## Task Results",
-            "",
-        ])
+        lines.extend(
+            [
+                "---",
+                "",
+                "## Task Results",
+                "",
+            ]
+        )
 
         for _task_id, analysis in self.task_analyses.items():
             lines.append(f"### {analysis.task_type.replace('_', ' ').title()}")
@@ -151,17 +166,23 @@ class ComprehensiveBenchmarkAnalysis:
 
         # Statistical Significance
         if self.statistical_comparison:
-            lines.extend([
-                "---",
-                "",
-                "## Statistical Significance",
-                "",
-                "| N | Diff. P-value | K-S P-value | Reject Null | SSF (95% CI) |",
-                "|---|---------------|-------------|-------------|--------------|",
-            ])
+            lines.extend(
+                [
+                    "---",
+                    "",
+                    "## Statistical Significance",
+                    "",
+                    "| N | Diff. P-value | K-S P-value | Reject Null | SSF (95% CI) |",
+                    "|---|---------------|-------------|-------------|--------------|",
+                ]
+            )
             for n, comp in sorted(self.statistical_comparison.items()):
                 ssf_ci = comp.ssf_ci
-                ssf_str = f"{ssf_ci.estimate:.2f} [{ssf_ci.ci_low:.2f}, {ssf_ci.ci_high:.2f}]" if ssf_ci else "N/A"
+                ssf_str = (
+                    f"{ssf_ci.estimate:.2f} [{ssf_ci.ci_low:.2f}, {ssf_ci.ci_high:.2f}]"
+                    if ssf_ci
+                    else "N/A"
+                )
                 lines.append(
                     f"| {n} | {comp.difference_test.p_value:.4f} | "
                     f"{comp.ks_test.p_value:.4f} | "
@@ -172,14 +193,16 @@ class ComprehensiveBenchmarkAnalysis:
 
         # Locality Analysis
         if self.locality_analysis:
-            lines.extend([
-                "---",
-                "",
-                "## Performance by Locality",
-                "",
-            ])
+            lines.extend(
+                [
+                    "---",
+                    "",
+                    "## Performance by Locality",
+                    "",
+                ]
+            )
             for protocol_id, analysis in self.locality_analysis.items():
-                if hasattr(analysis, 'by_locality'):
+                if hasattr(analysis, "by_locality"):
                     lines.append(f"### {protocol_id}")
                     lines.append("")
                     lines.append(f"- Locality-SE Correlation: {analysis.locality_correlation:.3f}")
@@ -188,46 +211,60 @@ class ComprehensiveBenchmarkAnalysis:
         # Crossover Analysis
         if self.crossover_analysis:
             summary = self.crossover_analysis.summary
-            lines.extend([
-                "---",
-                "",
-                "## Per-Observable Crossover Analysis",
-                "",
-                f"- Protocol A ({self.crossover_analysis.protocol_a}) wins on {summary['a_win_fraction']*100:.1f}% of observables",
-                f"- Protocol B ({self.crossover_analysis.protocol_b}) wins on {summary['b_win_fraction']*100:.1f}% of observables",
-                f"- Crossover exists for {summary['crossover_fraction']*100:.1f}% of observables",
-                "",
-            ])
+            lines.extend(
+                [
+                    "---",
+                    "",
+                    "## Per-Observable Crossover Analysis",
+                    "",
+                    f"- Protocol A ({self.crossover_analysis.protocol_a}) wins on {summary['a_win_fraction']*100:.1f}% of observables",
+                    f"- Protocol B ({self.crossover_analysis.protocol_b}) wins on {summary['b_win_fraction']*100:.1f}% of observables",
+                    f"- Crossover exists for {summary['crossover_fraction']*100:.1f}% of observables",
+                    "",
+                ]
+            )
 
         # Pilot Analysis
         if self.pilot_analysis:
-            lines.extend([
-                "---",
-                "",
-                "## Multi-Pilot Fraction Analysis",
-                "",
-                "| Pilot % | Accuracy | Mean Regret |",
-                "|---------|----------|-------------|",
-            ])
+            lines.extend(
+                [
+                    "---",
+                    "",
+                    "## Multi-Pilot Fraction Analysis",
+                    "",
+                    "| Pilot % | Accuracy | Mean Regret |",
+                    "|---------|----------|-------------|",
+                ]
+            )
             for frac, result in sorted(self.pilot_analysis.results.items()):
-                lines.append(f"| {frac*100:.0f}% | {result.selection_accuracy*100:.1f}% | {result.mean_regret:.4f} |")
+                lines.append(
+                    f"| {frac*100:.0f}% | {result.selection_accuracy*100:.1f}% | {result.mean_regret:.4f} |"
+                )
             lines.append("")
             if self.pilot_analysis.optimal_fraction:
-                lines.append(f"**Optimal pilot fraction:** {self.pilot_analysis.optimal_fraction*100:.0f}%")
+                lines.append(
+                    f"**Optimal pilot fraction:** {self.pilot_analysis.optimal_fraction*100:.0f}%"
+                )
             lines.append("")
 
         # Interpolated N*
         if self.interpolated_n_star:
-            lines.extend([
-                "---",
-                "",
-                "## Interpolated N* (Power-Law)",
-                "",
-            ])
+            lines.extend(
+                [
+                    "---",
+                    "",
+                    "## Interpolated N* (Power-Law)",
+                    "",
+                ]
+            )
             for protocol_id, data in self.interpolated_n_star.items():
                 n_star = data.get("n_star_interpolated")
                 r_sq = data.get("r_squared", 0)
-                lines.append(f"- **{protocol_id}:** N* = {n_star:.0f} (R² = {r_sq:.3f})" if n_star else f"- **{protocol_id}:** N* not reached")
+                lines.append(
+                    f"- **{protocol_id}:** N* = {n_star:.0f} (R² = {r_sq:.3f})"
+                    if n_star
+                    else f"- **{protocol_id}:** N* not reached"
+                )
             lines.append("")
 
         return "\n".join(lines)
@@ -443,7 +480,9 @@ def run_comprehensive_analysis(
     # =========================================================================
     # Locality analysis
     # =========================================================================
-    locality_analysis = analyze_by_locality(long_form_results, n_total=n_shots_grid[-1], locality_map=locality_map)
+    locality_analysis = analyze_by_locality(
+        long_form_results, n_total=n_shots_grid[-1], locality_map=locality_map
+    )
 
     # =========================================================================
     # Statistical comparison
@@ -519,12 +558,20 @@ def run_comprehensive_analysis(
 
     # Add key findings
     if shadows_protocol_id in by_protocol and baseline_protocol_id in by_protocol:
-        shadows_se = np.mean([r.se for r in by_protocol[shadows_protocol_id] if r.N_total == n_shots_grid[-1]])
-        baseline_se = np.mean([r.se for r in by_protocol[baseline_protocol_id] if r.N_total == n_shots_grid[-1]])
+        shadows_se = np.mean(
+            [r.se for r in by_protocol[shadows_protocol_id] if r.N_total == n_shots_grid[-1]]
+        )
+        baseline_se = np.mean(
+            [r.se for r in by_protocol[baseline_protocol_id] if r.N_total == n_shots_grid[-1]]
+        )
         summary["shadows_mean_se"] = float(shadows_se)
         summary["baseline_mean_se"] = float(baseline_se)
-        summary["shadows_vs_baseline_ratio"] = float(shadows_se / baseline_se) if baseline_se > 0 else float('inf')
-        summary["winner_at_max_n"] = shadows_protocol_id if shadows_se < baseline_se else baseline_protocol_id
+        summary["shadows_vs_baseline_ratio"] = (
+            float(shadows_se / baseline_se) if baseline_se > 0 else float("inf")
+        )
+        summary["winner_at_max_n"] = (
+            shadows_protocol_id if shadows_se < baseline_se else baseline_protocol_id
+        )
 
     if crossover_analysis:
         summary["shadows_wins_fraction"] = crossover_analysis.summary.get("a_win_fraction", 0)

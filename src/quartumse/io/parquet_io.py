@@ -40,8 +40,7 @@ def _check_parquet_available() -> None:
     """Check if parquet dependencies are available."""
     if not HAS_PARQUET:
         raise ImportError(
-            "Parquet I/O requires pyarrow and pandas. "
-            "Install with: pip install pyarrow pandas"
+            "Parquet I/O requires pyarrow and pandas. " "Install with: pip install pyarrow pandas"
         )
 
 
@@ -103,9 +102,7 @@ class ParquetWriter:
         # Serialize dict columns to JSON strings (Arrow can't handle empty structs)
         for col in df.columns:
             if df[col].apply(lambda x: isinstance(x, dict)).any():
-                df[col] = df[col].apply(
-                    lambda x: json.dumps(x) if isinstance(x, dict) else x
-                )
+                df[col] = df[col].apply(lambda x: json.dumps(x) if isinstance(x, dict) else x)
 
         long_form_dir = self.output_dir / "long_form"
 
@@ -142,9 +139,7 @@ class ParquetWriter:
         # Serialize dict columns to JSON strings (Arrow can't handle empty structs)
         for col in df.columns:
             if df[col].apply(lambda x: isinstance(x, dict)).any():
-                df[col] = df[col].apply(
-                    lambda x: json.dumps(x) if isinstance(x, dict) else x
-                )
+                df[col] = df[col].apply(lambda x: json.dumps(x) if isinstance(x, dict) else x)
 
         output_path = self.output_dir / "summary.parquet"
         pq.write_table(pa.Table.from_pandas(df), str(output_path))
@@ -261,9 +256,7 @@ class ParquetReader:
         rows = []
         for _, record in df.iterrows():
             # Convert NaN to None
-            record_dict = {
-                k: (None if pd.isna(v) else v) for k, v in record.to_dict().items()
-            }
+            record_dict = {k: (None if pd.isna(v) else v) for k, v in record.to_dict().items()}
             rows.append(LongFormRow(**record_dict))
 
         return LongFormResultSet(rows)
@@ -303,9 +296,7 @@ class ParquetReader:
 
         rows = []
         for _, record in df.iterrows():
-            record_dict = {
-                k: (None if pd.isna(v) else v) for k, v in record.to_dict().items()
-            }
+            record_dict = {k: (None if pd.isna(v) else v) for k, v in record.to_dict().items()}
             rows.append(SummaryRow(**record_dict))
 
         return rows
@@ -338,9 +329,7 @@ class ParquetReader:
 
         rows = []
         for _, record in df.iterrows():
-            record_dict = {
-                k: (None if pd.isna(v) else v) for k, v in record.to_dict().items()
-            }
+            record_dict = {k: (None if pd.isna(v) else v) for k, v in record.to_dict().items()}
             # Parse outputs JSON
             if "outputs" in record_dict and record_dict["outputs"]:
                 record_dict["outputs"] = json.loads(record_dict["outputs"])

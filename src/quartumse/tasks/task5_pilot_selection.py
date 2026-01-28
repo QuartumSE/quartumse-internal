@@ -71,12 +71,8 @@ class PilotSelectionTask(BenchmarkTask):
                     for row in rows
                     if row.N_total == target_n and row.replicate_id == replicate_id
                 ]
-                pilot_quality[protocol_id] = self._compute_quality(
-                    pilot_rows, truth_values
-                )
-                target_quality[protocol_id] = self._compute_quality(
-                    target_rows, truth_values
-                )
+                pilot_quality[protocol_id] = self._compute_quality(pilot_rows, truth_values)
+                target_quality[protocol_id] = self._compute_quality(target_rows, truth_values)
 
             selected_protocol = min(pilot_quality, key=pilot_quality.get)
             oracle_protocol = min(target_quality, key=target_quality.get)
@@ -94,17 +90,10 @@ class PilotSelectionTask(BenchmarkTask):
             )
 
         selection_accuracy = float(
-            np.mean(
-                [r["selected_protocol"] == r["oracle_protocol"] for r in selection_results]
-            )
+            np.mean([r["selected_protocol"] == r["oracle_protocol"] for r in selection_results])
         )
         regret = float(
-            np.mean(
-                [
-                    r["target_quality_selected"] - r["oracle_quality"]
-                    for r in selection_results
-                ]
-            )
+            np.mean([r["target_quality_selected"] - r["oracle_quality"] for r in selection_results])
         )
 
         return TaskOutput(

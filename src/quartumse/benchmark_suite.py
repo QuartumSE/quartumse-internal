@@ -22,9 +22,10 @@ from .observables import ObservableSet
 
 class BenchmarkMode(Enum):
     """Benchmark execution modes."""
-    BASIC = "basic"           # Core benchmark + Tasks 1,3,6
-    COMPLETE = "complete"     # All 8 tasks
-    ANALYSIS = "analysis"     # Complete + enhanced analysis
+
+    BASIC = "basic"  # Core benchmark + Tasks 1,3,6
+    COMPLETE = "complete"  # All 8 tasks
+    ANALYSIS = "analysis"  # Complete + enhanced analysis
 
 
 @dataclass
@@ -43,6 +44,7 @@ class BenchmarkSuiteConfig:
         baseline_protocol_id: Protocol ID for baseline (for comparison)
         output_base_dir: Base directory for outputs (timestamped subdir created)
     """
+
     mode: BenchmarkMode = BenchmarkMode.COMPLETE
     n_shots_grid: list[int] = field(default_factory=lambda: [100, 500, 1000, 5000])
     n_replicates: int = 20
@@ -86,6 +88,7 @@ class BenchmarkSuiteResult:
         reports: Dict of report paths
         summary: Summary statistics
     """
+
     run_id: str
     timestamp: datetime
     mode: BenchmarkMode
@@ -106,7 +109,9 @@ class BenchmarkSuiteResult:
             "output_dir": str(self.output_dir),
             "n_long_form_rows": len(self.long_form_results),
             "tasks_completed": list(self.task_results.keys()),
-            "all_tasks_completed": list(self.all_task_results.keys()) if self.all_task_results else [],
+            "all_tasks_completed": (
+                list(self.all_task_results.keys()) if self.all_task_results else []
+            ),
             "has_analysis": self.analysis is not None,
             "reports": {k: str(v) for k, v in self.reports.items()},
             "summary": self.summary,
@@ -117,6 +122,7 @@ def _generate_run_id(circuit_id: str) -> str:
     """Generate unique run ID with timestamp."""
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     import uuid
+
     short_uuid = uuid.uuid4().hex[:8]
     return f"{circuit_id}_{ts}_{short_uuid}"
 
@@ -179,6 +185,7 @@ def _run_all_tasks(
     )
     try:
         from .tasks import AverageTargetTask
+
         task2 = AverageTargetTask(task2_config)
         for protocol_id in protocol_ids:
             protocol_rows = [r for r in long_form_rows if r.protocol_id == protocol_id]
@@ -222,10 +229,11 @@ def _run_all_tasks(
     )
     try:
         from .tasks import DominanceTask
+
         task4 = DominanceTask(task4_config)
         # Compare pairs of protocols
         for i, p1 in enumerate(protocol_ids):
-            for p2 in protocol_ids[i+1:]:
+            for p2 in protocol_ids[i + 1 :]:
                 rows_p1 = [r for r in long_form_rows if r.protocol_id == p1]
                 rows_p2 = [r for r in long_form_rows if r.protocol_id == p2]
                 if rows_p1 and rows_p2:
@@ -267,6 +275,7 @@ def _run_all_tasks(
     # Task 8: Adaptive Efficiency
     try:
         from .tasks import AdaptiveEfficiencyTask
+
         task8_config = TaskConfig(
             task_id="task8_adaptive",
             task_type=TaskType.ADAPTIVE,
@@ -315,15 +324,17 @@ def _generate_basic_report(
         "",
     ]
 
-    protocol_summaries = summary.get('protocol_summaries', {})
+    protocol_summaries = summary.get("protocol_summaries", {})
     if protocol_summaries:
         report_lines.append("| Protocol | Mean SE | Max SE | Median SE |")
         report_lines.append("|----------|---------|--------|-----------|")
         for protocol_id, stats in protocol_summaries.items():
-            mean_se = stats.get('mean_se', 0)
-            max_se = stats.get('max_se', 0)
-            median_se = stats.get('median_se', 0)
-            report_lines.append(f"| {protocol_id} | {mean_se:.4f} | {max_se:.4f} | {median_se:.4f} |")
+            mean_se = stats.get("mean_se", 0)
+            max_se = stats.get("max_se", 0)
+            median_se = stats.get("median_se", 0)
+            report_lines.append(
+                f"| {protocol_id} | {mean_se:.4f} | {max_se:.4f} | {median_se:.4f} |"
+            )
         report_lines.append("")
 
     # Task results summary
@@ -331,13 +342,13 @@ def _generate_basic_report(
         report_lines.append("## Task Results")
         report_lines.append("")
         for task_id, result in task_results.items():
-            if hasattr(result, 'n_star'):
+            if hasattr(result, "n_star"):
                 report_lines.append(f"- **{task_id}:** N* = {result.n_star}")
         report_lines.append("")
 
     report_content = "\n".join(report_lines)
     report_path = output_dir / "basic_report.md"
-    report_path.write_text(report_content, encoding='utf-8')
+    report_path.write_text(report_content, encoding="utf-8")
 
     return report_path
 
@@ -378,7 +389,7 @@ def _generate_complete_report(
     ]
 
     # Protocol performance at max N
-    protocol_summaries = summary.get('protocol_summaries', {})
+    protocol_summaries = summary.get("protocol_summaries", {})
     if protocol_summaries:
         max_n = max(config.n_shots_grid)
         report_lines.append(f"### Protocol Performance at N = {max_n}")
@@ -386,65 +397,67 @@ def _generate_complete_report(
         report_lines.append("| Protocol | Mean SE | Max SE | Mean Abs Error |")
         report_lines.append("|----------|---------|--------|----------------|")
         for protocol_id, stats in protocol_summaries.items():
-            mean_se = stats.get('mean_se', 0)
-            max_se = stats.get('max_se', 0)
-            mae = stats.get('mean_abs_error', 'N/A')
+            mean_se = stats.get("mean_se", 0)
+            max_se = stats.get("max_se", 0)
+            mae = stats.get("mean_abs_error", "N/A")
             mae_str = f"{mae:.4f}" if isinstance(mae, float) else mae
             report_lines.append(f"| {protocol_id} | {mean_se:.4f} | {max_se:.4f} | {mae_str} |")
         report_lines.append("")
 
-    report_lines.extend([
-        "---",
-        "",
-        "## Task Results",
-        "",
-    ])
+    report_lines.extend(
+        [
+            "---",
+            "",
+            "## Task Results",
+            "",
+        ]
+    )
 
     # Group task results by task number
     tasks_by_num = {}
     for task_id, result in all_task_results.items():
         # Extract task number (e.g., "task1_protocol" -> 1)
-        parts = task_id.split('_')
-        if len(parts) >= 1 and parts[0].startswith('task'):
-            task_num = parts[0].replace('task', '')
+        parts = task_id.split("_")
+        if len(parts) >= 1 and parts[0].startswith("task"):
+            task_num = parts[0].replace("task", "")
             if task_num not in tasks_by_num:
                 tasks_by_num[task_num] = {}
             tasks_by_num[task_num][task_id] = result
 
     task_descriptions = {
-        '1': 'Worst-Case Guarantee',
-        '2': 'Average Target',
-        '3': 'Fixed Budget Distribution',
-        '4': 'Dominance',
-        '5': 'Pilot Selection',
-        '6': 'Bias-Variance Decomposition',
-        '7': 'Noise Sensitivity',
-        '8': 'Adaptive Efficiency',
+        "1": "Worst-Case Guarantee",
+        "2": "Average Target",
+        "3": "Fixed Budget Distribution",
+        "4": "Dominance",
+        "5": "Pilot Selection",
+        "6": "Bias-Variance Decomposition",
+        "7": "Noise Sensitivity",
+        "8": "Adaptive Efficiency",
     }
 
     for task_num in sorted(tasks_by_num.keys()):
-        task_name = task_descriptions.get(task_num, f'Task {task_num}')
+        task_name = task_descriptions.get(task_num, f"Task {task_num}")
         report_lines.append(f"### Task {task_num}: {task_name}")
         report_lines.append("")
 
         for task_id, result in tasks_by_num[task_num].items():
-            protocol_part = task_id.replace(f'task{task_num}_', '')
+            protocol_part = task_id.replace(f"task{task_num}_", "")
 
-            if hasattr(result, 'n_star') and result.n_star:
+            if hasattr(result, "n_star") and result.n_star:
                 report_lines.append(f"- **{protocol_part}:** N* = {result.n_star}")
-            elif hasattr(result, 'to_dict'):
+            elif hasattr(result, "to_dict"):
                 rd = result.to_dict()
-                if 'n_star' in rd:
+                if "n_star" in rd:
                     report_lines.append(f"- **{protocol_part}:** N* = {rd['n_star']}")
-                elif 'metrics' in rd:
-                    metrics = rd['metrics']
+                elif "metrics" in rd:
+                    metrics = rd["metrics"]
                     report_lines.append(f"- **{protocol_part}:** {metrics}")
 
         report_lines.append("")
 
     report_content = "\n".join(report_lines)
     report_path = output_dir / "complete_report.md"
-    report_path.write_text(report_content, encoding='utf-8')
+    report_path.write_text(report_content, encoding="utf-8")
 
     return report_path
 
@@ -504,9 +517,9 @@ def run_benchmark_suite(
     timestamp = datetime.now()
     output_dir = _create_output_dir(config.output_base_dir, run_id)
 
-    print("="*70)
+    print("=" * 70)
     print(f"BENCHMARK SUITE: {config.mode.value.upper()}")
-    print("="*70)
+    print("=" * 70)
     print(f"Run ID: {run_id}")
     print(f"Output: {output_dir}")
     print(f"Mode: {config.mode.value}")
@@ -528,11 +541,13 @@ def run_benchmark_suite(
         delta=config.delta,
     )
 
-    long_form_rows = base_results['long_form_results']
-    truth_values = base_results['ground_truth'].truth_values if base_results['ground_truth'] else None
-    task_results = base_results['task_results']
-    summary = base_results['summary']
-    protocol_ids = summary.get('protocols', [])
+    long_form_rows = base_results["long_form_results"]
+    truth_values = (
+        base_results["ground_truth"].truth_values if base_results["ground_truth"] else None
+    )
+    task_results = base_results["task_results"]
+    summary = base_results["summary"]
+    protocol_ids = summary.get("protocols", [])
 
     print(f"  Completed: {len(long_form_rows)} rows")
     print()
@@ -585,7 +600,7 @@ def run_benchmark_suite(
         task_results=task_results,
         output_dir=output_dir,
     )
-    reports['basic'] = basic_report_path
+    reports["basic"] = basic_report_path
     print(f"  Basic report: {basic_report_path}")
 
     # Generate complete report for complete/analysis modes
@@ -599,28 +614,28 @@ def run_benchmark_suite(
             config=config,
             output_dir=output_dir,
         )
-        reports['complete'] = complete_report_path
+        reports["complete"] = complete_report_path
         print(f"  Complete report: {complete_report_path}")
 
     # Generate analysis report for analysis mode
     if config.mode == BenchmarkMode.ANALYSIS and analysis:
         analysis_report_content = analysis.generate_report()
         analysis_report_path = output_dir / "analysis_report.md"
-        analysis_report_path.write_text(analysis_report_content, encoding='utf-8')
-        reports['analysis'] = analysis_report_path
+        analysis_report_path.write_text(analysis_report_content, encoding="utf-8")
+        reports["analysis"] = analysis_report_path
         print(f"  Analysis report: {analysis_report_path}")
 
         # Also save JSON
         analysis_json_path = output_dir / "analysis.json"
         analysis.save(analysis_json_path)
-        reports['analysis_json'] = analysis_json_path
+        reports["analysis_json"] = analysis_json_path
         print(f"  Analysis JSON: {analysis_json_path}")
 
     # Save config
     config_path = output_dir / "config.json"
-    with open(config_path, 'w') as f:
+    with open(config_path, "w") as f:
         json.dump(config.to_dict(), f, indent=2)
-    reports['config'] = config_path
+    reports["config"] = config_path
 
     # Save run manifest
     manifest = {
@@ -641,14 +656,14 @@ def run_benchmark_suite(
         "reports": {k: str(v) for k, v in reports.items()},
     }
     manifest_path = output_dir / "manifest.json"
-    with open(manifest_path, 'w') as f:
+    with open(manifest_path, "w") as f:
         json.dump(manifest, f, indent=2)
-    reports['manifest'] = manifest_path
+    reports["manifest"] = manifest_path
 
     print()
-    print("="*70)
+    print("=" * 70)
     print("BENCHMARK COMPLETE")
-    print("="*70)
+    print("=" * 70)
     print(f"Output directory: {output_dir}")
     print(f"Reports generated: {list(reports.keys())}")
     print()
@@ -658,7 +673,7 @@ def run_benchmark_suite(
         timestamp=timestamp,
         mode=config.mode,
         output_dir=output_dir,
-        ground_truth=base_results['ground_truth'],
+        ground_truth=base_results["ground_truth"],
         long_form_results=long_form_rows,
         task_results=task_results,
         all_task_results=all_task_results,

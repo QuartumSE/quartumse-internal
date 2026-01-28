@@ -96,9 +96,7 @@ class DirectGroupedProtocol(StaticProtocol):
             Initialized DirectGroupedState.
         """
         # Partition into commuting groups
-        groups, stats = partition_observable_set(
-            observable_set, method=self.grouping_method
-        )
+        groups, stats = partition_observable_set(observable_set, method=self.grouping_method)
 
         G = len(groups)
         # Ensure at least 1 shot per group (if budget allows)

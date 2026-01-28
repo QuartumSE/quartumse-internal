@@ -185,9 +185,7 @@ class ProtocolState:
         """Set n_rounds via round_number alias."""
         self.n_rounds = value
 
-    def add_chunk(
-        self, chunk: RawDatasetChunk, round_meta: dict[str, Any] | None = None
-    ) -> None:
+    def add_chunk(self, chunk: RawDatasetChunk, round_meta: dict[str, Any] | None = None) -> None:
         """Add a data chunk and update counters."""
         self.accumulated_data.append(chunk)
         self.total_shots_used += chunk.n_shots
@@ -375,9 +373,7 @@ class Estimates:
     def max_ci_half_width(self) -> float | None:
         """Maximum CI half-width across all observables."""
         half_widths = [
-            est.ci.half_width
-            for est in self.observable_estimates.values()
-            if est.ci is not None
+            est.ci.half_width for est in self.observable_estimates.values() if est.ci is not None
         ]
         return max(half_widths) if half_widths else None
 

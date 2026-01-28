@@ -47,9 +47,7 @@ class NoiseSensitivityTask(BenchmarkTask):
 
         protocol_id = long_form_results[0].protocol_id
         circuit_id = long_form_results[0].circuit_id
-        baseline_noise = self.config.additional_params.get(
-            "baseline_noise_profile", "ideal"
-        )
+        baseline_noise = self.config.additional_params.get("baseline_noise_profile", "ideal")
 
         by_noise: dict[str, list[LongFormRow]] = {}
         for row in long_form_results:
@@ -67,16 +65,13 @@ class NoiseSensitivityTask(BenchmarkTask):
         degradation = {
             noise_profile: (
                 n_star_by_noise[noise_profile] / baseline_n_star
-                if baseline_n_star
-                and n_star_by_noise[noise_profile] is not None
+                if baseline_n_star and n_star_by_noise[noise_profile] is not None
                 else None
             )
             for noise_profile in n_star_by_noise
         }
 
-        failure_rate = float(
-            np.mean([n_star is None for n_star in n_star_by_noise.values()])
-        )
+        failure_rate = float(np.mean([n_star is None for n_star in n_star_by_noise.values()]))
 
         return TaskOutput(
             task_id=self.task_id,

@@ -142,9 +142,7 @@ class WorstCaseTask(BenchmarkTask):
 
         if self.config.criterion_type == CriterionType.CI_BASED:
             # Get FWER-adjusted confidence level
-            compute_fwer_adjustment(
-                M, self.config.delta, self.config.fwer_method
-            )
+            compute_fwer_adjustment(M, self.config.delta, self.config.fwer_method)
 
             # Check all CI half-widths
             worst_obs = None
@@ -154,6 +152,7 @@ class WorstCaseTask(BenchmarkTask):
             for est in estimates.estimates:
                 # Compute CI half-width (using SE * z for normal)
                 from scipy import stats
+
                 z = stats.norm.ppf(1 - self.config.delta / (2 * M))
                 half_width = est.se * z
 
@@ -234,6 +233,7 @@ class WorstCaseTask(BenchmarkTask):
         if self.config.criterion_type == CriterionType.CI_BASED:
             # Get FWER-adjusted threshold
             from scipy import stats
+
             z = stats.norm.ppf(1 - self.config.delta / (2 * M))
 
             for row in rows:
@@ -301,7 +301,8 @@ class WorstCaseTask(BenchmarkTask):
         for n, rows in results_by_n.items():
             by_replicate = group_results_by_replicate(rows)
             successes = sum(
-                1 for rep_rows in by_replicate.values()
+                1
+                for rep_rows in by_replicate.values()
                 if self._check_replicate_criterion(rep_rows, truth_values)
             )
             success_rates[n] = successes / len(by_replicate) if by_replicate else 0.0

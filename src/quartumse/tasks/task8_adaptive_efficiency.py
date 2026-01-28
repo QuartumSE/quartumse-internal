@@ -82,11 +82,13 @@ class AdaptiveEfficiencyTask(BenchmarkTask):
                 success_fraction_by_n[n] = 0.0
 
             efficiency_by_n[n] = {
-                "mean_quality": float(np.mean(replicate_quality)) if replicate_quality else float("nan"),
+                "mean_quality": (
+                    float(np.mean(replicate_quality)) if replicate_quality else float("nan")
+                ),
                 "mean_n_settings": float(np.mean(n_settings)) if n_settings else float("nan"),
-                "mean_classical_time_s": float(np.mean(classical_times))
-                if classical_times
-                else float("nan"),
+                "mean_classical_time_s": (
+                    float(np.mean(classical_times)) if classical_times else float("nan")
+                ),
             }
 
         n_star = self._find_n_star(success_fraction_by_n)
@@ -100,9 +102,7 @@ class AdaptiveEfficiencyTask(BenchmarkTask):
             circuit_id=circuit_id,
             n_star=n_star,
             ssf=ssf,
-            baseline_protocol_id=self.config.baseline_protocol_id
-            if ssf is not None
-            else None,
+            baseline_protocol_id=self.config.baseline_protocol_id if ssf is not None else None,
             metrics={
                 "epsilon": self.config.epsilon,
                 "delta": self.config.delta,

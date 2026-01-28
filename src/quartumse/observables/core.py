@@ -75,8 +75,7 @@ class Observable:
         if not all(c in valid_chars for c in self.pauli_string):
             invalid = set(self.pauli_string) - valid_chars
             raise ValueError(
-                f"Invalid characters in Pauli string: {invalid}. "
-                f"Must be one of I, X, Y, Z."
+                f"Invalid characters in Pauli string: {invalid}. " f"Must be one of I, X, Y, Z."
             )
 
         # Auto-generate observable_id if not provided
@@ -191,7 +190,9 @@ class Observable:
 
     def __repr__(self) -> str:
         """Detailed representation."""
-        return f"Observable('{self.pauli_string}', coef={self.coefficient}, id={self.observable_id})"
+        return (
+            f"Observable('{self.pauli_string}', coef={self.coefficient}, id={self.observable_id})"
+        )
 
     def __hash__(self) -> int:
         """Hash based on Pauli string and coefficient."""
@@ -240,9 +241,7 @@ class ObservableSet:
         # Verify all observables have same qubit count
         n_qubits_set = {obs.n_qubits for obs in self.observables}
         if len(n_qubits_set) > 1:
-            raise ValueError(
-                f"All observables must have same qubit count, got: {n_qubits_set}"
-            )
+            raise ValueError(f"All observables must have same qubit count, got: {n_qubits_set}")
 
         # Auto-generate set ID if not provided
         if self.observable_set_id is None:

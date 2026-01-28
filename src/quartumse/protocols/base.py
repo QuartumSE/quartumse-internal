@@ -300,9 +300,7 @@ class Protocol(ABC):
 
         # Add timing and protocol info
         total_time = time.time() - start_time
-        estimates.time_quantum_s = sum(
-            m.get("quantum_time_s", 0) for m in state.round_metadata
-        )
+        estimates.time_quantum_s = sum(m.get("quantum_time_s", 0) for m in state.round_metadata)
         estimates.time_classical_s = total_time - (estimates.time_quantum_s or 0)
         estimates.protocol_id = self.protocol_id
         estimates.protocol_version = self.protocol_version

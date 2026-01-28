@@ -72,9 +72,7 @@ class AverageTargetTask(BenchmarkTask):
             replicate_quality = []
 
             for replicate_rows in replicate_groups.values():
-                avg_quality = self._compute_average_quality(
-                    replicate_rows, truth_values, weights
-                )
+                avg_quality = self._compute_average_quality(replicate_rows, truth_values, weights)
                 if avg_quality is not None:
                     replicate_quality.append(avg_quality)
 
@@ -101,9 +99,7 @@ class AverageTargetTask(BenchmarkTask):
             circuit_id=circuit_id,
             n_star=n_star,
             ssf=ssf,
-            baseline_protocol_id=self.config.baseline_protocol_id
-            if ssf is not None
-            else None,
+            baseline_protocol_id=self.config.baseline_protocol_id if ssf is not None else None,
             metrics={
                 "epsilon": self.config.epsilon,
                 "delta": self.config.delta,
@@ -125,9 +121,7 @@ class AverageTargetTask(BenchmarkTask):
         weights = self.config.additional_params.get("observable_weights")
         if not isinstance(weights, dict):
             weights = {est.observable_id: 1.0 for est in estimates.estimates}
-        avg_quality = self._compute_average_quality_from_estimates(
-            estimates, truth_values, weights
-        )
+        avg_quality = self._compute_average_quality_from_estimates(estimates, truth_values, weights)
         if avg_quality is None:
             return False, {"error": "Truth values required for truth-based criterion"}
         return avg_quality <= self.config.epsilon, {

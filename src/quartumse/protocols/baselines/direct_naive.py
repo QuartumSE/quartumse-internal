@@ -77,9 +77,7 @@ class DirectNaiveProtocol(StaticProtocol):
         shots_per_observable = max(1, total_budget // M) if M > 0 else 0
 
         # Initialize storage for each observable
-        observable_bitstrings = {
-            obs.observable_id: [] for obs in observable_set.observables
-        }
+        observable_bitstrings = {obs.observable_id: [] for obs in observable_set.observables}
 
         return DirectNaiveState(
             observable_set=observable_set,

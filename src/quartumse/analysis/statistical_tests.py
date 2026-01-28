@@ -28,6 +28,7 @@ class BootstrapCI:
         n_bootstrap: Number of bootstrap samples
         bootstrap_std: Standard deviation of bootstrap distribution
     """
+
     estimate: float
     ci_low: float
     ci_high: float
@@ -59,6 +60,7 @@ class HypothesisTestResult:
         alpha: Significance level
         test_name: Name of the test
     """
+
     statistic: float
     p_value: float
     effect_size: float
@@ -92,6 +94,7 @@ class StatisticalComparison:
         ks_test: Kolmogorov-Smirnov distribution test
         ssf_ci: Bootstrap CI for shot-savings factor
     """
+
     protocol_a: str
     protocol_b: str
     n_total: int
@@ -321,8 +324,8 @@ def bootstrap_ssf(
         if mean_se_p > 0 and mean_se_b > 0:
             return (mean_se_b / mean_se_p) ** 2
         elif mean_se_p == 0 and mean_se_b > 0:
-            return float('inf')  # Protocol is perfect, infinite savings
-        return float('nan')  # Can't compute
+            return float("inf")  # Protocol is perfect, infinite savings
+        return float("nan")  # Can't compute
 
     # Point estimate
     ssf_point = estimate_ssf(se_a, se_b)
@@ -342,11 +345,11 @@ def bootstrap_ssf(
         # Too many infinities
         return BootstrapCI(
             estimate=float(ssf_point),
-            ci_low=float('nan'),
-            ci_high=float('nan'),
+            ci_low=float("nan"),
+            ci_high=float("nan"),
             confidence=confidence,
             n_bootstrap=n_bootstrap,
-            bootstrap_std=float('nan'),
+            bootstrap_std=float("nan"),
         )
 
     valid_ssf = bootstrap_ssf_values[valid]
@@ -394,7 +397,8 @@ def compare_protocols_statistically(
 
     # Bootstrap test for mean SE difference
     diff_test = bootstrap_hypothesis_test(
-        se_a, se_b,
+        se_a,
+        se_b,
         statistic=np.mean,
         n_bootstrap=n_bootstrap,
         alpha=alpha,

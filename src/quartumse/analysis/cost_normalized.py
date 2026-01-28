@@ -29,6 +29,7 @@ class CostModel:
 
     Effective cost = shots * (1 + depth_penalty * depth) * (1 + gate_penalty * gates) * noise_factor
     """
+
     depth_penalty: float = 0.01  # 1% per depth unit
     gate_penalty: float = 0.005  # 0.5% per 2-qubit gate
     noise_factor: float = 1.0
@@ -88,6 +89,7 @@ class CostNormalizedResult:
         circuit_depth: Mean circuit depth
         twoq_gates: Mean 2-qubit gate count
     """
+
     protocol_id: str
     n_total: int
     raw_metrics: dict[str, float]
@@ -144,9 +146,19 @@ def compute_cost_normalized_metrics(
             mean_se = float(np.mean(se_values))
 
             # Circuit metrics (may not be available for all rows)
-            depths = [r.circuit_depth for r in rows if hasattr(r, 'circuit_depth') and r.circuit_depth]
-            gates = [r.twoq_gate_count for r in rows if hasattr(r, 'twoq_gate_count') and r.twoq_gate_count]
-            times = [r.time_classical_s for r in rows if hasattr(r, 'time_classical_s') and r.time_classical_s]
+            depths = [
+                r.circuit_depth for r in rows if hasattr(r, "circuit_depth") and r.circuit_depth
+            ]
+            gates = [
+                r.twoq_gate_count
+                for r in rows
+                if hasattr(r, "twoq_gate_count") and r.twoq_gate_count
+            ]
+            times = [
+                r.time_classical_s
+                for r in rows
+                if hasattr(r, "time_classical_s") and r.time_classical_s
+            ]
 
             mean_depth = float(np.mean(depths)) if depths else 0.0
             mean_gates = float(np.mean(gates)) if gates else 0.0
@@ -161,7 +173,7 @@ def compute_cost_normalized_metrics(
             )
 
             # Cost-normalized SE (SE scales as 1/sqrt(N), so normalize by sqrt(cost))
-            cost_normalized_se = mean_se * np.sqrt(cost) / np.sqrt(n) if n > 0 else float('inf')
+            cost_normalized_se = mean_se * np.sqrt(cost) / np.sqrt(n) if n > 0 else float("inf")
 
             # Error if truth available
             cost_normalized_error = None
@@ -172,7 +184,9 @@ def compute_cost_normalized_metrics(
                         errors.append(abs(row.estimate - truth_values[row.observable_id]))
                 if errors:
                     mean_error = float(np.mean(errors))
-                    cost_normalized_error = mean_error * np.sqrt(cost) / np.sqrt(n) if n > 0 else float('inf')
+                    cost_normalized_error = (
+                        mean_error * np.sqrt(cost) / np.sqrt(n) if n > 0 else float("inf")
+                    )
 
             results[protocol_id][n] = CostNormalizedResult(
                 protocol_id=protocol_id,
@@ -210,14 +224,16 @@ def compare_cost_normalized(
     for protocol_id, by_n in results.items():
         if n_total in by_n:
             result = by_n[n_total]
-            comparison.append({
-                "protocol_id": protocol_id,
-                "raw_se": result.raw_metrics["mean_se"],
-                "cost": result.cost,
-                "cost_normalized_se": result.cost_normalized_se,
-                "circuit_depth": result.circuit_depth,
-                "twoq_gates": result.twoq_gates,
-            })
+            comparison.append(
+                {
+                    "protocol_id": protocol_id,
+                    "raw_se": result.raw_metrics["mean_se"],
+                    "cost": result.cost,
+                    "cost_normalized_se": result.cost_normalized_se,
+                    "circuit_depth": result.circuit_depth,
+                    "twoq_gates": result.twoq_gates,
+                }
+            )
 
     # Sort by cost-normalized SE
     comparison.sort(key=lambda x: x["cost_normalized_se"])
@@ -254,12 +270,14 @@ def compute_cost_efficiency_curve(
     for protocol_id, by_n in results.items():
         points = []
         for n, result in sorted(by_n.items()):
-            points.append({
-                "n_total": n,
-                "cost": result.cost,
-                "se": result.raw_metrics["mean_se"],
-                "cost_normalized_se": result.cost_normalized_se,
-            })
+            points.append(
+                {
+                    "n_total": n,
+                    "cost": result.cost,
+                    "se": result.raw_metrics["mean_se"],
+                    "cost_normalized_se": result.cost_normalized_se,
+                }
+            )
         curves[protocol_id] = points
 
     return curves
@@ -282,12 +300,14 @@ def find_pareto_frontier(
     all_points = []
     for protocol_id, points in curves.items():
         for point in points:
-            all_points.append({
-                "protocol_id": protocol_id,
-                "cost": point["cost"],
-                "se": point["se"],
-                "n_total": point["n_total"],
-            })
+            all_points.append(
+                {
+                    "protocol_id": protocol_id,
+                    "cost": point["cost"],
+                    "se": point["se"],
+                    "n_total": point["n_total"],
+                }
+            )
 
     # Find Pareto frontier
     pareto = []

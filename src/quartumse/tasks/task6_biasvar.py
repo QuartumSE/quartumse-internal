@@ -182,9 +182,7 @@ class BiasVarianceTask(BenchmarkTask):
             per_obs_stats = []
             for obs_id, estimates in estimates_by_obs.items():
                 if obs_id in truth_values:
-                    stats = BiasVarianceStats.compute(
-                        obs_id, estimates, truth_values[obs_id]
-                    )
+                    stats = BiasVarianceStats.compute(obs_id, estimates, truth_values[obs_id])
                     per_obs_stats.append(stats)
 
             # Aggregate statistics
@@ -301,15 +299,10 @@ class BiasVarianceTask(BenchmarkTask):
             return True
 
         sorted_ns = sorted(analysis_by_n.keys())
-        biases = [
-            abs(analysis_by_n[n]["aggregate"]["mean_bias"])
-            for n in sorted_ns
-        ]
+        biases = [abs(analysis_by_n[n]["aggregate"]["mean_bias"]) for n in sorted_ns]
 
         # Check if generally decreasing (allowing some noise)
-        decreasing_count = sum(
-            1 for i in range(1, len(biases)) if biases[i] <= biases[i - 1] * 1.1
-        )
+        decreasing_count = sum(1 for i in range(1, len(biases)) if biases[i] <= biases[i - 1] * 1.1)
 
         return decreasing_count >= len(biases) // 2
 

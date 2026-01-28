@@ -164,8 +164,7 @@ class ClassicalShadowsProtocol(StaticProtocol):
 
         # Map all observables to this single setting
         observable_setting_map = {
-            obs.observable_id: [0]
-            for obs in shadows_state.observable_set.observables
+            obs.observable_id: [0] for obs in shadows_state.observable_set.observables
         }
 
         return MeasurementPlan(
@@ -209,9 +208,7 @@ class ClassicalShadowsProtocol(StaticProtocol):
 
         # Simulate measurements
         # In ideal case, sample from statevector probabilities
-        measurement_outcomes = self._simulate_shadow_measurements(
-            circuit, measurement_bases, rng
-        )
+        measurement_outcomes = self._simulate_shadow_measurements(circuit, measurement_bases, rng)
 
         # Store as bitstrings for compatibility with Protocol interface
         bitstrings = {}

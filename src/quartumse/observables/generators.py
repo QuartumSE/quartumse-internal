@@ -131,7 +131,7 @@ class RandomPauliGenerator(ObservableGenerator):
         if weight_dist == "fixed":
             fixed_w = extra.get("fixed_weight", min_weight)
             # Max unique weight-k Paulis = 3^k * C(n, k)
-            max_possible = (3 ** fixed_w) * comb(n, fixed_w)
+            max_possible = (3**fixed_w) * comb(n, fixed_w)
             if m > max_possible:
                 raise ValueError(
                     f"Cannot generate {m} unique weight-{fixed_w} observables "
@@ -168,9 +168,7 @@ class RandomPauliGenerator(ObservableGenerator):
     def _generate_pauli_string(self, n_qubits: int, weight: int) -> str:
         """Generate a random Pauli string with specified weight."""
         # Choose which qubits have non-identity operators
-        non_identity_positions = self.rng.choice(
-            n_qubits, size=weight, replace=False
-        )
+        non_identity_positions = self.rng.choice(n_qubits, size=weight, replace=False)
 
         # Build Pauli string
         paulis = ["I"] * n_qubits
@@ -293,9 +291,7 @@ class CorrelatorGenerator(ObservableGenerator):
         # Generate pairs/tuples based on graph structure
         if correlator_type in ["two_point_z", "two_point_xx"]:
             pairs = self._generate_pairs(n, m, graph, periodic)
-            observables = self._create_two_point_observables(
-                pairs, n, correlator_type
-            )
+            observables = self._create_two_point_observables(pairs, n, correlator_type)
         else:
             k = extra.get("k", 2)
             tuples = self._generate_k_tuples(n, m, k, graph)
@@ -318,9 +314,7 @@ class CorrelatorGenerator(ObservableGenerator):
                 pairs.append((n_qubits - 1, 0))
         elif graph == "all_pairs":
             # All pairs of qubits
-            pairs = [
-                (i, j) for i in range(n_qubits) for j in range(i + 1, n_qubits)
-            ]
+            pairs = [(i, j) for i in range(n_qubits) for j in range(i + 1, n_qubits)]
         elif graph == "nearest_neighbor":
             # Same as chain
             pairs = [(i, i + 1) for i in range(n_qubits - 1)]
@@ -328,9 +322,7 @@ class CorrelatorGenerator(ObservableGenerator):
                 pairs.append((n_qubits - 1, 0))
         elif graph == "random":
             # Random pairs
-            all_pairs = [
-                (i, j) for i in range(n_qubits) for j in range(i + 1, n_qubits)
-            ]
+            all_pairs = [(i, j) for i in range(n_qubits) for j in range(i + 1, n_qubits)]
             n_pairs = min(n_observables, len(all_pairs))
             indices = self.rng.choice(len(all_pairs), size=n_pairs, replace=False)
             pairs = [all_pairs[i] for i in indices]
@@ -374,9 +366,7 @@ class CorrelatorGenerator(ObservableGenerator):
         """Generate k-tuples of qubits."""
         if graph == "chain":
             # Consecutive k-tuples along chain
-            tuples = [
-                tuple(range(i, i + k)) for i in range(n_qubits - k + 1)
-            ]
+            tuples = [tuple(range(i, i + k)) for i in range(n_qubits - k + 1)]
         else:
             # Random k-tuples
             from itertools import combinations
@@ -430,9 +420,7 @@ class ClusteredSupportGenerator(ObservableGenerator):
 
         n_clusters = extra.get("n_clusters", max(1, n // 4))
         cluster_size = extra.get("cluster_size", min(4, n))
-        obs_per_cluster = extra.get(
-            "observables_per_cluster", m // n_clusters + 1
-        )
+        obs_per_cluster = extra.get("observables_per_cluster", m // n_clusters + 1)
         weight_in_cluster = extra.get("weight_in_cluster", 2)
 
         # Generate cluster centers
@@ -513,9 +501,7 @@ def get_generator(generator_id: str) -> type[ObservableGenerator]:
     """Get a generator class by ID."""
     if generator_id not in _GENERATORS:
         available = ", ".join(sorted(_GENERATORS.keys()))
-        raise KeyError(
-            f"Generator '{generator_id}' not found. Available: {available}"
-        )
+        raise KeyError(f"Generator '{generator_id}' not found. Available: {available}")
     return _GENERATORS[generator_id]
 
 

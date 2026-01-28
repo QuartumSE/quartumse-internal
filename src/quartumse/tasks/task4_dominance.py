@@ -202,12 +202,10 @@ class DominanceTask(BenchmarkTask):
                 metrics_b[n] = np.median([r.se for r in rows_b])
             elif metric in ("max_error", "mean_error") and truth_values:
                 errors_a = [
-                    abs(r.estimate - truth_values.get(r.observable_id, r.estimate))
-                    for r in rows_a
+                    abs(r.estimate - truth_values.get(r.observable_id, r.estimate)) for r in rows_a
                 ]
                 errors_b = [
-                    abs(r.estimate - truth_values.get(r.observable_id, r.estimate))
-                    for r in rows_b
+                    abs(r.estimate - truth_values.get(r.observable_id, r.estimate)) for r in rows_b
                 ]
                 if metric == "max_error":
                     metrics_a[n] = max(errors_a)

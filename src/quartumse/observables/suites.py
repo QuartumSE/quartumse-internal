@@ -31,18 +31,18 @@ class ObjectiveType(Enum):
     """Type of objective function for the suite."""
 
     PER_OBSERVABLE = "per_observable"  # Evaluate each observable independently
-    WEIGHTED_SUM = "weighted_sum"      # Evaluate sum: E = Σ w_k ⟨O_k⟩
-    MAX_ERROR = "max_error"            # Evaluate worst-case observable
-    CUSTOM = "custom"                  # User-defined objective
+    WEIGHTED_SUM = "weighted_sum"  # Evaluate sum: E = Σ w_k ⟨O_k⟩
+    MAX_ERROR = "max_error"  # Evaluate worst-case observable
+    CUSTOM = "custom"  # User-defined objective
 
 
 class SuiteType(Enum):
     """Category of observable suite."""
 
-    WORKLOAD = "workload"      # Task-aligned (what practitioners measure)
-    STRESS = "stress"          # Large sets for scaling tests
-    POSTHOC = "posthoc"        # Library for post-hoc querying tests
-    COMMUTING = "commuting"    # All-commuting baseline (grouped measurement advantage)
+    WORKLOAD = "workload"  # Task-aligned (what practitioners measure)
+    STRESS = "stress"  # Large sets for scaling tests
+    POSTHOC = "posthoc"  # Library for post-hoc querying tests
+    COMMUTING = "commuting"  # All-commuting baseline (grouped measurement advantage)
     DIAGNOSTIC = "diagnostic"  # System diagnostics (readout, crosstalk)
 
 
@@ -152,7 +152,7 @@ class ObservableSuite:
 
         elif self.objective == ObjectiveType.MAX_ERROR:
             # This requires truth values, return NaN for now
-            return float('nan')
+            return float("nan")
 
         else:
             raise ValueError(f"Unknown objective type: {self.objective}")
@@ -213,6 +213,7 @@ class ObservableSuite:
 # PAULI STRING GENERATORS
 # =============================================================================
 
+
 def generate_all_k_local(n_qubits: int, k: int) -> list[str]:
     """Generate ALL k-local Pauli strings on n qubits.
 
@@ -226,14 +227,14 @@ def generate_all_k_local(n_qubits: int, k: int) -> list[str]:
         List of Pauli strings
     """
     paulis = []
-    pauli_ops = ['X', 'Y', 'Z']
+    pauli_ops = ["X", "Y", "Z"]
 
     for positions in combinations(range(n_qubits), k):
         for ops in product(pauli_ops, repeat=k):
-            pauli_list = ['I'] * n_qubits
+            pauli_list = ["I"] * n_qubits
             for pos, op in zip(positions, ops, strict=False):
                 pauli_list[pos] = op
-            paulis.append(''.join(pauli_list))
+            paulis.append("".join(pauli_list))
 
     return paulis
 
@@ -241,7 +242,7 @@ def generate_all_k_local(n_qubits: int, k: int) -> list[str]:
 def generate_zz_correlators(
     n_qubits: int,
     pairs: list[tuple[int, int]] | None = None,
-    graph: Literal['all', 'chain', 'ring'] = 'all',
+    graph: Literal["all", "chain", "ring"] = "all",
 ) -> list[str]:
     """Generate Z_i Z_j correlator strings.
 
@@ -253,13 +254,13 @@ def generate_zz_correlators(
     Returns:
         List of ZZ Pauli strings
     """
-    return generate_edge_correlators(n_qubits, pairs=pairs, graph=graph, paulis=['ZZ'])
+    return generate_edge_correlators(n_qubits, pairs=pairs, graph=graph, paulis=["ZZ"])
 
 
 def generate_edge_correlators(
     n_qubits: int,
     pairs: list[tuple[int, int]] | None = None,
-    graph: Literal['all', 'chain', 'ring'] = 'all',
+    graph: Literal["all", "chain", "ring"] = "all",
     paulis: list[str] | None = None,
 ) -> list[str]:
     """Generate two-qubit correlator strings on graph edges.
@@ -275,14 +276,14 @@ def generate_edge_correlators(
         List of Pauli strings for all (edge, pauli_type) combinations
     """
     if paulis is None:
-        paulis = ['ZZ']
+        paulis = ["ZZ"]
 
     if pairs is None:
-        if graph == 'all':
+        if graph == "all":
             pairs = [(i, j) for i in range(n_qubits) for j in range(i + 1, n_qubits)]
-        elif graph == 'chain':
+        elif graph == "chain":
             pairs = [(i, i + 1) for i in range(n_qubits - 1)]
-        elif graph == 'ring':
+        elif graph == "ring":
             pairs = [(i, (i + 1) % n_qubits) for i in range(n_qubits)]
         else:
             raise ValueError(f"Unknown graph type: {graph}")
@@ -292,15 +293,15 @@ def generate_edge_correlators(
         for pp in paulis:
             if len(pp) != 2:
                 raise ValueError(f"Pauli pair must be 2 characters, got: {pp}")
-            pauli_list = ['I'] * n_qubits
+            pauli_list = ["I"] * n_qubits
             pauli_list[i] = pp[0]
             pauli_list[j] = pp[1]
-            result.append(''.join(pauli_list))
+            result.append("".join(pauli_list))
 
     return result
 
 
-def generate_single_qubit(n_qubits: int, paulis: str = 'XYZ') -> list[str]:
+def generate_single_qubit(n_qubits: int, paulis: str = "XYZ") -> list[str]:
     """Generate single-qubit Pauli strings.
 
     Args:
@@ -313,13 +314,13 @@ def generate_single_qubit(n_qubits: int, paulis: str = 'XYZ') -> list[str]:
     result = []
     for i in range(n_qubits):
         for p in paulis:
-            pauli_list = ['I'] * n_qubits
+            pauli_list = ["I"] * n_qubits
             pauli_list[i] = p
-            result.append(''.join(pauli_list))
+            result.append("".join(pauli_list))
     return result
 
 
-def generate_global_pauli(n_qubits: int, paulis: str = 'XYZ') -> list[str]:
+def generate_global_pauli(n_qubits: int, paulis: str = "XYZ") -> list[str]:
     """Generate global (n-local) Pauli strings.
 
     Args:
@@ -335,7 +336,7 @@ def generate_global_pauli(n_qubits: int, paulis: str = 'XYZ') -> list[str]:
 def sample_random_paulis(
     n_qubits: int,
     n_samples: int,
-    strategy: Literal['stratified', 'uniform', 'importance', 'uniform_weight'] = 'stratified',
+    strategy: Literal["stratified", "uniform", "importance", "uniform_weight"] = "stratified",
     max_weight: int | None = None,
     seed: int = 42,
 ) -> list[str]:
@@ -362,15 +363,15 @@ def sample_random_paulis(
         max_weight = n_qubits
 
     sampled = set()
-    pauli_ops = ['X', 'Y', 'Z']
+    pauli_ops = ["X", "Y", "Z"]
 
-    if strategy == 'stratified':
+    if strategy == "stratified":
         samples_per_k = max(1, n_samples // max_weight)
         remainder = n_samples - samples_per_k * max_weight
 
         for k in range(1, max_weight + 1):
             n_at_k = samples_per_k + (1 if k <= remainder else 0)
-            max_possible = comb(n_qubits, k) * (3 ** k)
+            max_possible = comb(n_qubits, k) * (3**k)
 
             if n_at_k >= max_possible:
                 sampled.update(generate_all_k_local(n_qubits, k))
@@ -380,27 +381,27 @@ def sample_random_paulis(
                 while count < n_at_k and attempts < n_at_k * 100:
                     positions = tuple(sorted(rng.choice(n_qubits, k, replace=False)))
                     ops = tuple(rng.choice(pauli_ops, k))
-                    pauli_list = ['I'] * n_qubits
+                    pauli_list = ["I"] * n_qubits
                     for pos, op in zip(positions, ops, strict=False):
                         pauli_list[pos] = op
-                    pauli = ''.join(pauli_list)
+                    pauli = "".join(pauli_list)
                     if pauli not in sampled:
                         sampled.add(pauli)
                         count += 1
                     attempts += 1
 
-    elif strategy == 'uniform':
+    elif strategy == "uniform":
         attempts = 0
         while len(sampled) < n_samples and attempts < n_samples * 100:
-            pauli_list = rng.choice(['I', 'X', 'Y', 'Z'], n_qubits)
-            pauli = ''.join(pauli_list)
-            weight = sum(1 for c in pauli if c != 'I')
+            pauli_list = rng.choice(["I", "X", "Y", "Z"], n_qubits)
+            pauli = "".join(pauli_list)
+            weight = sum(1 for c in pauli if c != "I")
             if 0 < weight <= max_weight and pauli not in sampled:
                 sampled.add(pauli)
             attempts += 1
 
-    elif strategy == 'importance':
-        weights = np.array([1.0 / (3 ** k) for k in range(1, max_weight + 1)])
+    elif strategy == "importance":
+        weights = np.array([1.0 / (3**k) for k in range(1, max_weight + 1)])
         weights /= weights.sum()
 
         attempts = 0
@@ -408,24 +409,24 @@ def sample_random_paulis(
             k = rng.choice(range(1, max_weight + 1), p=weights)
             positions = tuple(sorted(rng.choice(n_qubits, k, replace=False)))
             ops = tuple(rng.choice(pauli_ops, k))
-            pauli_list = ['I'] * n_qubits
+            pauli_list = ["I"] * n_qubits
             for pos, op in zip(positions, ops, strict=False):
                 pauli_list[pos] = op
-            pauli = ''.join(pauli_list)
+            pauli = "".join(pauli_list)
             if pauli not in sampled:
                 sampled.add(pauli)
             attempts += 1
 
-    elif strategy == 'uniform_weight':
+    elif strategy == "uniform_weight":
         attempts = 0
         while len(sampled) < n_samples and attempts < n_samples * 100:
             k = rng.integers(1, max_weight + 1)
             positions = tuple(sorted(rng.choice(n_qubits, k, replace=False)))
             ops = tuple(rng.choice(pauli_ops, k))
-            pauli_list = ['I'] * n_qubits
+            pauli_list = ["I"] * n_qubits
             for pos, op in zip(positions, ops, strict=False):
                 pauli_list[pos] = op
-            pauli = ''.join(pauli_list)
+            pauli = "".join(pauli_list)
             if pauli not in sampled:
                 sampled.add(pauli)
             attempts += 1
@@ -439,6 +440,7 @@ def sample_random_paulis(
 # =============================================================================
 # CIRCUIT-SPECIFIC SUITE BUILDERS
 # =============================================================================
+
 
 def make_ghz_suites(n_qubits: int, seed: int = 42) -> dict[str, ObservableSuite]:
     """Create benchmark suites for GHZ state verification.
@@ -456,45 +458,41 @@ def make_ghz_suites(n_qubits: int, seed: int = 42) -> dict[str, ObservableSuite]
     # === WORKLOAD: GHZ Stabilizers ===
     # Stabilizers: X^⊗n, Z_i Z_{i+1} for all i (and optionally all Z_i Z_j)
     stabilizer_paulis = []
-    stabilizer_paulis.append('X' * n_qubits)  # Global X parity
-    stabilizer_paulis.extend(generate_zz_correlators(n_qubits, graph='all'))  # All ZZ pairs
+    stabilizer_paulis.append("X" * n_qubits)  # Global X parity
+    stabilizer_paulis.extend(generate_zz_correlators(n_qubits, graph="all"))  # All ZZ pairs
 
-    suites['workload_stabilizers'] = ObservableSuite.from_pauli_strings(
-        name='workload_stabilizers',
+    suites["workload_stabilizers"] = ObservableSuite.from_pauli_strings(
+        name="workload_stabilizers",
         suite_type=SuiteType.WORKLOAD,
         pauli_strings=stabilizer_paulis,
         description=f"GHZ stabilizer generators: X^{n_qubits} + all Z_i Z_j pairs",
     )
 
     # === STRESS: Random 1000 observables ===
-    stress_paulis = sample_random_paulis(
-        n_qubits, 1000, strategy='stratified', seed=seed
-    )
-    suites['stress_random_1000'] = ObservableSuite.from_pauli_strings(
-        name='stress_random_1000',
+    stress_paulis = sample_random_paulis(n_qubits, 1000, strategy="stratified", seed=seed)
+    suites["stress_random_1000"] = ObservableSuite.from_pauli_strings(
+        name="stress_random_1000",
         suite_type=SuiteType.STRESS,
         pauli_strings=stress_paulis,
         description="1000 random Paulis, stratified by weight",
     )
 
     # === COMMUTING: Z-only correlators ===
-    z_paulis = generate_zz_correlators(n_qubits, graph='all')
-    z_paulis.extend(generate_single_qubit(n_qubits, paulis='Z'))
-    z_paulis.append('Z' * n_qubits)
+    z_paulis = generate_zz_correlators(n_qubits, graph="all")
+    z_paulis.extend(generate_single_qubit(n_qubits, paulis="Z"))
+    z_paulis.append("Z" * n_qubits)
 
-    suites['commuting_z_only'] = ObservableSuite.from_pauli_strings(
-        name='commuting_z_only',
+    suites["commuting_z_only"] = ObservableSuite.from_pauli_strings(
+        name="commuting_z_only",
         suite_type=SuiteType.COMMUTING,
         pauli_strings=list(set(z_paulis)),  # Deduplicate
         description="All-Z observables (fully commuting, grouped measurement advantage)",
     )
 
     # === POSTHOC: Large library for querying tests ===
-    posthoc_paulis = sample_random_paulis(
-        n_qubits, 2000, strategy='stratified', seed=seed + 1000
-    )
-    suites['posthoc_library'] = ObservableSuite.from_pauli_strings(
-        name='posthoc_library',
+    posthoc_paulis = sample_random_paulis(n_qubits, 2000, strategy="stratified", seed=seed + 1000)
+    suites["posthoc_library"] = ObservableSuite.from_pauli_strings(
+        name="posthoc_library",
         suite_type=SuiteType.POSTHOC,
         pauli_strings=posthoc_paulis,
         description="2000 observables for post-hoc querying benchmark",
@@ -521,23 +519,23 @@ def make_bell_suites(n_pairs: int, seed: int = 42) -> dict[str, ObservableSuite]
     pair_paulis = []
     for i in range(n_pairs):
         q1, q2 = 2 * i, 2 * i + 1
-        for pp in ['XX', 'YY', 'ZZ']:
-            pauli_list = ['I'] * n_qubits
+        for pp in ["XX", "YY", "ZZ"]:
+            pauli_list = ["I"] * n_qubits
             pauli_list[q1] = pp[0]
             pauli_list[q2] = pp[1]
-            pair_paulis.append(''.join(pauli_list))
+            pair_paulis.append("".join(pauli_list))
 
-    suites['workload_pair_correlations'] = ObservableSuite.from_pauli_strings(
-        name='workload_pair_correlations',
+    suites["workload_pair_correlations"] = ObservableSuite.from_pauli_strings(
+        name="workload_pair_correlations",
         suite_type=SuiteType.WORKLOAD,
         pauli_strings=pair_paulis,
         description=f"XX, YY, ZZ on each of {n_pairs} Bell pairs",
     )
 
     # === DIAGNOSTICS: Single-qubit Z ===
-    single_z = generate_single_qubit(n_qubits, paulis='Z')
-    suites['diagnostics_single_qubit'] = ObservableSuite.from_pauli_strings(
-        name='diagnostics_single_qubit',
+    single_z = generate_single_qubit(n_qubits, paulis="Z")
+    suites["diagnostics_single_qubit"] = ObservableSuite.from_pauli_strings(
+        name="diagnostics_single_qubit",
         suite_type=SuiteType.DIAGNOSTIC,
         pauli_strings=single_z,
         description="Single-qubit Z for readout bias diagnostics",
@@ -548,25 +546,23 @@ def make_bell_suites(n_pairs: int, seed: int = 42) -> dict[str, ObservableSuite]
     for i in range(n_pairs):
         for j in range(i + 1, n_pairs):
             # Z on first qubit of pair i, Z on first qubit of pair j
-            pauli_list = ['I'] * n_qubits
-            pauli_list[2 * i] = 'Z'
-            pauli_list[2 * j] = 'Z'
-            cross_paulis.append(''.join(pauli_list))
+            pauli_list = ["I"] * n_qubits
+            pauli_list[2 * i] = "Z"
+            pauli_list[2 * j] = "Z"
+            cross_paulis.append("".join(pauli_list))
 
     if cross_paulis:
-        suites['diagnostics_cross_pair'] = ObservableSuite.from_pauli_strings(
-            name='diagnostics_cross_pair',
+        suites["diagnostics_cross_pair"] = ObservableSuite.from_pauli_strings(
+            name="diagnostics_cross_pair",
             suite_type=SuiteType.DIAGNOSTIC,
             pauli_strings=cross_paulis,
             description="Cross-pair ZZ correlators for crosstalk detection",
         )
 
     # === STRESS: Random 1000 ===
-    stress_paulis = sample_random_paulis(
-        n_qubits, 1000, strategy='stratified', seed=seed
-    )
-    suites['stress_random_1000'] = ObservableSuite.from_pauli_strings(
-        name='stress_random_1000',
+    stress_paulis = sample_random_paulis(n_qubits, 1000, strategy="stratified", seed=seed)
+    suites["stress_random_1000"] = ObservableSuite.from_pauli_strings(
+        name="stress_random_1000",
         suite_type=SuiteType.STRESS,
         pauli_strings=stress_paulis,
         description="1000 random Paulis, stratified by weight",
@@ -592,19 +588,19 @@ def make_ising_suites(n_qubits: int, seed: int = 42) -> dict[str, ObservableSuit
     energy_weights = {}
 
     # ZZ chain terms (J = 1.0)
-    zz_chain = generate_zz_correlators(n_qubits, graph='chain')
+    zz_chain = generate_zz_correlators(n_qubits, graph="chain")
     for ps in zz_chain:
         energy_paulis.append(ps)
         energy_weights[ps] = -1.0  # -J
 
     # X single-qubit terms (h = 0.5)
-    x_single = generate_single_qubit(n_qubits, paulis='X')
+    x_single = generate_single_qubit(n_qubits, paulis="X")
     for ps in x_single:
         energy_paulis.append(ps)
         energy_weights[ps] = -0.5  # -h
 
-    suites['workload_energy'] = ObservableSuite.from_pauli_strings(
-        name='workload_energy',
+    suites["workload_energy"] = ObservableSuite.from_pauli_strings(
+        name="workload_energy",
         suite_type=SuiteType.WORKLOAD,
         pauli_strings=energy_paulis,
         weights=energy_weights,
@@ -616,24 +612,22 @@ def make_ising_suites(n_qubits: int, seed: int = 42) -> dict[str, ObservableSuit
     corr_paulis = []
     for r in range(1, min(n_qubits, 5)):  # Distances 1, 2, 3, 4
         for i in range(n_qubits - r):
-            pauli_list = ['I'] * n_qubits
-            pauli_list[i] = 'Z'
-            pauli_list[i + r] = 'Z'
-            corr_paulis.append(''.join(pauli_list))
+            pauli_list = ["I"] * n_qubits
+            pauli_list[i] = "Z"
+            pauli_list[i + r] = "Z"
+            corr_paulis.append("".join(pauli_list))
 
-    suites['workload_correlations'] = ObservableSuite.from_pauli_strings(
-        name='workload_correlations',
+    suites["workload_correlations"] = ObservableSuite.from_pauli_strings(
+        name="workload_correlations",
         suite_type=SuiteType.WORKLOAD,
         pauli_strings=list(set(corr_paulis)),
         description="Z_i Z_j correlators at distances r=1,2,3,4",
     )
 
     # === STRESS: Random 1000 ===
-    stress_paulis = sample_random_paulis(
-        n_qubits, 1000, strategy='stratified', seed=seed
-    )
-    suites['stress_random_1000'] = ObservableSuite.from_pauli_strings(
-        name='stress_random_1000',
+    stress_paulis = sample_random_paulis(n_qubits, 1000, strategy="stratified", seed=seed)
+    suites["stress_random_1000"] = ObservableSuite.from_pauli_strings(
+        name="stress_random_1000",
         suite_type=SuiteType.STRESS,
         pauli_strings=stress_paulis,
         description="1000 random Paulis, stratified by weight",
@@ -658,23 +652,23 @@ def make_qaoa_ring_suites(n_qubits: int, seed: int = 42) -> dict[str, Observable
 
     # === WORKLOAD: Cost Hamiltonian ===
     # CRITICAL: Include wrap-around edge (n-1, 0)!
-    edge_paulis = generate_zz_correlators(n_qubits, graph='ring')
+    edge_paulis = generate_zz_correlators(n_qubits, graph="ring")
     edge_weights = dict.fromkeys(edge_paulis, 0.5)  # (1 - ⟨ZZ⟩)/2, so weight is -0.5 on ⟨ZZ⟩
 
-    suites['workload_cost'] = ObservableSuite.from_pauli_strings(
-        name='workload_cost',
+    suites["workload_cost"] = ObservableSuite.from_pauli_strings(
+        name="workload_cost",
         suite_type=SuiteType.WORKLOAD,
         pauli_strings=edge_paulis,
         weights=edge_weights,
         objective=ObjectiveType.WEIGHTED_SUM,
         description=f"QAOA ring cost: {n_qubits} edges INCLUDING wrap (n-1,0)",
-        metadata={'graph': 'ring', 'includes_wrap': True},
+        metadata={"graph": "ring", "includes_wrap": True},
     )
 
     # === COMMUTING: Same terms (all ZZ commute) ===
     # This shows where grouped direct measurement dominates
-    suites['commuting_cost'] = ObservableSuite.from_pauli_strings(
-        name='commuting_cost',
+    suites["commuting_cost"] = ObservableSuite.from_pauli_strings(
+        name="commuting_cost",
         suite_type=SuiteType.COMMUTING,
         pauli_strings=edge_paulis,
         weights=edge_weights,
@@ -683,22 +677,18 @@ def make_qaoa_ring_suites(n_qubits: int, seed: int = 42) -> dict[str, Observable
     )
 
     # === STRESS: Random mixed to show where shadows helps ===
-    stress_paulis = sample_random_paulis(
-        n_qubits, 1000, strategy='stratified', seed=seed
-    )
-    suites['stress_random_1000'] = ObservableSuite.from_pauli_strings(
-        name='stress_random_1000',
+    stress_paulis = sample_random_paulis(n_qubits, 1000, strategy="stratified", seed=seed)
+    suites["stress_random_1000"] = ObservableSuite.from_pauli_strings(
+        name="stress_random_1000",
         suite_type=SuiteType.STRESS,
         pauli_strings=stress_paulis,
         description="1000 random Paulis (non-commuting → shadows may help)",
     )
 
     # === POSTHOC: Library for "measure once, query later" ===
-    posthoc_paulis = sample_random_paulis(
-        n_qubits, 2000, strategy='stratified', seed=seed + 1000
-    )
-    suites['posthoc_library'] = ObservableSuite.from_pauli_strings(
-        name='posthoc_library',
+    posthoc_paulis = sample_random_paulis(n_qubits, 2000, strategy="stratified", seed=seed + 1000)
+    suites["posthoc_library"] = ObservableSuite.from_pauli_strings(
+        name="posthoc_library",
         suite_type=SuiteType.POSTHOC,
         pauli_strings=posthoc_paulis,
         description="2000 observables for post-hoc querying benchmark",
@@ -725,33 +715,31 @@ def make_phase_sensing_suites(n_qubits: int, seed: int = 42) -> dict[str, Observ
 
     # === WORKLOAD: Phase signal observables ===
     # CRITICAL: Always include Y^n for all n >= 2
-    phase_paulis = ['X' * n_qubits, 'Y' * n_qubits]
+    phase_paulis = ["X" * n_qubits, "Y" * n_qubits]
 
-    suites['workload_phase_signal'] = ObservableSuite.from_pauli_strings(
-        name='workload_phase_signal',
+    suites["workload_phase_signal"] = ObservableSuite.from_pauli_strings(
+        name="workload_phase_signal",
         suite_type=SuiteType.WORKLOAD,
         pauli_strings=phase_paulis,
         description=f"Phase sensing: X^{n_qubits} and Y^{n_qubits} (always included)",
-        metadata={'includes_Y_global': True},
+        metadata={"includes_Y_global": True},
     )
 
     # === WORKLOAD: Full stabilizers (for fidelity estimation) ===
     stabilizer_paulis = list(phase_paulis)  # Copy
-    stabilizer_paulis.extend(generate_zz_correlators(n_qubits, graph='chain'))
+    stabilizer_paulis.extend(generate_zz_correlators(n_qubits, graph="chain"))
 
-    suites['workload_stabilizers'] = ObservableSuite.from_pauli_strings(
-        name='workload_stabilizers',
+    suites["workload_stabilizers"] = ObservableSuite.from_pauli_strings(
+        name="workload_stabilizers",
         suite_type=SuiteType.WORKLOAD,
         pauli_strings=list(set(stabilizer_paulis)),
         description="GHZ stabilizers for fidelity estimation",
     )
 
     # === STRESS: Random 500 ===
-    stress_paulis = sample_random_paulis(
-        n_qubits, 500, strategy='stratified', seed=seed
-    )
-    suites['stress_random_500'] = ObservableSuite.from_pauli_strings(
-        name='stress_random_500',
+    stress_paulis = sample_random_paulis(n_qubits, 500, strategy="stratified", seed=seed)
+    suites["stress_random_500"] = ObservableSuite.from_pauli_strings(
+        name="stress_random_500",
         suite_type=SuiteType.STRESS,
         pauli_strings=stress_paulis,
         description="500 random Paulis for scaling test",
@@ -787,8 +775,8 @@ def make_chemistry_suites(
     # === WORKLOAD: Energy ===
     if hamiltonian_terms and hamiltonian_coeffs:
         weights = dict(zip(hamiltonian_terms, hamiltonian_coeffs, strict=False))
-        suites['workload_energy'] = ObservableSuite.from_pauli_strings(
-            name='workload_energy',
+        suites["workload_energy"] = ObservableSuite.from_pauli_strings(
+            name="workload_energy",
             suite_type=SuiteType.WORKLOAD,
             pauli_strings=hamiltonian_terms,
             weights=weights,
@@ -797,23 +785,21 @@ def make_chemistry_suites(
         )
     else:
         # Placeholder: use random 2-local as proxy for molecular Hamiltonian
-        placeholder_paulis = generate_zz_correlators(n_qubits, graph='all')
-        placeholder_paulis.extend(generate_single_qubit(n_qubits, paulis='XYZ'))
+        placeholder_paulis = generate_zz_correlators(n_qubits, graph="all")
+        placeholder_paulis.extend(generate_single_qubit(n_qubits, paulis="XYZ"))
 
-        suites['workload_energy_placeholder'] = ObservableSuite.from_pauli_strings(
-            name='workload_energy_placeholder',
+        suites["workload_energy_placeholder"] = ObservableSuite.from_pauli_strings(
+            name="workload_energy_placeholder",
             suite_type=SuiteType.WORKLOAD,
             pauli_strings=placeholder_paulis,
             description=f"{molecule_name} placeholder (use actual Hamiltonian when available)",
-            metadata={'is_placeholder': True},
+            metadata={"is_placeholder": True},
         )
 
     # === STRESS: Random 1000 ===
-    stress_paulis = sample_random_paulis(
-        n_qubits, 1000, strategy='stratified', seed=seed
-    )
-    suites['stress_random_1000'] = ObservableSuite.from_pauli_strings(
-        name='stress_random_1000',
+    stress_paulis = sample_random_paulis(n_qubits, 1000, strategy="stratified", seed=seed)
+    suites["stress_random_1000"] = ObservableSuite.from_pauli_strings(
+        name="stress_random_1000",
         suite_type=SuiteType.STRESS,
         pauli_strings=stress_paulis,
         description="1000 random Paulis, stratified by weight",
@@ -826,10 +812,11 @@ def make_chemistry_suites(
 # GENERIC SUITE GENERATORS
 # =============================================================================
 
+
 def make_stress_suite(
     n_qubits: int,
     n_observables: int = 1000,
-    strategy: str = 'stratified',
+    strategy: str = "stratified",
     seed: int = 42,
     name: str | None = None,
 ) -> ObservableSuite:
@@ -869,7 +856,7 @@ def make_posthoc_library(
         seed: Random seed
         name: Suite name
     """
-    paulis = sample_random_paulis(n_qubits, n_observables, strategy='stratified', seed=seed)
+    paulis = sample_random_paulis(n_qubits, n_observables, strategy="stratified", seed=seed)
 
     if name is None:
         name = f"posthoc_library_{n_observables}"
@@ -884,7 +871,7 @@ def make_posthoc_library(
 
 def make_commuting_suite(
     n_qubits: int,
-    basis: Literal['Z', 'X', 'Y'] = 'Z',
+    basis: Literal["Z", "X", "Y"] = "Z",
     include_global: bool = True,
     name: str | None = None,
 ) -> ObservableSuite:
@@ -902,10 +889,10 @@ def make_commuting_suite(
     # All 2-local in this basis
     for i in range(n_qubits):
         for j in range(i + 1, n_qubits):
-            pauli_list = ['I'] * n_qubits
+            pauli_list = ["I"] * n_qubits
             pauli_list[i] = basis
             pauli_list[j] = basis
-            paulis.append(''.join(pauli_list))
+            paulis.append("".join(pauli_list))
 
     if include_global:
         paulis.append(basis * n_qubits)

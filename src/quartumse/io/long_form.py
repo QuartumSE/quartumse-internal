@@ -402,9 +402,7 @@ class LongFormResultSet:
 
     def filter_by_observable(self, observable_id: str) -> LongFormResultSet:
         """Filter rows by observable ID."""
-        return LongFormResultSet(
-            [r for r in self._rows if r.observable_id == observable_id]
-        )
+        return LongFormResultSet([r for r in self._rows if r.observable_id == observable_id])
 
     def get_unique_protocols(self) -> list[str]:
         """Get unique protocol IDs."""

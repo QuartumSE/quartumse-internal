@@ -82,9 +82,7 @@ def compute_coverage(
     # Verify dimensions
     for rep_idx, cis in enumerate(ci_results):
         if len(cis) != n_observables:
-            raise ValueError(
-                f"Replicate {rep_idx} has {len(cis)} CIs, expected {n_observables}"
-            )
+            raise ValueError(f"Replicate {rep_idx} has {len(cis)} CIs, expected {n_observables}")
 
     # Get nominal confidence from first CI
     nominal_confidence = ci_results[0][0].confidence_level
@@ -93,9 +91,7 @@ def compute_coverage(
     per_obs_coverage = []
     for obs_idx in range(n_observables):
         truth = truth_values[obs_idx]
-        covered = sum(
-            1 for cis in ci_results if cis[obs_idx].contains(truth)
-        )
+        covered = sum(1 for cis in ci_results if cis[obs_idx].contains(truth))
         per_obs_coverage.append(covered / n_replicates)
 
     # Compute average coverage
@@ -240,9 +236,7 @@ def simulate_coverage(
             se = float(np.std(outcomes, ddof=1) / np.sqrt(n_shots))
 
             # Construct CI at adjusted confidence level
-            ci = normal_ci(
-                estimate, se, adjustment.confidence_individual[obs_idx], n_shots
-            )
+            ci = normal_ci(estimate, se, adjustment.confidence_individual[obs_idx], n_shots)
 
             if not ci.contains(true_exp):
                 all_covered = False

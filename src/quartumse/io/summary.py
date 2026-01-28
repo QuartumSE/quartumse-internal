@@ -172,18 +172,12 @@ class SummaryAggregator:
         rows_with_ci = [
             row
             for row in rows
-            if row.ci_low is not None
-            and row.ci_high is not None
-            and row.truth_value is not None
+            if row.ci_low is not None and row.ci_high is not None and row.truth_value is not None
         ]
 
         if rows_with_ci:
             # Per-observable coverage: fraction of CIs that contain truth
-            covered = sum(
-                1
-                for row in rows_with_ci
-                if row.ci_low <= row.truth_value <= row.ci_high
-            )
+            covered = sum(1 for row in rows_with_ci if row.ci_low <= row.truth_value <= row.ci_high)
             coverage_per_observable = covered / len(rows_with_ci)
 
             # Family-wise coverage: for each replicate, check if ALL CIs contain truth
@@ -196,9 +190,7 @@ class SummaryAggregator:
                 )
 
             # Family-wise: fraction of replicates where all CIs contain truth
-            family_covered = sum(
-                1 for covers in replicate_coverage.values() if all(covers)
-            )
+            family_covered = sum(1 for covers in replicate_coverage.values() if all(covers))
             coverage_family_wise = family_covered / len(replicate_coverage)
 
         # Resource totals
@@ -292,9 +284,7 @@ def compute_shot_savings_factor(
         target_precision = protocol_by_N[protocol_N]
 
         # Find baseline N that achieves similar precision (interpolate)
-        baseline_N_for_precision = _interpolate_N_for_precision(
-            baseline_by_N, target_precision
-        )
+        baseline_N_for_precision = _interpolate_N_for_precision(baseline_by_N, target_precision)
 
         if baseline_N_for_precision is not None:
             ssf_results[circuit_id] = baseline_N_for_precision / protocol_N

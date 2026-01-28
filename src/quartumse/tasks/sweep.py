@@ -257,13 +257,15 @@ class SweepOrchestrator:
                                     self.results.add_many(rows)
 
                                 except Exception as e:
-                                    self.progress.errors.append({
-                                        "protocol": protocol.protocol_id,
-                                        "circuit": circuit_id,
-                                        "n": n,
-                                        "replicate": rep,
-                                        "error": str(e),
-                                    })
+                                    self.progress.errors.append(
+                                        {
+                                            "protocol": protocol.protocol_id,
+                                            "circuit": circuit_id,
+                                            "n": n,
+                                            "replicate": rep,
+                                            "error": str(e),
+                                        }
+                                    )
 
                                 self.progress.completed_configs += 1
                                 config_id += 1

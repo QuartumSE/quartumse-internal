@@ -123,8 +123,7 @@ def bootstrap_objective_ci(
 
     # Compute objective for each replicate
     objective_values = [
-        compute_weighted_objective(rep, weights, objective_type)
-        for rep in replicate_estimates
+        compute_weighted_objective(rep, weights, objective_type) for rep in replicate_estimates
     ]
 
     # Bootstrap resampling
@@ -207,8 +206,11 @@ def compute_objective_metrics(
 
             # Bootstrap CI
             se, ci_low, ci_high = bootstrap_objective_ci(
-                replicate_estimates, weights, objective_type,
-                n_bootstrap=n_bootstrap, seed=seed,
+                replicate_estimates,
+                weights,
+                objective_type,
+                n_bootstrap=n_bootstrap,
+                seed=seed,
             )
 
             # Comparison to truth
@@ -245,7 +247,7 @@ def compute_objective_metrics(
     # Determine winner at max N
     max_n = max(shot_counts)
     best_protocol = None
-    best_se = float('inf')
+    best_se = float("inf")
 
     for protocol in protocols:
         if max_n in analysis.estimates_by_protocol[protocol]:
@@ -262,9 +264,9 @@ def compute_objective_metrics(
     for protocol in protocols:
         if max_n in analysis.estimates_by_protocol[protocol]:
             est = analysis.estimates_by_protocol[protocol][max_n]
-            if 'shadows' in protocol.lower():
+            if "shadows" in protocol.lower():
                 shadows_se = est.se
-            elif 'grouped' in protocol.lower() or 'direct' in protocol.lower():
+            elif "grouped" in protocol.lower() or "direct" in protocol.lower():
                 baseline_se = est.se
 
     if shadows_se is not None and baseline_se is not None and baseline_se > 0:
@@ -291,7 +293,7 @@ def format_objective_analysis(analysis: ObjectiveAnalysis) -> str:
     for protocol, estimates in analysis.estimates_by_protocol.items():
         if max_n in estimates:
             est = estimates[max_n]
-            short_name = protocol.replace('classical_shadows_v0', 'shadows').replace('direct_', '')
+            short_name = protocol.replace("classical_shadows_v0", "shadows").replace("direct_", "")
 
             se_str = f"SE={est.se:.4f}" if est.se is not None else "SE=N/A"
             ci_str = ""
@@ -307,7 +309,7 @@ def format_objective_analysis(analysis: ObjectiveAnalysis) -> str:
     # N* for objective
     lines.append(f"\nN* for objective (SE <= {analysis.target_epsilon}):")
     for protocol, n_star in analysis.n_star_objective.items():
-        short_name = protocol.replace('classical_shadows_v0', 'shadows').replace('direct_', '')
+        short_name = protocol.replace("classical_shadows_v0", "shadows").replace("direct_", "")
         n_str = f"N*={n_star}" if n_star else f"N*>{max_n}"
         lines.append(f"  {short_name}: {n_str}")
 

@@ -106,9 +106,7 @@ class DirectOptimizedProtocol(StaticProtocol):
         groups, stats = partition_observable_set(observable_set, method="greedy")
 
         # Compute optimal allocation
-        shots_per_group, allocation_weights = self._compute_allocation(
-            groups, total_budget
-        )
+        shots_per_group, allocation_weights = self._compute_allocation(groups, total_budget)
 
         # Initialize storage
         group_bitstrings = {g.group_id: [] for g in groups}
@@ -344,9 +342,7 @@ class DirectOptimizedProtocol(StaticProtocol):
                         n_settings=1,
                         metadata={
                             "group_id": group.group_id,
-                            "allocation_weight": opt_state.allocation_weights[
-                                group.group_id
-                            ],
+                            "allocation_weight": opt_state.allocation_weights[group.group_id],
                         },
                     )
 

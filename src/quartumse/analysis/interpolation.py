@@ -27,6 +27,7 @@ class PowerLawFit:
         observed: Observed SE values
         predicted: Predicted SE values from fit
     """
+
     amplitude: float
     exponent: float
     r_squared: float
@@ -37,7 +38,7 @@ class PowerLawFit:
 
     def predict(self, n: float) -> float:
         """Predict SE at shot budget n."""
-        return self.amplitude * (n ** self.exponent)
+        return self.amplitude * (n**self.exponent)
 
     def to_dict(self) -> dict[str, Any]:
         return {

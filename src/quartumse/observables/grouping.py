@@ -11,7 +11,6 @@ grouping" baseline (§4.1B) which is required for defensible benchmarks.
 
 from __future__ import annotations
 
-from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -37,7 +36,7 @@ def pauli_commutes(p1: str, p2: str) -> bool:
         raise ValueError(f"Pauli strings must have same length: {len(p1)} vs {len(p2)}")
 
     anticommute_count = 0
-    for c1, c2 in zip(p1, p2):
+    for c1, c2 in zip(p1, p2, strict=False):
         if c1 != "I" and c2 != "I" and c1 != c2:
             anticommute_count += 1
 
@@ -62,7 +61,7 @@ def qubitwise_commutes(p1: str, p2: str) -> bool:
     if len(p1) != len(p2):
         raise ValueError(f"Pauli strings must have same length: {len(p1)} vs {len(p2)}")
 
-    for c1, c2 in zip(p1, p2):
+    for c1, c2 in zip(p1, p2, strict=False):
         if c1 != "I" and c2 != "I" and c1 != c2:
             return False
     return True
@@ -297,7 +296,7 @@ def sorted_insertion_grouping(
         placed = False
 
         # Try to place in existing group
-        for g_idx, (group, basis) in enumerate(zip(groups, group_bases)):
+        for g_idx, (group, _basis) in enumerate(zip(groups, group_bases, strict=False)):
             # Check if observable fits in this group
             group_obs = [observables[i] for i in group]
             test_basis = shared_measurement_basis(group_obs + [obs])
@@ -315,7 +314,7 @@ def sorted_insertion_grouping(
 
     # Convert to CommutingGroup objects
     result: list[CommutingGroup] = []
-    for g_idx, (group_indices, basis) in enumerate(zip(groups, group_bases)):
+    for g_idx, (group_indices, basis) in enumerate(zip(groups, group_bases, strict=False)):
         group_id = f"group_{g_idx}"
         group_observables = [observables[i] for i in group_indices]
 

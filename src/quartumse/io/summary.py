@@ -7,8 +7,6 @@ replicates for each (protocol, circuit, N) combination.
 
 from __future__ import annotations
 
-from typing import Any
-
 import numpy as np
 
 from .long_form import LongFormResultSet
@@ -121,8 +119,8 @@ class SummaryAggregator:
         run_id = rows[0].run_id
 
         # Count unique observables and replicates
-        observable_ids = set(row.observable_id for row in rows)
-        replicate_ids = set(row.replicate_id for row in rows)
+        observable_ids = {row.observable_id for row in rows}
+        replicate_ids = {row.replicate_id for row in rows}
 
         n_observables = len(observable_ids)
         n_replicates = len(replicate_ids)

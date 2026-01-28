@@ -29,7 +29,6 @@ from .base import (
     TaskOutput,
     TaskType,
     group_results_by_n,
-    group_results_by_replicate,
 )
 
 

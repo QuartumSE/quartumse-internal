@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from typing import Any
 
 import numpy as np
-from scipy.optimize import curve_fit, brentq
+from scipy.optimize import curve_fit
 
 
 @dataclass

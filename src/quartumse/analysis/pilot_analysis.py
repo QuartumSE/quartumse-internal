@@ -8,9 +8,9 @@ Implements Benchmarking_Improvement.md enhancement:
 
 from __future__ import annotations
 
+from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from typing import Any
-from collections import defaultdict, Counter
 
 import numpy as np
 
@@ -134,7 +134,7 @@ def multi_pilot_analysis(
         pilot_fractions = [0.02, 0.05, 0.10, 0.20]
 
     # Determine target N
-    all_ns = sorted(set(r.N_total for r in long_form_results))
+    all_ns = sorted({r.N_total for r in long_form_results})
     if target_n is None:
         target_n = all_ns[-1]
 

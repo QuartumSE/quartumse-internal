@@ -1,13 +1,12 @@
 """Unit tests for the backends package (ground truth and samplers)."""
 
-import numpy as np
 import pytest
 from qiskit import QuantumCircuit
 
 from quartumse.backends import (
-    StatevectorBackend,
     IdealSampler,
     NoisySampler,
+    StatevectorBackend,
     sample_circuit,
 )
 from quartumse.observables import Observable, ObservableSet

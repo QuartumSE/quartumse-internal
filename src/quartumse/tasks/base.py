@@ -12,13 +12,10 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Protocol as TypingProtocol
+from typing import Any
 
-import numpy as np
-
-from ..io.schemas import LongFormRow, SummaryRow, TaskResult
-from ..observables import ObservableSet
-from ..protocols import Estimates, Protocol
+from ..io.schemas import LongFormRow, TaskResult
+from ..protocols import Estimates
 
 
 class TaskType(str, Enum):

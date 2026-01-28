@@ -14,20 +14,17 @@ Expected scaling: O(G) measurement settings, where G ≤ M.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
 
 import numpy as np
 
 from ...observables import (
     CommutingGroup,
-    Observable,
     ObservableSet,
     partition_observable_set,
 )
 from ..base import StaticProtocol
 from ..registry import register_protocol
 from ..state import (
-    CIResult,
     Estimates,
     MeasurementPlan,
     MeasurementSetting,

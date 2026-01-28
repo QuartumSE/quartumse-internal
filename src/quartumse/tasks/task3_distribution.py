@@ -23,7 +23,6 @@ from .base import (
     TaskType,
     compute_attainment,
     group_results_by_n,
-    group_results_by_replicate,
 )
 
 
@@ -191,7 +190,7 @@ class FixedBudgetDistributionTask(BenchmarkTask):
             n_star=None,  # Not applicable for this task
             metrics={
                 "n_evaluated": list(results_by_n.keys()),
-                "n_observables": len(set(r.observable_id for r in long_form_results)),
+                "n_observables": len({r.observable_id for r in long_form_results}),
             },
             details={
                 "se_distributions": se_distributions,
@@ -276,7 +275,7 @@ class FixedBudgetDistributionTask(BenchmarkTask):
                 "relative_improvement": improvement,
                 "ks_statistic": ks_stat,
                 "ks_pvalue": ks_pvalue,
-                "a_better_fraction": sum(1 for a, b in zip(sorted(se_a), sorted(se_b)) if a < b) / min(len(se_a), len(se_b)),
+                "a_better_fraction": sum(1 for a, b in zip(sorted(se_a), sorted(se_b), strict=False) if a < b) / min(len(se_a), len(se_b)),
             }
 
         return comparison

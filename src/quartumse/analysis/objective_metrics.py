@@ -11,7 +11,6 @@ individual observable errors.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
 
 import numpy as np
 
@@ -176,8 +175,8 @@ def compute_objective_metrics(
         by_protocol_n_rep[key][row.observable_id] = row.estimate
 
     # Get unique protocols and shot counts
-    protocols = sorted(set(row.protocol_id for row in long_form_results))
-    shot_counts = sorted(set(row.N_total for row in long_form_results))
+    protocols = sorted({row.protocol_id for row in long_form_results})
+    shot_counts = sorted({row.N_total for row in long_form_results})
 
     analysis = ObjectiveAnalysis(
         objective_type=objective_type,
@@ -190,7 +189,7 @@ def compute_objective_metrics(
         for n_shots in shot_counts:
             # Gather all replicates for this (protocol, N)
             replicate_estimates = []
-            for (p, n, rep), obs_dict in by_protocol_n_rep.items():
+            for (p, n, _rep), obs_dict in by_protocol_n_rep.items():
                 if p == protocol and n == n_shots:
                     replicate_estimates.append(obs_dict)
 

@@ -12,11 +12,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-import numpy as np
-
 from ..io.schemas import LongFormRow
 from ..protocols import Estimates
-from ..stats import compute_fwer_adjustment, FWERMethod
+from ..stats import compute_fwer_adjustment
 from .base import (
     BenchmarkTask,
     CriterionType,
@@ -144,7 +142,7 @@ class WorstCaseTask(BenchmarkTask):
 
         if self.config.criterion_type == CriterionType.CI_BASED:
             # Get FWER-adjusted confidence level
-            adjustment = compute_fwer_adjustment(
+            compute_fwer_adjustment(
                 M, self.config.delta, self.config.fwer_method
             )
 
@@ -212,7 +210,7 @@ class WorstCaseTask(BenchmarkTask):
 
             # For each replicate, check if criterion is met
             success_count = 0
-            for rep_id, rep_rows in by_replicate.items():
+            for _rep_id, rep_rows in by_replicate.items():
                 if self._check_replicate_criterion(rep_rows, truth_values):
                     success_count += 1
 

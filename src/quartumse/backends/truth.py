@@ -202,7 +202,7 @@ def compute_ground_truth(
     observable_set: ObservableSet,
     circuit_id: str = "circuit",
     max_qubits: int | None = None,
-    config: "GroundTruthConfig | None" = None,
+    config: GroundTruthConfig | None = None,
 ) -> GroundTruthResult:
     """Convenience function to compute ground truth.
 

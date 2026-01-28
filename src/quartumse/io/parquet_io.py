@@ -19,8 +19,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-import numpy as np
-
 from .long_form import LongFormResultSet
 from .schemas import LongFormRow, RunManifest, SummaryRow, TaskResult
 

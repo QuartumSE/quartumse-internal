@@ -17,8 +17,6 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
-import numpy as np
-
 from .observables import ObservableSet
 
 
@@ -141,11 +139,11 @@ def _run_all_tasks(
 ) -> dict[str, Any]:
     """Run all 8 tasks from the Measurements Bible."""
     from .tasks import (
+        BiasVarianceTask,
+        FixedBudgetDistributionTask,
         TaskConfig,
         TaskType,
         WorstCaseTask,
-        FixedBudgetDistributionTask,
-        BiasVarianceTask,
     )
 
     all_results = {}
@@ -358,7 +356,7 @@ def _generate_complete_report(
         f"# Complete Benchmark Report: {run_id}",
         "",
         f"**Generated:** {datetime.now().isoformat()}",
-        f"**Mode:** Complete (All 8 Tasks)",
+        "**Mode:** Complete (All 8 Tasks)",
         "",
         "---",
         "",
@@ -506,9 +504,9 @@ def run_benchmark_suite(
     timestamp = datetime.now()
     output_dir = _create_output_dir(config.output_base_dir, run_id)
 
-    print(f"="*70)
+    print("="*70)
     print(f"BENCHMARK SUITE: {config.mode.value.upper()}")
-    print(f"="*70)
+    print("="*70)
     print(f"Run ID: {run_id}")
     print(f"Output: {output_dir}")
     print(f"Mode: {config.mode.value}")
@@ -648,9 +646,9 @@ def run_benchmark_suite(
     reports['manifest'] = manifest_path
 
     print()
-    print(f"="*70)
-    print(f"BENCHMARK COMPLETE")
-    print(f"="*70)
+    print("="*70)
+    print("BENCHMARK COMPLETE")
+    print("="*70)
     print(f"Output directory: {output_dir}")
     print(f"Reports generated: {list(reports.keys())}")
     print()

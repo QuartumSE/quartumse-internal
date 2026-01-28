@@ -21,7 +21,6 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
 from qiskit import QuantumCircuit
-from qiskit.primitives import BackendSamplerV2
 from qiskit_aer import AerSimulator
 
 from .state import (
@@ -394,7 +393,7 @@ class StaticProtocol(Protocol):
         bitstrings: dict[str, list[str]] = {}
         backend = backend or AerSimulator()
 
-        for setting, n_shots in zip(plan.settings, plan.shots_per_setting):
+        for setting, n_shots in zip(plan.settings, plan.shots_per_setting, strict=False):
             measurement_circuit = self._build_measurement_circuit(
                 circuit=circuit,
                 measurement_basis=setting.measurement_basis,
@@ -466,7 +465,7 @@ class StaticProtocol(Protocol):
         basis = ["Z"] * n_qubits
         if target_qubits:
             if len(measurement_basis) == len(target_qubits):
-                for basis_char, qubit in zip(measurement_basis, target_qubits):
+                for basis_char, qubit in zip(measurement_basis, target_qubits, strict=False):
                     basis[qubit] = basis_char
             else:
                 for qubit in target_qubits:

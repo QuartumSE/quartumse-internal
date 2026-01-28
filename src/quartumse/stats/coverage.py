@@ -13,10 +13,8 @@ Key metrics:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
 
 import numpy as np
-from numpy.typing import NDArray
 
 from .confidence import ConfidenceInterval
 from .fwer import FWERMethod, SimultaneousCIs
@@ -107,7 +105,7 @@ def compute_coverage(
     family_wise = sum(
         1
         for cis in ci_results
-        if all(ci.contains(truth) for ci, truth in zip(cis, truth_values))
+        if all(ci.contains(truth) for ci, truth in zip(cis, truth_values, strict=False))
     )
     family_wise_coverage = family_wise / n_replicates
 

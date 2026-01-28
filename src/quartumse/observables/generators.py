@@ -19,7 +19,6 @@ from math import comb
 from typing import Any
 
 import numpy as np
-from numpy.random import Generator
 
 from .core import Observable, ObservableSet
 
@@ -234,7 +233,7 @@ class HamiltonianGenerator(ObservableGenerator):
                 pauli_string=obs.pauli_string,
                 coefficient=float(coef),
             )
-            for obs, coef in zip(base_set.observables, coefficients)
+            for obs, coef in zip(base_set.observables, coefficients, strict=False)
         ]
 
         return self._create_observable_set(
@@ -474,10 +473,10 @@ class ClusteredSupportGenerator(ObservableGenerator):
             center = self.rng.integers(0, n_qubits)
             # Qubits around center
             cluster_qubits = sorted(
-                set(
+                {
                     (center + offset) % n_qubits
                     for offset in range(-cluster_size // 2, cluster_size // 2 + 1)
-                )
+                }
             )[:cluster_size]
             clusters.append(cluster_qubits)
         return clusters

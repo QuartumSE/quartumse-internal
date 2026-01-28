@@ -9,9 +9,9 @@ Implements Benchmarking_Improvement.md enhancement:
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Any
 from collections import defaultdict
+from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
 
@@ -86,7 +86,7 @@ class PropertyAnalysis:
         """Convert to pandas DataFrame."""
         import pandas as pd
         rows = []
-        for loc, group in sorted(self.by_locality.items()):
+        for _loc, group in sorted(self.by_locality.items()):
             row = group.to_dict()
             rows.append(row)
         return pd.DataFrame(rows)
@@ -163,7 +163,7 @@ def analyze_by_locality(
 
         for locality, loc_rows in sorted(by_locality.items()):
             se_values = [r.se for r in loc_rows]
-            obs_ids = list(set(r.observable_id for r in loc_rows))
+            obs_ids = list({r.observable_id for r in loc_rows})
 
             locality_groups[locality] = LocalityGroup(
                 locality=locality,

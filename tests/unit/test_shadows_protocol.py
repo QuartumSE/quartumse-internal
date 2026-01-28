@@ -2,19 +2,17 @@
 
 import numpy as np
 import pytest
-from qiskit import QuantumCircuit
 
+from quartumse.observables import Observable, ObservableSet
 from quartumse.protocols import (
     ShadowsV0Protocol,
     ShadowsV1Protocol,
-    list_protocols,
     get_protocol,
+    list_protocols,
 )
 from quartumse.protocols.shadows.shadows_protocol import (
-    ClassicalShadowsProtocol,
     ShadowsProtocolState,
 )
-from quartumse.observables import Observable, ObservableSet
 
 
 @pytest.fixture

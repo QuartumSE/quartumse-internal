@@ -231,7 +231,7 @@ def generate_all_k_local(n_qubits: int, k: int) -> list[str]:
     for positions in combinations(range(n_qubits), k):
         for ops in product(pauli_ops, repeat=k):
             pauli_list = ['I'] * n_qubits
-            for pos, op in zip(positions, ops):
+            for pos, op in zip(positions, ops, strict=False):
                 pauli_list[pos] = op
             paulis.append(''.join(pauli_list))
 
@@ -381,7 +381,7 @@ def sample_random_paulis(
                     positions = tuple(sorted(rng.choice(n_qubits, k, replace=False)))
                     ops = tuple(rng.choice(pauli_ops, k))
                     pauli_list = ['I'] * n_qubits
-                    for pos, op in zip(positions, ops):
+                    for pos, op in zip(positions, ops, strict=False):
                         pauli_list[pos] = op
                     pauli = ''.join(pauli_list)
                     if pauli not in sampled:
@@ -409,7 +409,7 @@ def sample_random_paulis(
             positions = tuple(sorted(rng.choice(n_qubits, k, replace=False)))
             ops = tuple(rng.choice(pauli_ops, k))
             pauli_list = ['I'] * n_qubits
-            for pos, op in zip(positions, ops):
+            for pos, op in zip(positions, ops, strict=False):
                 pauli_list[pos] = op
             pauli = ''.join(pauli_list)
             if pauli not in sampled:
@@ -423,7 +423,7 @@ def sample_random_paulis(
             positions = tuple(sorted(rng.choice(n_qubits, k, replace=False)))
             ops = tuple(rng.choice(pauli_ops, k))
             pauli_list = ['I'] * n_qubits
-            for pos, op in zip(positions, ops):
+            for pos, op in zip(positions, ops, strict=False):
                 pauli_list[pos] = op
             pauli = ''.join(pauli_list)
             if pauli not in sampled:
@@ -659,7 +659,7 @@ def make_qaoa_ring_suites(n_qubits: int, seed: int = 42) -> dict[str, Observable
     # === WORKLOAD: Cost Hamiltonian ===
     # CRITICAL: Include wrap-around edge (n-1, 0)!
     edge_paulis = generate_zz_correlators(n_qubits, graph='ring')
-    edge_weights = {ps: 0.5 for ps in edge_paulis}  # (1 - ⟨ZZ⟩)/2, so weight is -0.5 on ⟨ZZ⟩
+    edge_weights = dict.fromkeys(edge_paulis, 0.5)  # (1 - ⟨ZZ⟩)/2, so weight is -0.5 on ⟨ZZ⟩
 
     suites['workload_cost'] = ObservableSuite.from_pauli_strings(
         name='workload_cost',
@@ -786,7 +786,7 @@ def make_chemistry_suites(
 
     # === WORKLOAD: Energy ===
     if hamiltonian_terms and hamiltonian_coeffs:
-        weights = dict(zip(hamiltonian_terms, hamiltonian_coeffs))
+        weights = dict(zip(hamiltonian_terms, hamiltonian_coeffs, strict=False))
         suites['workload_energy'] = ObservableSuite.from_pauli_strings(
             name='workload_energy',
             suite_type=SuiteType.WORKLOAD,

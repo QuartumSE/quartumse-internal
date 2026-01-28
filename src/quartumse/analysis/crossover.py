@@ -14,7 +14,7 @@ from typing import Any
 import numpy as np
 
 from ..io.schemas import LongFormRow
-from .interpolation import fit_power_law, PowerLawFit
+from .interpolation import PowerLawFit, fit_power_law
 
 
 @dataclass

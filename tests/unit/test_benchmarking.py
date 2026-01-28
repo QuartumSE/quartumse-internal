@@ -2,19 +2,18 @@
 
 import numpy as np
 import pytest
-from qiskit import QuantumCircuit
 
 from quartumse.benchmarking import (
-    quick_comparison,
     compute_ssf,
+    quick_comparison,
     simulate_protocol_execution,
 )
+from quartumse.observables import Observable, ObservableSet
 from quartumse.protocols import (
-    DirectNaiveProtocol,
     DirectGroupedProtocol,
+    DirectNaiveProtocol,
     ShadowsV0Protocol,
 )
-from quartumse.observables import Observable, ObservableSet
 
 
 @pytest.fixture
@@ -116,7 +115,7 @@ class TestSimulateProtocolExecution:
         )
 
         # Same seed should produce identical estimates
-        for e1, e2 in zip(est1.estimates, est2.estimates):
+        for e1, e2 in zip(est1.estimates, est2.estimates, strict=False):
             assert e1.estimate == e2.estimate
             assert e1.se == e2.se
 
@@ -176,7 +175,7 @@ class TestQuickComparison:
         )
 
         assert len(results) == 2
-        for protocol_id, estimates in results.items():
+        for _protocol_id, estimates in results.items():
             assert estimates is not None
             assert len(estimates.estimates) == 4
 

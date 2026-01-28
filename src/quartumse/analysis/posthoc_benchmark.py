@@ -13,7 +13,6 @@ This allows us to quantify the "option value" of shadows.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
 
 import numpy as np
 
@@ -210,7 +209,7 @@ def compute_direct_measurement_coverage(
     requested = set(observable_ids)
     covered = set()
 
-    for basis_id, compatible in measurement_bases.items():
+    for _basis_id, compatible in measurement_bases.items():
         covered.update(requested & compatible)
 
     uncovered = requested - covered
@@ -343,7 +342,7 @@ def simulate_posthoc_benchmark(
         direct_total,         # Full direct cost
     ]
     # Remove duplicates and sort
-    budget_points = sorted(set(b for b in budget_points if b > 0))
+    budget_points = sorted({b for b in budget_points if b > 0})
 
     coverage_at_budgets = [
         compute_coverage_at_budget(shadows, direct, library_size, budget)
@@ -398,15 +397,15 @@ def format_posthoc_result(result: PosthocBenchmarkResult) -> str:
     lines.append(f"  (Direct uses {result.shot_savings_factor:.1f}x more shots than Shadows)")
 
     if result.breakeven_round is not None:
-        lines.append(f"\nBreak-even point:")
+        lines.append("\nBreak-even point:")
         lines.append(f"  Round {result.breakeven_round} ({result.breakeven_observables} observables)")
-        lines.append(f"  After this, shadows has lower cumulative quantum cost")
+        lines.append("  After this, shadows has lower cumulative quantum cost")
     else:
-        lines.append(f"\nNo break-even: Direct is always cheaper (fully commuting observables?)")
+        lines.append("\nNo break-even: Direct is always cheaper (fully commuting observables?)")
 
     # Coverage at fixed budgets
     if result.coverage_at_budgets:
-        lines.append(f"\nCOVERAGE AT FIXED SHOT BUDGETS:")
+        lines.append("\nCOVERAGE AT FIXED SHOT BUDGETS:")
         lines.append(f"{'Budget':>12} {'Shadows':>12} {'Direct':>12} {'Shadows %':>12} {'Direct %':>12}")
         lines.append("-" * 65)
         for cov in result.coverage_at_budgets:

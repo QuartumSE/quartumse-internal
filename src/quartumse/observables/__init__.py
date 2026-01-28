@@ -58,28 +58,28 @@ from .grouping import (
     verify_grouping,
 )
 from .suites import (
+    ObjectiveType,
     # Core classes
     ObservableSuite,
-    ObjectiveType,
     SuiteType,
     # Pauli string generators
     generate_all_k_local,
-    generate_zz_correlators,
     generate_edge_correlators,
-    generate_single_qubit,
     generate_global_pauli,
-    sample_random_paulis,
+    generate_single_qubit,
+    generate_zz_correlators,
+    make_bell_suites,
+    make_chemistry_suites,
+    make_commuting_suite,
     # Circuit-specific suite builders
     make_ghz_suites,
-    make_bell_suites,
     make_ising_suites,
-    make_qaoa_ring_suites,
     make_phase_sensing_suites,
-    make_chemistry_suites,
+    make_posthoc_library,
+    make_qaoa_ring_suites,
     # Generic suite builders
     make_stress_suite,
-    make_posthoc_library,
-    make_commuting_suite,
+    sample_random_paulis,
 )
 
 __all__ = [

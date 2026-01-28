@@ -20,9 +20,10 @@ from __future__ import annotations
 
 import hashlib
 import uuid
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Iterator
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
@@ -130,7 +131,7 @@ class Observable:
             )
 
         anticommute_count = 0
-        for p1, p2 in zip(self.pauli_string, other.pauli_string):
+        for p1, p2 in zip(self.pauli_string, other.pauli_string, strict=False):
             if p1 != "I" and p2 != "I" and p1 != p2:
                 anticommute_count += 1
 
@@ -146,7 +147,7 @@ class Observable:
             return None
 
         basis = []
-        for p1, p2 in zip(self.pauli_string, other.pauli_string):
+        for p1, p2 in zip(self.pauli_string, other.pauli_string, strict=False):
             if p1 == "I":
                 basis.append(p2 if p2 != "I" else "Z")  # Default to Z
             elif p2 == "I":
@@ -352,6 +353,6 @@ class ObservableSet:
 
         observables = [
             Observable(pauli_string=ps, coefficient=coef)
-            for ps, coef in zip(pauli_strings, coefficients)
+            for ps, coef in zip(pauli_strings, coefficients, strict=False)
         ]
         return cls(observables=observables, **kwargs)

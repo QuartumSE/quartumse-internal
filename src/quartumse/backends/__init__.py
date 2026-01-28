@@ -8,16 +8,16 @@ This module provides:
 Ground truth is critical for publication-grade benchmarking (Measurements Bible §3.4).
 """
 
+from quartumse.backends.sampler import (
+    IdealSampler,
+    NoisySampler,
+    sample_circuit,
+)
 from quartumse.backends.truth import (
     GroundTruthConfig,
     StatevectorBackend,
     compute_ground_truth,
     compute_observable_expectation,
-)
-from quartumse.backends.sampler import (
-    IdealSampler,
-    NoisySampler,
-    sample_circuit,
 )
 
 __all__ = [

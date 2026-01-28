@@ -21,8 +21,8 @@ import numpy as np
 # Try to import matplotlib, but provide fallback
 try:
     import matplotlib.pyplot as plt
-    from matplotlib.figure import Figure
     from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
 
     HAS_MATPLOTLIB = True
 except ImportError:
@@ -157,7 +157,7 @@ def plot_ssf_comparison(
     ax.set_ylim(0, max(ssfs) * 1.2)
 
     # Add value labels on bars
-    for bar, ssf in zip(bars, ssfs):
+    for bar, ssf in zip(bars, ssfs, strict=False):
         height = bar.get_height()
         ax.annotate(
             f"{ssf:.2f}×",

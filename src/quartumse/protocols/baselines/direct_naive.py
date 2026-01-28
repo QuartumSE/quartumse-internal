@@ -12,15 +12,13 @@ Expected scaling: O(M) measurement settings.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
 
 import numpy as np
 
-from ...observables import Observable, ObservableSet
+from ...observables import ObservableSet
 from ..base import StaticProtocol
 from ..registry import register_protocol
 from ..state import (
-    CIResult,
     Estimates,
     MeasurementPlan,
     MeasurementSetting,

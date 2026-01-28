@@ -11,7 +11,7 @@ from datetime import datetime
 from typing import Any
 from uuid import uuid4
 
-from .schemas import JobStatus, LongFormRow, SummaryRow
+from .schemas import JobStatus, LongFormRow
 
 
 class LongFormResultBuilder:
@@ -408,15 +408,15 @@ class LongFormResultSet:
 
     def get_unique_protocols(self) -> list[str]:
         """Get unique protocol IDs."""
-        return list(set(r.protocol_id for r in self._rows))
+        return list({r.protocol_id for r in self._rows})
 
     def get_unique_circuits(self) -> list[str]:
         """Get unique circuit IDs."""
-        return list(set(r.circuit_id for r in self._rows))
+        return list({r.circuit_id for r in self._rows})
 
     def get_unique_budgets(self) -> list[int]:
         """Get unique shot budgets."""
-        return sorted(set(r.N_total for r in self._rows))
+        return sorted({r.N_total for r in self._rows})
 
     def to_dicts(self) -> list[dict[str, Any]]:
         """Convert all rows to dictionaries."""

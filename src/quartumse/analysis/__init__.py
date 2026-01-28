@@ -11,59 +11,59 @@ This module implements the improvements from Benchmarking_Improvement.md:
 - K-S tests and statistical comparisons
 """
 
-from .interpolation import (
-    interpolate_n_star,
-    fit_power_law,
-    PowerLawFit,
-)
-from .crossover import (
-    per_observable_crossover,
-    CrossoverAnalysis,
-    ObservableCrossover,
-)
-from .observable_properties import (
-    analyze_by_locality,
-    analyze_by_commutation,
-    PropertyAnalysis,
-)
-from .statistical_tests import (
-    bootstrap_ci,
-    bootstrap_hypothesis_test,
-    ks_test_protocols,
-    compare_protocols_statistically,
-    StatisticalComparison,
-)
-from .cost_normalized import (
-    compute_cost_normalized_metrics,
-    CostModel,
-    CostNormalizedResult,
-)
-from .pilot_analysis import (
-    multi_pilot_analysis,
-    PilotFractionResult,
-)
 from .comprehensive import (
     ComprehensiveBenchmarkAnalysis,
     run_comprehensive_analysis,
 )
+from .cost_normalized import (
+    CostModel,
+    CostNormalizedResult,
+    compute_cost_normalized_metrics,
+)
+from .crossover import (
+    CrossoverAnalysis,
+    ObservableCrossover,
+    per_observable_crossover,
+)
+from .interpolation import (
+    PowerLawFit,
+    fit_power_law,
+    interpolate_n_star,
+)
 from .objective_metrics import (
-    ObjectiveEstimate,
     ObjectiveAnalysis,
-    compute_weighted_objective,
+    ObjectiveEstimate,
     bootstrap_objective_ci,
     compute_objective_metrics,
+    compute_weighted_objective,
     format_objective_analysis,
 )
+from .observable_properties import (
+    PropertyAnalysis,
+    analyze_by_commutation,
+    analyze_by_locality,
+)
+from .pilot_analysis import (
+    PilotFractionResult,
+    multi_pilot_analysis,
+)
 from .posthoc_benchmark import (
-    QueryRound,
-    PosthocCostAccounting,
-    PosthocBenchmarkResult,
     CoverageAtBudget,
-    generate_query_rounds,
+    PosthocBenchmarkResult,
+    PosthocCostAccounting,
+    QueryRound,
     compute_coverage_at_budget,
-    simulate_posthoc_benchmark,
     format_posthoc_result,
+    generate_query_rounds,
     run_posthoc_benchmark_from_suite,
+    simulate_posthoc_benchmark,
+)
+from .statistical_tests import (
+    StatisticalComparison,
+    bootstrap_ci,
+    bootstrap_hypothesis_test,
+    compare_protocols_statistically,
+    ks_test_protocols,
 )
 
 __all__ = [

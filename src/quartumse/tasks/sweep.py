@@ -6,15 +6,16 @@ across protocols, circuits, shot budgets, and replicates.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Callable
+from typing import Any
 from uuid import uuid4
 
 import numpy as np
 
-from ..io.schemas import LongFormRow, RunManifest, TaskResult
 from ..io.long_form import LongFormResultBuilder, LongFormResultSet
+from ..io.schemas import LongFormRow, RunManifest
 from ..observables import ObservableSet
 from ..protocols import Estimates, Protocol
 from ..utils.provenance import (

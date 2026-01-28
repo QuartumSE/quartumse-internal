@@ -34,9 +34,10 @@ from uuid import uuid4
 
 import numpy as np
 
+from .backends.truth import GroundTruthConfig
 from .io import LongFormResultBuilder, LongFormResultSet, ParquetWriter, SummaryAggregator
 from .io.schemas import RunManifest
-from .observables import Observable, ObservableSet, generate_observable_set
+from .observables import ObservableSet, generate_observable_set
 from .protocols import (
     DirectGroupedProtocol,
     DirectNaiveProtocol,
@@ -45,9 +46,8 @@ from .protocols import (
     Protocol,
     get_protocol,
 )
-from .stats import construct_simultaneous_cis, FWERMethod
 from .tasks import SweepConfig, SweepOrchestrator, TaskConfig, TaskType, WorstCaseTask
-from .viz import ReportBuilder, create_benchmark_report
+from .viz import create_benchmark_report
 
 
 def get_default_protocols() -> list[Protocol]:
@@ -391,7 +391,7 @@ def run_publication_benchmark(
     output_dir: str | None = None,
     epsilon: float = 0.01,
     delta: float = 0.05,
-    ground_truth_config: "GroundTruthConfig | None" = None,
+    ground_truth_config: GroundTruthConfig | None = None,
 ) -> dict[str, Any]:
     """Run publication-grade benchmark with ground truth (Measurements Bible).
 
@@ -425,22 +425,17 @@ def run_publication_benchmark(
         - summary: Aggregate statistics
     """
     from qiskit import QuantumCircuit
-
-    from .backends import compute_ground_truth as _compute_ground_truth
     from qiskit_aer import AerSimulator
 
+    from .backends import compute_ground_truth as _compute_ground_truth
     from .io import (
-        LongFormResultBuilder,
         LongFormResultSet,
         ParquetWriter,
         SummaryAggregator,
     )
     from .tasks import (
-        WorstCaseTask,
-        FixedBudgetDistributionTask,
         BiasVarianceTask,
-        TaskConfig,
-        TaskType,
+        FixedBudgetDistributionTask,
     )
     from .utils.provenance import (
         get_environment_lock,
@@ -632,7 +627,7 @@ def run_publication_benchmark(
                 try:
                     result = task3.evaluate(protocol_rows, truth_values)
                     task_results[f"task3_{protocol.protocol_id}"] = result
-                except Exception as e:
+                except Exception:
                     pass  # Task 3 may not be fully implemented
     except ImportError:
         pass

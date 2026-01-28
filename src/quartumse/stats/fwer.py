@@ -19,7 +19,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any
 
 import numpy as np
 
@@ -235,13 +234,13 @@ class SimultaneousCIs:
         """Check if all CIs contain their respective truth values."""
         if len(values) != len(self.intervals):
             raise ValueError("Number of values must match number of intervals")
-        return all(ci.contains(v) for ci, v in zip(self.intervals, values))
+        return all(ci.contains(v) for ci, v in zip(self.intervals, values, strict=False))
 
     def coverage_count(self, values: list[float]) -> int:
         """Count how many CIs contain their truth values."""
         if len(values) != len(self.intervals):
             raise ValueError("Number of values must match number of intervals")
-        return sum(ci.contains(v) for ci, v in zip(self.intervals, values))
+        return sum(ci.contains(v) for ci, v in zip(self.intervals, values, strict=False))
 
     def coverage_fraction(self, values: list[float]) -> float:
         """Fraction of CIs containing their truth values."""
@@ -279,7 +278,7 @@ def construct_simultaneous_cis(
 
     # Construct individual CIs at adjusted confidence level
     intervals = []
-    for i, (est, se) in enumerate(zip(estimates, standard_errors)):
+    for i, (est, se) in enumerate(zip(estimates, standard_errors, strict=False)):
         ci = construct_ci(
             estimate=est,
             se=se,

@@ -11,22 +11,22 @@ Supported variants:
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 import numpy as np
 from qiskit import QuantumCircuit
 from qiskit_aer import AerSimulator
 
-from ...observables import Observable, ObservableSet
-from ...shadows import RandomLocalCliffordShadows, NoiseAwareRandomLocalCliffordShadows
+from ...observables import ObservableSet
+from ...shadows import NoiseAwareRandomLocalCliffordShadows, RandomLocalCliffordShadows
 from ...shadows.config import ShadowConfig
 from ...shadows.core import Observable as ShadowObservable
 from ..base import StaticProtocol
 from ..registry import register_protocol
 from ..state import (
-    CIResult,
     CIMethod,
+    CIResult,
     Estimates,
     MeasurementPlan,
     MeasurementSetting,
@@ -257,7 +257,7 @@ class ClassicalShadowsProtocol(StaticProtocol):
         n_shots, n_qubits = measurement_bases.shape
 
         # Get statevector
-        sv = Statevector.from_instruction(circuit)
+        Statevector.from_instruction(circuit)
 
         outcomes = np.zeros((n_shots, n_qubits), dtype=int)
 

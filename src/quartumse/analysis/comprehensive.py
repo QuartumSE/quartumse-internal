@@ -12,27 +12,31 @@ Combines all analysis improvements into a single comprehensive report:
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Any
-from pathlib import Path
 import json
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any
 
 import numpy as np
 
 from ..io.schemas import LongFormRow
 from ..tasks import (
-    TaskConfig, TaskType, CriterionType,
-    WorstCaseTask, AverageTargetTask, FixedBudgetDistributionTask,
-    DominanceTask, PilotSelectionTask, BiasVarianceTask,
-    NoiseSensitivityTask, AdaptiveEfficiencyTask,
+    AverageTargetTask,
+    BiasVarianceTask,
+    CriterionType,
+    DominanceTask,
+    FixedBudgetDistributionTask,
+    PilotSelectionTask,
+    TaskConfig,
+    TaskType,
+    WorstCaseTask,
 )
-
-from .interpolation import interpolate_n_star, fit_power_law, compute_percentile_n_star
-from .crossover import per_observable_crossover, CrossoverAnalysis
-from .observable_properties import analyze_by_locality, compare_locality_performance
-from .statistical_tests import compare_protocols_statistically, bootstrap_ci, StatisticalComparison
-from .cost_normalized import compute_cost_normalized_metrics, CostModel, compare_cost_normalized
-from .pilot_analysis import multi_pilot_analysis, MultiPilotAnalysis
+from .cost_normalized import CostModel, compare_cost_normalized, compute_cost_normalized_metrics
+from .crossover import CrossoverAnalysis, per_observable_crossover
+from .interpolation import compute_percentile_n_star, interpolate_n_star
+from .observable_properties import analyze_by_locality
+from .pilot_analysis import MultiPilotAnalysis, multi_pilot_analysis
+from .statistical_tests import StatisticalComparison, compare_protocols_statistically
 
 
 @dataclass
@@ -103,13 +107,13 @@ class ComprehensiveBenchmarkAnalysis:
     def generate_report(self) -> str:
         """Generate markdown report."""
         lines = [
-            f"# Comprehensive Benchmark Analysis",
-            f"",
+            "# Comprehensive Benchmark Analysis",
+            "",
             f"**Run ID:** {self.run_id}",
             f"**Protocols:** {', '.join(self.protocols)}",
             f"**Observables:** {self.n_observables}",
             f"**Shot Grid:** {self.n_shots_grid}",
-            f"",
+            "",
             "---",
             "",
         ]
@@ -131,7 +135,7 @@ class ComprehensiveBenchmarkAnalysis:
             "",
         ])
 
-        for task_id, analysis in self.task_analyses.items():
+        for _task_id, analysis in self.task_analyses.items():
             lines.append(f"### {analysis.task_type.replace('_', ' ').title()}")
             lines.append("")
             for key, value in analysis.base_results.items():
@@ -258,9 +262,9 @@ def run_comprehensive_analysis(
         raise ValueError("No results provided")
 
     # Extract metadata
-    protocols = list(set(r.protocol_id for r in long_form_results))
-    n_shots_grid = sorted(set(r.N_total for r in long_form_results))
-    n_observables = len(set(r.observable_id for r in long_form_results))
+    protocols = list({r.protocol_id for r in long_form_results})
+    n_shots_grid = sorted({r.N_total for r in long_form_results})
+    n_observables = len({r.observable_id for r in long_form_results})
 
     # Separate results by protocol
     by_protocol: dict[str, list[LongFormRow]] = {}

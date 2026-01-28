@@ -35,22 +35,6 @@ from .base import (
     ProtocolConfig,
     StaticProtocol,
 )
-from .registry import (
-    get_protocol,
-    get_registry,
-    list_protocols,
-    register_protocol,
-)
-from .state import (
-    CIMethod,
-    CIResult,
-    Estimates,
-    MeasurementPlan,
-    MeasurementSetting,
-    ObservableEstimate,
-    ProtocolState,
-    RawDatasetChunk,
-)
 
 # Import baseline protocols (triggers registration)
 from .baselines import (
@@ -61,12 +45,28 @@ from .baselines import (
     DirectOptimizedProtocol,
     DirectOptimizedState,
 )
+from .registry import (
+    get_protocol,
+    get_registry,
+    list_protocols,
+    register_protocol,
+)
 
 # Import shadows protocols (triggers registration)
 from .shadows import (
     ClassicalShadowsProtocol,
     ShadowsV0Protocol,
     ShadowsV1Protocol,
+)
+from .state import (
+    CIMethod,
+    CIResult,
+    Estimates,
+    MeasurementPlan,
+    MeasurementSetting,
+    ObservableEstimate,
+    ProtocolState,
+    RawDatasetChunk,
 )
 
 __all__ = [

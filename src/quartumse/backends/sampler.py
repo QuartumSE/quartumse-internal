@@ -147,7 +147,7 @@ class NoisySampler(Sampler):
         if self.readout_error == 0 and self.depol_1q == 0 and self.depol_2q == 0:
             return None
 
-        from qiskit_aer.noise import NoiseModel, depolarizing_error, ReadoutError
+        from qiskit_aer.noise import NoiseModel, ReadoutError, depolarizing_error
 
         noise_model = NoiseModel()
 
@@ -252,7 +252,7 @@ class StatevectorSampler(Sampler):
         unique, counts_arr = np.unique(outcomes, return_counts=True)
         counts = {
             format(outcome, f"0{n_qubits}b"): int(count)
-            for outcome, count in zip(unique, counts_arr)
+            for outcome, count in zip(unique, counts_arr, strict=False)
         }
 
         return SamplingResult(

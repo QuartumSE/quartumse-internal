@@ -305,7 +305,7 @@ def sorted_insertion_grouping(
         placed = False
 
         # Try to place in existing group
-        for g_idx, (group, cached_obs) in enumerate(zip(groups, group_obs_cache, strict=False)):
+        for g_idx, (_group, cached_obs) in enumerate(zip(groups, group_obs_cache, strict=False)):
             # Check if observable fits in this group using cached observables
             test_basis = shared_measurement_basis(cached_obs + [obs])
 

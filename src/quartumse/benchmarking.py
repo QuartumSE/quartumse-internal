@@ -684,7 +684,9 @@ def run_publication_benchmark(
     protocol_summaries = {}
     for protocol in protocol_instances:
         # Filter from pre-grouped data instead of full list
-        protocol_rows = [r for r in rows_by_protocol.get(protocol.protocol_id, []) if r.N_total == max_n]
+        protocol_rows = [
+            r for r in rows_by_protocol.get(protocol.protocol_id, []) if r.N_total == max_n
+        ]
         if protocol_rows:
             ses = [r.se for r in protocol_rows if r.se is not None]
             if ses:

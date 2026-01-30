@@ -26,6 +26,15 @@ class Observable:
         self.pauli_string = pauli_string
         self.coefficient = coefficient
         self.num_qubits = len(pauli_string)
+        # Cache support indices for vectorized operations
+        self._cached_support: list[int] | None = None
+
+    @property
+    def support(self) -> list[int]:
+        """Return list of qubit indices where operator is non-identity (cached)."""
+        if self._cached_support is None:
+            self._cached_support = [i for i, c in enumerate(self.pauli_string) if c != "I"]
+        return self._cached_support
 
     def __repr__(self) -> str:
         return f"{self.coefficient}*{self.pauli_string}"

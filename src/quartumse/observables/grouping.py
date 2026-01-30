@@ -211,6 +211,8 @@ def greedy_grouping(
     grouped = [False] * n
     groups: list[CommutingGroup] = []
     group_counter = 0
+    # Track ungrouped indices for faster iteration
+    ungrouped = set(range(n))
 
     for start in range(n):
         if grouped[start]:
@@ -219,20 +221,25 @@ def greedy_grouping(
         # Start a new group
         current_group = [start]
         grouped[start] = True
+        ungrouped.discard(start)
 
-        # Find all observables that commute with entire current group
-        candidates = set(range(n)) - set(current_group)
+        # Track intersection of commuting neighbors for efficient candidate filtering
+        valid_candidates = graph[start].copy()
 
-        for cand in sorted(candidates):
+        for cand in sorted(valid_candidates & ungrouped):
             if grouped[cand]:
                 continue
 
             # Check if candidate commutes with all current group members
+            # (only need to check new members since valid_candidates is intersection)
             commutes_with_all = all(cand in graph[member] for member in current_group)
 
             if commutes_with_all:
                 current_group.append(cand)
                 grouped[cand] = True
+                ungrouped.discard(cand)
+                # Narrow down valid candidates to those that also commute with this new member
+                valid_candidates &= graph[cand]
 
         # Create CommutingGroup
         group_observables = [observables[i] for i in current_group]
@@ -290,20 +297,22 @@ def sorted_insertion_grouping(
 
     groups: list[list[int]] = []
     group_bases: list[str | None] = []
+    # Cache observable lists per group to avoid repeated reconstruction
+    group_obs_cache: list[list[Observable]] = []
 
     for idx in sorted_indices:
         obs = observables[idx]
         placed = False
 
         # Try to place in existing group
-        for g_idx, (group, _basis) in enumerate(zip(groups, group_bases, strict=False)):
-            # Check if observable fits in this group
-            group_obs = [observables[i] for i in group]
-            test_basis = shared_measurement_basis(group_obs + [obs])
+        for g_idx, (group, cached_obs) in enumerate(zip(groups, group_obs_cache, strict=False)):
+            # Check if observable fits in this group using cached observables
+            test_basis = shared_measurement_basis(cached_obs + [obs])
 
             if test_basis is not None:
                 groups[g_idx].append(idx)
                 group_bases[g_idx] = test_basis
+                group_obs_cache[g_idx].append(obs)
                 placed = True
                 break
 
@@ -311,6 +320,7 @@ def sorted_insertion_grouping(
             # Create new group
             groups.append([idx])
             group_bases.append(obs.pauli_string.replace("I", "Z"))
+            group_obs_cache.append([obs])
 
     # Convert to CommutingGroup objects
     result: list[CommutingGroup] = []

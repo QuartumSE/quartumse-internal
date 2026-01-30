@@ -84,28 +84,33 @@ class ShotDataWriter:
                     )
                 start_index = int(existing_df["shadow_index"].max()) + 1
 
-        # Build dataframe for the new chunk
-        records = []
-        for offset in range(shadow_size):
-            global_index = start_index + offset
+        # Build dataframe for the new chunk using vectorized operations
+        # Pre-compute basis strings using numpy vectorization
+        basis_chars = np.array(["Z", "X", "Y"])  # Index 0=Z, 1=X, 2=Y
+        # Clip bases to valid range and convert to char array
+        clipped_bases = np.clip(measurement_bases, 0, 2)
+        bases_char_array = basis_chars[clipped_bases]  # Shape: (shadow_size, num_qubits)
+        # Join each row into a string
+        bases_strings = ["".join(row) for row in bases_char_array]
 
-            # Encode measurement bases as string (e.g., "XYZ")
-            basis_map = {0: "Z", 1: "X", 2: "Y"}  # Common Clifford basis convention
-            bases_str = "".join(basis_map.get(int(b), str(b)) for b in measurement_bases[offset])
+        # Convert outcomes to bitstrings using vectorized approach
+        outcomes_strings = [
+            "".join(measurement_outcomes[i].astype(str)) for i in range(shadow_size)
+        ]
 
-            # Encode outcomes as bitstring
-            outcomes_str = "".join(str(int(o)) for o in measurement_outcomes[offset])
-
-            records.append(
-                {
-                    "experiment_id": experiment_id,
-                    "shadow_index": global_index,
-                    "num_qubits": num_qubits,
-                    "measurement_bases": bases_str,
-                    "measurement_outcomes": outcomes_str,
-                    "timestamp": time.time(),
-                }
-            )
+        # Build records in batch
+        current_time = time.time()
+        records = [
+            {
+                "experiment_id": experiment_id,
+                "shadow_index": start_index + offset,
+                "num_qubits": num_qubits,
+                "measurement_bases": bases_strings[offset],
+                "measurement_outcomes": outcomes_strings[offset],
+                "timestamp": current_time,
+            }
+            for offset in range(shadow_size)
+        ]
 
         new_df = pd.DataFrame(records)
 
@@ -141,22 +146,29 @@ class ShotDataWriter:
         """
         df = self._load_dataframe(experiment_id)
 
-        # Decode bases
+        # Decode bases using vectorized approach
         basis_map_inv = {"Z": 0, "X": 1, "Y": 2}
-        measurement_bases_list: list[list[int]] = []
-        for bases_str in df["measurement_bases"]:
-            bases = [basis_map_inv[b] for b in bases_str]
-            measurement_bases_list.append(bases)
+        # Convert strings to numpy arrays efficiently
+        bases_series = df["measurement_bases"].values
+        num_rows = len(bases_series)
+        if num_rows > 0:
+            str_len = len(bases_series[0])
+            # Pre-allocate array
+            measurement_bases_array = np.empty((num_rows, str_len), dtype=int)
+            for i, bases_str in enumerate(bases_series):
+                measurement_bases_array[i] = [basis_map_inv[b] for b in bases_str]
+        else:
+            measurement_bases_array = np.empty((0, 0), dtype=int)
 
-        measurement_bases_array = np.asarray(measurement_bases_list, dtype=int)
-
-        # Decode outcomes
-        measurement_outcomes_list: list[list[int]] = []
-        for outcomes_str in df["measurement_outcomes"]:
-            outcomes = [int(o) for o in outcomes_str]
-            measurement_outcomes_list.append(outcomes)
-
-        measurement_outcomes_array = np.asarray(measurement_outcomes_list, dtype=int)
+        # Decode outcomes using vectorized approach
+        outcomes_series = df["measurement_outcomes"].values
+        if num_rows > 0:
+            outcome_len = len(outcomes_series[0])
+            measurement_outcomes_array = np.empty((num_rows, outcome_len), dtype=int)
+            for i, outcomes_str in enumerate(outcomes_series):
+                measurement_outcomes_array[i] = [int(o) for o in outcomes_str]
+        else:
+            measurement_outcomes_array = np.empty((0, 0), dtype=int)
 
         num_qubits = int(df["num_qubits"].iloc[0])
 
@@ -203,15 +215,24 @@ def summarize_dataframe(
     bitstring_counts = df["measurement_outcomes"].value_counts().head(top_bitstrings).to_dict()
     bitstring_histogram = {bit: int(count) for bit, count in bitstring_counts.items()}
 
+    # Compute qubit marginals efficiently by decoding outcomes once
     qubit_marginals: dict[int, dict[str, float]] = {}
-    for qubit in range(num_qubits):
-        qubit_bits = df["measurement_outcomes"].str.get(qubit)
-        counts = Counter(qubit_bits)
-        total = sum(counts.values())
-        qubit_marginals[qubit] = {
-            "0": counts.get("0", 0) / total if total else 0.0,
-            "1": counts.get("1", 0) / total if total else 0.0,
-        }
+    outcomes_array = df["measurement_outcomes"].values
+    total = len(outcomes_array)
+    if total > 0 and num_qubits > 0:
+        # Decode all bitstrings to a numpy array for vectorized extraction
+        outcome_matrix = np.array([[int(c) for c in s] for s in outcomes_array], dtype=np.int8)
+        for qubit in range(num_qubits):
+            qubit_bits = outcome_matrix[:, qubit]
+            count_1 = np.sum(qubit_bits)
+            count_0 = total - count_1
+            qubit_marginals[qubit] = {
+                "0": count_0 / total,
+                "1": count_1 / total,
+            }
+    else:
+        for qubit in range(num_qubits):
+            qubit_marginals[qubit] = {"0": 0.0, "1": 0.0}
 
     return ShotDataDiagnostics(
         experiment_id=experiment_id,

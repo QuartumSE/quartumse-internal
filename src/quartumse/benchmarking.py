@@ -592,6 +592,13 @@ def run_publication_benchmark(
     task_results = {}
     long_form_rows = list(result_set)
 
+    # Pre-group rows by protocol_id for O(N) instead of O(P*N) filtering
+    from collections import defaultdict
+
+    rows_by_protocol: dict[str, list] = defaultdict(list)
+    for row in long_form_rows:
+        rows_by_protocol[row.protocol_id].append(row)
+
     # Task 1: Worst-case
     task1_config = TaskConfig(
         task_id="task1_worstcase",
@@ -604,7 +611,7 @@ def run_publication_benchmark(
     task1 = WorstCaseTask(task1_config)
 
     for protocol in protocol_instances:
-        protocol_rows = [r for r in long_form_rows if r.protocol_id == protocol.protocol_id]
+        protocol_rows = rows_by_protocol.get(protocol.protocol_id, [])
         if protocol_rows:
             try:
                 result = task1.evaluate(protocol_rows, truth_values)
@@ -625,7 +632,7 @@ def run_publication_benchmark(
         task3 = FixedBudgetDistributionTask(task3_config)
 
         for protocol in protocol_instances:
-            protocol_rows = [r for r in long_form_rows if r.protocol_id == protocol.protocol_id]
+            protocol_rows = rows_by_protocol.get(protocol.protocol_id, [])
             if protocol_rows:
                 try:
                     result = task3.evaluate(protocol_rows, truth_values)
@@ -649,7 +656,7 @@ def run_publication_benchmark(
             task6 = BiasVarianceTask(task6_config)
 
             for protocol in protocol_instances:
-                protocol_rows = [r for r in long_form_rows if r.protocol_id == protocol.protocol_id]
+                protocol_rows = rows_by_protocol.get(protocol.protocol_id, [])
                 if protocol_rows:
                     try:
                         result = task6.evaluate(protocol_rows, truth_values)
@@ -672,15 +679,12 @@ def run_publication_benchmark(
         "protocols": [p.protocol_id for p in protocol_instances],
     }
 
-    # Per-protocol summaries at largest N
+    # Per-protocol summaries at largest N (reuse pre-grouped rows)
     max_n = max(n_shots_grid)
     protocol_summaries = {}
     for protocol in protocol_instances:
-        protocol_rows = [
-            r
-            for r in long_form_rows
-            if r.protocol_id == protocol.protocol_id and r.N_total == max_n
-        ]
+        # Filter from pre-grouped data instead of full list
+        protocol_rows = [r for r in rows_by_protocol.get(protocol.protocol_id, []) if r.N_total == max_n]
         if protocol_rows:
             ses = [r.se for r in protocol_rows if r.se is not None]
             if ses:

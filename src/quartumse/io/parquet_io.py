@@ -252,12 +252,11 @@ class ParquetReader:
         dataset = pq.ParquetDataset(str(long_form_dir), filters=filters)
         df = dataset.read().to_pandas()
 
-        # Convert to LongFormRow objects
-        rows = []
-        for _, record in df.iterrows():
-            # Convert NaN to None
-            record_dict = {k: (None if pd.isna(v) else v) for k, v in record.to_dict().items()}
-            rows.append(LongFormRow(**record_dict))
+        # Convert to LongFormRow objects using vectorized approach (faster than iterrows)
+        # Replace NaN with None across all columns first
+        df = df.where(pd.notna(df), None)
+        records = df.to_dict("records")
+        rows = [LongFormRow(**record) for record in records]
 
         return LongFormResultSet(rows)
 
@@ -294,10 +293,10 @@ class ParquetReader:
 
         df = pq.read_table(str(summary_path)).to_pandas()
 
-        rows = []
-        for _, record in df.iterrows():
-            record_dict = {k: (None if pd.isna(v) else v) for k, v in record.to_dict().items()}
-            rows.append(SummaryRow(**record_dict))
+        # Use vectorized approach (faster than iterrows)
+        df = df.where(pd.notna(df), None)
+        records = df.to_dict("records")
+        rows = [SummaryRow(**record) for record in records]
 
         return rows
 
@@ -327,13 +326,15 @@ class ParquetReader:
 
         df = pq.read_table(str(task_path)).to_pandas()
 
+        # Use vectorized approach (faster than iterrows)
+        df = df.where(pd.notna(df), None)
+        records = df.to_dict("records")
         rows = []
-        for _, record in df.iterrows():
-            record_dict = {k: (None if pd.isna(v) else v) for k, v in record.to_dict().items()}
+        for record in records:
             # Parse outputs JSON
-            if "outputs" in record_dict and record_dict["outputs"]:
-                record_dict["outputs"] = json.loads(record_dict["outputs"])
-            rows.append(TaskResult(**record_dict))
+            if "outputs" in record and record["outputs"]:
+                record["outputs"] = json.loads(record["outputs"])
+            rows.append(TaskResult(**record))
 
         return rows
 

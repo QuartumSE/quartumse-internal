@@ -128,43 +128,75 @@ class RandomLocalCliffordShadows(ClassicalShadows):
         where k is the support size (number of non-identity Paulis).
         The 3^k factor comes from the inverse channel: ρ̂ = 3|b⟩⟨b| - I.
         """
-        pauli_string = observable.pauli_string
-        num_qubits = len(pauli_string)
-
-        expectation = 1.0
-        support_size = 0  # Count non-identity Paulis
-
         if self.measurement_bases is None or self.measurement_outcomes is None:
             raise ValueError("No measurement data available for expectation estimation.")
 
-        measurement_bases = self.measurement_bases
-        measurement_outcomes = self.measurement_outcomes
+        pauli_string = observable.pauli_string
+        # Use cached support for performance
+        support = observable.support  # Pre-computed list of non-identity qubit indices
 
-        for qubit_idx in range(num_qubits):
+        if not support:
+            # All identity: expectation is coefficient * 1
+            return float(observable.coefficient)
+
+        # Map Pauli to basis index (precomputed outside hot path)
+        pauli_to_basis = {"X": 1, "Y": 2, "Z": 0}
+
+        expectation = 1.0
+        for qubit_idx in support:
             pauli = pauli_string[qubit_idx]
-            if pauli == "I":
-                continue  # Identity doesn't affect expectation
+            required_basis = pauli_to_basis[pauli]
 
-            support_size += 1
-
-            # Map Pauli to basis index
-            pauli_to_basis = {"X": 1, "Y": 2, "Z": 0}
-            required_basis = pauli_to_basis.get(pauli)
-
-            measured_basis = int(measurement_bases[shadow_idx, qubit_idx])
-            outcome = int(measurement_outcomes[shadow_idx, qubit_idx])
-
-            if measured_basis == required_basis:
-                # Compatible measurement: use outcome (0 -> +1, 1 -> -1)
-                sign = 1 - 2 * outcome
-                expectation *= sign
-            else:
+            measured_basis = self.measurement_bases[shadow_idx, qubit_idx]
+            if measured_basis != required_basis:
                 # Incompatible measurement: estimator is 0
                 return 0.0
 
+            # Compatible measurement: use outcome (0 -> +1, 1 -> -1)
+            outcome = self.measurement_outcomes[shadow_idx, qubit_idx]
+            expectation *= 1 - 2 * outcome
+
         # Apply 3^k scaling factor from inverse channel
-        scaling_factor = 3**support_size
+        scaling_factor = 3 ** len(support)
         return float(scaling_factor * expectation * observable.coefficient)
+
+    def _pauli_expectation_vectorized(self, observable: Observable) -> np.ndarray:
+        """
+        Compute Pauli expectations for all shadows at once (vectorized).
+
+        Returns array of expectations for each shadow.
+        """
+        if self.measurement_bases is None or self.measurement_outcomes is None:
+            raise ValueError("No measurement data available for expectation estimation.")
+
+        pauli_string = observable.pauli_string
+        support = observable.support
+        num_shadows = len(self.measurement_outcomes)
+
+        if not support:
+            # All identity: expectation is coefficient for all shadows
+            return np.full(num_shadows, observable.coefficient)
+
+        # Map Pauli to basis index
+        pauli_to_basis = {"X": 1, "Y": 2, "Z": 0}
+        required_bases = np.array([pauli_to_basis[pauli_string[q]] for q in support])
+
+        # Extract relevant columns for support qubits
+        measured_bases = self.measurement_bases[:, support]  # (num_shadows, support_size)
+        outcomes = self.measurement_outcomes[:, support]  # (num_shadows, support_size)
+
+        # Check if all measurements are in compatible basis
+        compatible = np.all(measured_bases == required_bases, axis=1)  # (num_shadows,)
+
+        # Compute sign product for compatible measurements
+        # sign = product of (1 - 2*outcome) over support qubits
+        signs = np.prod(1 - 2 * outcomes, axis=1)  # (num_shadows,)
+
+        # Apply scaling factor and coefficient
+        scaling_factor = 3 ** len(support)
+        expectations = np.where(compatible, scaling_factor * signs * observable.coefficient, 0.0)
+
+        return expectations
 
     def estimate_observable(
         self, observable: Observable, shadow_data: np.ndarray | None = None
@@ -179,10 +211,8 @@ class RandomLocalCliffordShadows(ClassicalShadows):
 
         num_shadows = len(self.measurement_outcomes)
 
-        # Compute expectation for each shadow
-        expectations = np.array(
-            [self._pauli_expectation_single_shadow(i, observable) for i in range(num_shadows)]
-        )
+        # Compute expectation for all shadows using vectorized method
+        expectations = self._pauli_expectation_vectorized(observable)
 
         # Compute statistics
         if self.config.median_of_means and num_shadows >= self.config.num_groups:

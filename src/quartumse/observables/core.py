@@ -67,6 +67,9 @@ class Observable:
     observable_id: str | None = None
     group_id: str | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
+    # Cached computed properties for performance
+    _cached_locality: int | None = field(default=None, repr=False, compare=False)
+    _cached_support: list[int] | None = field(default=None, repr=False, compare=False)
 
     def __post_init__(self) -> None:
         """Validate and set defaults."""
@@ -85,6 +88,10 @@ class Observable:
             short_hash = hashlib.sha256(hash_input.encode()).hexdigest()[:8]
             self.observable_id = f"obs_{short_hash}"
 
+        # Pre-compute locality and support for performance (avoid repeated iteration)
+        self._cached_support = [i for i, c in enumerate(self.pauli_string) if c != "I"]
+        self._cached_locality = len(self._cached_support)
+
     @property
     def n_qubits(self) -> int:
         """Number of qubits this observable acts on."""
@@ -97,8 +104,10 @@ class Observable:
 
     @property
     def locality(self) -> int:
-        """Pauli weight (number of non-identity factors)."""
-        return sum(1 for c in self.pauli_string if c != "I")
+        """Pauli weight (number of non-identity factors). Cached for performance."""
+        if self._cached_locality is None:
+            self._cached_locality = sum(1 for c in self.pauli_string if c != "I")
+        return self._cached_locality
 
     @property
     def weight(self) -> int:
@@ -107,8 +116,10 @@ class Observable:
 
     @property
     def support(self) -> list[int]:
-        """Qubit indices where this observable acts non-trivially."""
-        return [i for i, c in enumerate(self.pauli_string) if c != "I"]
+        """Qubit indices where this observable acts non-trivially. Cached for performance."""
+        if self._cached_support is None:
+            self._cached_support = [i for i, c in enumerate(self.pauli_string) if c != "I"]
+        return self._cached_support
 
     def to_matrix(self) -> NDArray[np.complexfloating]:
         """Convert to matrix representation."""
@@ -232,6 +243,8 @@ class ObservableSet:
     generator_seed: int | None = None
     generator_params: dict[str, Any] = field(default_factory=dict)
     metadata: dict[str, Any] = field(default_factory=dict)
+    # Index for O(1) lookup by observable_id
+    _id_index: dict[str, Observable] = field(default_factory=dict, repr=False, compare=False)
 
     def __post_init__(self) -> None:
         """Validate and set defaults."""
@@ -246,6 +259,9 @@ class ObservableSet:
         # Auto-generate set ID if not provided
         if self.observable_set_id is None:
             self.observable_set_id = f"obsset_{uuid.uuid4().hex[:8]}"
+
+        # Build index for O(1) lookup by observable_id
+        self._id_index = {obs.observable_id: obs for obs in self.observables if obs.observable_id}
 
     @property
     def n_qubits(self) -> int:
@@ -263,10 +279,9 @@ class ObservableSet:
         return self.n_observables
 
     def get_by_id(self, observable_id: str) -> Observable:
-        """Get an observable by its ID."""
-        for obs in self.observables:
-            if obs.observable_id == observable_id:
-                return obs
+        """Get an observable by its ID. O(1) lookup using index."""
+        if observable_id in self._id_index:
+            return self._id_index[observable_id]
         raise KeyError(f"Observable with ID '{observable_id}' not found")
 
     def locality_distribution(self) -> dict[int, int]:

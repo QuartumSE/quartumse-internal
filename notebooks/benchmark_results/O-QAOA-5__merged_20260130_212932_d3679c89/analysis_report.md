@@ -1,0 +1,98 @@
+# Comprehensive Benchmark Analysis
+
+**Run ID:** O-QAOA-5__merged_20260130_212932_d3679c89
+**Protocols:** direct_grouped, direct_optimized, classical_shadows_v0
+**Observables:** 237
+**Shot Grid:** [100, 200, 1000]
+
+---
+
+## Executive Summary
+
+- **n_protocols:** 3
+- **n_observables:** 237
+- **n_shots_evaluated:** 3
+- **max_shots:** 1000
+- **shadows_mean_se:** 0.2421766124835342
+- **baseline_mean_se:** 0.28389353629842445
+- **shadows_vs_baseline_ratio:** 0.8530543373448345
+- **winner_at_max_n:** classical_shadows_v0
+- **shadows_wins_fraction:** 0.5358649789029536
+- **baseline_wins_fraction:** 0.2742616033755274
+- **optimal_pilot_fraction:** 0.2
+
+---
+
+## Task Results
+
+### Worst Case
+
+
+**Enhanced Analysis:**
+
+### Average Target
+
+
+### Fixed Budget
+
+
+### Dominance
+
+- crossover_n: None
+- always_a_better: True
+- always_b_better: False
+- metric_used: mean_se
+
+### Pilot Selection
+
+- pilot_n: 100
+- target_n: 1000
+- selection_accuracy: 0.8
+- regret: 0.0028559453063128045
+- criterion_type: truth_based
+
+### Bias Variance
+
+
+---
+
+## Statistical Significance
+
+| N | Diff. P-value | K-S P-value | Reject Null | SSF (95% CI) |
+|---|---------------|-------------|-------------|--------------|
+| 100 | 0.0000 | nan | Yes | nan [nan, nan] |
+| 200 | 0.0000 | 0.0000 | Yes | 1.20 [1.07, 1.33] |
+| 1000 | 0.0000 | 0.0000 | Yes | 1.37 [1.31, 1.45] |
+
+---
+
+## Performance by Locality
+
+---
+
+## Per-Observable Crossover Analysis
+
+- Protocol A (classical_shadows_v0) wins on 53.6% of observables
+- Protocol B (direct_grouped) wins on 27.4% of observables
+- Crossover exists for 13.9% of observables
+
+---
+
+## Multi-Pilot Fraction Analysis
+
+| Pilot % | Accuracy | Mean Regret |
+|---------|----------|-------------|
+| 2% | 0.0% | 0.0417 |
+| 5% | 0.0% | 0.0417 |
+| 10% | 0.0% | 0.0417 |
+| 20% | 80.0% | 0.0080 |
+
+**Optimal pilot fraction:** 20%
+
+---
+
+## Interpolated N* (Power-Law)
+
+- **direct_grouped:** N* = 96689 (R² = 1.000)
+- **direct_optimized:** N* not reached
+- **classical_shadows_v0:** N* = 91285 (R² = 0.985)

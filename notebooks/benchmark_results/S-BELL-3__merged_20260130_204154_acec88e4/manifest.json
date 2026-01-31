@@ -1,0 +1,54 @@
+{
+  "run_id": "S-BELL-3__merged_20260130_204154_acec88e4",
+  "timestamp": "2026-01-30T20:41:54.760870",
+  "mode": "analysis",
+  "circuit_id": "S-BELL-3__merged",
+  "n_observables": 103,
+  "n_protocols": 3,
+  "protocols": [
+    "direct_grouped",
+    "direct_optimized",
+    "classical_shadows_v0"
+  ],
+  "n_shots_grid": [
+    100,
+    200,
+    1000
+  ],
+  "n_replicates": 10,
+  "n_long_form_rows": 9270,
+  "has_ground_truth": true,
+  "tasks_completed": [
+    "task1_direct_grouped",
+    "task1_direct_optimized",
+    "task1_classical_shadows_v0",
+    "task3_direct_grouped",
+    "task3_direct_optimized",
+    "task3_classical_shadows_v0",
+    "task6_direct_grouped",
+    "task6_direct_optimized",
+    "task6_classical_shadows_v0"
+  ],
+  "all_tasks_completed": [
+    "task1_direct_grouped",
+    "task1_direct_optimized",
+    "task1_classical_shadows_v0",
+    "task2_direct_grouped",
+    "task2_direct_optimized",
+    "task2_classical_shadows_v0",
+    "task3_direct_grouped",
+    "task3_direct_optimized",
+    "task3_classical_shadows_v0",
+    "task6_direct_grouped",
+    "task6_direct_optimized",
+    "task6_classical_shadows_v0"
+  ],
+  "has_analysis": true,
+  "reports": {
+    "basic": "benchmark_results\\S-BELL-3__merged_20260130_204154_acec88e4\\basic_report.md",
+    "complete": "benchmark_results\\S-BELL-3__merged_20260130_204154_acec88e4\\complete_report.md",
+    "analysis": "benchmark_results\\S-BELL-3__merged_20260130_204154_acec88e4\\analysis_report.md",
+    "analysis_json": "benchmark_results\\S-BELL-3__merged_20260130_204154_acec88e4\\analysis.json",
+    "config": "benchmark_results\\S-BELL-3__merged_20260130_204154_acec88e4\\config.json"
+  }
+}

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Real Quantum Hardware Experiment Strategy</title>
+    <style>
+        @page { size: A4; margin: 2cm; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            line-height: 1.7;
+            color: #2c3e50;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+            font-size: 1.8em;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 35px;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 8px;
+            font-size: 1.3em;
+        }
+        h3 {
+            color: #3498db;
+            margin-top: 20px;
+            font-size: 1.1em;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.9em;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .highlight { background-color: #d4edda !important; }
+        .warning { background-color: #fff3cd !important; }
+        .summary-box {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .key-point {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .key-point h3 { color: white; margin-top: 0; }
+        .warning-box {
+            background: #fef9e7;
+            border-left: 4px solid #f1c40f;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .success-box {
+            background: #e8f8f5;
+            border-left: 4px solid #27ae60;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .danger-box {
+            background: #fdedec;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: Consolas, monospace;
+        }
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #7f8c8d;
+            font-size: 0.85em;
+            text-align: center;
+        }
+        .phase-box {
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .phase-header {
+            background: #3498db;
+            color: white;
+            padding: 8px 15px;
+            margin: -15px -15px 15px -15px;
+            border-radius: 5px 5px 0 0;
+            font-weight: bold;
+        }
+        ul { margin: 10px 0; }
+        li { margin: 5px 0; }
+    </style>
+</head>
+<body>
+
+<h1>Real Quantum Hardware Experiment Strategy</h1>
+<p><strong>Classical Shadows Benchmark on IBM Quantum</strong><br>
+<em>QuartumSE Framework | January 2026</em></p>
+
+<div class="key-point">
+    <h3>Executive Summary</h3>
+    <p>Running the full 12-circuit classical shadows benchmark on real quantum hardware requires careful planning due to queue times, job overhead, and the unique requirements of the shadows protocol. This document outlines practical strategies for obtaining publication-quality results within realistic time and resource constraints.</p>
+</div>
+
+<h2>1. Simulation Baseline</h2>
+
+<p>Our simulation benchmark provides the reference point for hardware planning:</p>
+
+<table>
+    <tr>
+        <th>Configuration</th>
+        <th>Parameters</th>
+        <th>Runtime (Simulation)</th>
+    </tr>
+    <tr>
+        <td><strong>Current ("Less Ambitious")</strong></td>
+        <td>10 replicates, shots: 100/200/1000</td>
+        <td>~6 hours</td>
+    </tr>
+    <tr>
+        <td><strong>Publication Quality</strong></td>
+        <td>50 replicates, shots: 100/500/1k/5k/10k</td>
+        <td>~6-12 days</td>
+    </tr>
+    <tr class="highlight">
+        <td><strong>Recommended Middle Ground</strong></td>
+        <td>30 replicates, shots: 100/500/1k/5k</td>
+        <td>~3-4 days</td>
+    </tr>
+</table>
+
+<h2>2. Real Hardware Timing Components</h2>
+
+<h3>2.1 Actual Quantum Execution (Fast)</h3>
+<table>
+    <tr>
+        <th>Component</th>
+        <th>Typical Duration</th>
+    </tr>
+    <tr>
+        <td>Single qubit gate</td>
+        <td>~20-50 nanoseconds</td>
+    </tr>
+    <tr>
+        <td>Two-qubit gate (CX)</td>
+        <td>~200-500 nanoseconds</td>
+    </tr>
+    <tr>
+        <td>Measurement + reset</td>
+        <td>~1-5 microseconds</td>
+    </tr>
+    <tr>
+        <td>Full shot (typical circuit)</td>
+        <td>~5-20 microseconds</td>
+    </tr>
+    <tr>
+        <td>1,000 shots</td>
+        <td>~5-20 milliseconds</td>
+    </tr>
+</table>
+
+<div class="success-box">
+    <strong>Key Insight:</strong> The actual QPU time for our entire benchmark (all circuits, all shots) would be only <strong>minutes</strong>. The bottleneck is everything else.
+</div>
+
+<h3>2.2 Overhead Factors (Slow)</h3>
+<table>
+    <tr>
+        <th>Factor</th>
+        <th>Typical Duration</th>
+        <th>Impact</th>
+    </tr>
+    <tr>
+        <td>Queue wait (free tier)</td>
+        <td>Hours to days</td>
+        <td>Dominant factor</td>
+    </tr>
+    <tr>
+        <td>Queue wait (premium)</td>
+        <td>Minutes to hours</td>
+        <td>Significant</td>
+    </tr>
+    <tr>
+        <td>Job submission overhead</td>
+        <td>~30-60 seconds/job</td>
+        <td>Adds up with many jobs</td>
+    </tr>
+    <tr>
+        <td>Circuit transpilation</td>
+        <td>~1-10 seconds/circuit</td>
+        <td>Can be pre-computed</td>
+    </tr>
+    <tr>
+        <td>Result retrieval</td>
+        <td>~5-30 seconds/job</td>
+        <td>Parallelizable</td>
+    </tr>
+</table>
+
+<h2>3. Classical Shadows: Hardware Challenges</h2>
+
+<div class="warning-box">
+    <strong>Protocol-Specific Issue:</strong> Classical shadows require a <em>different random measurement basis</em> for each shadow. This means:
+    <ul>
+        <li>Each shadow = different circuit (random Cliffords appended)</li>
+        <li>1,000 shadows = 1,000 unique circuits per base state</li>
+        <li>Cannot simply run "1,000 shots of the same circuit"</li>
+    </ul>
+</div>
+
+<h3>3.1 Shadow Count Requirements</h3>
+<table>
+    <tr>
+        <th>Configuration</th>
+        <th>Shadows per Circuit</th>
+        <th>Total Shadows (12 circuits)</th>
+    </tr>
+    <tr>
+        <td>Current (10 rep × 1k shots)</td>
+        <td>~1,000</td>
+        <td>~12,000</td>
+    </tr>
+    <tr>
+        <td>Publication (50 rep × 10k shots)</td>
+        <td>~10,000</td>
+        <td>~120,000</td>
+    </tr>
+</table>
+
+<h3>3.2 Batching Strategies</h3>
+<p>To reduce job overhead, shadows can be batched:</p>
+<ul>
+    <li><strong>Primitive batching:</strong> IBM's Sampler allows multiple circuits per job (up to ~300)</li>
+    <li><strong>Session mode:</strong> Reserve QPU time to avoid repeated queue waits</li>
+    <li><strong>Dynamic circuits:</strong> Some randomization possible within a single job</li>
+</ul>
+
+<h2>4. Realistic Hardware Runtime Estimates</h2>
+
+<table>
+    <tr>
+        <th>Access Level</th>
+        <th>Less Ambitious</th>
+        <th>Publication Quality</th>
+    </tr>
+    <tr>
+        <td><strong>Free Tier</strong> (ibm_brisbane, etc.)</td>
+        <td>2-4 weeks</td>
+        <td>Impractical (months)</td>
+    </tr>
+    <tr>
+        <td><strong>Premium Access</strong></td>
+        <td>1-3 days</td>
+        <td>1-2 weeks</td>
+    </tr>
+    <tr class="highlight">
+        <td><strong>Reserved Session</strong></td>
+        <td>2-6 hours</td>
+        <td>1-3 days</td>
+    </tr>
+</table>
+
+<div class="danger-box">
+    <strong>Cost Consideration:</strong> IBM Quantum premium access is billed by "runtime seconds." A full publication-quality benchmark could cost $1,000-10,000+ depending on the plan. Reserved sessions are more cost-effective for large experiments.
+</div>
+
+<h2>5. Recommended Experiment Strategy</h2>
+
+<div class="phase-box">
+    <div class="phase-header">Phase 1: Validation Run (1-2 days)</div>
+    <ul>
+        <li><strong>Circuits:</strong> 3 key circuits (S-GHZ-4, C-H2, M-PHASE-3)</li>
+        <li><strong>Parameters:</strong> 10 replicates, 500 shadows each</li>
+        <li><strong>Purpose:</strong> Validate pipeline, check noise levels, identify issues</li>
+        <li><strong>Access:</strong> Free tier sufficient</li>
+    </ul>
+</div>
+
+<div class="phase-box">
+    <div class="phase-header">Phase 2: Core Benchmark (3-5 days)</div>
+    <ul>
+        <li><strong>Circuits:</strong> 6 circuits (2 per family: S, C, O)</li>
+        <li><strong>Parameters:</strong> 20 replicates, 1,000 shadows each</li>
+        <li><strong>Purpose:</strong> Main publication data</li>
+        <li><strong>Access:</strong> Premium recommended</li>
+    </ul>
+</div>
+
+<div class="phase-box">
+    <div class="phase-header">Phase 3: Extended Analysis (Optional, 1 week)</div>
+    <ul>
+        <li><strong>Circuits:</strong> All 12 circuits</li>
+        <li><strong>Parameters:</strong> 30 replicates, 2,000 shadows</li>
+        <li><strong>Purpose:</strong> Comprehensive comparison, supplementary material</li>
+        <li><strong>Access:</strong> Reserved session recommended</li>
+    </ul>
+</div>
+
+<h2>6. Publication Comparison</h2>
+
+<p>For context, here's what recent classical shadows papers used:</p>
+
+<table>
+    <tr>
+        <th>Paper</th>
+        <th>Qubits</th>
+        <th>Shadows</th>
+        <th>Circuits</th>
+    </tr>
+    <tr>
+        <td>Huang et al. (Nature 2020)</td>
+        <td>2-4</td>
+        <td>500-2,000</td>
+        <td>2-3</td>
+    </tr>
+    <tr>
+        <td>Struchalin et al. (PRX 2021)</td>
+        <td>4-6</td>
+        <td>1,000-5,000</td>
+        <td>4</td>
+    </tr>
+    <tr>
+        <td>IBM Quantum demos</td>
+        <td>4-7</td>
+        <td>1,000-10,000</td>
+        <td>1-2</td>
+    </tr>
+    <tr class="highlight">
+        <td><strong>Our Target (Recommended)</strong></td>
+        <td>3-7</td>
+        <td>1,000-2,000</td>
+        <td>6</td>
+    </tr>
+</table>
+
+<h2>7. Specific Recommendations</h2>
+
+<div class="summary-box">
+    <h3>For Maximum Impact with Limited Resources:</h3>
+    <ol>
+        <li><strong>Focus on 4-5 qubits:</strong> Best noise-to-signal ratio on current hardware</li>
+        <li><strong>Prioritize GHZ and chemistry circuits:</strong> Most compelling use cases</li>
+        <li><strong>Use 1,000-2,000 shadows:</strong> Sufficient for statistically significant results</li>
+        <li><strong>Run 20-30 replicates:</strong> Enables robust error bars</li>
+        <li><strong>Compare 2 protocols:</strong> Shadows vs. Direct Optimized (skip grouped baseline)</li>
+        <li><strong>Include noise characterization:</strong> Run calibration circuits alongside</li>
+    </ol>
+</div>
+
+<h3>7.1 Suggested Circuit Selection</h3>
+<table>
+    <tr>
+        <th>Priority</th>
+        <th>Circuit</th>
+        <th>Rationale</th>
+    </tr>
+    <tr class="highlight">
+        <td>1</td>
+        <td>S-GHZ-4</td>
+        <td>Classic benchmark, shadows excel here</td>
+    </tr>
+    <tr class="highlight">
+        <td>2</td>
+        <td>C-H2</td>
+        <td>Chemistry application, high impact</td>
+    </tr>
+    <tr class="highlight">
+        <td>3</td>
+        <td>M-PHASE-4</td>
+        <td>Metrology application, clean comparison</td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>S-BELL-2</td>
+        <td>Tests crosstalk detection capability</td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td>O-QAOA-5</td>
+        <td>Optimization application</td>
+    </tr>
+    <tr>
+        <td>6</td>
+        <td>S-ISING-4</td>
+        <td>Condensed matter application</td>
+    </tr>
+</table>
+
+<h2>8. Risk Mitigation</h2>
+
+<table>
+    <tr>
+        <th>Risk</th>
+        <th>Mitigation</th>
+    </tr>
+    <tr>
+        <td>Hardware drift during long runs</td>
+        <td>Interleave calibration circuits; run in sessions</td>
+    </tr>
+    <tr>
+        <td>Job failures / timeouts</td>
+        <td>Implement checkpointing; save partial results</td>
+    </tr>
+    <tr>
+        <td>Unexpected noise levels</td>
+        <td>Run validation phase first; adjust shadow count</td>
+    </tr>
+    <tr>
+        <td>Queue delays</td>
+        <td>Use off-peak hours; consider premium access</td>
+    </tr>
+    <tr>
+        <td>Cost overruns</td>
+        <td>Set job limits; monitor runtime usage</td>
+    </tr>
+</table>
+
+<h2>9. Next Steps</h2>
+
+<ol>
+    <li><strong>Verify hardware backend support</strong> in QuartumSE codebase</li>
+    <li><strong>Implement job batching</strong> for shadows protocol</li>
+    <li><strong>Run Phase 1 validation</strong> on free tier</li>
+    <li><strong>Analyze noise impact</strong> and adjust parameters</li>
+    <li><strong>Execute Phase 2</strong> with premium access</li>
+    <li><strong>Compile results</strong> and compare to simulation baseline</li>
+</ol>
+
+<div class="footer">
+    <p><strong>QuartumSE Classical Shadows Framework</strong><br>
+    Strategy Document | January 31, 2026<br><br>
+    <em>Use Ctrl+P in browser to save as PDF</em></p>
+</div>
+
+</body>
+</html>

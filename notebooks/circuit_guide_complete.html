@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>QuartumSE Benchmark Circuits - Complete Guide</title>
+    <style>
+        @page { size: A4; margin: 2cm; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px;
+            line-height: 1.7;
+            color: #2c3e50;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+            font-size: 2.2em;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 50px;
+            border-bottom: 2px solid #bdc3c7;
+            padding-bottom: 8px;
+            font-size: 1.6em;
+        }
+        .circuit-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            page-break-inside: avoid;
+        }
+        .circuit-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .family-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.9em;
+            color: white;
+        }
+        .family-S { background-color: #3498db; }
+        .family-C { background-color: #27ae60; }
+        .family-O { background-color: #e67e22; }
+        .family-M { background-color: #9b59b6; }
+        .circuit-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .qubit-count {
+            background: #ecf0f1;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            color: #7f8c8d;
+        }
+        .circuit-diagram {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .circuit-diagram img {
+            max-width: 100%;
+            height: auto;
+        }
+        .section { margin: 15px 0; }
+        .section-title {
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 5px;
+        }
+        .physics-box {
+            background: #eef6f9;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+        }
+        .importance-box {
+            background: #fef9e7;
+            border-left: 4px solid #f1c40f;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .intro-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+        .intro-box h3 { color: white; margin-top: 0; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #3498db; color: white; }
+        tr:nth-child(even) { background: #f9f9f9; }
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<h1>QuartumSE Benchmark Circuits</h1>
+<p><strong>A Complete Guide to the 12 Quantum Circuits</strong></p>
+<p style="color: #7f8c8d;">Generated: January 31, 2026 | QuartumSE Classical Shadows Framework</p>
+
+<div class="intro-box">
+    <h3>What This Document Covers</h3>
+    <p>This guide explains the 12 quantum circuits used in the QuartumSE classical shadows benchmark suite. For each circuit, you will learn:</p>
+    <ul>
+        <li><strong>What it is:</strong> The quantum state being prepared</li>
+        <li><strong>How it works:</strong> The physics and mathematics behind it</li>
+        <li><strong>Why it matters:</strong> Real-world applications and importance</li>
+        <li><strong>Circuit diagram:</strong> Visual representation of the quantum gates</li>
+    </ul>
+</div>
+
+<h2>Overview: Circuit Families</h2>
+<table>
+    <tr><th>Family</th><th>Code</th><th>Circuits</th><th>Purpose</th></tr>
+    <tr><td><strong>Shadows Core</strong></td><td>S</td><td>6</td><td>Validate shadow estimation on fundamental entangled states</td></tr>
+    <tr><td><strong>Chemistry</strong></td><td>C</td><td>2</td><td>Molecular ground state energy estimation</td></tr>
+    <tr><td><strong>Optimization</strong></td><td>O</td><td>2</td><td>QAOA cost function estimation for combinatorial problems</td></tr>
+    <tr><td><strong>Metrology</strong></td><td>M</td><td>2</td><td>Quantum-enhanced parameter estimation</td></tr>
+</table>
+
+
+<h2><span class="family-badge family-S">S</span> Shadows Core Circuits</h2>
+
+
+<div class="circuit-card" id="S-GHZ-4">
+    <div class="circuit-header">
+        <span class="family-badge family-S">S-GHZ-4</span>
+        <span class="circuit-title">4-Qubit GHZ State</span>
+        <span class="qubit-count">4 qubits</span>
+    </div>
+    <p><em>Maximally entangled 4-qubit Greenberger-Horne-Zeilinger state</em></p>
+    <div class="circuit-diagram"><p><em>Diagram generation failed</em></p></div>
+    <div class="section">
+        <div class="section-title">Description</div>
+        <p>The GHZ state is a fundamental quantum state exhibiting genuine multipartite entanglement. For 4 qubits: |GHZ4> = (|0000> + |1111>) / sqrt(2). All qubits are in perfect superposition of all-0 or all-1.</p>
+    </div>
+    <div class="physics-box">|GHZ4> = (|0000> + |1111>) / sqrt(2)
+Stabilizers: XXXX, ZZII, IZZI, IIZZ
+Maximum multipartite entanglement</div>
+    <div class="section">
+        <div class="section-title">Applications</div>
+        <p>Quantum error correction, quantum metrology (Heisenberg limit), quantum communication, Bell tests</p>
+    </div>
+    <div class="importance-box">
+        <div class="section-title">Why This Circuit Matters for Benchmarking</div>
+        <p>Tests ability to estimate multi-qubit correlations like <XXXX> where all shadow measurements must align.</p>
+    </div>
+</div>
+
+
+<div class="circuit-card" id="S-GHZ-5">
+    <div class="circuit-header">
+        <span class="family-badge family-S">S-GHZ-5</span>
+        <span class="circuit-title">5-Qubit GHZ State</span>
+        <span class="qubit-count">5 qubits</span>
+    </div>
+    <p><em>Maximally entangled 5-qubit GHZ state</em></p>
+    <div class="circuit-diagram"><p><em>Diagram generation failed</em></p></div>
+    <div class="section">
+        <div class="section-title">Description</div>
+        <p>Extension of GHZ to 5 qubits: |GHZ5> = (|00000> + |11111>) / sqrt(2). Larger Hilbert space (32 dims) and more stabilizers to verify.</p>
+    </div>
+    <div class="physics-box">|GHZ5> = (|00000> + |11111>) / sqrt(2)
+Stabilizers: XXXXX, ZZIII, IZZII, IIZZI, IIIZZ</div>
+    <div class="section">
+        <div class="section-title">Applications</div>
+        <p>5-qubit error correction, distributed quantum computing, 5-party secret sharing</p>
+    </div>
+    <div class="importance-box">
+        <div class="section-title">Why This Circuit Matters for Benchmarking</div>
+        <p>Tests scaling behavior - 5-qubit operators like XXXXX have 243x higher variance than single-qubit.</p>
+    </div>
+</div>
+
+
+<div class="circuit-card" id="S-BELL-2">
+    <div class="circuit-header">
+        <span class="family-badge family-S">S-BELL-2</span>
+        <span class="circuit-title">2 Bell Pairs</span>
+        <span class="qubit-count">4 qubits</span>
+    </div>
+    <p><em>Two independent Bell pairs (4 qubits total)</em></p>
+    <div class="circuit-diagram"><p><em>Diagram generation failed</em></p></div>
+    <div class="section">
+        <div class="section-title">Description</div>
+        <p>Two independent maximally-entangled Bell pairs: |Phi+>_01 x |Phi+>_23. Bipartite entanglement - qubits entangled in pairs, not globally.</p>
+    </div>
+    <div class="physics-box">|Psi> = |Phi+>_01 x |Phi+>_23
+Within pairs: <ZZ>_01 = <ZZ>_23 = +1
+Cross-pairs: <ZZ>_02 = <ZZ>_13 = 0</div>
+    <div class="section">
+        <div class="section-title">Applications</div>
+        <p>Quantum teleportation, superdense coding, entanglement distribution, crosstalk detection</p>
+    </div>
+    <div class="importance-box">
+        <div class="section-title">Why This Circuit Matters for Benchmarking</div>
+        <p>Tests correct identification of correlation structure - must distinguish within-pair vs cross-pair correlations.</p>
+    </div>
+</div>
+
+
+<div class="circuit-card" id="S-BELL-3">
+    <div class="circuit-header">
+        <span class="family-badge family-S">S-BELL-3</span>
+        <span class="circuit-title">3 Bell Pairs</span>
+        <span class="qubit-count">6 qubits</span>
+    </div>
+    <p><em>Three independent Bell pairs (6 qubits total)</em></p>
+    <div class="circuit-diagram"><p><em>Diagram generation failed</em></p></div>
+    <div class="section">
+        <div class="section-title">Description</div>
+        <p>Three parallel Bell pairs on 6 qubits. Tests shadow estimation on structured 6-qubit state with localized entanglement.</p>
+    </div>
+    <div class="physics-box">|Psi> = |Phi+>_01 x |Phi+>_23 x |Phi+>_45
+Only <ZZ> within each pair is nonzero</div>
+    <div class="section">
+        <div class="section-title">Applications</div>
+        <p>Parallel quantum channels, error characterization, network primitives</p>
+    </div>
+    <div class="importance-box">
+        <div class="section-title">Why This Circuit Matters for Benchmarking</div>
+        <p>At 6 qubits, shadow variance becomes significant. Tests resolution of pair structure.</p>
+    </div>
+</div>
+
+
+<div class="circuit-card" id="S-ISING-4">
+    <div class="circuit-header">
+        <span class="family-badge family-S">S-ISING-4</span>
+        <span class="circuit-title">4-Qubit Ising Ground State</span>
+        <span class="qubit-count">4 qubits</span>
+    </div>
+    <p><em>Trotterized transverse-field Ising model ground state</em></p>
+    <div class="circuit-diagram"><p><em>Diagram generation failed</em></p></div>
+    <div class="section">
+        <div class="section-title">Description</div>
+        <p>Approximate ground state of the transverse-field Ising model (TFIM) via Trotterized evolution. H = -J Sum(ZiZi+1) - h Sum(Xi)</p>
+    </div>
+    <div class="physics-box">H = -J Sum(ZiZi+1) - h Sum(Xi), J=1.0, h=0.5
+Strong ZZ correlations: <ZiZi+1> ~ -0.9 to -1.0
+Nonzero magnetization: <Xi> ~ 0.3-0.5</div>
+    <div class="section">
+        <div class="section-title">Applications</div>
+        <p>Condensed matter physics, quantum simulation, VQE preparation, quantum annealing</p>
+    </div>
+    <div class="importance-box">
+        <div class="section-title">Why This Circuit Matters for Benchmarking</div>
+        <p>Ising models have local (nearest-neighbor) correlations. Shadows should efficiently estimate with low variance.</p>
+    </div>
+</div>
+
+
+<div class="circuit-card" id="S-ISING-6">
+    <div class="circuit-header">
+        <span class="family-badge family-S">S-ISING-6</span>
+        <span class="circuit-title">6-Qubit Ising Ground State</span>
+        <span class="qubit-count">6 qubits</span>
+    </div>
+    <p><em>Larger Trotterized Ising ground state approximation</em></p>
+    <div class="circuit-diagram"><p><em>Diagram generation failed</em></p></div>
+    <div class="section">
+        <div class="section-title">Description</div>
+        <p>6-qubit TFIM ground state. More qubits means richer correlation structure with 5 nearest-neighbor ZZ pairs.</p>
+    </div>
+    <div class="physics-box">6 qubits in a line with 5 ZZ bonds
+q0 -- q1 -- q2 -- q3 -- q4 -- q5
+Longer-range <ZiZj> decay with distance</div>
+    <div class="section">
+        <div class="section-title">Applications</div>
+        <p>Quantum phase transitions, entanglement area law studies, many-body physics</p>
+    </div>
+    <div class="importance-box">
+        <div class="section-title">Why This Circuit Matters for Benchmarking</div>
+        <p>Tests whether shadows maintain accuracy for longer-range correlations as system size grows.</p>
+    </div>
+</div>
+
+
+<h2><span class="family-badge family-C">C</span> Chemistry Circuits</h2>
+
+
+<div class="circuit-card" id="C-H2">
+    <div class="circuit-header">
+        <span class="family-badge family-C">C-H2</span>
+        <span class="circuit-title">H2 Molecule Ansatz</span>
+        <span class="qubit-count">4 qubits</span>
+    </div>
+    <p><em>Variational ansatz for hydrogen molecule ground state</em></p>
+    <div class="circuit-diagram"><p><em>Diagram generation failed</em></p></div>
+    <div class="section">
+        <div class="section-title">Description</div>
+        <p>Hardware-efficient ansatz for H2 in STO-3G minimal basis. 4 qubits = 4 spin-orbitals: q0,q1 (1s) and q2,q3 (1s* antibonding).</p>
+    </div>
+    <div class="physics-box">Molecular Hamiltonian has ~15 Pauli terms
+Key observables: Energy <H>, Particle number <N>, Spin <S^2></div>
+    <div class="section">
+        <div class="section-title">Applications</div>
+        <p>Variational Quantum Eigensolver (VQE), ground state energy computation, quantum chemistry benchmarks</p>
+    </div>
+    <div class="importance-box">
+        <div class="section-title">Why This Circuit Matters for Benchmarking</div>
+        <p>Chemistry requires estimating many Pauli terms for energy. Shadows' multi-observable estimation is ideal.</p>
+    </div>
+</div>
+
+
+<div class="circuit-card" id="C-LiH">
+    <div class="circuit-header">
+        <span class="family-badge family-C">C-LiH</span>
+        <span class="circuit-title">LiH Molecule Ansatz</span>
+        <span class="qubit-count">6 qubits</span>
+    </div>
+    <p><em>Variational ansatz for lithium hydride ground state</em></p>
+    <div class="circuit-diagram"><p><em>Diagram generation failed</em></p></div>
+    <div class="section">
+        <div class="section-title">Description</div>
+        <p>6-qubit ansatz for LiH molecule, more complex than H2. LiH is ionic with partial charge transfer. Hamiltonian has ~100+ Pauli terms.</p>
+    </div>
+    <div class="physics-box">Bond length ~1.6 A, Dipole moment ~5.9 Debye
+Hamiltonian has O(100) Pauli terms</div>
+    <div class="section">
+        <div class="section-title">Applications</div>
+        <p>Beyond-H2 benchmarks, ionic system studies, active space methods</p>
+    </div>
+    <div class="importance-box">
+        <div class="section-title">Why This Circuit Matters for Benchmarking</div>
+        <p>With ~100 observables, tests whether shadows provide practical advantage over direct measurement.</p>
+    </div>
+</div>
+
+
+<h2><span class="family-badge family-O">O</span> Optimization Circuits</h2>
+
+
+<div class="circuit-card" id="O-QAOA-5">
+    <div class="circuit-header">
+        <span class="family-badge family-O">O-QAOA-5</span>
+        <span class="circuit-title">QAOA MAX-CUT (5-node Ring)</span>
+        <span class="qubit-count">5 qubits</span>
+    </div>
+    <p><em>Quantum Approximate Optimization for MAX-CUT on 5-node ring</em></p>
+    <div class="circuit-diagram"><p><em>Diagram generation failed</em></p></div>
+    <div class="section">
+        <div class="section-title">Description</div>
+        <p>QAOA for MAX-CUT on 5-node ring graph. Optimal cut is 4 edges (alternating partition). Encodes superposition over all 32 partitions.</p>
+    </div>
+    <div class="physics-box">|psi(g,b)> = e^{-ib Sum Xi} e^{-ig Sum ZiZj} |+>^n
+Cost: H_C = Sum_{edges} (1 - ZiZj)/2</div>
+    <div class="section">
+        <div class="section-title">Applications</div>
+        <p>Combinatorial optimization, scheduling, logistics, hybrid classical-quantum algorithms</p>
+    </div>
+    <div class="importance-box">
+        <div class="section-title">Why This Circuit Matters for Benchmarking</div>
+        <p>QAOA observables (ZiZj) all commute, so grouped measurement is efficient. Tests if shadows compete.</p>
+    </div>
+</div>
+
+
+<div class="circuit-card" id="O-QAOA-7">
+    <div class="circuit-header">
+        <span class="family-badge family-O">O-QAOA-7</span>
+        <span class="circuit-title">QAOA MAX-CUT (7-node Ring)</span>
+        <span class="qubit-count">7 qubits</span>
+    </div>
+    <p><em>QAOA MAX-CUT on larger 7-node ring</em></p>
+    <div class="circuit-diagram"><p><em>Diagram generation failed</em></p></div>
+    <div class="section">
+        <div class="section-title">Description</div>
+        <p>QAOA on 7-node ring. State space is 128-dimensional. Odd nodes cause frustration - best cut is 6 of 7 edges.</p>
+    </div>
+    <div class="physics-box">7 nodes in cycle: (0,1),(1,2),...,(6,0)
+Odd ring = frustrated optimization
+128-dim state space</div>
+    <div class="section">
+        <div class="section-title">Applications</div>
+        <p>Scalability testing, frustration effects, parameter landscape studies</p>
+    </div>
+    <div class="importance-box">
+        <div class="section-title">Why This Circuit Matters for Benchmarking</div>
+        <p>At 7 qubits, benchmark shows shadows having higher variance than direct methods - crossover point.</p>
+    </div>
+</div>
+
+
+<h2><span class="family-badge family-M">M</span> Metrology Circuits</h2>
+
+
+<div class="circuit-card" id="M-PHASE-3">
+    <div class="circuit-header">
+        <span class="family-badge family-M">M-PHASE-3</span>
+        <span class="circuit-title">3-Qubit Phase Sensing</span>
+        <span class="qubit-count">3 qubits</span>
+    </div>
+    <p><em>GHZ-enhanced quantum phase estimation</em></p>
+    <div class="circuit-diagram"><p><em>Diagram generation failed</em></p></div>
+    <div class="section">
+        <div class="section-title">Description</div>
+        <p>GHZ state with phase rotations for quantum-enhanced sensing. |psi(phi)> = (|000> + e^{3i*phi}|111>) / sqrt(2). Achieves Heisenberg limit.</p>
+    </div>
+    <div class="physics-box">|psi(phi)> = (|000> + e^{3i*phi}|111>) / sqrt(2)
+<XXX> = cos(3*phi), <YYY> = sin(3*phi)
+Precision: delta_phi >= 1/(n*sqrt(M))</div>
+    <div class="section">
+        <div class="section-title">Applications</div>
+        <p>Magnetometry, gravitational wave detection, atomic clocks, quantum radar</p>
+    </div>
+    <div class="importance-box">
+        <div class="section-title">Why This Circuit Matters for Benchmarking</div>
+        <p>Metrology needs precise estimation of specific observables. Shadows must provide unbiased estimates.</p>
+    </div>
+</div>
+
+
+<div class="circuit-card" id="M-PHASE-4">
+    <div class="circuit-header">
+        <span class="family-badge family-M">M-PHASE-4</span>
+        <span class="circuit-title">4-Qubit Phase Sensing</span>
+        <span class="qubit-count">4 qubits</span>
+    </div>
+    <p><em>4-qubit GHZ-enhanced phase estimation</em></p>
+    <div class="circuit-diagram"><p><em>Diagram generation failed</em></p></div>
+    <div class="section">
+        <div class="section-title">Description</div>
+        <p>4-qubit phase sensing. Phase factor e^{4i*phi} provides 4x better resolution than single qubit at same shot count.</p>
+    </div>
+    <div class="physics-box">|psi(phi)> = (|0000> + e^{4i*phi}|1111>) / sqrt(2)
+<XXXX> = <YYYY> = cos(4*phi)</div>
+    <div class="section">
+        <div class="section-title">Applications</div>
+        <p>Precision measurement, phase transition detection, quantum sensor networks</p>
+    </div>
+    <div class="importance-box">
+        <div class="section-title">Why This Circuit Matters for Benchmarking</div>
+        <p>Tests 4-local observable estimation where variance scaling (3^4=81) is significant but manageable.</p>
+    </div>
+</div>
+
+
+<div class="footer">
+    <p><strong>QuartumSE Classical Shadows Benchmark Suite</strong><br>
+    This document accompanies the benchmark results from the overnight run of January 30-31, 2026.<br>
+    <br>
+    For questions or contributions, see the QuartumSE GitHub repository.</p>
+</div>
+</body>
+</html>

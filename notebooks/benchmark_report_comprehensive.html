@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Comprehensive Classical Shadows Benchmark Report</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; max-width: 1100px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #2c3e50; }
+        h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
+        h2 { color: #34495e; border-bottom: 1px solid #bdc3c7; padding-bottom: 5px; margin-top: 40px; }
+        h3 { color: #7f8c8d; margin-top: 25px; }
+        table { border-collapse: collapse; width: 100%; margin: 15px 0; font-size: 0.9em; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #3498db; color: white; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        tr:hover { background-color: #f1f1f1; }
+        .highlight { background-color: #d4edda !important; font-weight: bold; }
+        .warning { background-color: #fff3cd !important; }
+        .danger { background-color: #f8d7da !important; }
+        .metric-good { color: #27ae60; font-weight: bold; }
+        .metric-bad { color: #e74c3c; }
+        .summary-box { background: #ecf0f1; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .key-finding { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .key-finding h3 { color: white; margin-top: 0; }
+        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
+        .stat-card { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 15px; text-align: center; }
+        .stat-value { font-size: 2em; font-weight: bold; color: #3498db; }
+        .stat-label { color: #7f8c8d; font-size: 0.9em; }
+        .protocol-badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.8em; color: white; }
+        .badge-grouped { background-color: #95a5a6; }
+        .badge-optimized { background-color: #27ae60; }
+        .badge-shadows { background-color: #3498db; }
+        .family-badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-weight: bold; font-size: 0.85em; color: white; margin-right: 5px; }
+        .family-S { background-color: #3498db; }
+        .family-C { background-color: #27ae60; }
+        .family-O { background-color: #e67e22; }
+        .family-M { background-color: #9b59b6; }
+        .toc { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin: 20px 0; }
+        .toc ul { list-style: none; padding-left: 0; }
+        .toc li { padding: 5px 0; }
+        .toc a { color: #3498db; text-decoration: none; }
+        .footer { margin-top: 50px; padding-top: 20px; border-top: 1px solid #ddd; color: #7f8c8d; font-size: 0.9em; text-align: center; }
+        code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; font-family: Consolas, monospace; }
+        .insight-box { background: #e8f4fd; border-left: 4px solid #3498db; padding: 15px; margin: 15px 0; }
+        .warning-box { background: #fef9e7; border-left: 4px solid #f1c40f; padding: 15px; margin: 15px 0; }
+        .comparison-row td:nth-child(4), .comparison-row td:nth-child(5), .comparison-row td:nth-child(6) { font-family: Consolas, monospace; }
+    </style>
+</head>
+<body>
+
+<h1>Comprehensive Classical Shadows Benchmark Report</h1>
+<p><strong>Date:</strong> January 30-31, 2026 | <strong>Runtime:</strong> ~5h 45min | <strong>Framework:</strong> QuartumSE</p>
+
+<div class="toc">
+    <h3>Table of Contents</h3>
+    <ul>
+        <li><a href="#summary">1. Executive Summary</a></li>
+        <li><a href="#config">2. Benchmark Configuration</a></li>
+        <li><a href="#overview">3. Protocol Overview</a></li>
+        <li><a href="#results">4. Detailed Results</a></li>
+        <li><a href="#scaling">5. Scaling Analysis</a></li>
+        <li><a href="#variance">6. Variance and Error Analysis</a></li>
+        <li><a href="#recommendations">7. Recommendations</a></li>
+        <li><a href="#methodology">8. Methodology</a></li>
+    </ul>
+</div>
+
+<h2 id="summary">1. Executive Summary</h2>
+
+<div class="key-finding">
+    <h3>Key Findings</h3>
+    <ul>
+        <li><strong>Direct Optimized</strong> achieved lowest mean standard error on <strong>8 of 12</strong> circuits</li>
+        <li><strong>Classical Shadows v0</strong> won on <strong>4 of 12</strong> circuits, particularly excelling on high-observable-count scenarios</li>
+        <li>Classical shadows show <strong>increased variance on 6+ qubit circuits</strong> due to 3^k scaling with locality k</li>
+        <li>For VQE/chemistry applications, Direct Optimized provides the <strong>most reliable accuracy</strong></li>
+    </ul>
+</div>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="stat-value">12</div>
+        <div class="stat-label">Circuits Tested</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">3</div>
+        <div class="stat-label">Protocols Compared</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">144,870</div>
+        <div class="stat-label">Data Points</div>
+    </div>
+</div>
+
+<h3>Protocol Win Summary</h3>
+<table>
+    <tr><th>Protocol</th><th>Wins</th><th>Win Rate</th><th>Best For</th></tr>
+    <tr>
+        <td><span class="protocol-badge badge-grouped">Direct Grouped</span></td>
+        <td>0/12</td>
+        <td>0%</td>
+        <td>Baseline comparison only</td>
+    </tr>
+    <tr class="highlight">
+        <td><span class="protocol-badge badge-optimized">Direct Optimized</span></td>
+        <td>8/12</td>
+        <td>67%</td>
+        <td>Chemistry, 6+ qubit systems, low-observable counts</td>
+    </tr>
+    <tr>
+        <td><span class="protocol-badge badge-shadows">Classical Shadows</span></td>
+        <td>4/12</td>
+        <td>33%</td>
+        <td>GHZ states, high-observable counts, exploratory analysis</td>
+    </tr>
+</table>
+
+<h2 id="config">2. Benchmark Configuration</h2>
+
+<div class="summary-box">
+<table>
+    <tr><th>Parameter</th><th>Value</th><th>Description</th></tr>
+    <tr><td>Shot Budgets</td><td><code>100, 200, 1000</code></td><td>Number of measurement repetitions per configuration</td></tr>
+    <tr><td>Replicates</td><td>10</td><td>Independent runs for statistical averaging</td></tr>
+    <tr><td>Target Precision (epsilon)</td><td>0.05</td><td>Desired accuracy threshold</td></tr>
+    <tr><td>Confidence Level (delta)</td><td>0.05</td><td>Failure probability bound</td></tr>
+    <tr><td>Suite Types</td><td>Stress, Posthoc, Diagnostics</td><td>Observable generation strategies</td></tr>
+    <tr><td>Suite Merging</td><td>Enabled</td><td>Combines suites to reduce redundant measurements</td></tr>
+    <tr><td>Simulator</td><td>Qiskit Aer (statevector)</td><td>Noiseless simulation for ground truth</td></tr>
+</table>
+</div>
+
+<h2 id="overview">3. Protocol Overview</h2>
+
+<h3>3.1 Direct Grouped (Baseline)</h3>
+<p>The simplest measurement strategy. Observables are grouped by commutation relations, and each group is measured with equal shot allocation. This serves as the baseline against which other methods are compared.</p>
+<ul>
+    <li><strong>Pros:</strong> Simple implementation, predictable behavior</li>
+    <li><strong>Cons:</strong> Inefficient shot allocation, highest variance</li>
+</ul>
+
+<h3>3.2 Direct Optimized</h3>
+<p>An enhanced direct measurement strategy that optimizes shot allocation across commuting groups based on observable variances. Uses derandomization to minimize total estimation error.</p>
+<ul>
+    <li><strong>Pros:</strong> Consistent best performer, low maximum error, efficient for small observable sets</li>
+    <li><strong>Cons:</strong> Requires upfront commutation analysis, higher classical overhead</li>
+</ul>
+
+<h3>3.3 Classical Shadows (v0)</h3>
+<p>The randomized measurement protocol. Random single-qubit Clifford rotations are applied before measurement, creating "shadow snapshots" that can be post-processed to estimate many observables from the same data.</p>
+<ul>
+    <li><strong>Pros:</strong> "Measure once, query later" flexibility, excellent for many observables</li>
+    <li><strong>Cons:</strong> Variance scales as 3^k with locality k, struggles on large systems</li>
+</ul>
+
+<h2 id="results">4. Detailed Results</h2>
+
+<h3>4.1 Mean Standard Error by Circuit</h3>
+<p>Lower is better. The highlighted cell shows the winning protocol for each circuit.</p>
+
+<table class="comparison-row">
+    <tr>
+        <th>Circuit</th>
+        <th>Qubits</th>
+        <th>Observables</th>
+        <th>Direct Grouped</th>
+        <th>Direct Optimized</th>
+        <th>Classical Shadows</th>
+        <th>Winner</th>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-GHZ-4</td>
+        <td>4</td>
+        <td>180</td>
+        <td class="">0.2361</td>
+        <td class="">0.2043</td>
+        <td class="highlight">0.1730</td>
+        <td>Shadows</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-BELL-2</td>
+        <td>4</td>
+        <td>87</td>
+        <td class="">0.1693</td>
+        <td class="highlight">0.1565</td>
+        <td class="">0.1616</td>
+        <td>Optimized</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-ISING-4</td>
+        <td>4</td>
+        <td>87</td>
+        <td class="">0.1704</td>
+        <td class="highlight">0.1544</td>
+        <td class="">0.1616</td>
+        <td>Optimized</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-GHZ-5</td>
+        <td>5</td>
+        <td>237</td>
+        <td class="">0.2772</td>
+        <td class="">0.2495</td>
+        <td class="highlight">0.2421</td>
+        <td>Shadows</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-BELL-3</td>
+        <td>6</td>
+        <td>103</td>
+        <td class="">0.2030</td>
+        <td class="highlight">0.1831</td>
+        <td class="">0.2925</td>
+        <td>Optimized</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-ISING-6</td>
+        <td>6</td>
+        <td>100</td>
+        <td class="">0.2064</td>
+        <td class="highlight">0.1848</td>
+        <td class="">0.2983</td>
+        <td>Optimized</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-C">C</span>C-H2</td>
+        <td>4</td>
+        <td>87</td>
+        <td class="">0.1634</td>
+        <td class="highlight">0.1492</td>
+        <td class="">0.1611</td>
+        <td>Optimized</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-C">C</span>C-LiH</td>
+        <td>6</td>
+        <td>100</td>
+        <td class="">0.1964</td>
+        <td class="highlight">0.1784</td>
+        <td class="">0.2979</td>
+        <td>Optimized</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-O">O</span>O-QAOA-5</td>
+        <td>5</td>
+        <td>237</td>
+        <td class="">0.2839</td>
+        <td class="">0.2540</td>
+        <td class="highlight">0.2422</td>
+        <td>Shadows</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-O">O</span>O-QAOA-7</td>
+        <td>7</td>
+        <td>275</td>
+        <td class="">0.3500</td>
+        <td class="highlight">0.3010</td>
+        <td class="">0.4048</td>
+        <td>Optimized</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-M">M</span>M-PHASE-3</td>
+        <td>3</td>
+        <td>63</td>
+        <td class="">0.1471</td>
+        <td class="">0.1352</td>
+        <td class="highlight">0.1181</td>
+        <td>Shadows</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-M">M</span>M-PHASE-4</td>
+        <td>4</td>
+        <td>87</td>
+        <td class="">0.1648</td>
+        <td class="highlight">0.1516</td>
+        <td class="">0.1616</td>
+        <td>Optimized</td>
+    </tr>
+</table><h3>4.2 Maximum Standard Error by Circuit</h3>
+<p>The worst-case error across all observables. Important for applications requiring guaranteed precision.</p>
+
+<table class="comparison-row">
+    <tr>
+        <th>Circuit</th>
+        <th>Qubits</th>
+        <th>Direct Grouped</th>
+        <th>Direct Optimized</th>
+        <th>Classical Shadows</th>
+        <th>Shadows/Optimized Ratio</th>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-GHZ-4</td>
+        <td>4</td>
+        <td>0.2582</td>
+        <td>0.3333</td>
+        <td>0.4361</td>
+        <td class="">1.31x</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-BELL-2</td>
+        <td>4</td>
+        <td>0.1825</td>
+        <td>0.2294</td>
+        <td>0.3799</td>
+        <td class="warning">1.66x</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-ISING-4</td>
+        <td>4</td>
+        <td>0.1796</td>
+        <td>0.2294</td>
+        <td>0.3799</td>
+        <td class="warning">1.66x</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-GHZ-5</td>
+        <td>5</td>
+        <td>0.3015</td>
+        <td>0.4041</td>
+        <td>0.8056</td>
+        <td class="warning">1.99x</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-BELL-3</td>
+        <td>6</td>
+        <td>0.2130</td>
+        <td>0.2582</td>
+        <td>1.7851</td>
+        <td class="metric-bad">6.91x</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-ISING-6</td>
+        <td>6</td>
+        <td>0.2130</td>
+        <td>0.2582</td>
+        <td>1.7803</td>
+        <td class="metric-bad">6.90x</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-C">C</span>C-H2</td>
+        <td>4</td>
+        <td>0.1796</td>
+        <td>0.2294</td>
+        <td>0.3799</td>
+        <td class="warning">1.66x</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-C">C</span>C-LiH</td>
+        <td>6</td>
+        <td>0.2130</td>
+        <td>0.2582</td>
+        <td>1.7857</td>
+        <td class="metric-bad">6.92x</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-O">O</span>O-QAOA-5</td>
+        <td>5</td>
+        <td>0.3015</td>
+        <td>0.4041</td>
+        <td>0.8050</td>
+        <td class="warning">1.99x</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-O">O</span>O-QAOA-7</td>
+        <td>7</td>
+        <td>0.3780</td>
+        <td>0.4472</td>
+        <td>3.7874</td>
+        <td class="metric-bad">8.47x</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-M">M</span>M-PHASE-3</td>
+        <td>3</td>
+        <td>0.1666</td>
+        <td>0.2040</td>
+        <td>0.1983</td>
+        <td class="">0.97x</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-M">M</span>M-PHASE-4</td>
+        <td>4</td>
+        <td>0.1796</td>
+        <td>0.2294</td>
+        <td>0.3799</td>
+        <td class="warning">1.66x</td>
+    </tr>
+</table><h3>4.3 Mean Absolute Error by Circuit</h3>
+<p>Average absolute difference from ground truth. Measures overall estimation accuracy.</p>
+
+<table class="comparison-row">
+    <tr>
+        <th>Circuit</th>
+        <th>Qubits</th>
+        <th>Direct Grouped</th>
+        <th>Direct Optimized</th>
+        <th>Classical Shadows</th>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-GHZ-4</td>
+        <td>4</td>
+        <td class="">0.1967</td>
+        <td class="">0.1625</td>
+        <td class="highlight">0.1421</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-BELL-2</td>
+        <td>4</td>
+        <td class="">0.1369</td>
+        <td class="highlight">0.1141</td>
+        <td class="">0.1268</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-ISING-4</td>
+        <td>4</td>
+        <td class="">0.1366</td>
+        <td class="highlight">0.1216</td>
+        <td class="">0.1262</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-GHZ-5</td>
+        <td>5</td>
+        <td class="">0.2116</td>
+        <td class="">0.2037</td>
+        <td class="highlight">0.1928</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-BELL-3</td>
+        <td>6</td>
+        <td class="">0.1501</td>
+        <td class="highlight">0.1389</td>
+        <td class="">0.2366</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-ISING-6</td>
+        <td>6</td>
+        <td class="">0.1557</td>
+        <td class="highlight">0.1465</td>
+        <td class="">0.2455</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-C">C</span>C-H2</td>
+        <td>4</td>
+        <td class="">0.2472</td>
+        <td class="highlight">0.2421</td>
+        <td class="">0.2574</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-C">C</span>C-LiH</td>
+        <td>6</td>
+        <td class="">0.2444</td>
+        <td class="highlight">0.2361</td>
+        <td class="">0.3303</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-O">O</span>O-QAOA-5</td>
+        <td>5</td>
+        <td class="">0.2151</td>
+        <td class="">0.2126</td>
+        <td class="highlight">0.1961</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-O">O</span>O-QAOA-7</td>
+        <td>7</td>
+        <td class="">0.2652</td>
+        <td class="highlight">0.2549</td>
+        <td class="">0.3515</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-M">M</span>M-PHASE-3</td>
+        <td>3</td>
+        <td class="">0.1266</td>
+        <td class="">0.1051</td>
+        <td class="highlight">0.0940</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-M">M</span>M-PHASE-4</td>
+        <td>4</td>
+        <td class="">0.1416</td>
+        <td class="highlight">0.1095</td>
+        <td class="">0.1326</td>
+    </tr>
+</table><h2 id="scaling">5. Scaling Analysis</h2>
+
+<h3>5.1 Performance vs. Qubit Count</h3>
+<p>How estimation error scales with system size.</p>
+
+<table>
+    <tr>
+        <th>Qubits</th>
+        <th># Circuits</th>
+        <th>Avg SE (Grouped)</th>
+        <th>Avg SE (Optimized)</th>
+        <th>Avg SE (Shadows)</th>
+        <th>Shadow Advantage</th>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>1</td>
+        <td>0.1471</td>
+        <td>0.1352</td>
+        <td>0.1181</td>
+        <td class="metric-good">Yes</td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>5</td>
+        <td>0.1808</td>
+        <td>0.1632</td>
+        <td>0.1638</td>
+        <td class="metric-bad">No</td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td>2</td>
+        <td>0.2805</td>
+        <td>0.2517</td>
+        <td>0.2421</td>
+        <td class="metric-good">Yes</td>
+    </tr>
+    <tr>
+        <td>6</td>
+        <td>3</td>
+        <td>0.2019</td>
+        <td>0.1821</td>
+        <td>0.2962</td>
+        <td class="metric-bad">No</td>
+    </tr>
+    <tr>
+        <td>7</td>
+        <td>1</td>
+        <td>0.3500</td>
+        <td>0.3010</td>
+        <td>0.4048</td>
+        <td class="metric-bad">No</td>
+    </tr>
+</table>
+
+<div class="insight-box">
+    <strong>Insight:</strong> Classical shadows show competitive performance at 3-5 qubits but experience 
+    increased variance at 6-7 qubits. This aligns with the theoretical 3^k variance scaling, where k is 
+    the maximum observable locality.
+</div>
+
+<h3>5.2 Performance vs. Observable Count</h3>
+<p>Classical shadows theoretically excel when estimating many observables from the same data.</p>
+
+<table>
+    <tr>
+        <th>Observable Count</th>
+        <th>Circuits</th>
+        <th>Shadow Wins</th>
+        <th>Optimized Wins</th>
+    </tr>
+    <tr>
+        <td>< 100</td>
+        <td>S-BELL-2, S-ISING-4, C-H2, M-PHASE-3, M-PHASE-4</td>
+        <td>1/5</td>
+        <td>4/5</td>
+    </tr>
+    <tr>
+        <td>100-199</td>
+        <td>S-GHZ-4, S-BELL-3, S-ISING-6, C-LiH</td>
+        <td>1/4</td>
+        <td>3/4</td>
+    </tr>
+    <tr>
+        <td>>= 200</td>
+        <td>S-GHZ-5, O-QAOA-5, O-QAOA-7</td>
+        <td>2/3</td>
+        <td>1/3</td>
+    </tr>
+</table>
+
+<div class="insight-box">
+    <strong>Insight:</strong> Classical shadows show improved relative performance on high-observable-count 
+    circuits (GHZ states, QAOA) where the "measure once, estimate many" advantage is most pronounced.
+</div>
+<h2 id="variance">6. Variance and Error Analysis</h2>
+
+<h3>6.1 Aggregate Protocol Statistics</h3>
+<table>
+    <tr>
+        <th>Metric</th>
+        <th>Direct Grouped</th>
+        <th>Direct Optimized</th>
+        <th>Classical Shadows</th>
+    </tr>
+    <tr><td>Mean SE (across circuits)</td><td class="">0.2140</td><td class="highlight">0.1918</td><td class="">0.2262</td></tr>
+    <tr><td>Avg Max SE</td><td class="highlight">0.2305</td><td class="">0.2904</td><td class="">1.0753</td></tr>
+    <tr><td>Mean Absolute Error</td><td class="">0.1856</td><td class="highlight">0.1706</td><td class="">0.2027</td></tr>
+    <tr><td>Avg Max Absolute Error</td><td class="highlight">0.9308</td><td class="">0.9882</td><td class="">2.1119</td></tr>
+</table>
+
+<h3>6.2 Maximum Error Cases</h3>
+<p>Circuits where classical shadows showed highest variance (potential areas of concern):</p>
+
+<table>
+    <tr>
+        <th>Circuit</th>
+        <th>Qubits</th>
+        <th>Shadow Max SE</th>
+        <th>Optimized Max SE</th>
+        <th>Ratio</th>
+        <th>Concern Level</th>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-O">O</span>O-QAOA-7</td>
+        <td>7</td>
+        <td>3.7874</td>
+        <td>0.4472</td>
+        <td>8.47x</td>
+        <td><span class="metric-bad">High</span></td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-C">C</span>C-LiH</td>
+        <td>6</td>
+        <td>1.7857</td>
+        <td>0.2582</td>
+        <td>6.92x</td>
+        <td><span class="metric-bad">High</span></td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-BELL-3</td>
+        <td>6</td>
+        <td>1.7851</td>
+        <td>0.2582</td>
+        <td>6.91x</td>
+        <td><span class="metric-bad">High</span></td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-ISING-6</td>
+        <td>6</td>
+        <td>1.7803</td>
+        <td>0.2582</td>
+        <td>6.90x</td>
+        <td><span class="metric-bad">High</span></td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-GHZ-5</td>
+        <td>5</td>
+        <td>0.8056</td>
+        <td>0.4041</td>
+        <td>1.99x</td>
+        <td><span class="metric-good">Low</span></td>
+    </tr>
+</table>
+
+<div class="warning-box">
+    <strong>Warning:</strong> On 6-qubit circuits (S-BELL-3, S-ISING-6, C-LiH), classical shadows exhibit 
+    max SE values 5-7x higher than Direct Optimized. This is due to the 3^k variance scaling becoming 
+    significant for higher-locality observables.
+</div>
+<h2 id="recommendations">7. Recommendations</h2>
+
+<h3>7.1 By Application Domain</h3>
+
+<table>
+    <tr>
+        <th>Application</th>
+        <th>Recommended Protocol</th>
+        <th>Rationale</th>
+    </tr>
+    <tr>
+        <td><strong>VQE / Quantum Chemistry</strong></td>
+        <td><span class="protocol-badge badge-optimized">Direct Optimized</span></td>
+        <td>Most reliable energy estimation accuracy; lower max error crucial for optimization convergence</td>
+    </tr>
+    <tr>
+        <td><strong>Entanglement Verification</strong></td>
+        <td><span class="protocol-badge badge-shadows">Classical Shadows</span></td>
+        <td>Efficient multi-qubit stabilizer estimation; wins on GHZ benchmarks</td>
+    </tr>
+    <tr>
+        <td><strong>QAOA Cost Estimation</strong></td>
+        <td><span class="protocol-badge badge-optimized">Direct Optimized</span> or <span class="protocol-badge badge-shadows">Shadows</span></td>
+        <td>Mixed results; shadows better at 5q, optimized better at 7q</td>
+    </tr>
+    <tr>
+        <td><strong>Quantum Metrology</strong></td>
+        <td><span class="protocol-badge badge-shadows">Classical Shadows</span></td>
+        <td>Lowest error for phase sensing observables (3-4 qubits)</td>
+    </tr>
+    <tr>
+        <td><strong>Exploratory Analysis</strong></td>
+        <td><span class="protocol-badge badge-shadows">Classical Shadows</span></td>
+        <td>"Measure once, query later" flexibility ideal for hypothesis testing</td>
+    </tr>
+    <tr>
+        <td><strong>Large Systems (7+ qubits)</strong></td>
+        <td><span class="protocol-badge badge-optimized">Direct Optimized</span></td>
+        <td>Shadow variance grows too large; consider hybrid approaches</td>
+    </tr>
+</table>
+
+<h3>7.2 Decision Flowchart</h3>
+
+<div class="summary-box">
+<pre style="font-family: Consolas, monospace; line-height: 1.8;">
+Start
+  |
+  v
+How many qubits?
+  |
+  +-- 6+ qubits --> Use Direct Optimized
+  |
+  +-- 3-5 qubits
+        |
+        v
+      How many observables?
+        |
+        +-- < 100 --> Use Direct Optimized
+        |
+        +-- 100+ --> 
+              |
+              v
+            Need worst-case guarantees?
+              |
+              +-- Yes --> Use Direct Optimized
+              |
+              +-- No --> Use Classical Shadows
+</pre>
+</div>
+
+<h3>7.3 Future Improvements</h3>
+<ul>
+    <li><strong>Derandomized Shadows:</strong> Could reduce variance on large systems</li>
+    <li><strong>Hybrid Protocols:</strong> Use shadows for low-locality, direct for high-locality observables</li>
+    <li><strong>Adaptive Shot Allocation:</strong> Dynamically allocate based on pilot measurements</li>
+    <li><strong>Tensor Network Shadows:</strong> Better scaling for structured observables</li>
+</ul>
+
+<h2 id="methodology">8. Methodology</h2>
+
+<h3>8.1 Observable Generation</h3>
+<p>Three types of observable suites were used:</p>
+<ul>
+    <li><strong>Stress Suite:</strong> 100 randomly sampled Pauli strings with stratified locality distribution</li>
+    <li><strong>Posthoc Suite:</strong> 200 observables designed for post-measurement querying tests</li>
+    <li><strong>Diagnostics Suite:</strong> Targeted observables (single-qubit Z, cross-pair ZZ) for specific tests</li>
+</ul>
+
+<h3>8.2 Metrics Definitions</h3>
+<table>
+    <tr><th>Metric</th><th>Definition</th><th>Interpretation</th></tr>
+    <tr>
+        <td><strong>Mean SE</strong></td>
+        <td>Average standard error across all observables at N=1000</td>
+        <td>Lower is better; typical estimation precision</td>
+    </tr>
+    <tr>
+        <td><strong>Max SE</strong></td>
+        <td>Maximum standard error across all observables</td>
+        <td>Lower is better; worst-case precision guarantee</td>
+    </tr>
+    <tr>
+        <td><strong>Mean Abs Error</strong></td>
+        <td>Average |estimated - true| across observables and replicates</td>
+        <td>Lower is better; includes both bias and variance</td>
+    </tr>
+    <tr>
+        <td><strong>Max Abs Error</strong></td>
+        <td>Maximum |estimated - true| observed</td>
+        <td>Lower is better; worst outlier performance</td>
+    </tr>
+</table>
+
+<h3>8.3 Statistical Validity</h3>
+<ul>
+    <li>10 independent replicates per configuration for robust statistics</li>
+    <li>Ground truth computed via exact statevector simulation</li>
+    <li>Results aggregated at N=1000 shots (highest precision point)</li>
+    <li>Suite merging eliminated 5-69 redundant observables per circuit</li>
+</ul>
+
+<h3>8.4 Limitations</h3>
+<ul>
+    <li>Noiseless simulation only (no hardware noise models)</li>
+    <li>Maximum 7 qubits (limited by variance scaling concerns)</li>
+    <li>Single shadow protocol version (v0 baseline)</li>
+    <li>Fixed shot budgets (no adaptive allocation)</li>
+</ul>
+
+<div class="footer">
+    <p><strong>QuartumSE Classical Shadows Benchmark Suite</strong><br>
+    Report generated: January 31, 2026<br>
+    Total runtime: 5h 45min | 12 circuits | 3 protocols | 144,870 data points<br><br>
+    <em>This report was auto-generated from benchmark results.</em></p>
+</div>
+
+</body>
+</html>

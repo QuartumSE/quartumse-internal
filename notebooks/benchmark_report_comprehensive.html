@@ -48,7 +48,7 @@
 <body>
 
 <h1>Comprehensive Classical Shadows Benchmark Report</h1>
-<p><strong>Date:</strong> January 30-31, 2026 | <strong>Runtime:</strong> ~5h 45min | <strong>Framework:</strong> QuartumSE</p>
+<p><strong>Original Run:</strong> January 30-31, 2026 (~5h 45min) | <strong>Replication Run:</strong> February 2, 2026 (~7h 21min) | <strong>Framework:</strong> QuartumSE</p>
 
 <div class="toc">
     <h3>Table of Contents</h3>
@@ -61,6 +61,7 @@
         <li><a href="#variance">6. Variance and Error Analysis</a></li>
         <li><a href="#recommendations">7. Recommendations</a></li>
         <li><a href="#methodology">8. Methodology</a></li>
+        <li><a href="#replication">9. Replication Study (Feb 2, 2026)</a></li>
     </ul>
 </div>
 
@@ -779,10 +780,188 @@ How many qubits?
     <li>Fixed shot budgets (no adaptive allocation)</li>
 </ul>
 
+<h2 id="replication">9. Replication Study (February 2, 2026)</h2>
+
+<div class="summary-box">
+<p>A full replication of the benchmark suite was conducted on February 2, 2026, with identical configuration parameters. This section compares results across both runs to validate reproducibility.</p>
+</div>
+
+<h3>9.1 Run Configuration</h3>
+<table>
+    <tr><th>Parameter</th><th>Run 1 (Jan 30-31)</th><th>Run 2 (Feb 2)</th></tr>
+    <tr><td>Shot Budgets</td><td><code>[100, 200, 1000]</code></td><td><code>[100, 200, 1000]</code></td></tr>
+    <tr><td>Replicates</td><td>10</td><td>10</td></tr>
+    <tr><td>Epsilon</td><td>0.05</td><td>0.05</td></tr>
+    <tr><td>Circuits</td><td>12</td><td>12</td></tr>
+    <tr><td>Runtime</td><td>~5h 45min</td><td>~7h 21min</td></tr>
+    <tr><td>Noise Sweep Flag</td><td>False</td><td>True*</td></tr>
+</table>
+<p><em>*Note: Noise sweep infrastructure was enabled but full multi-noise-profile execution is pending implementation.</em></p>
+
+<h3>9.2 Mean SE Comparison (Run 1 vs Run 2)</h3>
+<p>Comparing protocol performance across both runs confirms reproducibility of results.</p>
+
+<table class="comparison-row">
+    <tr>
+        <th>Circuit</th>
+        <th>Qubits</th>
+        <th>Grouped (R1/R2)</th>
+        <th>Optimized (R1/R2)</th>
+        <th>Shadows (R1/R2)</th>
+        <th>Winner Consistent?</th>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-GHZ-4</td>
+        <td>4</td>
+        <td>0.2361 / 0.2296</td>
+        <td>0.2043 / 0.2055</td>
+        <td>0.1730 / 0.1730</td>
+        <td class="metric-good">Yes (Shadows)</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-BELL-2</td>
+        <td>4</td>
+        <td>0.1693 / 0.1692</td>
+        <td>0.1565 / 0.1560</td>
+        <td>0.1616 / 0.1616</td>
+        <td class="metric-good">Yes (Optimized)</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-ISING-4</td>
+        <td>4</td>
+        <td>0.1704 / 0.1702</td>
+        <td>0.1544 / 0.1566</td>
+        <td>0.1616 / 0.1616</td>
+        <td class="metric-good">Yes (Optimized)</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-GHZ-5</td>
+        <td>5</td>
+        <td>0.2772 / 0.2771</td>
+        <td>0.2495 / 0.2496</td>
+        <td>0.2421 / 0.2421</td>
+        <td class="metric-good">Yes (Shadows)</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-BELL-3</td>
+        <td>6</td>
+        <td>0.2030 / 0.2076</td>
+        <td>0.1831 / 0.1805</td>
+        <td>0.2925 / 0.2925</td>
+        <td class="metric-good">Yes (Optimized)</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-ISING-6</td>
+        <td>6</td>
+        <td>0.2064 / 0.2055</td>
+        <td>0.1848 / 0.1824</td>
+        <td>0.2983 / 0.2983</td>
+        <td class="metric-good">Yes (Optimized)</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-C">C</span>C-H2</td>
+        <td>4</td>
+        <td>0.1634 / 0.1628</td>
+        <td>0.1492 / 0.1506</td>
+        <td>0.1611 / 0.1611</td>
+        <td class="metric-good">Yes (Optimized)</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-C">C</span>C-LiH</td>
+        <td>6</td>
+        <td>0.1964 / 0.1964</td>
+        <td>0.1784 / 0.1757</td>
+        <td>0.2979 / 0.2979</td>
+        <td class="metric-good">Yes (Optimized)</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-O">O</span>O-QAOA-5</td>
+        <td>5</td>
+        <td>0.2839 / 0.2844</td>
+        <td>0.2540 / 0.2536</td>
+        <td>0.2422 / 0.2422</td>
+        <td class="metric-good">Yes (Shadows)</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-O">O</span>O-QAOA-7</td>
+        <td>7</td>
+        <td>0.3500 / 0.3300</td>
+        <td>0.3010 / 0.2957</td>
+        <td>0.4048 / 0.4048</td>
+        <td class="metric-good">Yes (Optimized)</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-M">M</span>M-PHASE-3</td>
+        <td>3</td>
+        <td>0.1471 / 0.1472</td>
+        <td>0.1352 / 0.1356</td>
+        <td>0.1181 / 0.1181</td>
+        <td class="metric-good">Yes (Shadows)</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-M">M</span>M-PHASE-4</td>
+        <td>4</td>
+        <td>0.1648 / 0.1650</td>
+        <td>0.1516 / 0.1531</td>
+        <td>0.1616 / 0.1616</td>
+        <td class="metric-good">Yes (Optimized)</td>
+    </tr>
+</table>
+
+<div class="insight-box">
+    <strong>Reproducibility Confirmed:</strong> All 12 circuits showed consistent winners between runs, with mean SE values differing by less than 3% on average. This validates the statistical reliability of the benchmark methodology.
+</div>
+
+<h3>9.3 Aggregate Statistics Comparison</h3>
+<table>
+    <tr>
+        <th>Metric</th>
+        <th>Run 1 (Jan 30-31)</th>
+        <th>Run 2 (Feb 2)</th>
+        <th>Difference</th>
+    </tr>
+    <tr>
+        <td>Mean SE (Grouped)</td>
+        <td>0.2140</td>
+        <td>0.2125</td>
+        <td class="metric-good">-0.7%</td>
+    </tr>
+    <tr>
+        <td>Mean SE (Optimized)</td>
+        <td>0.1918</td>
+        <td>0.1904</td>
+        <td class="metric-good">-0.7%</td>
+    </tr>
+    <tr>
+        <td>Mean SE (Shadows)</td>
+        <td>0.2262</td>
+        <td>0.2262</td>
+        <td class="metric-good">0.0%</td>
+    </tr>
+    <tr>
+        <td>Total Data Points</td>
+        <td>144,870</td>
+        <td>144,870</td>
+        <td>-</td>
+    </tr>
+</table>
+
+<h3>9.4 Future Work: Noise Sensitivity Analysis</h3>
+<p>The infrastructure for noise sweep experiments (Task 7) has been prepared with the following noise profiles:</p>
+<ul>
+    <li><code>ideal</code> - Noiseless baseline (current results)</li>
+    <li><code>readout_1e-2</code> - 1% readout error per qubit</li>
+    <li><code>depol_1e-3</code> - 0.1% depolarizing noise per gate</li>
+</ul>
+
+<div class="warning-box">
+    <strong>Pending Implementation:</strong> Full noise sweep execution requires implementing the noise model integration in the benchmark runner. This will enable Task 7 (noise sensitivity) analysis comparing protocol robustness under realistic hardware conditions.
+</div>
+
 <div class="footer">
     <p><strong>QuartumSE Classical Shadows Benchmark Suite</strong><br>
-    Report generated: January 31, 2026<br>
-    Total runtime: 5h 45min | 12 circuits | 3 protocols | 144,870 data points<br><br>
+    Report generated: February 2, 2026 (updated from January 31, 2026)<br>
+    Total runtime: 13h 6min combined | 24 circuit runs (12 × 2) | 3 protocols | 289,740 data points<br><br>
     <em>This report was auto-generated from benchmark results.</em></p>
 </div>
 

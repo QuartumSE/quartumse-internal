@@ -1,0 +1,860 @@
+{
+  "timestamp": "2026-02-02T15:46:55.700931",
+  "n_runs": 12,
+  "config": {
+    "mode": "analysis",
+    "n_shots_grid": [
+      100,
+      200,
+      1000
+    ],
+    "n_replicates": 10,
+    "epsilon": 0.05
+  },
+  "suites_enabled": {
+    "stress": true,
+    "posthoc": true,
+    "diagnostics": true
+  },
+  "circuits_enabled": [
+    "S-GHZ-4",
+    "S-GHZ-5",
+    "S-BELL-2",
+    "S-BELL-3",
+    "S-ISING-4",
+    "S-ISING-6",
+    "C-H2",
+    "C-LiH",
+    "O-QAOA-5",
+    "O-QAOA-7",
+    "M-PHASE-3",
+    "M-PHASE-4"
+  ],
+  "merge_enabled": true,
+  "runs": {
+    "S-GHZ-4__merged": {
+      "circuit_id": "S-GHZ-4",
+      "suite_name": "_merged_",
+      "n_qubits": 4,
+      "merged": true,
+      "merged_suites": [
+        "stress_random_1000",
+        "posthoc_library"
+      ],
+      "overlap_eliminated": 69,
+      "suite_metadata": {
+        "stress_random_1000": {
+          "suite_type": "stress",
+          "objective": "per_observable",
+          "n_observables": 87,
+          "fully_commuting": false,
+          "n_commuting_groups": 31,
+          "has_weights": false,
+          "description": "100 observables, stratified sampling"
+        },
+        "posthoc_library": {
+          "suite_type": "posthoc",
+          "objective": "per_observable",
+          "n_observables": 162,
+          "fully_commuting": false,
+          "n_commuting_groups": 54,
+          "has_weights": false,
+          "description": "Library of 200 observables for post-hoc querying tests"
+        }
+      },
+      "run_id": "S-GHZ-4__merged_20260202_082541_d096c3c9",
+      "output_dir": "benchmark_results\\S-GHZ-4__merged_20260202_082541_d096c3c9",
+      "summary": {
+        "run_id": "publication_benchmark_9bbdf1f2",
+        "n_protocols": 3,
+        "n_shots_grid": [
+          100,
+          200,
+          1000
+        ],
+        "n_replicates": 10,
+        "n_observables": 180,
+        "has_ground_truth": true,
+        "n_long_form_rows": 16200,
+        "protocols": [
+          "direct_grouped",
+          "direct_optimized",
+          "classical_shadows_v0"
+        ],
+        "protocol_summaries": {
+          "direct_grouped": {
+            "mean_se": 0.2296159264896487,
+            "max_se": 0.2495670992423109,
+            "median_se": 0.24607647839237515,
+            "mean_abs_error": 0.18758169934640523,
+            "max_abs_error": 0.7647058823529411
+          },
+          "direct_optimized": {
+            "mean_se": 0.20547946529360414,
+            "max_se": 0.3333333333333333,
+            "median_se": 0.19195851781663212,
+            "mean_abs_error": 0.1630667149900896,
+            "max_abs_error": 0.8
+          },
+          "classical_shadows_v0": {
+            "mean_se": 0.1730226352033466,
+            "max_se": 0.4361306581748181,
+            "median_se": 0.15973187221090224,
+            "mean_abs_error": 0.14206722222222223,
+            "max_abs_error": 0.972
+          }
+        }
+      }
+    },
+    "S-GHZ-5__merged": {
+      "circuit_id": "S-GHZ-5",
+      "suite_name": "_merged_",
+      "n_qubits": 5,
+      "merged": true,
+      "merged_suites": [
+        "stress_random_1000",
+        "posthoc_library"
+      ],
+      "overlap_eliminated": 33,
+      "suite_metadata": {
+        "stress_random_1000": {
+          "suite_type": "stress",
+          "objective": "per_observable",
+          "n_observables": 95,
+          "fully_commuting": false,
+          "n_commuting_groups": 36,
+          "has_weights": false,
+          "description": "100 observables, stratified sampling"
+        },
+        "posthoc_library": {
+          "suite_type": "posthoc",
+          "objective": "per_observable",
+          "n_observables": 175,
+          "fully_commuting": false,
+          "n_commuting_groups": 65,
+          "has_weights": false,
+          "description": "Library of 200 observables for post-hoc querying tests"
+        }
+      },
+      "run_id": "S-GHZ-5__merged_20260202_083546_ed5e9543",
+      "output_dir": "benchmark_results\\S-GHZ-5__merged_20260202_083546_ed5e9543",
+      "summary": {
+        "run_id": "publication_benchmark_b5412ec9",
+        "n_protocols": 3,
+        "n_shots_grid": [
+          100,
+          200,
+          1000
+        ],
+        "n_replicates": 10,
+        "n_observables": 237,
+        "has_ground_truth": true,
+        "n_long_form_rows": 21330,
+        "protocols": [
+          "direct_grouped",
+          "direct_optimized",
+          "classical_shadows_v0"
+        ],
+        "protocol_summaries": {
+          "direct_grouped": {
+            "mean_se": 0.27710379299430377,
+            "max_se": 0.30151134457776363,
+            "median_se": 0.2972941950052816,
+            "mean_abs_error": 0.21441631504922648,
+            "max_abs_error": 0.8333333333333334
+          },
+          "direct_optimized": {
+            "mean_se": 0.24963405738448646,
+            "max_se": 0.40406101782088427,
+            "median_se": 0.24607647839237515,
+            "mean_abs_error": 0.20542278149816046,
+            "max_abs_error": 1.0
+          },
+          "classical_shadows_v0": {
+            "mean_se": 0.24211344686909902,
+            "max_se": 0.805610053934284,
+            "median_se": 0.18110339312116713,
+            "mean_abs_error": 0.19280084388185653,
+            "max_abs_error": 1.458
+          }
+        }
+      }
+    },
+    "S-BELL-2__merged": {
+      "circuit_id": "S-BELL-2",
+      "suite_name": "_merged_",
+      "n_qubits": 4,
+      "merged": true,
+      "merged_suites": [
+        "diagnostics_single_qubit",
+        "diagnostics_cross_pair",
+        "stress_random_1000"
+      ],
+      "overlap_eliminated": 5,
+      "suite_metadata": {
+        "diagnostics_single_qubit": {
+          "suite_type": "diagnostic",
+          "objective": "per_observable",
+          "n_observables": 4,
+          "fully_commuting": true,
+          "n_commuting_groups": 1,
+          "has_weights": false,
+          "description": "Single-qubit Z for readout bias diagnostics"
+        },
+        "diagnostics_cross_pair": {
+          "suite_type": "diagnostic",
+          "objective": "per_observable",
+          "n_observables": 1,
+          "fully_commuting": true,
+          "n_commuting_groups": 1,
+          "has_weights": false,
+          "description": "Cross-pair ZZ correlators for crosstalk detection"
+        },
+        "stress_random_1000": {
+          "suite_type": "stress",
+          "objective": "per_observable",
+          "n_observables": 87,
+          "fully_commuting": false,
+          "n_commuting_groups": 31,
+          "has_weights": false,
+          "description": "100 observables, stratified sampling"
+        }
+      },
+      "run_id": "S-BELL-2__merged_20260202_091440_5134b467",
+      "output_dir": "benchmark_results\\S-BELL-2__merged_20260202_091440_5134b467",
+      "summary": {
+        "run_id": "publication_benchmark_68892d23",
+        "n_protocols": 3,
+        "n_shots_grid": [
+          100,
+          200,
+          1000
+        ],
+        "n_replicates": 10,
+        "n_observables": 87,
+        "has_ground_truth": true,
+        "n_long_form_rows": 7830,
+        "protocols": [
+          "direct_grouped",
+          "direct_optimized",
+          "classical_shadows_v0"
+        ],
+        "protocol_summaries": {
+          "direct_grouped": {
+            "mean_se": 0.1691842467258343,
+            "max_se": 0.1824791693384639,
+            "median_se": 0.18018374250024446,
+            "mean_abs_error": 0.13904338153503892,
+            "max_abs_error": 0.6129032258064516
+          },
+          "direct_optimized": {
+            "mean_se": 0.15604686839676057,
+            "max_se": 0.22941573387056172,
+            "median_se": 0.1568929081105472,
+            "mean_abs_error": 0.11301236154953485,
+            "max_abs_error": 0.6
+          },
+          "classical_shadows_v0": {
+            "mean_se": 0.16162769372645533,
+            "max_se": 0.3799236765456978,
+            "median_se": 0.15491272058807823,
+            "mean_abs_error": 0.1268068965517241,
+            "max_abs_error": 0.891
+          }
+        }
+      }
+    },
+    "S-BELL-3__merged": {
+      "circuit_id": "S-BELL-3",
+      "suite_name": "_merged_",
+      "n_qubits": 6,
+      "merged": true,
+      "merged_suites": [
+        "diagnostics_single_qubit",
+        "diagnostics_cross_pair",
+        "stress_random_1000"
+      ],
+      "overlap_eliminated": 6,
+      "suite_metadata": {
+        "diagnostics_single_qubit": {
+          "suite_type": "diagnostic",
+          "objective": "per_observable",
+          "n_observables": 6,
+          "fully_commuting": true,
+          "n_commuting_groups": 1,
+          "has_weights": false,
+          "description": "Single-qubit Z for readout bias diagnostics"
+        },
+        "diagnostics_cross_pair": {
+          "suite_type": "diagnostic",
+          "objective": "per_observable",
+          "n_observables": 3,
+          "fully_commuting": true,
+          "n_commuting_groups": 1,
+          "has_weights": false,
+          "description": "Cross-pair ZZ correlators for crosstalk detection"
+        },
+        "stress_random_1000": {
+          "suite_type": "stress",
+          "objective": "per_observable",
+          "n_observables": 100,
+          "fully_commuting": false,
+          "n_commuting_groups": 43,
+          "has_weights": false,
+          "description": "100 observables, stratified sampling"
+        }
+      },
+      "run_id": "S-BELL-3__merged_20260202_092200_9b08f84a",
+      "output_dir": "benchmark_results\\S-BELL-3__merged_20260202_092200_9b08f84a",
+      "summary": {
+        "run_id": "publication_benchmark_caf0c359",
+        "n_protocols": 3,
+        "n_shots_grid": [
+          100,
+          200,
+          1000
+        ],
+        "n_replicates": 10,
+        "n_observables": 103,
+        "has_ground_truth": true,
+        "n_long_form_rows": 9270,
+        "protocols": [
+          "direct_grouped",
+          "direct_optimized",
+          "classical_shadows_v0"
+        ],
+        "protocol_summaries": {
+          "direct_grouped": {
+            "mean_se": 0.20756839133573488,
+            "max_se": 0.21821789023599236,
+            "median_se": 0.21731429260625335,
+            "mean_abs_error": 0.14766107678729037,
+            "max_abs_error": 0.7272727272727273
+          },
+          "direct_optimized": {
+            "mean_se": 0.180482708853222,
+            "max_se": 0.2581988897471611,
+            "median_se": 0.1739020859100631,
+            "mean_abs_error": 0.13924771021973242,
+            "max_abs_error": 0.75
+          },
+          "classical_shadows_v0": {
+            "mean_se": 0.2924864515425386,
+            "max_se": 1.785082697244024,
+            "median_se": 0.16743508635076976,
+            "mean_abs_error": 0.23660388349514563,
+            "max_abs_error": 2.6450000000000005
+          }
+        }
+      }
+    },
+    "S-ISING-4__stress_random_1000": {
+      "circuit_id": "S-ISING-4",
+      "suite_name": "stress_random_1000",
+      "n_qubits": 4,
+      "merged": false,
+      "suite_metadata": {
+        "stress_random_1000": {
+          "suite_type": "stress",
+          "objective": "per_observable",
+          "n_observables": 87,
+          "fully_commuting": false,
+          "n_commuting_groups": 31,
+          "has_weights": false,
+          "description": "100 observables, stratified sampling"
+        }
+      },
+      "run_id": "S-ISING-4__stress_random_1000_20260202_123214_326d7c76",
+      "output_dir": "benchmark_results\\S-ISING-4__stress_random_1000_20260202_123214_326d7c76",
+      "summary": {
+        "run_id": "publication_benchmark_52053f62",
+        "n_protocols": 3,
+        "n_shots_grid": [
+          100,
+          200,
+          1000
+        ],
+        "n_replicates": 10,
+        "n_observables": 87,
+        "has_ground_truth": true,
+        "n_long_form_rows": 7830,
+        "protocols": [
+          "direct_grouped",
+          "direct_optimized",
+          "classical_shadows_v0"
+        ],
+        "protocol_summaries": {
+          "direct_grouped": {
+            "mean_se": 0.170190650259363,
+            "max_se": 0.17960530202677488,
+            "median_se": 0.176419930663981,
+            "mean_abs_error": 0.13560648901258623,
+            "max_abs_error": 0.5669647016106059
+          },
+          "direct_optimized": {
+            "mean_se": 0.15661066178006625,
+            "max_se": 0.22941573387056172,
+            "median_se": 0.14982219165849828,
+            "mean_abs_error": 0.11860516529933345,
+            "max_abs_error": 0.4857142857142857
+          },
+          "classical_shadows_v0": {
+            "mean_se": 0.1615563673284441,
+            "max_se": 0.3799236765456978,
+            "median_se": 0.15469605033043332,
+            "mean_abs_error": 0.12618130258459415,
+            "max_abs_error": 1.134
+          }
+        }
+      }
+    },
+    "S-ISING-6__stress_random_1000": {
+      "circuit_id": "S-ISING-6",
+      "suite_name": "stress_random_1000",
+      "n_qubits": 6,
+      "merged": false,
+      "suite_metadata": {
+        "stress_random_1000": {
+          "suite_type": "stress",
+          "objective": "per_observable",
+          "n_observables": 100,
+          "fully_commuting": false,
+          "n_commuting_groups": 43,
+          "has_weights": false,
+          "description": "100 observables, stratified sampling"
+        }
+      },
+      "run_id": "S-ISING-6__stress_random_1000_20260202_123741_8a6cddbc",
+      "output_dir": "benchmark_results\\S-ISING-6__stress_random_1000_20260202_123741_8a6cddbc",
+      "summary": {
+        "run_id": "publication_benchmark_aef8e9dd",
+        "n_protocols": 3,
+        "n_shots_grid": [
+          100,
+          200,
+          1000
+        ],
+        "n_replicates": 10,
+        "n_observables": 100,
+        "has_ground_truth": true,
+        "n_long_form_rows": 9000,
+        "protocols": [
+          "direct_grouped",
+          "direct_optimized",
+          "classical_shadows_v0"
+        ],
+        "protocol_summaries": {
+          "direct_grouped": {
+            "mean_se": 0.20553806429513327,
+            "max_se": 0.2129991080681025,
+            "median_se": 0.2113793194801729,
+            "mean_abs_error": 0.1653945142939211,
+            "max_abs_error": 0.6928774563575574
+          },
+          "direct_optimized": {
+            "mean_se": 0.18244845506964222,
+            "max_se": 0.2581988897471611,
+            "median_se": 0.16513786288129156,
+            "mean_abs_error": 0.1461773761283098,
+            "max_abs_error": 0.875
+          },
+          "classical_shadows_v0": {
+            "mean_se": 0.29834346336325035,
+            "max_se": 1.7803129286729338,
+            "median_se": 0.17070748531941604,
+            "mean_abs_error": 0.24547629706582824,
+            "max_abs_error": 4.407383024698308
+          }
+        }
+      }
+    },
+    "C-H2__stress_random_1000": {
+      "circuit_id": "C-H2",
+      "suite_name": "stress_random_1000",
+      "n_qubits": 4,
+      "merged": false,
+      "suite_metadata": {
+        "stress_random_1000": {
+          "suite_type": "stress",
+          "objective": "per_observable",
+          "n_observables": 87,
+          "fully_commuting": false,
+          "n_commuting_groups": 31,
+          "has_weights": false,
+          "description": "100 observables, stratified sampling"
+        }
+      },
+      "run_id": "C-H2__stress_random_1000_20260202_124438_14375f28",
+      "output_dir": "benchmark_results\\C-H2__stress_random_1000_20260202_124438_14375f28",
+      "summary": {
+        "run_id": "publication_benchmark_2a5c15d2",
+        "n_protocols": 3,
+        "n_shots_grid": [
+          100,
+          200,
+          1000
+        ],
+        "n_replicates": 10,
+        "n_observables": 87,
+        "has_ground_truth": true,
+        "n_long_form_rows": 7830,
+        "protocols": [
+          "direct_grouped",
+          "direct_optimized",
+          "classical_shadows_v0"
+        ],
+        "protocol_summaries": {
+          "direct_grouped": {
+            "mean_se": 0.16278755316486676,
+            "max_se": 0.17960530202677488,
+            "median_se": 0.1781966112418093,
+            "mean_abs_error": 0.24789870687513169,
+            "max_abs_error": 1.9999999999999998
+          },
+          "direct_optimized": {
+            "mean_se": 0.15058289435376795,
+            "max_se": 0.22941573387056172,
+            "median_se": 0.1507184440694504,
+            "mean_abs_error": 0.2435673833847087,
+            "max_abs_error": 1.9999999999999998
+          },
+          "classical_shadows_v0": {
+            "mean_se": 0.16114611817478433,
+            "max_se": 0.37988913645957284,
+            "median_se": 0.15490328538820547,
+            "mean_abs_error": 0.2574275332855908,
+            "max_abs_error": 2.0349999999999997
+          }
+        }
+      }
+    },
+    "C-LiH__stress_random_1000": {
+      "circuit_id": "C-LiH",
+      "suite_name": "stress_random_1000",
+      "n_qubits": 6,
+      "merged": false,
+      "suite_metadata": {
+        "stress_random_1000": {
+          "suite_type": "stress",
+          "objective": "per_observable",
+          "n_observables": 100,
+          "fully_commuting": false,
+          "n_commuting_groups": 43,
+          "has_weights": false,
+          "description": "100 observables, stratified sampling"
+        }
+      },
+      "run_id": "C-LiH__stress_random_1000_20260202_124937_2d991953",
+      "output_dir": "benchmark_results\\C-LiH__stress_random_1000_20260202_124937_2d991953",
+      "summary": {
+        "run_id": "publication_benchmark_a1024ceb",
+        "n_protocols": 3,
+        "n_shots_grid": [
+          100,
+          200,
+          1000
+        ],
+        "n_replicates": 10,
+        "n_observables": 100,
+        "has_ground_truth": true,
+        "n_long_form_rows": 9000,
+        "protocols": [
+          "direct_grouped",
+          "direct_optimized",
+          "classical_shadows_v0"
+        ],
+        "protocol_summaries": {
+          "direct_grouped": {
+            "mean_se": 0.1963939622281472,
+            "max_se": 0.2129991080681025,
+            "median_se": 0.2113793194801729,
+            "mean_abs_error": 0.24417131262283825,
+            "max_abs_error": 1.9999999999999998
+          },
+          "direct_optimized": {
+            "mean_se": 0.17572246352510074,
+            "max_se": 0.2581988897471611,
+            "median_se": 0.16365677589716177,
+            "mean_abs_error": 0.23748895418975854,
+            "max_abs_error": 1.9999999999999998
+          },
+          "classical_shadows_v0": {
+            "mean_se": 0.2979103971891202,
+            "max_se": 1.7856780224889368,
+            "median_se": 0.17068613300441252,
+            "mean_abs_error": 0.3303189154731079,
+            "max_abs_error": 2.3056117764184116
+          }
+        }
+      }
+    },
+    "O-QAOA-5__merged": {
+      "circuit_id": "O-QAOA-5",
+      "suite_name": "_merged_",
+      "n_qubits": 5,
+      "merged": true,
+      "merged_suites": [
+        "stress_random_1000",
+        "posthoc_library"
+      ],
+      "overlap_eliminated": 33,
+      "suite_metadata": {
+        "stress_random_1000": {
+          "suite_type": "stress",
+          "objective": "per_observable",
+          "n_observables": 95,
+          "fully_commuting": false,
+          "n_commuting_groups": 36,
+          "has_weights": false,
+          "description": "100 observables, stratified sampling"
+        },
+        "posthoc_library": {
+          "suite_type": "posthoc",
+          "objective": "per_observable",
+          "n_observables": 175,
+          "fully_commuting": false,
+          "n_commuting_groups": 65,
+          "has_weights": false,
+          "description": "Library of 200 observables for post-hoc querying tests"
+        }
+      },
+      "run_id": "O-QAOA-5__merged_20260202_125600_d16dc153",
+      "output_dir": "benchmark_results\\O-QAOA-5__merged_20260202_125600_d16dc153",
+      "summary": {
+        "run_id": "publication_benchmark_a18ad9ae",
+        "n_protocols": 3,
+        "n_shots_grid": [
+          100,
+          200,
+          1000
+        ],
+        "n_replicates": 10,
+        "n_observables": 237,
+        "has_ground_truth": true,
+        "n_long_form_rows": 21330,
+        "protocols": [
+          "direct_grouped",
+          "direct_optimized",
+          "classical_shadows_v0"
+        ],
+        "protocol_summaries": {
+          "direct_grouped": {
+            "mean_se": 0.2843523221255006,
+            "max_se": 0.30151134457776363,
+            "median_se": 0.2972941950052816,
+            "mean_abs_error": 0.21302053031130863,
+            "max_abs_error": 0.8733721192746181
+          },
+          "direct_optimized": {
+            "mean_se": 0.253550742907625,
+            "max_se": 0.40406101782088427,
+            "median_se": 0.24393468845452249,
+            "mean_abs_error": 0.21145949597607008,
+            "max_abs_error": 1.0
+          },
+          "classical_shadows_v0": {
+            "mean_se": 0.2421766124835342,
+            "max_se": 0.8050234623910038,
+            "median_se": 0.18110339312116713,
+            "mean_abs_error": 0.19609653823938328,
+            "max_abs_error": 1.607021631916376
+          }
+        }
+      }
+    },
+    "O-QAOA-7__merged": {
+      "circuit_id": "O-QAOA-7",
+      "suite_name": "_merged_",
+      "n_qubits": 7,
+      "merged": true,
+      "merged_suites": [
+        "stress_random_1000",
+        "posthoc_library"
+      ],
+      "overlap_eliminated": 17,
+      "suite_metadata": {
+        "stress_random_1000": {
+          "suite_type": "stress",
+          "objective": "per_observable",
+          "n_observables": 100,
+          "fully_commuting": false,
+          "n_commuting_groups": 45,
+          "has_weights": false,
+          "description": "100 observables, stratified sampling"
+        },
+        "posthoc_library": {
+          "suite_type": "posthoc",
+          "objective": "per_observable",
+          "n_observables": 192,
+          "fully_commuting": false,
+          "n_commuting_groups": 80,
+          "has_weights": false,
+          "description": "Library of 200 observables for post-hoc querying tests"
+        }
+      },
+      "run_id": "O-QAOA-7__merged_20260202_130742_b9229acd",
+      "output_dir": "benchmark_results\\O-QAOA-7__merged_20260202_130742_b9229acd",
+      "summary": {
+        "run_id": "publication_benchmark_857d55d9",
+        "n_protocols": 3,
+        "n_shots_grid": [
+          100,
+          200,
+          1000
+        ],
+        "n_replicates": 10,
+        "n_observables": 275,
+        "has_ground_truth": true,
+        "n_long_form_rows": 24750,
+        "protocols": [
+          "direct_grouped",
+          "direct_optimized",
+          "classical_shadows_v0"
+        ],
+        "protocol_summaries": {
+          "direct_grouped": {
+            "mean_se": 0.33003825867124936,
+            "max_se": 0.35136418446315326,
+            "median_se": 0.3333333333333333,
+            "mean_abs_error": 0.26229456290100206,
+            "max_abs_error": 1.0391088005818632
+          },
+          "direct_optimized": {
+            "mean_se": 0.29570464497533017,
+            "max_se": 0.4472135954999579,
+            "median_se": 0.2972941950052816,
+            "mean_abs_error": 0.25051403280125245,
+            "max_abs_error": 1.1725748978165622
+          },
+          "classical_shadows_v0": {
+            "mean_se": 0.40482779969526694,
+            "max_se": 3.787363731013962,
+            "median_se": 0.177048781413485,
+            "mean_abs_error": 0.3514502891490592,
+            "max_abs_error": 6.548632636048177
+          }
+        }
+      }
+    },
+    "M-PHASE-3__stress_random_500": {
+      "circuit_id": "M-PHASE-3",
+      "suite_name": "stress_random_500",
+      "n_qubits": 3,
+      "merged": false,
+      "suite_metadata": {
+        "stress_random_500": {
+          "suite_type": "stress",
+          "objective": "per_observable",
+          "n_observables": 63,
+          "fully_commuting": false,
+          "n_commuting_groups": 27,
+          "has_weights": false,
+          "description": "100 observables, stratified sampling"
+        }
+      },
+      "run_id": "M-PHASE-3__stress_random_500_20260202_141412_b11d602e",
+      "output_dir": "benchmark_results\\M-PHASE-3__stress_random_500_20260202_141412_b11d602e",
+      "summary": {
+        "run_id": "publication_benchmark_4690ac98",
+        "n_protocols": 3,
+        "n_shots_grid": [
+          100,
+          200,
+          1000
+        ],
+        "n_replicates": 10,
+        "n_observables": 63,
+        "has_ground_truth": true,
+        "n_long_form_rows": 5670,
+        "protocols": [
+          "direct_grouped",
+          "direct_optimized",
+          "classical_shadows_v0"
+        ],
+        "protocol_summaries": {
+          "direct_grouped": {
+            "mean_se": 0.14717587840038138,
+            "max_se": 0.16660578386402644,
+            "median_se": 0.16513786288129156,
+            "mean_abs_error": 0.12452571344446922,
+            "max_abs_error": 0.4594594594594595
+          },
+          "direct_optimized": {
+            "mean_se": 0.13564228953157237,
+            "max_se": 0.20396078054371142,
+            "median_se": 0.13237446481895077,
+            "mean_abs_error": 0.10688341484942472,
+            "max_abs_error": 0.4444444444444444
+          },
+          "classical_shadows_v0": {
+            "mean_se": 0.11811456186005928,
+            "max_se": 0.19834252191600268,
+            "median_se": 0.09855636937959725,
+            "mean_abs_error": 0.09404492943361864,
+            "max_abs_error": 0.432
+          }
+        }
+      }
+    },
+    "M-PHASE-4__stress_random_500": {
+      "circuit_id": "M-PHASE-4",
+      "suite_name": "stress_random_500",
+      "n_qubits": 4,
+      "merged": false,
+      "suite_metadata": {
+        "stress_random_500": {
+          "suite_type": "stress",
+          "objective": "per_observable",
+          "n_observables": 87,
+          "fully_commuting": false,
+          "n_commuting_groups": 31,
+          "has_weights": false,
+          "description": "100 observables, stratified sampling"
+        }
+      },
+      "run_id": "M-PHASE-4__stress_random_500_20260202_154128_68a6fe2c",
+      "output_dir": "benchmark_results\\M-PHASE-4__stress_random_500_20260202_154128_68a6fe2c",
+      "summary": {
+        "run_id": "publication_benchmark_1023957a",
+        "n_protocols": 3,
+        "n_shots_grid": [
+          100,
+          200,
+          1000
+        ],
+        "n_replicates": 10,
+        "n_observables": 87,
+        "has_ground_truth": true,
+        "n_long_form_rows": 7830,
+        "protocols": [
+          "direct_grouped",
+          "direct_optimized",
+          "classical_shadows_v0"
+        ],
+        "protocol_summaries": {
+          "direct_grouped": {
+            "mean_se": 0.1650220478608175,
+            "max_se": 0.17960530202677488,
+            "median_se": 0.1781966112418093,
+            "mean_abs_error": 0.13574645901077145,
+            "max_abs_error": 0.5625
+          },
+          "direct_optimized": {
+            "mean_se": 0.1530677566116601,
+            "max_se": 0.22941573387056172,
+            "median_se": 0.1505693653437607,
+            "mean_abs_error": 0.10927081567675903,
+            "max_abs_error": 0.6
+          },
+          "classical_shadows_v0": {
+            "mean_se": 0.16156309922825465,
+            "max_se": 0.3799236765456978,
+            "median_se": 0.15498799630939164,
+            "mean_abs_error": 0.1325817494115009,
+            "max_abs_error": 0.9065816576913496
+          }
+        }
+      }
+    }
+  }
+}

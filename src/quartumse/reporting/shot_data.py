@@ -226,8 +226,8 @@ def summarize_dataframe(
             count_1 = np.sum(qubit_bits)
             count_0 = total - count_1
             qubit_marginals[qubit] = {
-                "0": count_0 / total,
-                "1": count_1 / total,
+                "0": float(count_0 / total),
+                "1": float(count_1 / total),
             }
     else:
         for qubit in range(num_qubits):

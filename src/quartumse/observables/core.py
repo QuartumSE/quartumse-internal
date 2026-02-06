@@ -81,6 +81,10 @@ class Observable:
     _cached_basis_indices: NDArray[np.int_] | None = field(
         default=None, repr=False, compare=False
     )
+    _cached_sparse_matrix: csr_matrix | None = field(default=None, repr=False, compare=False)
+    _cached_dense_matrix: NDArray[np.complexfloating] | None = field(
+        default=None, repr=False, compare=False
+    )
 
     def __post_init__(self) -> None:
         """Validate and set defaults."""
@@ -151,14 +155,18 @@ class Observable:
 
     def to_matrix(self) -> NDArray[np.complexfloating]:
         """Convert to dense matrix representation."""
-        return self.to_sparse_matrix().toarray()
+        if self._cached_dense_matrix is None:
+            self._cached_dense_matrix = self.to_sparse_matrix().toarray()
+        return self._cached_dense_matrix
 
     def to_sparse_matrix(self) -> csr_matrix:
         """Convert to sparse matrix representation."""
-        result = sparse.csr_matrix([[1.0]], dtype=complex)
-        for pauli_char in self.pauli_string:
-            result = sparse.kron(result, SPARSE_PAULI_MATRICES[pauli_char], format="csr")
-        return self.coefficient * result
+        if self._cached_sparse_matrix is None:
+            result = sparse.csr_matrix([[1.0]], dtype=complex)
+            for pauli_char in self.pauli_string:
+                result = sparse.kron(result, SPARSE_PAULI_MATRICES[pauli_char], format="csr")
+            self._cached_sparse_matrix = self.coefficient * result
+        return self._cached_sparse_matrix
 
     def commutes_with(self, other: Observable) -> bool:
         """Check if this observable commutes with another.

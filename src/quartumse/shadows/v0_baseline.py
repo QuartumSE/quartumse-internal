@@ -131,7 +131,6 @@ class RandomLocalCliffordShadows(ClassicalShadows):
         if self.measurement_bases is None or self.measurement_outcomes is None:
             raise ValueError("No measurement data available for expectation estimation.")
 
-        pauli_string = observable.pauli_string
         # Use cached support for performance
         support = observable.support  # Pre-computed list of non-identity qubit indices
 
@@ -139,13 +138,10 @@ class RandomLocalCliffordShadows(ClassicalShadows):
             # All identity: expectation is coefficient * 1
             return float(observable.coefficient)
 
-        # Map Pauli to basis index (precomputed outside hot path)
-        pauli_to_basis = {"X": 1, "Y": 2, "Z": 0}
-
         expectation = 1.0
-        for qubit_idx in support:
-            pauli = pauli_string[qubit_idx]
-            required_basis = pauli_to_basis[pauli]
+        required_bases = observable.basis_indices
+        for support_idx, qubit_idx in enumerate(support):
+            required_basis = required_bases[support_idx]
 
             measured_basis = self.measurement_bases[shadow_idx, qubit_idx]
             if measured_basis != required_basis:
@@ -169,7 +165,6 @@ class RandomLocalCliffordShadows(ClassicalShadows):
         if self.measurement_bases is None or self.measurement_outcomes is None:
             raise ValueError("No measurement data available for expectation estimation.")
 
-        pauli_string = observable.pauli_string
         support = observable.support
         num_shadows = len(self.measurement_outcomes)
 
@@ -177,9 +172,7 @@ class RandomLocalCliffordShadows(ClassicalShadows):
             # All identity: expectation is coefficient for all shadows
             return np.full(num_shadows, observable.coefficient)
 
-        # Map Pauli to basis index
-        pauli_to_basis = {"X": 1, "Y": 2, "Z": 0}
-        required_bases = np.array([pauli_to_basis[pauli_string[q]] for q in support])
+        required_bases = observable.basis_indices
 
         # Extract relevant columns for support qubits
         measured_bases = self.measurement_bases[:, support]  # (num_shadows, support_size)

@@ -78,6 +78,9 @@ class Observable:
     # Cached computed properties for performance
     _cached_locality: int | None = field(default=None, repr=False, compare=False)
     _cached_support: list[int] | None = field(default=None, repr=False, compare=False)
+    _cached_basis_indices: NDArray[np.int_] | None = field(
+        default=None, repr=False, compare=False
+    )
 
     def __post_init__(self) -> None:
         """Validate and set defaults."""
@@ -99,6 +102,12 @@ class Observable:
         # Pre-compute locality and support for performance (avoid repeated iteration)
         self._cached_support = [i for i, c in enumerate(self.pauli_string) if c != "I"]
         self._cached_locality = len(self._cached_support)
+        if self._cached_support:
+            pauli_to_basis = {"X": 1, "Y": 2, "Z": 0}
+            self._cached_basis_indices = np.array(
+                [pauli_to_basis[self.pauli_string[q]] for q in self._cached_support],
+                dtype=int,
+            )
 
     @property
     def n_qubits(self) -> int:
@@ -128,6 +137,17 @@ class Observable:
         if self._cached_support is None:
             self._cached_support = [i for i, c in enumerate(self.pauli_string) if c != "I"]
         return self._cached_support
+
+    @property
+    def basis_indices(self) -> NDArray[np.int_]:
+        """Measurement basis indices for non-identity terms (X->1, Y->2, Z->0)."""
+        if self._cached_basis_indices is None:
+            pauli_to_basis = {"X": 1, "Y": 2, "Z": 0}
+            support = self.support
+            self._cached_basis_indices = np.array(
+                [pauli_to_basis[self.pauli_string[q]] for q in support], dtype=int
+            )
+        return self._cached_basis_indices
 
     def to_matrix(self) -> NDArray[np.complexfloating]:
         """Convert to dense matrix representation."""

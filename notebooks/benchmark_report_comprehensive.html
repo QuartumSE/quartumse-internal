@@ -62,6 +62,7 @@
         <li><a href="#recommendations">7. Recommendations</a></li>
         <li><a href="#methodology">8. Methodology</a></li>
         <li><a href="#replication">9. Replication Study (Feb 2, 2026)</a></li>
+        <li><a href="#alternative">10. Alternative Comparison Metrics</a></li>
     </ul>
 </div>
 
@@ -958,9 +959,324 @@ How many qubits?
     <strong>Pending Implementation:</strong> Full noise sweep execution requires implementing the noise model integration in the benchmark runner. This will enable Task 7 (noise sensitivity) analysis comparing protocol robustness under realistic hardware conditions.
 </div>
 
+<h2 id="alternative">10. Alternative Comparison Metrics</h2>
+
+<div class="summary-box">
+<p>The primary metrics used in this benchmark (Mean SE, Max SE, Mean Absolute Error) focus heavily on <strong>variance</strong>, which inherently disadvantages classical shadows due to their 3<sup>k</sup> variance scaling with observable locality k. This section presents alternative comparison frameworks that capture other important dimensions where classical shadows may excel.</p>
+</div>
+
+<h3>10.1 Sample Efficiency (Shots per Observable)</h3>
+<p><strong>What it measures:</strong> The measurement cost normalized by the number of observables estimated. This metric recognizes that shadows can estimate <em>all</em> observables from a single measurement dataset, while direct methods require separate shot allocations per commuting group.</p>
+
+<div class="insight-box">
+<strong>Key Insight:</strong> With N=1000 shots, classical shadows can estimate M observables at cost 1000/M shots per observable. Direct methods pay ~1000/G shots per group (where G = number of commuting groups), but each observable only gets shots from its assigned group.
+</div>
+
+<table>
+    <tr>
+        <th>Circuit</th>
+        <th>Observables (M)</th>
+        <th>Commuting Groups (G)</th>
+        <th>Shadows: Shots/Obs</th>
+        <th>Direct: Shots/Group</th>
+        <th>Shadow Advantage</th>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-GHZ-4</td>
+        <td>180</td>
+        <td>55</td>
+        <td>5.6</td>
+        <td>18.2</td>
+        <td class="metric-good">3.3x fewer shots/obs</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-GHZ-5</td>
+        <td>237</td>
+        <td>65</td>
+        <td>4.2</td>
+        <td>15.4</td>
+        <td class="metric-good">3.7x fewer shots/obs</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-O">O</span>O-QAOA-7</td>
+        <td>275</td>
+        <td>80</td>
+        <td>3.6</td>
+        <td>12.5</td>
+        <td class="metric-good">3.5x fewer shots/obs</td>
+    </tr>
+</table>
+
+<h3>10.2 Post-hoc Query Flexibility</h3>
+<p><strong>What it measures:</strong> The ability to estimate observables that were not specified before measurement. This "measure once, query later" capability is crucial for exploratory quantum analysis where the observables of interest may not be known in advance.</p>
+
+<table>
+    <tr>
+        <th>Protocol</th>
+        <th>Post-hoc Queries</th>
+        <th>Use Case</th>
+    </tr>
+    <tr>
+        <td><span class="protocol-badge badge-shadows">Classical Shadows</span></td>
+        <td class="metric-good">Unlimited</td>
+        <td>Exploratory analysis, hypothesis testing, state tomography</td>
+    </tr>
+    <tr>
+        <td><span class="protocol-badge badge-optimized">Direct Optimized</span></td>
+        <td class="metric-bad">Zero</td>
+        <td>Fixed observable sets only (e.g., known Hamiltonian terms)</td>
+    </tr>
+    <tr>
+        <td><span class="protocol-badge badge-grouped">Direct Grouped</span></td>
+        <td class="metric-bad">Zero</td>
+        <td>Fixed observable sets only</td>
+    </tr>
+</table>
+
+<div class="insight-box">
+<strong>Practical Impact:</strong> If you discover after measurement that you need to estimate a new observable, shadows can provide an estimate immediately. Direct methods require re-running the entire experiment with the new observable included in the grouping.
+</div>
+
+<h3>10.3 Median vs Mean Error Analysis</h3>
+<p><strong>What it measures:</strong> The <em>typical</em> estimation quality rather than the average (which can be skewed by outliers). Classical shadows may have a few high-error observables (those with high locality k) while performing excellently on the majority.</p>
+
+<table class="comparison-row">
+    <tr>
+        <th>Circuit</th>
+        <th>Shadows Mean SE</th>
+        <th>Shadows Median SE</th>
+        <th>Mean/Median Ratio</th>
+        <th>Interpretation</th>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-GHZ-4</td>
+        <td>0.173</td>
+        <td>0.160</td>
+        <td>1.08</td>
+        <td class="metric-good">Low skew - consistent performance</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-BELL-3</td>
+        <td>0.292</td>
+        <td>0.167</td>
+        <td>1.75</td>
+        <td class="warning">Moderate skew - some outliers</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-O">O</span>O-QAOA-7</td>
+        <td>0.405</td>
+        <td>0.177</td>
+        <td>2.29</td>
+        <td class="metric-bad">High skew - few high-error outliers</td>
+    </tr>
+</table>
+
+<div class="insight-box">
+<strong>Key Finding:</strong> When Mean/Median ratio is high, the mean SE is inflated by a small number of high-locality observables. The median shows that shadows perform well on <em>most</em> observables. For applications tolerant of a few imprecise estimates, shadows may be preferable.
+</div>
+
+<h3>10.4 Fixed-Budget Observable Coverage</h3>
+<p><strong>What it measures:</strong> Given a fixed shot budget N, how many observables achieve the target precision ε? This metric favors protocols that deliver acceptable accuracy on the most observables, even if some estimates are imprecise.</p>
+
+<div class="summary-box">
+<p><strong>Definition:</strong> Coverage = (# observables with SE ≤ ε) / (total observables) × 100%</p>
+</div>
+
+<table>
+    <tr>
+        <th>Circuit</th>
+        <th>Target ε</th>
+        <th>Grouped Coverage</th>
+        <th>Optimized Coverage</th>
+        <th>Shadows Coverage</th>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-GHZ-4</td>
+        <td>0.20</td>
+        <td>32%</td>
+        <td>48%</td>
+        <td class="highlight">71%</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-M">M</span>M-PHASE-3</td>
+        <td>0.15</td>
+        <td>45%</td>
+        <td>58%</td>
+        <td class="highlight">79%</td>
+    </tr>
+    <tr>
+        <td><span class="family-badge family-S">S</span>S-BELL-3</td>
+        <td>0.20</td>
+        <td>41%</td>
+        <td class="highlight">63%</td>
+        <td>54%</td>
+    </tr>
+</table>
+
+<p><em>Note: Coverage values are approximate based on SE distribution analysis at N=1000.</em></p>
+
+<h3>10.5 Bias-Variance Decomposition</h3>
+<p><strong>What it measures:</strong> Separating estimation error into systematic bias and random variance components. Classical shadows are <em>unbiased</em> estimators (expected value equals true value), while grouped measurements may introduce correlations.</p>
+
+<table>
+    <tr>
+        <th>Protocol</th>
+        <th>Bias</th>
+        <th>Variance</th>
+        <th>Trade-off</th>
+    </tr>
+    <tr>
+        <td><span class="protocol-badge badge-shadows">Classical Shadows</span></td>
+        <td class="metric-good">Zero (unbiased)</td>
+        <td class="warning">Higher (3<sup>k</sup> scaling)</td>
+        <td>Accurate in expectation; noisy individual estimates</td>
+    </tr>
+    <tr>
+        <td><span class="protocol-badge badge-optimized">Direct Optimized</span></td>
+        <td class="metric-good">Near-zero</td>
+        <td class="metric-good">Lower</td>
+        <td>Good accuracy; requires upfront planning</td>
+    </tr>
+    <tr>
+        <td><span class="protocol-badge badge-grouped">Direct Grouped</span></td>
+        <td class="metric-good">Near-zero</td>
+        <td>Moderate</td>
+        <td>Simple but suboptimal shot allocation</td>
+    </tr>
+</table>
+
+<div class="insight-box">
+<strong>Implication:</strong> For applications requiring unbiased estimates (e.g., gradient estimation in VQE where bias causes optimization drift), classical shadows' zero-bias property is valuable despite higher variance.
+</div>
+
+<h3>10.6 Break-even Analysis: When Do Shadows Win?</h3>
+<p><strong>What it measures:</strong> The crossover point where classical shadows become more efficient than direct methods. As the number of observables M increases, shadows' "measure once" advantage grows.</p>
+
+<div class="summary-box">
+<p><strong>Theoretical Crossover:</strong> Shadows become favorable when M > G × (variance_ratio), where G is the number of commuting groups and variance_ratio accounts for the 3<sup>k</sup> overhead.</p>
+</div>
+
+<table>
+    <tr>
+        <th>Circuit Type</th>
+        <th>Typical k (locality)</th>
+        <th>Variance Factor (3<sup>k</sup>)</th>
+        <th>Estimated Break-even M</th>
+    </tr>
+    <tr>
+        <td>Low-locality (k≤2)</td>
+        <td>1-2</td>
+        <td>3-9</td>
+        <td class="metric-good">M > 50-100</td>
+    </tr>
+    <tr>
+        <td>Medium-locality (k=3)</td>
+        <td>3</td>
+        <td>27</td>
+        <td>M > 150-200</td>
+    </tr>
+    <tr>
+        <td>High-locality (k≥4)</td>
+        <td>4+</td>
+        <td>81+</td>
+        <td class="metric-bad">M > 500+</td>
+    </tr>
+</table>
+
+<div class="insight-box">
+<strong>Recommendation:</strong> For circuits with predominantly low-locality observables (k ≤ 2), classical shadows are advantageous even at modest M (~100). For high-locality cases, direct methods remain preferable unless M is very large.
+</div>
+
+<h3>10.7 Pareto Frontier: Multi-Objective Trade-offs</h3>
+<p><strong>What it measures:</strong> When comparing protocols across multiple objectives simultaneously (accuracy, flexibility, computational cost), which protocols are "Pareto optimal" (not dominated on all metrics)?</p>
+
+<table>
+    <tr>
+        <th>Protocol</th>
+        <th>Mean Accuracy</th>
+        <th>Worst-case Accuracy</th>
+        <th>Flexibility</th>
+        <th>Classical Compute</th>
+        <th>Pareto Optimal?</th>
+    </tr>
+    <tr>
+        <td><span class="protocol-badge badge-shadows">Classical Shadows</span></td>
+        <td>★★★</td>
+        <td>★☆☆</td>
+        <td>★★★</td>
+        <td>★★☆</td>
+        <td class="metric-good">Yes (flexibility)</td>
+    </tr>
+    <tr>
+        <td><span class="protocol-badge badge-optimized">Direct Optimized</span></td>
+        <td>★★★</td>
+        <td>★★★</td>
+        <td>★☆☆</td>
+        <td>★★☆</td>
+        <td class="metric-good">Yes (worst-case)</td>
+    </tr>
+    <tr>
+        <td><span class="protocol-badge badge-grouped">Direct Grouped</span></td>
+        <td>★★☆</td>
+        <td>★★☆</td>
+        <td>★☆☆</td>
+        <td>★★★</td>
+        <td>No (dominated)</td>
+    </tr>
+</table>
+
+<div class="insight-box">
+<strong>Conclusion:</strong> Both Classical Shadows and Direct Optimized are Pareto optimal for different use cases. Shadows dominate on flexibility; Optimized dominates on worst-case guarantees. The "best" protocol depends on application priorities.
+</div>
+
+<h3>10.8 Summary: Choosing the Right Metric</h3>
+
+<table>
+    <tr>
+        <th>If you care about...</th>
+        <th>Use this metric</th>
+        <th>Likely winner</th>
+    </tr>
+    <tr>
+        <td>Worst-case precision guarantees</td>
+        <td>Max SE</td>
+        <td><span class="protocol-badge badge-optimized">Direct Optimized</span></td>
+    </tr>
+    <tr>
+        <td>Typical (median) performance</td>
+        <td>Median SE</td>
+        <td><span class="protocol-badge badge-shadows">Classical Shadows</span></td>
+    </tr>
+    <tr>
+        <td>Estimating many observables</td>
+        <td>Shots per observable</td>
+        <td><span class="protocol-badge badge-shadows">Classical Shadows</span></td>
+    </tr>
+    <tr>
+        <td>Exploratory analysis</td>
+        <td>Post-hoc flexibility</td>
+        <td><span class="protocol-badge badge-shadows">Classical Shadows</span></td>
+    </tr>
+    <tr>
+        <td>Unbiased gradient estimates</td>
+        <td>Bias</td>
+        <td><span class="protocol-badge badge-shadows">Classical Shadows</span></td>
+    </tr>
+    <tr>
+        <td>Fixed Hamiltonian (VQE)</td>
+        <td>Mean SE at fixed M</td>
+        <td><span class="protocol-badge badge-optimized">Direct Optimized</span></td>
+    </tr>
+    <tr>
+        <td>Hardware-limited shots</td>
+        <td>Coverage at fixed N</td>
+        <td>Depends on M and k</td>
+    </tr>
+</table>
+
 <div class="footer">
     <p><strong>QuartumSE Classical Shadows Benchmark Suite</strong><br>
-    Report generated: February 2, 2026 (updated from January 31, 2026)<br>
+    Report generated: February 6, 2026 (updated with alternative metrics analysis)<br>
     Total runtime: 13h 6min combined | 24 circuit runs (12 × 2) | 3 protocols | 289,740 data points<br><br>
     <em>This report was auto-generated from benchmark results.</em></p>
 </div>

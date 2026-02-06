@@ -37,6 +37,7 @@ import numpy as np
 from .backends.truth import GroundTruthConfig
 from .io import LongFormResultBuilder, LongFormResultSet, ParquetWriter, SummaryAggregator
 from .io.schemas import RunManifest
+from .noise.profiles import CANONICAL_PROFILES, NoiseType, get_profile
 from .observables import ObservableSet, generate_observable_set
 from .protocols import (
     DirectGroupedProtocol,
@@ -48,6 +49,69 @@ from .protocols import (
 )
 from .tasks import SweepConfig, SweepOrchestrator, TaskConfig, TaskType, WorstCaseTask
 from .viz import create_benchmark_report
+
+
+def _create_execution_backend(noise_profile_id: str | None = None) -> Any:
+    """Create an execution backend, optionally with noise.
+
+    Args:
+        noise_profile_id: Optional noise profile ID from CANONICAL_PROFILES.
+            If None or "ideal", returns a standard AerSimulator.
+
+    Returns:
+        AerSimulator, optionally configured with a noise model.
+    """
+    from qiskit_aer import AerSimulator
+
+    if noise_profile_id is None or noise_profile_id == "ideal":
+        return AerSimulator()
+
+    # Get the noise profile
+    profile = get_profile(noise_profile_id)
+
+    if profile.noise_type == NoiseType.IDEAL:
+        return AerSimulator()
+
+    # Build Qiskit noise model based on profile type
+    from qiskit_aer.noise import NoiseModel, ReadoutError, depolarizing_error
+
+    noise_model = NoiseModel()
+
+    if profile.noise_type == NoiseType.READOUT_BITFLIP:
+        p = profile.parameters.get("p", 0.0)
+        if p > 0:
+            readout_err = ReadoutError([[1 - p, p], [p, 1 - p]])
+            noise_model.add_all_qubit_readout_error(readout_err)
+
+    elif profile.noise_type == NoiseType.DEPOLARIZING:
+        p1 = profile.parameters.get("p1", 0.0)
+        p2 = profile.parameters.get("p2", 0.0)
+        if p1 > 0:
+            error_1q = depolarizing_error(p1, 1)
+            noise_model.add_all_qubit_quantum_error(
+                error_1q, ["h", "x", "y", "z", "s", "sdg", "sx", "rz"]
+            )
+        if p2 > 0:
+            error_2q = depolarizing_error(p2, 2)
+            noise_model.add_all_qubit_quantum_error(error_2q, ["cx", "cz", "ecr"])
+
+    elif profile.noise_type == NoiseType.THERMAL_RELAXATION:
+        # Thermal relaxation requires more complex setup; use simplified depolarizing
+        # as approximation for now
+        from qiskit_aer.noise import thermal_relaxation_error
+
+        T1 = profile.parameters.get("T1_us", 100) * 1e-6  # Convert to seconds
+        T2 = profile.parameters.get("T2_us", 80) * 1e-6
+        gate_time = profile.parameters.get("gate_time_ns", 35) * 1e-9
+        error_1q = thermal_relaxation_error(T1, T2, gate_time)
+        noise_model.add_all_qubit_quantum_error(
+            error_1q, ["h", "x", "y", "z", "s", "sdg", "sx", "rz"]
+        )
+        # For 2Q gates, use longer gate time
+        error_2q = thermal_relaxation_error(T1, T2, gate_time * 10, 2)
+        noise_model.add_all_qubit_quantum_error(error_2q, ["cx", "cz", "ecr"])
+
+    return AerSimulator(noise_model=noise_model)
 
 
 def get_default_protocols() -> list[Protocol]:
@@ -393,6 +457,7 @@ def run_publication_benchmark(
     epsilon: float = 0.01,
     delta: float = 0.05,
     ground_truth_config: GroundTruthConfig | None = None,
+    noise_profile: str | None = None,
 ) -> dict[str, Any]:
     """Run publication-grade benchmark with ground truth (Measurements Bible).
 
@@ -417,6 +482,8 @@ def run_publication_benchmark(
         delta: Global failure probability.
         ground_truth_config: Optional configuration for statevector ground truth
             (including memory_limit_bytes).
+        noise_profile: Noise profile ID (e.g., "ideal", "readout_1e-2", "depol_medium").
+            If None or "ideal", runs noiseless simulation.
 
     Returns:
         Dict with benchmark results including:
@@ -501,8 +568,13 @@ def run_publication_benchmark(
     if isinstance(circuit, QuantumCircuit):
         twoq_gate_count = sum(1 for instr, qargs, _ in circuit.data if len(qargs) == 2)
 
-    backend_id = "aer_simulator"
-    execution_backend = AerSimulator()
+    # Create backend with optional noise profile
+    noise_profile_id = noise_profile or "ideal"
+    if noise_profile_id == "ideal":
+        backend_id = "aer_simulator"
+    else:
+        backend_id = f"aer_simulator_noisy_{noise_profile_id}"
+    execution_backend = _create_execution_backend(noise_profile_id)
 
     def _generate_seeds(rep: int, n_shots: int, protocol_index: int) -> dict[str, int]:
         rng = np.random.default_rng(seed + rep * 1000 + n_shots + protocol_index * 17)
@@ -553,7 +625,7 @@ def run_publication_benchmark(
                             protocol_version=estimates.protocol_version
                             or protocol.protocol_version,
                         )
-                        .with_backend(backend_id, noise_profile_id="ideal")
+                        .with_backend(backend_id, noise_profile_id=noise_profile_id)
                         .with_replicate(rep)
                         .with_seeds(
                             seed_policy=seeds["seed_policy"],

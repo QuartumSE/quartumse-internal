@@ -43,6 +43,8 @@ class BenchmarkSuiteConfig:
         shadows_protocol_id: Protocol ID for shadows (for comparison)
         baseline_protocol_id: Protocol ID for baseline (for comparison)
         output_base_dir: Base directory for outputs (timestamped subdir created)
+        noise_profile: Noise profile ID (e.g., "readout_1e-2", "depol_medium").
+            If None or "ideal", runs noiseless simulation.
     """
 
     mode: BenchmarkMode = BenchmarkMode.COMPLETE
@@ -55,6 +57,7 @@ class BenchmarkSuiteConfig:
     shadows_protocol_id: str = "classical_shadows_v0"
     baseline_protocol_id: str = "direct_grouped"
     output_base_dir: str = "benchmark_results"
+    noise_profile: str | None = None  # Noise profile ID (e.g., "readout_1e-2", "depol_medium")
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -68,6 +71,7 @@ class BenchmarkSuiteConfig:
             "shadows_protocol_id": self.shadows_protocol_id,
             "baseline_protocol_id": self.baseline_protocol_id,
             "output_base_dir": self.output_base_dir,
+            "noise_profile": self.noise_profile,
         }
 
 
@@ -526,7 +530,8 @@ def run_benchmark_suite(
     print()
 
     # Step 1: Run base benchmark
-    print("Step 1: Running base benchmark...")
+    noise_info = f" (noise: {config.noise_profile})" if config.noise_profile else ""
+    print(f"Step 1: Running base benchmark{noise_info}...")
     base_results = run_publication_benchmark(
         circuit=circuit,
         observable_set=observable_set,
@@ -539,6 +544,7 @@ def run_benchmark_suite(
         output_dir=str(output_dir / "base"),
         epsilon=config.epsilon,
         delta=config.delta,
+        noise_profile=config.noise_profile,
     )
 
     long_form_rows = base_results["long_form_results"]

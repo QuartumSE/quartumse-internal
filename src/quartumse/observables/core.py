@@ -27,6 +27,8 @@ from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
+from scipy import sparse
+from scipy.sparse import csr_matrix
 
 
 class ObservableType(Enum):
@@ -44,6 +46,12 @@ PAULI_Y = np.array([[0, -1j], [1j, 0]], dtype=complex)
 PAULI_Z = np.array([[1, 0], [0, -1]], dtype=complex)
 
 PAULI_MATRICES = {"I": PAULI_I, "X": PAULI_X, "Y": PAULI_Y, "Z": PAULI_Z}
+SPARSE_PAULI_MATRICES = {
+    "I": sparse.csr_matrix(PAULI_I),
+    "X": sparse.csr_matrix(PAULI_X),
+    "Y": sparse.csr_matrix(PAULI_Y),
+    "Z": sparse.csr_matrix(PAULI_Z),
+}
 
 
 @dataclass
@@ -122,10 +130,14 @@ class Observable:
         return self._cached_support
 
     def to_matrix(self) -> NDArray[np.complexfloating]:
-        """Convert to matrix representation."""
-        result = np.array([[1.0]], dtype=complex)
+        """Convert to dense matrix representation."""
+        return self.to_sparse_matrix().toarray()
+
+    def to_sparse_matrix(self) -> csr_matrix:
+        """Convert to sparse matrix representation."""
+        result = sparse.csr_matrix([[1.0]], dtype=complex)
         for pauli_char in self.pauli_string:
-            result = np.kron(result, PAULI_MATRICES[pauli_char])
+            result = sparse.kron(result, SPARSE_PAULI_MATRICES[pauli_char], format="csr")
         return self.coefficient * result
 
     def commutes_with(self, other: Observable) -> bool:

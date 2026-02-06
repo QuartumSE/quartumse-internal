@@ -393,6 +393,7 @@ def run_publication_benchmark(
     epsilon: float = 0.01,
     delta: float = 0.05,
     ground_truth_config: GroundTruthConfig | None = None,
+    max_workers: int | None = None,
 ) -> dict[str, Any]:
     """Run publication-grade benchmark with ground truth (Measurements Bible).
 
@@ -417,6 +418,7 @@ def run_publication_benchmark(
         delta: Global failure probability.
         ground_truth_config: Optional configuration for statevector ground truth
             (including memory_limit_bytes).
+        max_workers: Optional number of workers for parallel protocol execution.
 
     Returns:
         Dict with benchmark results including:
@@ -514,21 +516,44 @@ def run_publication_benchmark(
             "seed_bootstrap": int(rng.integers(0, 2**31)),
         }
 
+    observable_lookup = {obs.observable_id: obs for obs in observable_set.observables}
+
+    def _run_protocol(
+        protocol_index: int,
+        protocol: Protocol,
+        rep: int,
+        n_shots: int,
+    ) -> tuple[Protocol, dict[str, int], Estimates]:
+        seeds = _generate_seeds(rep, n_shots, protocol_index)
+        estimates = protocol.run(
+            circuit=circuit,
+            observable_set=observable_set,
+            total_budget=n_shots,
+            backend=execution_backend,
+            seed=seeds["seed_protocol"],
+        )
+        return protocol, seeds, estimates
+
     for n_shots in n_shots_grid:
         for rep in range(n_replicates):
-            for protocol_index, protocol in enumerate(protocol_instances):
-                seeds = _generate_seeds(rep, n_shots, protocol_index)
+            if max_workers and max_workers > 1 and len(protocol_instances) > 1:
+                from concurrent.futures import ThreadPoolExecutor
 
-                estimates = protocol.run(
-                    circuit=circuit,
-                    observable_set=observable_set,
-                    total_budget=n_shots,
-                    backend=execution_backend,
-                    seed=seeds["seed_protocol"],
-                )
+                with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                    futures = [
+                        executor.submit(_run_protocol, idx, protocol, rep, n_shots)
+                        for idx, protocol in enumerate(protocol_instances)
+                    ]
+                    protocol_runs = [future.result() for future in futures]
+            else:
+                protocol_runs = [
+                    _run_protocol(idx, protocol, rep, n_shots)
+                    for idx, protocol in enumerate(protocol_instances)
+                ]
 
+            for protocol, seeds, estimates in protocol_runs:
                 for est in estimates.estimates:
-                    obs = observable_set.get_by_id(est.observable_id)
+                    obs = observable_lookup[est.observable_id]
                     row_builder = (
                         builder.reset()
                         .with_run_id(run_id)

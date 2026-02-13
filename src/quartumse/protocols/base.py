@@ -297,6 +297,7 @@ class Protocol(ABC):
 
         # Finalize
         estimates = self.finalize(state, observable_set)
+        estimates.raw_chunks = state.accumulated_data
 
         # Add timing and protocol info
         total_time = time.time() - start_time

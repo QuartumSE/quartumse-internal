@@ -6,6 +6,7 @@ across protocols, circuits, shot budgets, and replicates.
 
 from __future__ import annotations
 
+import json
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -54,6 +55,7 @@ class SweepConfig:
     seeds: dict[str, int] = field(default_factory=lambda: {"base": 42})
     seed_policy: str = "base_replicate_config"
     tasks: list[str] = field(default_factory=list)
+    store_raw_shots: bool = True
 
 
 @dataclass
@@ -115,6 +117,7 @@ class SweepOrchestrator:
         self.executor = executor or self._default_executor
         self.results = LongFormResultSet()
         self.progress = SweepProgress()
+        self.raw_shot_records: list[dict] = []
 
     def _default_executor(
         self,
@@ -256,6 +259,16 @@ class SweepOrchestrator:
                                     )
                                     self.results.add_many(rows)
 
+                                    # Collect raw shot data
+                                    if self.config.store_raw_shots and estimates.raw_chunks:
+                                        self._collect_raw_shots(
+                                            estimates=estimates,
+                                            circuit_id=circuit_id,
+                                            n=n,
+                                            replicate_id=rep,
+                                            noise_profile=noise_profile,
+                                        )
+
                                 except Exception as e:
                                     self.progress.errors.append(
                                         {
@@ -328,6 +341,62 @@ class SweepOrchestrator:
             rows.append(row)
 
         return rows
+
+    def _collect_raw_shots(
+        self,
+        estimates: Estimates,
+        circuit_id: str,
+        n: int,
+        replicate_id: int,
+        noise_profile: str,
+    ) -> None:
+        """Extract raw shot data from estimates and append to raw_shot_records."""
+        protocol_id = estimates.protocol_id or ""
+        for chunk in estimates.raw_chunks:
+            if chunk.bitstrings:
+                for setting_id, bitstring_list in chunk.bitstrings.items():
+                    self.raw_shot_records.append(
+                        {
+                            "protocol_id": protocol_id,
+                            "circuit_id": circuit_id,
+                            "N_total": n,
+                            "replicate_id": replicate_id,
+                            "noise_profile": noise_profile,
+                            "setting_id": setting_id,
+                            "bitstrings": json.dumps(bitstring_list),
+                            "measurement_bases": None,
+                        }
+                    )
+            elif chunk.outcomes is not None:
+                # Array-based format (e.g., shadows)
+                unique_settings = (
+                    np.unique(chunk.setting_indices)
+                    if chunk.setting_indices is not None
+                    else [0]
+                )
+                for si in unique_settings:
+                    if chunk.setting_indices is not None:
+                        mask = chunk.setting_indices == si
+                        outcomes = chunk.outcomes[mask]
+                        bases = chunk.basis_choices[mask] if chunk.basis_choices is not None else None
+                    else:
+                        outcomes = chunk.outcomes
+                        bases = chunk.basis_choices
+
+                    self.raw_shot_records.append(
+                        {
+                            "protocol_id": protocol_id,
+                            "circuit_id": circuit_id,
+                            "N_total": n,
+                            "replicate_id": replicate_id,
+                            "noise_profile": noise_profile,
+                            "setting_id": str(si),
+                            "bitstrings": json.dumps(outcomes.tolist()),
+                            "measurement_bases": json.dumps(bases.tolist())
+                            if bases is not None
+                            else None,
+                        }
+                    )
 
     def create_manifest(self) -> RunManifest:
         """Create run manifest for this sweep."""

@@ -342,6 +342,9 @@ class Estimates:
     ci_method_id: str | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
 
+    # Optional: raw shot-level data for post-hoc analysis (e.g., pilot subsampling)
+    raw_chunks: list[RawDatasetChunk] | None = field(default=None, repr=False)
+
     @property
     def observable_estimates(self) -> dict[str, ObservableEstimate]:
         """Dict view mapping observable_id to ObservableEstimate."""

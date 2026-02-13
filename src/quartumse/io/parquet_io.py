@@ -195,6 +195,32 @@ class ParquetWriter:
 
         return output_path
 
+    def write_raw_shots(self, raw_records: list[dict]) -> Path:
+        """Write raw shot-level data to a separate parquet file.
+
+        Each record should contain:
+        - protocol_id, circuit_id, N_total, replicate_id, noise_profile: identifiers
+        - setting_id: which measurement setting
+        - bitstrings: JSON-serialized list of bitstring outcomes
+        - measurement_bases: JSON-serialized basis choices (null for direct protocols)
+
+        Args:
+            raw_records: List of dicts, one per (config, setting) combination.
+
+        Returns:
+            Path to the written parquet file.
+        """
+        if not raw_records:
+            raise ValueError("Cannot write empty raw shots")
+
+        df = pd.DataFrame(raw_records)
+
+        raw_shots_dir = self.output_dir / "raw_shots"
+        raw_shots_dir.mkdir(parents=True, exist_ok=True)
+        output_path = raw_shots_dir / "data.parquet"
+        pq.write_table(pa.Table.from_pandas(df), str(output_path))
+        return output_path
+
     def _populate_manifest_paths(self, manifest: RunManifest) -> None:
         long_form_dir = self.output_dir / "long_form"
         summary_path = self.output_dir / "summary.parquet"

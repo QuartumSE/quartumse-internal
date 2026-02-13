@@ -27,6 +27,7 @@ Example:
 
 from __future__ import annotations
 
+import json
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -296,6 +297,9 @@ def run_benchmark(
         long_form_path = writer.write_long_form(results)
         summary_path = writer.write_summary(summaries)
 
+        if orchestrator.raw_shot_records:
+            writer.write_raw_shots(orchestrator.raw_shot_records)
+
         manifest = orchestrator.create_manifest()
         manifest.long_form_path = str(long_form_path)
         manifest.summary_path = str(summary_path)
@@ -439,6 +443,66 @@ def _build_plot_summary(
     return summary
 
 
+def _extract_raw_shot_records(
+    estimates: Estimates,
+    circuit_id: str,
+    n_shots: int,
+    replicate_id: int,
+    noise_profile: str,
+) -> list[dict]:
+    """Extract raw shot records from an Estimates object."""
+    if not estimates.raw_chunks:
+        return []
+
+    records = []
+    protocol_id = estimates.protocol_id or ""
+    for chunk in estimates.raw_chunks:
+        if chunk.bitstrings:
+            for setting_id, bitstring_list in chunk.bitstrings.items():
+                records.append(
+                    {
+                        "protocol_id": protocol_id,
+                        "circuit_id": circuit_id,
+                        "N_total": n_shots,
+                        "replicate_id": replicate_id,
+                        "noise_profile": noise_profile,
+                        "setting_id": setting_id,
+                        "bitstrings": json.dumps(bitstring_list),
+                        "measurement_bases": None,
+                    }
+                )
+        elif chunk.outcomes is not None:
+            unique_settings = (
+                np.unique(chunk.setting_indices)
+                if chunk.setting_indices is not None
+                else [0]
+            )
+            for si in unique_settings:
+                if chunk.setting_indices is not None:
+                    mask = chunk.setting_indices == si
+                    outcomes = chunk.outcomes[mask]
+                    bases = chunk.basis_choices[mask] if chunk.basis_choices is not None else None
+                else:
+                    outcomes = chunk.outcomes
+                    bases = chunk.basis_choices
+
+                records.append(
+                    {
+                        "protocol_id": protocol_id,
+                        "circuit_id": circuit_id,
+                        "N_total": n_shots,
+                        "replicate_id": replicate_id,
+                        "noise_profile": noise_profile,
+                        "setting_id": str(si),
+                        "bitstrings": json.dumps(outcomes.tolist()),
+                        "measurement_bases": json.dumps(bases.tolist())
+                        if bases is not None
+                        else None,
+                    }
+                )
+    return records
+
+
 # =============================================================================
 # Publication-Grade Benchmarking with Ground Truth
 # =============================================================================
@@ -563,6 +627,7 @@ def run_publication_benchmark(
     methodology_version = "3.0.0"
     observable_set_id = f"{circuit_id}_observables"
     result_set = LongFormResultSet()
+    raw_shot_records: list[dict] = []
     builder = LongFormResultBuilder()
 
     circuit_depth = circuit.depth() if isinstance(circuit, QuantumCircuit) else None
@@ -684,6 +749,17 @@ def run_publication_benchmark(
                         )
 
                     result_set.add(row_builder.build())
+
+                # Collect raw shot data
+                raw_shot_records.extend(
+                    _extract_raw_shot_records(
+                        estimates=estimates,
+                        circuit_id=circuit_id,
+                        n_shots=n_shots,
+                        replicate_id=rep,
+                        noise_profile=noise_profile_id,
+                    )
+                )
 
     # Step 3: Evaluate tasks
     task_results = {}
@@ -813,7 +889,8 @@ def run_publication_benchmark(
         long_form_path = writer.write_long_form(result_set)
         summary_path = writer.write_summary(summary_rows)
 
-        import json
+        if raw_shot_records:
+            writer.write_raw_shots(raw_shot_records)
 
         # Save ground truth
         if ground_truth:

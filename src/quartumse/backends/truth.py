@@ -22,7 +22,7 @@ from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from qiskit import QuantumCircuit
-from qiskit.quantum_info import Pauli, PauliList, SparsePauliOp, Statevector
+from qiskit.quantum_info import Pauli, SparsePauliOp, Statevector
 
 if TYPE_CHECKING:
     from quartumse.observables import Observable, ObservableSet
@@ -124,22 +124,11 @@ class StatevectorBackend:
         # Get statevector
         statevector = Statevector.from_instruction(circuit)
 
-        # Compute expectations
+        # Compute expectations one at a time
         truth_values = {}
-        observables = list(observable_set.observables)
-        pauli_strings = [obs.pauli_string for obs in observables]
-        coefficients = [obs.coefficient for obs in observables]
-        try:
-            pauli_list = PauliList(pauli_strings)
-            expectations = statevector.expectation_value(pauli_list)
-            for obs, expectation, coeff in zip(
-                observables, expectations, coefficients, strict=False
-            ):
-                truth_values[obs.observable_id] = float(np.real(expectation)) * coeff
-        except Exception:
-            for obs in observables:
-                expectation = self._compute_pauli_expectation(statevector, obs)
-                truth_values[obs.observable_id] = expectation
+        for obs in observable_set.observables:
+            expectation = self._compute_pauli_expectation(statevector, obs)
+            truth_values[obs.observable_id] = expectation
 
         return GroundTruthResult(
             truth_values=truth_values,

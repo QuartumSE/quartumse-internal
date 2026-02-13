@@ -27,8 +27,6 @@ from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
-from scipy import sparse
-from scipy.sparse import csr_matrix
 
 
 class ObservableType(Enum):
@@ -46,12 +44,6 @@ PAULI_Y = np.array([[0, -1j], [1j, 0]], dtype=complex)
 PAULI_Z = np.array([[1, 0], [0, -1]], dtype=complex)
 
 PAULI_MATRICES = {"I": PAULI_I, "X": PAULI_X, "Y": PAULI_Y, "Z": PAULI_Z}
-SPARSE_PAULI_MATRICES = {
-    "I": sparse.csr_matrix(PAULI_I),
-    "X": sparse.csr_matrix(PAULI_X),
-    "Y": sparse.csr_matrix(PAULI_Y),
-    "Z": sparse.csr_matrix(PAULI_Z),
-}
 
 
 @dataclass
@@ -81,7 +73,7 @@ class Observable:
     _cached_basis_indices: NDArray[np.int_] | None = field(
         default=None, repr=False, compare=False
     )
-    _cached_sparse_matrix: csr_matrix | None = field(default=None, repr=False, compare=False)
+    _cached_sparse_matrix: Any | None = field(default=None, repr=False, compare=False)
     _cached_dense_matrix: NDArray[np.complexfloating] | None = field(
         default=None, repr=False, compare=False
     )
@@ -156,15 +148,21 @@ class Observable:
     def to_matrix(self) -> NDArray[np.complexfloating]:
         """Convert to dense matrix representation."""
         if self._cached_dense_matrix is None:
-            self._cached_dense_matrix = self.to_sparse_matrix().toarray()
+            result = np.array([[1.0]], dtype=complex)
+            for pauli_char in self.pauli_string:
+                result = np.kron(result, PAULI_MATRICES[pauli_char])
+            self._cached_dense_matrix = self.coefficient * result
         return self._cached_dense_matrix
 
-    def to_sparse_matrix(self) -> csr_matrix:
-        """Convert to sparse matrix representation."""
+    def to_sparse_matrix(self) -> Any:
+        """Convert to sparse matrix representation (opt-in for large systems)."""
         if self._cached_sparse_matrix is None:
+            from scipy import sparse
+
+            sparse_paulis = {k: sparse.csr_matrix(v) for k, v in PAULI_MATRICES.items()}
             result = sparse.csr_matrix([[1.0]], dtype=complex)
             for pauli_char in self.pauli_string:
-                result = sparse.kron(result, SPARSE_PAULI_MATRICES[pauli_char], format="csr")
+                result = sparse.kron(result, sparse_paulis[pauli_char], format="csr")
             self._cached_sparse_matrix = self.coefficient * result
         return self._cached_sparse_matrix
 

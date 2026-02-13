@@ -11,45 +11,7 @@ from typing import Any
 import numpy as np
 from qiskit import QuantumCircuit
 
-
-class Observable:
-    """Representation of a quantum observable (Pauli string or general)."""
-
-    def __init__(self, pauli_string: str, coefficient: float = 1.0):
-        """
-        Initialize observable.
-
-        Args:
-            pauli_string: Pauli string like "IXYZ" (I=identity, X/Y/Z=Paulis)
-            coefficient: Coefficient for the term
-        """
-        self.pauli_string = pauli_string
-        self.coefficient = coefficient
-        self.num_qubits = len(pauli_string)
-        # Cache support indices for vectorized operations
-        self._cached_support: list[int] | None = None
-        self._cached_basis_indices: np.ndarray | None = None
-
-    @property
-    def support(self) -> list[int]:
-        """Return list of qubit indices where operator is non-identity (cached)."""
-        if self._cached_support is None:
-            self._cached_support = [i for i, c in enumerate(self.pauli_string) if c != "I"]
-        return self._cached_support
-
-    @property
-    def basis_indices(self) -> np.ndarray:
-        """Measurement basis indices for non-identity terms (X->1, Y->2, Z->0)."""
-        if self._cached_basis_indices is None:
-            pauli_to_basis = {"X": 1, "Y": 2, "Z": 0}
-            support = self.support
-            self._cached_basis_indices = np.array(
-                [pauli_to_basis[self.pauli_string[q]] for q in support], dtype=int
-            )
-        return self._cached_basis_indices
-
-    def __repr__(self) -> str:
-        return f"{self.coefficient}*{self.pauli_string}"
+from quartumse.observables.core import Observable  # noqa: F401 — re-export
 
 
 class ShadowEstimate:

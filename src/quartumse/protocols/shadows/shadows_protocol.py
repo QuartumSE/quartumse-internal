@@ -21,7 +21,6 @@ from qiskit_aer import AerSimulator
 from ...observables import ObservableSet
 from ...shadows import NoiseAwareRandomLocalCliffordShadows, RandomLocalCliffordShadows
 from ...shadows.config import ShadowConfig
-from ...shadows.core import Observable as ShadowObservable
 from ..base import StaticProtocol
 from ..registry import register_protocol
 from ..state import (
@@ -365,14 +364,8 @@ class ClassicalShadowsProtocol(StaticProtocol):
         n_shots = shadows_state.total_budget - shadows_state.remaining_budget
 
         for obs in observable_set.observables:
-            # Create shadow observable
-            shadow_obs = ShadowObservable(
-                pauli_string=obs.pauli_string,
-                coefficient=obs.coefficient,
-            )
-
             # Get estimate from shadows implementation
-            shadow_estimate = shadows_impl.estimate_observable(shadow_obs)
+            shadow_estimate = shadows_impl.estimate_observable(obs)
 
             # Compute SE from variance
             variance = shadow_estimate.variance

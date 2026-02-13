@@ -1,0 +1,101 @@
+{
+  "timestamp": "2026-02-13T11:05:47.506206",
+  "n_runs": 1,
+  "config": {
+    "mode": "analysis",
+    "n_shots_grid": [
+      5000,
+      10000,
+      20000
+    ],
+    "n_replicates": 10,
+    "epsilon": 0.05
+  },
+  "suites_enabled": {
+    "workload": true,
+    "stress": true,
+    "commuting": true,
+    "posthoc": true,
+    "diagnostics": true
+  },
+  "circuits_enabled": [
+    "C-H2"
+  ],
+  "merge_enabled": true,
+  "runs": {
+    "C-H2__merged": {
+      "circuit_id": "C-H2",
+      "suite_name": "_merged_",
+      "n_qubits": 4,
+      "merged": true,
+      "merged_suites": [
+        "workload_energy_placeholder",
+        "stress_random_1000"
+      ],
+      "overlap_eliminated": 16,
+      "suite_metadata": {
+        "workload_energy_placeholder": {
+          "suite_type": "workload",
+          "objective": "per_observable",
+          "n_observables": 18,
+          "fully_commuting": false,
+          "n_commuting_groups": 3,
+          "has_weights": false,
+          "description": "H2 placeholder (use actual Hamiltonian when available)"
+        },
+        "stress_random_1000": {
+          "suite_type": "stress",
+          "objective": "per_observable",
+          "n_observables": 87,
+          "fully_commuting": false,
+          "n_commuting_groups": 32,
+          "has_weights": false,
+          "description": "100 observables, stratified sampling"
+        }
+      },
+      "run_id": "C-H2__merged_20260213_081258_8aa6fa3b",
+      "output_dir": "benchmark_results\\C-H2__merged_20260213_081258_8aa6fa3b",
+      "summary": {
+        "run_id": "publication_benchmark_bfa3bf06",
+        "n_protocols": 3,
+        "n_shots_grid": [
+          5000,
+          10000,
+          20000
+        ],
+        "n_replicates": 10,
+        "n_observables": 89,
+        "has_ground_truth": true,
+        "n_long_form_rows": 8010,
+        "protocols": [
+          "direct_grouped",
+          "direct_optimized",
+          "classical_shadows_v0"
+        ],
+        "protocol_summaries": {
+          "direct_grouped": {
+            "mean_se": 0.03752785477984987,
+            "max_se": 0.0412744171706498,
+            "median_se": 0.04125053455117633,
+            "mean_abs_error": 0.16625080277738924,
+            "max_abs_error": 1.9931972789115644
+          },
+          "direct_optimized": {
+            "mean_se": 0.03483618021172733,
+            "max_se": 0.050572173742417355,
+            "median_se": 0.03570776500518396,
+            "mean_abs_error": 0.16554487170508045,
+            "max_abs_error": 1.9822866344605474
+          },
+          "classical_shadows_v0": {
+            "mean_se": 0.03607491756796318,
+            "max_se": 0.06873077913133241,
+            "median_se": 0.036128655018590125,
+            "mean_abs_error": 0.16668271689153102,
+            "max_abs_error": 1.9877124217106446
+          }
+        }
+      }
+    }
+  }
+}

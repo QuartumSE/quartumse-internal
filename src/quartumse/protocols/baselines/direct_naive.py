@@ -247,17 +247,19 @@ class DirectNaiveProtocol(StaticProtocol):
         # Get positions where we have non-identity Paulis
         support = [i for i, p in enumerate(pauli_string) if p != "I"]
 
-        # Compute eigenvalues for each bitstring
-        eigenvalues = []
-        for bs in bitstrings:
-            # Count parity on support qubits
-            parity = sum(int(bs[i]) for i in support) % 2
-            eigenvalues.append((-1) ** parity)
+        # Vectorised eigenvalue computation:
+        # Convert bitstrings to a 2-D uint8 array, slice support columns,
+        # then compute parity and eigenvalues without a Python loop.
+        bs_array = np.frombuffer(
+            "".join(bitstrings).encode(), dtype=np.uint8
+        ).reshape(len(bitstrings), -1)[:, support]
+        # ASCII '1' = 49; subtract ord('0')=48 so '0'->0, '1'->1
+        parities = (bs_array - 48).sum(axis=1) % 2
+        eigenvalues_array = np.where(parities == 0, 1.0, -1.0)
 
         # Compute mean and standard error
-        eigenvalues_array = np.array(eigenvalues, dtype=float)
         mean = float(np.mean(eigenvalues_array)) * coefficient
         std = float(np.std(eigenvalues_array, ddof=1))
-        se = std / np.sqrt(len(eigenvalues)) * abs(coefficient)
+        se = std / np.sqrt(len(eigenvalues_array)) * abs(coefficient)
 
         return mean, se

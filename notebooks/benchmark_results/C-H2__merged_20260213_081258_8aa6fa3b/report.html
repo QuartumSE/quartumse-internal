@@ -557,6 +557,11 @@
     <p>Shadows (<code>classical_shadows_v0</code>) dominates baseline (<code>direct_grouped</code>) at <strong>all shot budgets</strong> tested (5k, 10k, 20k) by mean SE.</p>
 
     <h3>Task 5: Pilot Selection</h3>
+    <p style="margin-bottom:8px;">The original pilot analysis uses <em>mean SE</em> as the selection criterion and always picks <code>direct_optimized</code>.
+    But mean SE is just one metric. The tables below show which protocol would be selected &mdash; and whether that selection is correct &mdash;
+    under different criteria.</p>
+
+    <h4>5a. Original Pilot Results (Mean SE criterion)</h4>
     <table>
         <tr><th>Pilot Fraction</th><th>Selection Accuracy</th><th>Mean Regret</th><th>Selected Protocol</th></tr>
         <tr><td>2%</td><td>100%</td><td>0.000</td><td>direct_optimized</td></tr>
@@ -564,7 +569,200 @@
         <tr><td>10%</td><td>100%</td><td>0.000</td><td>direct_optimized</td></tr>
         <tr><td>20%</td><td>100%</td><td>0.000</td><td>direct_optimized</td></tr>
     </table>
-    <p style="font-size:13px; color:#888; margin-top:6px;">Pilot selection is perfectly reliable: even 2% pilot fraction correctly selects <code>direct_optimized</code> every time with zero regret.</p>
+
+    <h4>5b. Protocol Winner by Metric (Overall, all observables)</h4>
+    <p style="font-size:13px; color:#888; margin-bottom:8px;">Which protocol has the lowest value for each metric? The winner depends on <em>what you optimise for</em>.</p>
+    <table>
+        <tr>
+            <th>Metric</th>
+            <th>Winner at N=5k</th>
+            <th>Winner at N=10k</th>
+            <th>Winner at N=20k</th>
+            <th>Interpretation</th>
+        </tr>
+        <tr>
+            <td><strong>Mean SE</strong></td>
+            <td><span class="tag tag-orange">direct_optimized</span></td>
+            <td><span class="tag tag-orange">direct_optimized</span></td>
+            <td><span class="tag tag-orange">direct_optimized</span></td>
+            <td>Best average performance</td>
+        </tr>
+        <tr>
+            <td><strong>Median SE</strong></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-orange">direct_optimized</span></td>
+            <td><span class="tag tag-orange">direct_optimized</span></td>
+            <td>Best typical observable</td>
+        </tr>
+        <tr>
+            <td><strong>P10</strong></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td>Best precision on easiest observables</td>
+        </tr>
+        <tr>
+            <td><strong>P25</strong></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td>Best lower-quartile precision</td>
+        </tr>
+        <tr>
+            <td><strong>P75</strong></td>
+            <td><span class="tag tag-green">direct_grouped</span></td>
+            <td><span class="tag tag-green">direct_grouped</span></td>
+            <td><span class="tag tag-green">direct_grouped</span></td>
+            <td>Best upper-quartile control</td>
+        </tr>
+        <tr>
+            <td><strong>P90</strong></td>
+            <td><span class="tag tag-green">direct_grouped</span></td>
+            <td><span class="tag tag-green">direct_grouped</span></td>
+            <td><span class="tag tag-green">direct_grouped</span></td>
+            <td>Best tail control</td>
+        </tr>
+        <tr>
+            <td><strong>Max SE</strong></td>
+            <td><span class="tag tag-green">direct_grouped</span></td>
+            <td><span class="tag tag-green">direct_grouped</span></td>
+            <td><span class="tag tag-green">direct_grouped</span></td>
+            <td>Best worst-case guarantee</td>
+        </tr>
+    </table>
+    <div class="callout">
+        <strong>Three distinct niches:</strong>
+        Shadows wins on P10 &amp; P25 (best precision on the majority of observables),
+        direct_optimized wins on mean &amp; median (best aggregate),
+        direct_grouped wins on P75, P90 &amp; max (tightest worst-case). No single protocol dominates all metrics.
+    </div>
+
+    <h4>5c. Protocol Winner by Metric &times; Locality (N = 20,000)</h4>
+    <p style="font-size:13px; color:#888; margin-bottom:8px;">Per-locality breakdown reveals the full picture: shadows dominates almost every metric at k&le;3.</p>
+    <table>
+        <tr>
+            <th>Metric</th>
+            <th>k = 1 (12 obs)</th>
+            <th>k = 2 (27 obs)</th>
+            <th>k = 3 (25 obs)</th>
+            <th>k = 4 (25 obs)</th>
+        </tr>
+        <tr>
+            <td><strong>Mean</strong></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-green">direct_grouped</span></td>
+        </tr>
+        <tr>
+            <td><strong>Median</strong></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-green">direct_grouped</span></td>
+        </tr>
+        <tr>
+            <td><strong>P10</strong></td>
+            <td><span class="tag tag-green">direct_grouped</span></td>
+            <td><span class="tag tag-orange">direct_optimized</span></td>
+            <td><span class="tag tag-orange">direct_optimized</span></td>
+            <td><span class="tag tag-orange">direct_optimized</span></td>
+        </tr>
+        <tr>
+            <td><strong>P25</strong></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-orange">direct_optimized</span></td>
+            <td><span class="tag tag-green">direct_grouped</span></td>
+        </tr>
+        <tr>
+            <td><strong>P75</strong></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-green">direct_grouped</span></td>
+        </tr>
+        <tr>
+            <td><strong>P90</strong></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-green">direct_grouped</span></td>
+        </tr>
+        <tr>
+            <td><strong>Max</strong></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-blue">shadows</span></td>
+            <td><span class="tag tag-green">direct_grouped</span></td>
+        </tr>
+    </table>
+    <div class="callout callout-good">
+        <strong>Shadows wins 15 of 21 metric&times;locality cells for k&le;3</strong> (including mean, median, P75, P90, and max).
+        At k=1&ndash;2, shadows wins on <em>every</em> metric except P10 (where some observables have exact zero SE under direct methods).
+        At k=3, shadows wins mean, median, and the entire upper tail (P75+), while direct_optimized wins P10 and P25 (the easiest observables within that locality).
+        At k=4, direct_grouped wins everything except P10.
+    </div>
+
+    <h4>5d. Pilot Simulation: What If We Used Different Selection Criteria?</h4>
+    <p style="font-size:13px; color:#888; margin-bottom:8px;">
+        Pilot at N=5,000, target at N=20,000. Does the pilot selection at N=5k correctly identify the best protocol at N=20k?
+    </p>
+    <table>
+        <tr>
+            <th>Criterion</th>
+            <th>Overall</th>
+            <th>k = 1</th>
+            <th>k = 2</th>
+            <th>k = 3</th>
+            <th>k = 4</th>
+        </tr>
+        <tr>
+            <td><strong>Mean</strong></td>
+            <td><span class="tag tag-orange">d_optimized</span> &#10003;</td>
+            <td><span class="tag tag-blue">shadows</span> &#10003;</td>
+            <td><span class="tag tag-blue">shadows</span> &#10003;</td>
+            <td><span class="tag tag-blue">shadows</span> &#10003;</td>
+            <td><span class="tag tag-green">d_grouped</span> &#10003;</td>
+        </tr>
+        <tr>
+            <td><strong>Median</strong></td>
+            <td><span class="tag tag-blue">shadows</span> &#10007;</td>
+            <td><span class="tag tag-blue">shadows</span> &#10003;</td>
+            <td><span class="tag tag-blue">shadows</span> &#10003;</td>
+            <td><span class="tag tag-blue">shadows</span> &#10003;</td>
+            <td><span class="tag tag-green">d_grouped</span> &#10003;</td>
+        </tr>
+        <tr>
+            <td><strong>P10</strong></td>
+            <td><span class="tag tag-blue">shadows</span> &#10003;</td>
+            <td><span class="tag tag-green">d_grouped</span> &#10003;</td>
+            <td><span class="tag tag-orange">d_optimized</span> &#10003;</td>
+            <td><span class="tag tag-orange">d_optimized</span> &#10003;</td>
+            <td><span class="tag tag-orange">d_optimized</span> &#10003;</td>
+        </tr>
+        <tr>
+            <td><strong>P25</strong></td>
+            <td><span class="tag tag-blue">shadows</span> &#10003;</td>
+            <td><span class="tag tag-orange">d_optimized</span> &#10007;</td>
+            <td><span class="tag tag-blue">shadows</span> &#10003;</td>
+            <td><span class="tag tag-orange">d_optimized</span> &#10003;</td>
+            <td><span class="tag tag-orange">d_optimized</span> &#10007;</td>
+        </tr>
+    </table>
+    <p style="font-size:13px; color:#888; margin-top:6px;">
+        &#10003; = pilot correctly identifies the N=20k winner. &#10007; = pilot selects wrong protocol.<br>
+        <strong>Mean and P10 criteria achieve perfect pilot accuracy across all localities.</strong>
+        Median has one mismatch overall (selects shadows at 5k, but direct_optimized wins median at 20k).
+        P25 has two locality-level mismatches.
+    </p>
+    <div class="callout">
+        <strong>Recommendation:</strong> For overall selection, use <strong>mean SE</strong> (selects direct_optimized) or <strong>P10</strong> (selects shadows).
+        For per-locality adaptive selection, <strong>mean</strong> is the most reliable pilot criterion &mdash;
+        it correctly identifies shadows at k&le;3 and direct_grouped at k=4.
+        A <strong>locality-aware pilot</strong> that selects separately per locality class would leverage shadows' k&le;3 advantage
+        while falling back to direct methods at k=4.
+    </div>
 
     <h3>Task 6: Bias-Variance Decomposition</h3>
     <table>

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>C-H2 Benchmark Report &mdash; 2026-02-13</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            background: #f0f2f5;
+            color: #1a1a2e;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 40px 36px;
+            border-radius: 12px;
+            margin-bottom: 28px;
+        }
+        .header h1 { font-size: 30px; margin-bottom: 6px; }
+        .header .subtitle { opacity: 0.92; font-size: 15px; }
+        .header .run-id { opacity: 0.7; font-size: 13px; font-family: monospace; margin-top: 10px; }
+
+        /* Cards */
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            padding: 28px 32px;
+            margin-bottom: 22px;
+        }
+        .card h2 {
+            font-size: 20px;
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+            margin-bottom: 18px;
+        }
+        .card h3 { font-size: 16px; color: #444; margin: 18px 0 10px; }
+
+        /* Metric grid */
+        .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+        .metric-box {
+            background: #f8f9fb;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .metric-box .label { font-size: 11px; text-transform: uppercase; color: #888; letter-spacing: 0.5px; }
+        .metric-box .value { font-size: 26px; font-weight: 700; color: #667eea; margin-top: 4px; }
+        .metric-box .value.green { color: #27ae60; }
+        .metric-box .value.orange { color: #e67e22; }
+        .metric-box .value.small { font-size: 18px; }
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; margin: 12px 0 8px; font-size: 14px; }
+        th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid #e8e8e8; }
+        th { background: #f4f5f7; font-weight: 600; color: #555; font-size: 12px; text-transform: uppercase; letter-spacing: 0.3px; }
+        tr:hover td { background: #fafbfc; }
+        td code { background: #eef; padding: 2px 6px; border-radius: 3px; font-size: 13px; }
+        .winner { background: #e8f5e9 !important; font-weight: 600; }
+
+        /* Tags */
+        .tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; margin: 2px 3px; }
+        .tag-blue { background: #667eea; color: #fff; }
+        .tag-green { background: #27ae60; color: #fff; }
+        .tag-orange { background: #e67e22; color: #fff; }
+        .tag-gray { background: #bbb; color: #fff; }
+
+        /* Plots */
+        .plot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 18px; margin-top: 14px; }
+        .plot-grid img { width: 100%; border-radius: 6px; border: 1px solid #e0e0e0; }
+        .plot-caption { text-align: center; font-size: 12px; color: #888; margin-top: 4px; }
+
+        /* Noise table highlight */
+        .noise-best { color: #27ae60; font-weight: 700; }
+
+        /* Footer */
+        .footer { text-align: center; color: #aaa; font-size: 12px; margin-top: 36px; padding-top: 18px; border-top: 1px solid #ddd; }
+
+        /* Two-col layout */
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+        @media (max-width: 800px) { .two-col { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<div class="header">
+    <h1>C-H2 Benchmark Report</h1>
+    <div class="subtitle">H2 Molecule &mdash; 4 Qubits &bull; 89 Observables &bull; 3 Protocols &bull; Noise Sweep Enabled</div>
+    <div class="run-id">Run ID: C-H2__merged_20260213_081258_8aa6fa3b &bull; 2026-02-13 08:12 &ndash; 11:05 UTC (~2h53m)</div>
+</div>
+
+<!-- ===== CONFIGURATION ===== -->
+<div class="card">
+    <h2>Configuration</h2>
+    <div class="metrics">
+        <div class="metric-box"><div class="label">Mode</div><div class="value small">Analysis</div></div>
+        <div class="metric-box"><div class="label">Shot Grid</div><div class="value small">5k / 10k / 20k</div></div>
+        <div class="metric-box"><div class="label">Replicates</div><div class="value">10</div></div>
+        <div class="metric-box"><div class="label">Epsilon</div><div class="value">0.05</div></div>
+        <div class="metric-box"><div class="label">Delta</div><div class="value">0.05</div></div>
+        <div class="metric-box"><div class="label">Seed</div><div class="value">42</div></div>
+    </div>
+    <div style="margin-top: 14px;">
+        <span class="tag tag-blue">classical_shadows_v0</span>
+        <span class="tag tag-green">direct_grouped</span>
+        <span class="tag tag-orange">direct_optimized</span>
+    </div>
+</div>
+
+<!-- ===== HEADLINE RESULTS ===== -->
+<div class="card">
+    <h2>Headline Results (N = 20,000)</h2>
+    <div class="metrics">
+        <div class="metric-box">
+            <div class="label">Winner (Mean SE)</div>
+            <div class="value small green">direct_optimized</div>
+        </div>
+        <div class="metric-box">
+            <div class="label">Winner (Cost-Normalised)</div>
+            <div class="value small green">direct_optimized</div>
+        </div>
+        <div class="metric-box">
+            <div class="label">Shadows Win %</div>
+            <div class="value">61.8%</div>
+        </div>
+        <div class="metric-box">
+            <div class="label">SSF (Shadows / Baseline)</div>
+            <div class="value">1.08&times;</div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== PROTOCOL PERFORMANCE ===== -->
+<div class="card">
+    <h2>Protocol Performance at Max Budget (N = 20,000)</h2>
+    <table>
+        <tr>
+            <th>Protocol</th>
+            <th>Mean SE</th>
+            <th>Max SE</th>
+            <th>Median SE</th>
+            <th>Mean |Error|</th>
+            <th>Max |Error|</th>
+        </tr>
+        <tr class="winner">
+            <td><code>direct_optimized</code></td>
+            <td>0.0348</td>
+            <td>0.0506</td>
+            <td>0.0357</td>
+            <td>0.1655</td>
+            <td>1.9823</td>
+        </tr>
+        <tr>
+            <td><code>classical_shadows_v0</code></td>
+            <td>0.0361</td>
+            <td>0.0687</td>
+            <td>0.0361</td>
+            <td>0.1667</td>
+            <td>1.9877</td>
+        </tr>
+        <tr>
+            <td><code>direct_grouped</code></td>
+            <td>0.0375</td>
+            <td>0.0413</td>
+            <td>0.0413</td>
+            <td>0.1663</td>
+            <td>1.9932</td>
+        </tr>
+    </table>
+    <p style="font-size:13px; color:#888; margin-top:8px;">
+        <strong>direct_optimized</strong> achieves the lowest mean SE (0.0348) but highest max SE (0.0506).
+        <strong>direct_grouped</strong> has the tightest worst-case bound (0.0413).
+        <strong>classical_shadows_v0</strong> wins on 61.8% of individual observables.
+    </p>
+</div>
+
+<!-- ===== TASK RESULTS ===== -->
+<div class="card">
+    <h2>Task Analysis</h2>
+
+    <h3>Task 1: Worst-Case N* (95th Percentile)</h3>
+    <table>
+        <tr><th>Protocol</th><th>N*<sub>95</sub></th><th>SE @ 5k</th><th>SE @ 10k</th><th>SE @ 20k</th></tr>
+        <tr class="winner"><td><code>direct_grouped</code></td><td>20,000</td><td>0.0828</td><td>0.0584</td><td>0.0413</td></tr>
+        <tr><td><code>direct_optimized</code></td><td>&mdash;</td><td>0.1015</td><td>0.0716</td><td>0.0506</td></tr>
+        <tr><td><code>classical_shadows_v0</code></td><td>&mdash;</td><td>0.1336</td><td>0.0927</td><td>0.0654</td></tr>
+    </table>
+
+    <h3>Task 2: Average Target (N* for mean SE &le; &epsilon;)</h3>
+    <table>
+        <tr><th>Protocol</th><th>N*</th></tr>
+        <tr class="winner"><td><code>direct_optimized</code></td><td>10,000</td></tr>
+        <tr><td><code>direct_grouped</code></td><td>20,000</td></tr>
+        <tr><td><code>classical_shadows_v0</code></td><td>20,000</td></tr>
+    </table>
+
+    <h3>Task 4: Dominance</h3>
+    <p>Shadows (<code>classical_shadows_v0</code>) dominates baseline (<code>direct_grouped</code>) at <strong>all shot budgets</strong> tested (5k, 10k, 20k) by mean SE.</p>
+
+    <h3>Task 5: Pilot Selection</h3>
+    <table>
+        <tr><th>Pilot Fraction</th><th>Selection Accuracy</th><th>Mean Regret</th><th>Selected Protocol</th></tr>
+        <tr><td>2%</td><td>100%</td><td>0.000</td><td>direct_optimized</td></tr>
+        <tr><td>5%</td><td>100%</td><td>0.000</td><td>direct_optimized</td></tr>
+        <tr><td>10%</td><td>100%</td><td>0.000</td><td>direct_optimized</td></tr>
+        <tr><td>20%</td><td>100%</td><td>0.000</td><td>direct_optimized</td></tr>
+    </table>
+    <p style="font-size:13px; color:#888; margin-top:6px;">Pilot selection is perfectly reliable: even 2% pilot fraction correctly selects <code>direct_optimized</code> every time with zero regret.</p>
+
+    <h3>Task 6: Bias-Variance Decomposition</h3>
+    <table>
+        <tr><th>Protocol</th><th>Mean Bias</th><th>Max Bias</th><th>Mean RMSE</th><th>Bias &darr; with N?</th></tr>
+        <tr><td><code>direct_optimized</code></td><td>0.0025</td><td>1.9697</td><td>0.1860</td><td>Yes</td></tr>
+        <tr><td><code>classical_shadows_v0</code></td><td>0.0034</td><td>1.9666</td><td>0.1874</td><td>Yes</td></tr>
+        <tr><td><code>direct_grouped</code></td><td>0.0050</td><td>1.9745</td><td>0.1864</td><td>Yes</td></tr>
+    </table>
+</div>
+
+<!-- ===== INTERPOLATED N* ===== -->
+<div class="card">
+    <h2>Interpolated N* (Power-Law Fit)</h2>
+    <table>
+        <tr><th>Protocol</th><th>N* Interpolated</th><th>Amplitude</th><th>Exponent</th><th>R&sup2;</th></tr>
+        <tr class="winner"><td><code>direct_optimized</code></td><td>9,714</td><td>4.935</td><td>-0.500</td><td>1.000000</td></tr>
+        <tr><td><code>classical_shadows_v0</code></td><td>10,386</td><td>5.078</td><td>-0.500</td><td>0.999994</td></tr>
+        <tr><td><code>direct_grouped</code></td><td>11,289</td><td>5.273</td><td>-0.499</td><td>0.999986</td></tr>
+    </table>
+    <p style="font-size:13px; color:#888; margin-top:6px;">All protocols show near-perfect &radic;N scaling (exponent &approx; -0.50). <code>direct_optimized</code> reaches &epsilon;=0.05 with ~16% fewer shots than <code>direct_grouped</code>.</p>
+</div>
+
+<!-- ===== CROSSOVER ANALYSIS ===== -->
+<div class="card">
+    <h2>Crossover Analysis (Shadows vs Baseline)</h2>
+    <div class="metrics">
+        <div class="metric-box"><div class="label">Shadows Always Wins</div><div class="value">55</div></div>
+        <div class="metric-box"><div class="label">Baseline Always Wins</div><div class="value">33</div></div>
+        <div class="metric-box"><div class="label">Has Crossover</div><div class="value">1</div></div>
+        <div class="metric-box"><div class="label">Mean Crossover N</div><div class="value small">5,163</div></div>
+    </div>
+</div>
+
+<!-- ===== LOCALITY ANALYSIS ===== -->
+<div class="card">
+    <h2>Locality Analysis (N = 20,000)</h2>
+    <table>
+        <tr>
+            <th rowspan="2">Locality</th>
+            <th rowspan="2"># Obs</th>
+            <th colspan="2">direct_grouped</th>
+            <th colspan="2">direct_optimized</th>
+            <th colspan="2">classical_shadows_v0</th>
+        </tr>
+        <tr>
+            <th>Mean SE</th><th>Max SE</th>
+            <th>Mean SE</th><th>Max SE</th>
+            <th>Mean SE</th><th>Max SE</th>
+        </tr>
+        <tr>
+            <td>1</td><td>12</td>
+            <td>0.0293</td><td>0.0413</td>
+            <td>0.0211</td><td>0.0300</td>
+            <td class="noise-best">0.0115</td><td>0.0124</td>
+        </tr>
+        <tr>
+            <td>2</td><td>27</td>
+            <td>0.0347</td><td>0.0413</td>
+            <td>0.0284</td><td>0.0425</td>
+            <td class="noise-best">0.0210</td><td>0.0218</td>
+        </tr>
+        <tr>
+            <td>3</td><td>25</td>
+            <td>0.0410</td><td>0.0413</td>
+            <td>0.0381</td><td>0.0506</td>
+            <td class="noise-best">0.0367</td><td>0.0386</td>
+        </tr>
+        <tr>
+            <td>4</td><td>25</td>
+            <td class="noise-best">0.0411</td><td>0.0413</td>
+            <td>0.0451</td><td>0.0506</td>
+            <td>0.0636</td><td>0.0687</td>
+        </tr>
+    </table>
+    <h3>Locality Correlation</h3>
+    <table>
+        <tr><th>Protocol</th><th>Correlation</th><th>R&sup2;</th><th>Slope</th></tr>
+        <tr><td><code>classical_shadows_v0</code></td><td>0.973</td><td>0.947</td><td>0.0182</td></tr>
+        <tr><td><code>direct_optimized</code></td><td>0.703</td><td>0.494</td><td>0.0083</td></tr>
+        <tr><td><code>direct_grouped</code></td><td>0.395</td><td>0.156</td><td>0.0039</td></tr>
+    </table>
+    <p style="font-size:13px; color:#888; margin-top:6px;">
+        Shadows excels at low-locality observables (k=1,2) but degrades sharply at k=4.
+        Direct methods are more uniform across locality. This is the expected theoretical behaviour for random Pauli shadows.
+    </p>
+</div>
+
+<!-- ===== STATISTICAL COMPARISON ===== -->
+<div class="card">
+    <h2>Statistical Comparison (Shadows vs Baseline)</h2>
+    <table>
+        <tr>
+            <th>N</th>
+            <th>Shadows Mean SE</th>
+            <th>Baseline Mean SE</th>
+            <th>Difference</th>
+            <th>p-value</th>
+            <th>Reject H<sub>0</sub>?</th>
+            <th>SSF [95% CI]</th>
+        </tr>
+        <tr>
+            <td>5,000</td>
+            <td>0.0721</td>
+            <td>0.0751</td>
+            <td>-0.0030</td>
+            <td>0.042</td>
+            <td><span class="tag tag-green">Yes</span></td>
+            <td>1.08 [1.00, 1.17]</td>
+        </tr>
+        <tr>
+            <td>10,000</td>
+            <td>0.0509</td>
+            <td>0.0532</td>
+            <td>-0.0023</td>
+            <td>0.027</td>
+            <td><span class="tag tag-green">Yes</span></td>
+            <td>1.09 [1.01, 1.18]</td>
+        </tr>
+        <tr>
+            <td>20,000</td>
+            <td>0.0361</td>
+            <td>0.0375</td>
+            <td>-0.0015</td>
+            <td>0.046</td>
+            <td><span class="tag tag-green">Yes</span></td>
+            <td>1.08 [1.00, 1.17]</td>
+        </tr>
+    </table>
+    <p style="font-size:13px; color:#888; margin-top:6px;">
+        Shadows is statistically significantly better than the grouped baseline at all shot budgets (p &lt; 0.05),
+        with a consistent ~8% shot savings factor. KS tests also reject (p &asymp; 0).
+    </p>
+</div>
+
+<!-- ===== COST ANALYSIS ===== -->
+<div class="card">
+    <h2>Cost Analysis (N = 20,000)</h2>
+    <table>
+        <tr><th>Protocol</th><th>Raw SE</th><th>Cost (Effective Shots)</th><th>Cost-Normalised SE</th><th>Circuit Depth</th><th>2Q Gates</th></tr>
+        <tr class="winner"><td><code>direct_optimized</code></td><td>0.0348</td><td>21,216</td><td>0.0359</td><td>4</td><td>4</td></tr>
+        <tr><td><code>classical_shadows_v0</code></td><td>0.0361</td><td>21,216</td><td>0.0372</td><td>4</td><td>4</td></tr>
+        <tr><td><code>direct_grouped</code></td><td>0.0375</td><td>21,216</td><td>0.0387</td><td>4</td><td>4</td></tr>
+    </table>
+    <p style="font-size:13px; color:#888; margin-top:6px;">
+        Ranking is unchanged after cost normalisation. All protocols have equal circuit overhead for 4-qubit H2.
+    </p>
+</div>
+
+<!-- ===== NOISE SWEEP ===== -->
+<div class="card">
+    <h2>Noise Sweep (Task 7)</h2>
+    <p style="margin-bottom:14px;">Performance at N = 20,000 across 3 noise profiles.</p>
+
+    <h3>Mean SE by Noise Profile</h3>
+    <table>
+        <tr>
+            <th>Noise Profile</th>
+            <th>direct_grouped</th>
+            <th>direct_optimized</th>
+            <th>classical_shadows_v0</th>
+            <th>Winner</th>
+        </tr>
+        <tr>
+            <td><code>ideal</code></td>
+            <td>0.0375</td>
+            <td class="noise-best">0.0348</td>
+            <td>0.0361</td>
+            <td><span class="tag tag-orange">direct_optimized</span></td>
+        </tr>
+        <tr>
+            <td><code>readout_1e-2</code></td>
+            <td>0.0381</td>
+            <td class="noise-best">0.0353</td>
+            <td>0.0361</td>
+            <td><span class="tag tag-orange">direct_optimized</span></td>
+        </tr>
+        <tr>
+            <td><code>depol_low</code></td>
+            <td>0.0376</td>
+            <td class="noise-best">0.0349</td>
+            <td>0.0361</td>
+            <td><span class="tag tag-orange">direct_optimized</span></td>
+        </tr>
+    </table>
+
+    <h3>Max SE by Noise Profile</h3>
+    <table>
+        <tr>
+            <th>Noise Profile</th>
+            <th>direct_grouped</th>
+            <th>direct_optimized</th>
+            <th>classical_shadows_v0</th>
+        </tr>
+        <tr>
+            <td><code>ideal</code></td>
+            <td class="noise-best">0.0413</td>
+            <td>0.0506</td>
+            <td>0.0687</td>
+        </tr>
+        <tr>
+            <td><code>readout_1e-2</code></td>
+            <td class="noise-best">0.0413</td>
+            <td>0.0506</td>
+            <td>0.0687</td>
+        </tr>
+        <tr>
+            <td><code>depol_low</code></td>
+            <td class="noise-best">0.0413</td>
+            <td>0.0506</td>
+            <td>0.0687</td>
+        </tr>
+    </table>
+
+    <h3>Noise Impact Summary</h3>
+    <table>
+        <tr><th>Protocol</th><th>Ideal Mean SE</th><th>Readout Mean SE</th><th>Depol Mean SE</th><th>Max Degradation</th></tr>
+        <tr>
+            <td><code>direct_grouped</code></td>
+            <td>0.0375</td>
+            <td>0.0381</td>
+            <td>0.0376</td>
+            <td>+1.5%</td>
+        </tr>
+        <tr>
+            <td><code>direct_optimized</code></td>
+            <td>0.0348</td>
+            <td>0.0353</td>
+            <td>0.0349</td>
+            <td>+1.2%</td>
+        </tr>
+        <tr>
+            <td><code>classical_shadows_v0</code></td>
+            <td>0.0361</td>
+            <td>0.0361</td>
+            <td>0.0361</td>
+            <td>+0.0%</td>
+        </tr>
+    </table>
+    <p style="font-size:13px; color:#888; margin-top:6px;">
+        All protocols are highly robust to the tested noise levels. <code>classical_shadows_v0</code> shows zero degradation
+        (likely because shadows SE is dominated by the random measurement variance, not hardware noise at these levels).
+        Direct methods show &le;1.5% degradation under readout error.
+        <strong>direct_optimized</strong> remains the winner across all noise profiles.
+    </p>
+</div>
+
+<!-- ===== PLOTS ===== -->
+<div class="card">
+    <h2>Plots</h2>
+    <div class="plot-grid">
+        <div>
+            <img src="base/plots/attainment.png" alt="Attainment Curves">
+            <div class="plot-caption">Attainment Curves &mdash; SE vs Shot Budget</div>
+        </div>
+        <div>
+            <img src="base/plots/ssf.png" alt="Shot Savings Factor">
+            <div class="plot-caption">Shot Savings Factor (SSF)</div>
+        </div>
+        <div>
+            <img src="base/plots/coverage.png" alt="Coverage">
+            <div class="plot-caption">CI Coverage</div>
+        </div>
+        <div>
+            <img src="base/plots/se_dist_N5000.png" alt="SE Distribution at N=5000">
+            <div class="plot-caption">SE Distribution at N = 5,000</div>
+        </div>
+        <div>
+            <img src="base/plots/se_dist_N10000.png" alt="SE Distribution at N=10000">
+            <div class="plot-caption">SE Distribution at N = 10,000</div>
+        </div>
+        <div>
+            <img src="base/plots/se_dist_N20000.png" alt="SE Distribution at N=20000">
+            <div class="plot-caption">SE Distribution at N = 20,000</div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== KEY TAKEAWAYS ===== -->
+<div class="card">
+    <h2>Key Takeaways</h2>
+    <ol style="padding-left: 20px; font-size: 14px; line-height: 2;">
+        <li><strong>direct_optimized</strong> is the overall winner for H2 (4q), achieving the lowest mean SE at all shot budgets and requiring ~14% fewer shots than baseline to reach &epsilon;=0.05.</li>
+        <li><strong>classical_shadows_v0</strong> wins on 61.8% of individual observables (especially low-locality ones, k&le;2) but loses badly on high-locality (k=4) observables &mdash; as expected from theory.</li>
+        <li><strong>direct_grouped</strong> provides the tightest worst-case guarantee (max SE = 0.0413) due to uniform shot allocation.</li>
+        <li>Pilot selection with just 2% overhead reliably picks <code>direct_optimized</code> with zero regret.</li>
+        <li>All protocols are robust to readout error (1%) and depolarisation noise, with &le;1.5% SE degradation.</li>
+        <li>All protocols exhibit near-perfect &radic;N scaling (exponent &approx; -0.50, R&sup2; &gt; 0.9999).</li>
+    </ol>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div class="footer">
+    <p>Generated with QuartumSE &bull; C-H2 Benchmark &bull; 2026-02-13</p>
+    <p>Run ID: <code>C-H2__merged_20260213_081258_8aa6fa3b</code></p>
+</div>
+
+</body>
+</html>

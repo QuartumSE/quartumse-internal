@@ -566,7 +566,7 @@
         We simulate a pilot experiment: spend a fraction of the shot budget to measure all protocols, then commit the remaining budget
         to the protocol that looks best under a given criterion.
         Pilot fractions: 25% (N<sub>pilot</sub>=5,000) and 50% (N<sub>pilot</sub>=10,000), with target N=20,000.
-        For each <em>selection criterion</em> (mean, median, P10, P25 of the SE distribution), we show which protocol the pilot selects
+        For each <em>selection criterion</em> (mean, median, P10, P25, P75, P90, max of the SE distribution), we show which protocol the pilot selects
         and whether that matches the oracle (the true best at N=20k).
     </p>
 
@@ -577,39 +577,60 @@
             <th>Pilot Selects</th>
             <th>Oracle (N=20k)</th>
             <th>Correct?</th>
-            <th colspan="4">Target performance of selected protocol at N=20k</th>
+            <th colspan="7">Target performance of selected protocol at N=20k</th>
         </tr>
         <tr>
             <th></th><th></th><th></th><th></th>
-            <th>Mean SE</th><th>Median SE</th><th>P10</th><th>P25</th>
+            <th>Mean</th><th>Median</th><th>P10</th><th>P25</th><th>P75</th><th>P90</th><th>Max</th>
         </tr>
         <tr>
             <td><strong>Mean SE</strong></td>
             <td><span class="tag tag-orange">Direct Optimized</span></td>
             <td><span class="tag tag-orange">Direct Optimized</span></td>
             <td style="color:green; font-weight:bold;">&#10003;</td>
-            <td><strong>0.0348</strong></td><td><strong>0.0357</strong></td><td>0.0143</td><td>0.0300</td>
+            <td><strong>0.0348</strong></td><td><strong>0.0357</strong></td><td>0.0143</td><td>0.0300</td><td>0.0424</td><td>0.0505</td><td>0.0506</td>
         </tr>
         <tr>
             <td><strong>Median SE</strong></td>
             <td><span class="tag tag-blue">Shadows</span></td>
             <td><span class="tag tag-orange">Direct Optimized</span></td>
             <td style="color:red; font-weight:bold;">&#10007;</td>
-            <td>0.0361</td><td>0.0361</td><td><strong>0.0123</strong></td><td><strong>0.0210</strong></td>
+            <td>0.0361</td><td>0.0361</td><td><strong>0.0123</strong></td><td><strong>0.0210</strong></td><td>0.0611</td><td>0.0643</td><td>0.0687</td>
         </tr>
         <tr>
             <td><strong>P10</strong></td>
             <td><span class="tag tag-blue">Shadows</span></td>
             <td><span class="tag tag-blue">Shadows</span></td>
             <td style="color:green; font-weight:bold;">&#10003;</td>
-            <td>0.0361</td><td>0.0361</td><td><strong>0.0123</strong></td><td><strong>0.0210</strong></td>
+            <td>0.0361</td><td>0.0361</td><td><strong>0.0123</strong></td><td><strong>0.0210</strong></td><td>0.0611</td><td>0.0643</td><td>0.0687</td>
         </tr>
         <tr>
             <td><strong>P25</strong></td>
             <td><span class="tag tag-blue">Shadows</span></td>
             <td><span class="tag tag-blue">Shadows</span></td>
             <td style="color:green; font-weight:bold;">&#10003;</td>
-            <td>0.0361</td><td>0.0361</td><td><strong>0.0123</strong></td><td><strong>0.0210</strong></td>
+            <td>0.0361</td><td>0.0361</td><td><strong>0.0123</strong></td><td><strong>0.0210</strong></td><td>0.0611</td><td>0.0643</td><td>0.0687</td>
+        </tr>
+        <tr>
+            <td><strong>P75</strong></td>
+            <td><span class="tag tag-green">Direct Grouped</span></td>
+            <td><span class="tag tag-green">Direct Grouped</span></td>
+            <td style="color:green; font-weight:bold;">&#10003;</td>
+            <td>0.0375</td><td>0.0413</td><td>0.0208</td><td>0.0411</td><td><strong>0.0413</strong></td><td><strong>0.0413</strong></td><td><strong>0.0413</strong></td>
+        </tr>
+        <tr>
+            <td><strong>P90</strong></td>
+            <td><span class="tag tag-green">Direct Grouped</span></td>
+            <td><span class="tag tag-green">Direct Grouped</span></td>
+            <td style="color:green; font-weight:bold;">&#10003;</td>
+            <td>0.0375</td><td>0.0413</td><td>0.0208</td><td>0.0411</td><td><strong>0.0413</strong></td><td><strong>0.0413</strong></td><td><strong>0.0413</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Max</strong></td>
+            <td><span class="tag tag-green">Direct Grouped</span></td>
+            <td><span class="tag tag-green">Direct Grouped</span></td>
+            <td style="color:green; font-weight:bold;">&#10003;</td>
+            <td>0.0375</td><td>0.0413</td><td>0.0208</td><td>0.0411</td><td><strong>0.0413</strong></td><td><strong>0.0413</strong></td><td><strong>0.0413</strong></td>
         </tr>
     </table>
 
@@ -620,47 +641,69 @@
             <th>Pilot Selects</th>
             <th>Oracle (N=20k)</th>
             <th>Correct?</th>
-            <th colspan="4">Target performance of selected protocol at N=20k</th>
+            <th colspan="7">Target performance of selected protocol at N=20k</th>
         </tr>
         <tr>
             <th></th><th></th><th></th><th></th>
-            <th>Mean SE</th><th>Median SE</th><th>P10</th><th>P25</th>
+            <th>Mean</th><th>Median</th><th>P10</th><th>P25</th><th>P75</th><th>P90</th><th>Max</th>
         </tr>
         <tr>
             <td><strong>Mean SE</strong></td>
             <td><span class="tag tag-orange">Direct Optimized</span></td>
             <td><span class="tag tag-orange">Direct Optimized</span></td>
             <td style="color:green; font-weight:bold;">&#10003;</td>
-            <td><strong>0.0348</strong></td><td><strong>0.0357</strong></td><td>0.0143</td><td>0.0300</td>
+            <td><strong>0.0348</strong></td><td><strong>0.0357</strong></td><td>0.0143</td><td>0.0300</td><td>0.0424</td><td>0.0505</td><td>0.0506</td>
         </tr>
         <tr>
             <td><strong>Median SE</strong></td>
             <td><span class="tag tag-orange">Direct Optimized</span></td>
             <td><span class="tag tag-orange">Direct Optimized</span></td>
             <td style="color:green; font-weight:bold;">&#10003;</td>
-            <td><strong>0.0348</strong></td><td><strong>0.0357</strong></td><td>0.0143</td><td>0.0300</td>
+            <td><strong>0.0348</strong></td><td><strong>0.0357</strong></td><td>0.0143</td><td>0.0300</td><td>0.0424</td><td>0.0505</td><td>0.0506</td>
         </tr>
         <tr>
             <td><strong>P10</strong></td>
             <td><span class="tag tag-blue">Shadows</span></td>
             <td><span class="tag tag-blue">Shadows</span></td>
             <td style="color:green; font-weight:bold;">&#10003;</td>
-            <td>0.0361</td><td>0.0361</td><td><strong>0.0123</strong></td><td><strong>0.0210</strong></td>
+            <td>0.0361</td><td>0.0361</td><td><strong>0.0123</strong></td><td><strong>0.0210</strong></td><td>0.0611</td><td>0.0643</td><td>0.0687</td>
         </tr>
         <tr>
             <td><strong>P25</strong></td>
             <td><span class="tag tag-blue">Shadows</span></td>
             <td><span class="tag tag-blue">Shadows</span></td>
             <td style="color:green; font-weight:bold;">&#10003;</td>
-            <td>0.0361</td><td>0.0361</td><td><strong>0.0123</strong></td><td><strong>0.0210</strong></td>
+            <td>0.0361</td><td>0.0361</td><td><strong>0.0123</strong></td><td><strong>0.0210</strong></td><td>0.0611</td><td>0.0643</td><td>0.0687</td>
+        </tr>
+        <tr>
+            <td><strong>P75</strong></td>
+            <td><span class="tag tag-green">Direct Grouped</span></td>
+            <td><span class="tag tag-green">Direct Grouped</span></td>
+            <td style="color:green; font-weight:bold;">&#10003;</td>
+            <td>0.0375</td><td>0.0413</td><td>0.0208</td><td>0.0411</td><td><strong>0.0413</strong></td><td><strong>0.0413</strong></td><td><strong>0.0413</strong></td>
+        </tr>
+        <tr>
+            <td><strong>P90</strong></td>
+            <td><span class="tag tag-green">Direct Grouped</span></td>
+            <td><span class="tag tag-green">Direct Grouped</span></td>
+            <td style="color:green; font-weight:bold;">&#10003;</td>
+            <td>0.0375</td><td>0.0413</td><td>0.0208</td><td>0.0411</td><td><strong>0.0413</strong></td><td><strong>0.0413</strong></td><td><strong>0.0413</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Max</strong></td>
+            <td><span class="tag tag-green">Direct Grouped</span></td>
+            <td><span class="tag tag-green">Direct Grouped</span></td>
+            <td style="color:green; font-weight:bold;">&#10003;</td>
+            <td>0.0375</td><td>0.0413</td><td>0.0208</td><td>0.0411</td><td><strong>0.0413</strong></td><td><strong>0.0413</strong></td><td><strong>0.0413</strong></td>
         </tr>
     </table>
 
     <div class="callout">
-        <strong>Key finding:</strong> The choice of selection criterion determines which protocol you end up with, and different protocols excel on different metrics.
-        If you select by <strong>mean SE</strong>, you get Direct Optimized (best mean=0.0348, best median=0.0357).
-        If you select by <strong>P10 or P25</strong>, you get Shadows (best P10=0.0123, best P25=0.0210 &mdash; 14% and 30% lower than Direct Optimized on those metrics).
-        At 25% pilot fraction, median-based selection <em>incorrectly</em> picks Shadows over Direct Optimized; this mismatch disappears at 50%.
+        <strong>Key finding:</strong> The choice of selection criterion determines which protocol you end up with &mdash; three distinct clusters emerge.
+        <strong>Mean/Median</strong> &rarr; Direct Optimized (best mean=0.0348, best median=0.0357).
+        <strong>P10/P25</strong> &rarr; Shadows (best P10=0.0123, best P25=0.0210 &mdash; 14% and 30% lower than Direct Optimized).
+        <strong>P75/P90/Max</strong> &rarr; Direct Grouped (best worst-case: P75=P90=Max&asymp;0.0413, far tighter than either alternative).
+        At 25% pilot, only median-based selection has a mismatch (picks Shadows instead of Direct Optimized); all other 6 criteria are correct. At 50%, all 7 criteria achieve perfect accuracy.
         <strong>The pilot criterion itself is a design decision that implicitly prioritises different protocol strengths.</strong>
     </div>
 
@@ -713,6 +756,30 @@
             <td><span class="tag tag-orange">D. Optimized</span> <span style="color:red;">&#10007;</span><br>0.0451</td>
             <td style="color:#cc8800; font-weight:bold;">2/4</td>
         </tr>
+        <tr>
+            <td><strong>P75</strong></td>
+            <td><span class="tag tag-blue">Shadows</span> &#10003;<br>0.0115</td>
+            <td><span class="tag tag-blue">Shadows</span> &#10003;<br>0.0210</td>
+            <td><span class="tag tag-blue">Shadows</span> &#10003;<br>0.0367</td>
+            <td><span class="tag tag-green">D. Grouped</span> &#10003;<br>0.0411</td>
+            <td style="color:green; font-weight:bold;">4/4</td>
+        </tr>
+        <tr>
+            <td><strong>P90</strong></td>
+            <td><span class="tag tag-blue">Shadows</span> &#10003;<br>0.0115</td>
+            <td><span class="tag tag-blue">Shadows</span> &#10003;<br>0.0210</td>
+            <td><span class="tag tag-blue">Shadows</span> &#10003;<br>0.0367</td>
+            <td><span class="tag tag-green">D. Grouped</span> &#10003;<br>0.0411</td>
+            <td style="color:green; font-weight:bold;">4/4</td>
+        </tr>
+        <tr>
+            <td><strong>Max</strong></td>
+            <td><span class="tag tag-blue">Shadows</span> &#10003;<br>0.0115</td>
+            <td><span class="tag tag-blue">Shadows</span> &#10003;<br>0.0210</td>
+            <td><span class="tag tag-blue">Shadows</span> &#10003;<br>0.0367</td>
+            <td><span class="tag tag-green">D. Grouped</span> &#10003;<br>0.0411</td>
+            <td style="color:green; font-weight:bold;">4/4</td>
+        </tr>
     </table>
 
     <p style="font-weight:600; margin-top:16px; margin-bottom:6px;">Pilot N = 10,000 &rarr; Target N = 20,000: Per-Locality Selections</p>
@@ -757,14 +824,39 @@
             <td><span class="tag tag-green">D. Grouped</span> &#10003;</td>
             <td style="color:green; font-weight:bold;">4/4</td>
         </tr>
+        <tr>
+            <td><strong>P75</strong></td>
+            <td><span class="tag tag-blue">Shadows</span> &#10003;</td>
+            <td><span class="tag tag-blue">Shadows</span> &#10003;</td>
+            <td><span class="tag tag-blue">Shadows</span> &#10003;</td>
+            <td><span class="tag tag-green">D. Grouped</span> &#10003;</td>
+            <td style="color:green; font-weight:bold;">4/4</td>
+        </tr>
+        <tr>
+            <td><strong>P90</strong></td>
+            <td><span class="tag tag-blue">Shadows</span> &#10003;</td>
+            <td><span class="tag tag-blue">Shadows</span> &#10003;</td>
+            <td><span class="tag tag-blue">Shadows</span> &#10003;</td>
+            <td><span class="tag tag-green">D. Grouped</span> &#10003;</td>
+            <td style="color:green; font-weight:bold;">4/4</td>
+        </tr>
+        <tr>
+            <td><strong>Max</strong></td>
+            <td><span class="tag tag-blue">Shadows</span> &#10003;</td>
+            <td><span class="tag tag-blue">Shadows</span> &#10003;</td>
+            <td><span class="tag tag-blue">Shadows</span> &#10003;</td>
+            <td><span class="tag tag-green">D. Grouped</span> &#10003;</td>
+            <td style="color:green; font-weight:bold;">4/4</td>
+        </tr>
     </table>
 
     <div class="callout callout-good">
         <strong>Pilot accuracy summary:</strong>
-        At 25% pilot fraction, per-locality pilot accuracy is <strong>87.5%</strong> (14/16 criterion&times;locality cells correct; 2 mismatches in P25).
-        At 50% pilot fraction, accuracy reaches <strong>100%</strong> (16/16 correct).
-        Crucially, <strong>mean and median criteria both achieve perfect per-locality accuracy even at 25%</strong>,
+        At 25% pilot fraction, per-locality pilot accuracy is <strong>92.9%</strong> (26/28 criterion&times;locality cells correct; 2 mismatches in P25).
+        At 50% pilot fraction, accuracy reaches <strong>100%</strong> (28/28 correct).
+        Crucially, <strong>mean, median, P75, P90, and max criteria all achieve perfect per-locality accuracy even at 25%</strong>,
         correctly identifying shadows at k&le;3 and direct_grouped at k=4.
+        Only P25 shows mismatches (at k=1 and k=4), making it the least reliable pilot criterion.
     </div>
 
     <h4>5c. Full SE Distribution at Each Pilot N (What the Pilot Sees)</h4>

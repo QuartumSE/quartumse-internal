@@ -16,6 +16,7 @@ import json
 import math
 import sys
 import time
+import warnings
 from pathlib import Path
 
 import numpy as np
@@ -23,7 +24,7 @@ import pandas as pd
 
 sys.path.insert(0, "src")
 
-# ── Constants ────────────────────────────────────────────────────────────────
+# -- Constants ----------------------------------------------------------------
 PILOT_FRACTIONS = [0.01, 0.02, 0.05, 0.10, 0.20, 0.50]
 N_BUDGET = 5000
 N_REPLICATES = 10
@@ -36,7 +37,7 @@ SHORT = {
 BASIS_MAP = {"X": 1, "Y": 2, "Z": 0}  # matches shadows protocol encoding
 
 
-# ── Step 0: Generate benchmark data ─────────────────────────────────────────
+# -- Step 0: Generate benchmark data -----------------------------------------
 def build_h2_circuit():
     from qiskit import QuantumCircuit
 
@@ -126,7 +127,7 @@ def find_or_generate(data_dir: str | None) -> Path:
     return generate_data(cache_root)
 
 
-# ── Step 1: Build observable registry ────────────────────────────────────────
+# -- Step 1: Build observable registry ----------------------------------------
 def build_obs_registry() -> dict[str, dict]:
     """Map observable_id → {pauli_string, coefficient, support, locality}."""
     obs_set = build_merged_observable_set()
@@ -141,7 +142,14 @@ def build_obs_registry() -> dict[str, dict]:
     return registry
 
 
-# ── Step 2: Re-estimation helpers ────────────────────────────────────────────
+def _safe_nanmean(values: list[float]) -> float:
+    """nanmean that returns nan for all-nan / empty lists without warning."""
+    a = np.array(values)
+    valid = a[~np.isnan(a)]
+    return float(valid.mean()) if len(valid) > 0 else np.nan
+
+
+# -- Step 2: Re-estimation helpers --------------------------------------------
 def _estimate_direct_observable(
     bitstrings: list[str],
     support: list[int],
@@ -198,11 +206,11 @@ def _estimate_shadows_observable(
     return est, se
 
 
-# ── Step 3: Core pilot loop ─────────────────────────────────────────────────
+# -- Step 3: Core pilot loop -------------------------------------------------
 def run_pilot_analysis(base_dir: Path):
     """Main analysis: load data, subsample, compare."""
 
-    # ── Load data ────────────────────────────────────────────────────────
+    # -- Load data --------------------------------------------------------
     raw_df = pd.read_parquet(base_dir / "raw_shots" / "data.parquet")
     lf_df = pd.read_parquet(base_dir / "long_form" / "data.parquet")
     with open(base_dir / "ground_truth.json") as f:
@@ -222,7 +230,7 @@ def run_pilot_analysis(base_dir: Path):
     print(f"Protocols: {protocols_present}")
     print(f"Replicates: {n_reps}, N={N_BUDGET}")
 
-    # ── Build observable registry ────────────────────────────────────────
+    # -- Build observable registry ----------------------------------------
     obs_reg = build_obs_registry()
     # Verify all long-form obs_ids are in registry
     lf_obs_ids = set(lf_df["observable_id"].unique())
@@ -235,7 +243,7 @@ def run_pilot_analysis(base_dir: Path):
     obs_ids = sorted(matched)
     print(f"Observables: {len(obs_ids)} matched")
 
-    # ── Build group_id → [observable_id] mapping (for direct protocols) ──
+    # -- Build group_id → [observable_id] mapping (for direct protocols) --
     group_to_obs: dict[str, list[str]] = {}
     for _, row in lf_df[lf_df["protocol_id"] == "direct_grouped"].drop_duplicates(
         subset=["observable_id", "group_id"]
@@ -247,7 +255,7 @@ def run_pilot_analysis(base_dir: Path):
 
     print(f"Groups (direct_grouped): {len(group_to_obs)}")
 
-    # ── Full-budget estimates from long-form (for comparison) ────────────
+    # -- Full-budget estimates from long-form (for comparison) ------------
     full_budget: dict[str, dict[str, dict]] = {}  # protocol → obs_id → {est, se, abs_err}
     for _, row in lf_df.iterrows():
         pid = row["protocol_id"]
@@ -290,7 +298,7 @@ def run_pilot_analysis(base_dir: Path):
         print(f"{SHORT.get(pid, pid):<28} {full_metrics[pid]['mae']:10.5f} "
               f"{full_metrics[pid]['se']:10.5f}{tag}")
 
-    # ── Pre-parse raw shot data into fast lookup ─────────────────────────
+    # -- Pre-parse raw shot data into fast lookup -------------------------
     # raw_lookup[(protocol_id, replicate_id, setting_id)] = (bitstrings, bases_or_None)
     print("\nParsing raw shot data …")
     raw_lookup: dict[tuple, tuple] = {}
@@ -301,7 +309,7 @@ def run_pilot_analysis(base_dir: Path):
         raw_lookup[key] = (bs, mb)
     print(f"  {len(raw_lookup)} raw-shot entries parsed")
 
-    # ── Pilot loop ───────────────────────────────────────────────────────
+    # -- Pilot loop -------------------------------------------------------
     # For each fraction, replicate, protocol: re-estimate, score, pick winner
     print(f"\n{'='*72}")
     print("PILOT ANALYSIS")
@@ -363,7 +371,7 @@ def run_pilot_analysis(base_dir: Path):
 
                 pilot_estimates[rid][pid] = est_map
 
-        # ── Score each replicate ─────────────────────────────────────────
+        # -- Score each replicate -----------------------------------------
         rep_winners_mae: list[str] = []
         rep_winners_se: list[str] = []
         per_protocol_mae: dict[str, list[float]] = {p: [] for p in protocols_present}
@@ -403,7 +411,7 @@ def run_pilot_analysis(base_dir: Path):
                 min(valid_se, key=valid_se.get) if valid_se else ""
             )
 
-        # ── Aggregate ────────────────────────────────────────────────────
+        # -- Aggregate ----------------------------------------------------
         acc_mae = sum(1 for w in rep_winners_mae if w == full_winner_mae) / n_reps
         acc_se = sum(1 for w in rep_winners_se if w == full_winner_se) / n_reps
 
@@ -429,21 +437,25 @@ def run_pilot_analysis(base_dir: Path):
             "mean_regret_se": mean_regret_se,
             "winners_mae": rep_winners_mae,
             "winners_se": rep_winners_se,
-            "per_protocol_mae": {p: np.nanmean(per_protocol_mae[p]) for p in protocols_present},
-            "per_protocol_se": {p: np.nanmean(per_protocol_se[p]) for p in protocols_present},
+            "per_protocol_mae": {
+                p: _safe_nanmean(per_protocol_mae[p]) for p in protocols_present
+            },
+            "per_protocol_se": {
+                p: _safe_nanmean(per_protocol_se[p]) for p in protocols_present
+            },
         }
         all_results.append(row_result)
 
-    # ── Print summary table ──────────────────────────────────────────────
+    # -- Print summary table ----------------------------------------------
     print(f"Full-budget winner (MAE): {SHORT.get(full_winner_mae, full_winner_mae)} "
           f"({full_metrics[full_winner_mae]['mae']:.5f})")
     print(f"Full-budget winner (SE):  {SHORT.get(full_winner_se, full_winner_se)} "
           f"({full_metrics[full_winner_se]['se']:.5f})")
 
-    # ── Table 1: Selection accuracy by pilot fraction ────────────────────
-    print(f"\n{'─'*72}")
+    # -- Table 1: Selection accuracy by pilot fraction --------------------
+    print(f"\n{'-'*72}")
     print("Selection Accuracy (MAE criterion)")
-    print(f"{'─'*72}")
+    print(f"{'-'*72}")
     print(f"{'Pilot%':>7} {'Shots':>6}  {'Winner distribution':<36} {'Acc':>5} {'Regret':>8}")
     print("-" * 72)
 
@@ -456,9 +468,9 @@ def run_pilot_analysis(base_dir: Path):
         print(f"{r['frac']:6.0%} {r['n_pilot']:6d}  {dist_str:<36} "
               f"{r['acc_mae']:5.0%} {r['mean_regret_mae']:8.5f}")
 
-    print(f"\n{'─'*72}")
+    print(f"\n{'-'*72}")
     print("Selection Accuracy (SE criterion)")
-    print(f"{'─'*72}")
+    print(f"{'-'*72}")
     print(f"{'Pilot%':>7} {'Shots':>6}  {'Winner distribution':<36} {'Acc':>5} {'Regret':>8}")
     print("-" * 72)
 
@@ -470,10 +482,10 @@ def run_pilot_analysis(base_dir: Path):
         print(f"{r['frac']:6.0%} {r['n_pilot']:6d}  {dist_str:<36} "
               f"{r['acc_se']:5.0%} {r['mean_regret_se']:8.5f}")
 
-    # ── Table 2: Per-protocol metrics at each pilot level ────────────────
-    print(f"\n{'─'*72}")
+    # -- Table 2: Per-protocol metrics at each pilot level ----------------
+    print(f"\n{'-'*72}")
     print("Per-Protocol Metrics at Each Pilot Level")
-    print(f"{'─'*72}")
+    print(f"{'-'*72}")
     header = f"{'Pilot%':>7}"
     for pid in protocols_present:
         name = SHORT.get(pid, pid)
@@ -495,10 +507,10 @@ def run_pilot_analysis(base_dir: Path):
         line += f"  {full_metrics[pid]['mae']:14.5f} {full_metrics[pid]['se']:12.5f}"
     print(line + "  (full budget)")
 
-    # ── Verification: compare 100% re-estimate to stored values ──────────
-    print(f"\n{'─'*72}")
+    # -- Verification: compare 100% re-estimate to stored values ----------
+    print(f"\n{'-'*72}")
     print("Verification: 100% Re-estimate vs Stored Full-Budget")
-    print(f"{'─'*72}")
+    print(f"{'-'*72}")
 
     # Run re-estimation at fraction=1.0 for one replicate
     rid0 = replicates[0]
@@ -557,7 +569,7 @@ def run_pilot_analysis(base_dir: Path):
     print("\nDone.")
 
 
-# ── CLI ──────────────────────────────────────────────────────────────────────
+# -- CLI ----------------------------------------------------------------------
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Post-hoc pilot analysis from raw shots")
     parser.add_argument(

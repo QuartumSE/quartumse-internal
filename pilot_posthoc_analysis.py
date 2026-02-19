@@ -128,11 +128,21 @@ def find_or_generate(data_dir: str | None) -> Path:
 
 
 # -- Step 1: Build observable registry ----------------------------------------
-def build_obs_registry() -> dict[str, dict]:
+def build_obs_registry(n_qubits: int = 4) -> dict[str, dict]:
     """Map observable_id → {pauli_string, coefficient, support, locality}."""
-    obs_set = build_merged_observable_set()
+    from quartumse.observables.core import ObservableSet
+    from quartumse.observables.suites import make_chemistry_suites
+
+    suites = make_chemistry_suites(n_qubits)
+    pauli_to_obs: dict = {}
+    for suite in suites.values():
+        for obs in suite.observables:
+            if obs.pauli_string not in pauli_to_obs:
+                pauli_to_obs[obs.pauli_string] = obs
+    merged = list(pauli_to_obs.values())
+
     registry: dict[str, dict] = {}
-    for obs in obs_set.observables:
+    for obs in merged:
         registry[obs.observable_id] = {
             "pauli_string": obs.pauli_string,
             "coefficient": obs.coefficient,
@@ -234,7 +244,8 @@ def run_pilot_analysis(base_dir: Path):
     print(f"Replicates: {n_reps}, N={n_budget}")
 
     # -- Build observable registry ----------------------------------------
-    obs_reg = build_obs_registry()
+    n_qubits = gt.get("n_qubits", 4)
+    obs_reg = build_obs_registry(n_qubits)
     # Verify all long-form obs_ids are in registry
     lf_obs_ids = set(lf_df["observable_id"].unique())
     reg_ids = set(obs_reg.keys())

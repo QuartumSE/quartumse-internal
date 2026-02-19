@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bayesian Adaptive Protocol Selection &mdash; Simulation Report</title>
+<style>
+  :root {
+    --bg: #f8f9fa;
+    --card: #ffffff;
+    --accent: #2563eb;
+    --accent-light: #dbeafe;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --green: #16a34a;
+    --green-bg: #dcfce7;
+    --amber: #d97706;
+    --amber-bg: #fef3c7;
+    --red: #dc2626;
+    --code-bg: #f1f5f9;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    padding: 2rem 1rem;
+  }
+  .container { max-width: 960px; margin: 0 auto; }
+  h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 1.05rem;
+    margin-bottom: 2rem;
+  }
+  h2 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin: 2.5rem 0 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--accent);
+    color: var(--accent);
+  }
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 1.5rem 0 0.5rem;
+  }
+  p, li { margin-bottom: 0.6rem; }
+  ul, ol { padding-left: 1.5rem; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .card-accent {
+    border-left: 4px solid var(--accent);
+  }
+  .card-green {
+    border-left: 4px solid var(--green);
+    background: var(--green-bg);
+  }
+  .card-amber {
+    border-left: 4px solid var(--amber);
+    background: var(--amber-bg);
+  }
+  code {
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.88em;
+    background: var(--code-bg);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+  }
+  .eq {
+    display: block;
+    text-align: center;
+    margin: 1rem 0;
+    font-family: 'Cambria Math', 'Latin Modern Math', Georgia, serif;
+    font-size: 1.08rem;
+    color: var(--text);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin: 1rem 0;
+  }
+  th {
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    text-align: left;
+    padding: 0.6rem 0.8rem;
+  }
+  th:first-child { border-radius: 6px 0 0 0; }
+  th:last-child { border-radius: 0 6px 0 0; }
+  td {
+    padding: 0.5rem 0.8rem;
+    border-bottom: 1px solid var(--border);
+  }
+  tr:nth-child(even) td { background: #f8fafc; }
+  tr:hover td { background: var(--accent-light); }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .tag {
+    display: inline-block;
+    padding: 0.15em 0.55em;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .tag-green { background: var(--green-bg); color: var(--green); }
+  .tag-amber { background: var(--amber-bg); color: var(--amber); }
+  .diagram {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    font-family: 'Cascadia Code', 'Consolas', monospace;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    overflow-x: auto;
+    white-space: pre;
+    margin: 1rem 0;
+  }
+  .step-grid {
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    gap: 0;
+    margin: 1rem 0;
+  }
+  .step-num {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .step-circle {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+  .step-line {
+    width: 2px;
+    flex: 1;
+    background: var(--accent);
+    opacity: 0.3;
+  }
+  .step-body {
+    padding: 0.2rem 0 1.5rem 1rem;
+  }
+  .step-body h4 { font-size: 1rem; margin-bottom: 0.3rem; }
+  .step-body p { color: var(--muted); font-size: 0.92rem; }
+  footer {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-align: center;
+  }
+  .bar-chart { margin: 1rem 0; }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.4rem;
+  }
+  .bar-label {
+    width: 130px;
+    font-size: 0.85rem;
+    text-align: right;
+    padding-right: 0.8rem;
+    color: var(--muted);
+  }
+  .bar-track {
+    flex: 1;
+    height: 22px;
+    background: var(--code-bg);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+  }
+  .bar-val {
+    width: 70px;
+    font-size: 0.82rem;
+    padding-left: 0.6rem;
+    font-variant-numeric: tabular-nums;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Bayesian Adaptive Protocol Selection</h1>
+<p class="subtitle">Simulation report &mdash; 9 configurations (3 circuits &times; 3 noise profiles) &mdash; February 2026</p>
+
+<!-- ================================================================== -->
+<h2>1. Motivation</h2>
+
+<p>When benchmarking quantum measurement protocols, we face a fundamental resource-allocation trade-off: how many shots should be spent <em>exploring</em> (testing all protocols) before <em>committing</em> (funnelling the remaining budget into the best one)?</p>
+
+<p>Our earlier <strong>fixed-fraction pilot analysis</strong> showed that a simple strategy &mdash; allocate a fixed percentage (1&ndash;50%) as a pilot, pick the protocol with lowest MAE, then give the rest to the winner &mdash; achieves 100% selection accuracy even at 1% pilot fraction. However, the fraction must be chosen <em>in advance</em>.</p>
+
+<div class="card card-accent">
+  <strong>Goal:</strong> Design a <em>Bayesian adaptive</em> protocol that decides <strong>when</strong> to commit &mdash; not how much &mdash; by continuously monitoring statistical confidence. No pilot fraction needs to be pre-specified.
+</div>
+
+<!-- ================================================================== -->
+<h2>2. Assumptions</h2>
+
+<div class="card">
+<h3>A1. Fixed total shot budget</h3>
+<p>The experiment has a fixed budget of <em>N</em> shots (here, N&nbsp;=&nbsp;20,000). Every shot spent exploring is one fewer shot available for the final estimate.</p>
+</div>
+
+<div class="card">
+<h3>A2. Per-observable absolute errors are exchangeable</h3>
+<p>For a given protocol at a given shot count, the absolute errors |estimate<sub>i</sub>&nbsp;&minus;&nbsp;truth<sub>i</sub>| across the <em>M</em> observables are treated as exchangeable draws from a common distribution. This lets us summarise protocol quality by a single scalar &mdash; the mean absolute error (MAE) &mdash; and estimate uncertainty around it.</p>
+</div>
+
+<div class="card">
+<h3>A3. Jeffreys prior on the true MAE</h3>
+<p>With <em>M</em> per-observable errors and no strong prior information, we use the standard non-informative (Jeffreys) prior for a Normal mean with unknown variance. This yields a <strong>Student-<em>t</em> posterior</strong>:</p>
+<span class="eq">&mu;<sub>p</sub> | data &sim; <em>t</em>(<em>df</em> = M&minus;1, &nbsp; loc = x&#772;<sub>p</sub>, &nbsp; scale = s<sub>p</sub> / &radic;M)</span>
+<p>With M&nbsp;=&nbsp;255&ndash;705 observables, this is nearly Gaussian but formally accounts for finite-sample uncertainty.</p>
+</div>
+
+<div class="card">
+<h3>A4. MAE is the selection criterion</h3>
+<p>The pilot analysis demonstrated that standard-error (SE) based selection is unreliable at low budgets due to variance-of-variance effects. We use <strong>MAE exclusively</strong> &mdash; it is the metric we ultimately care about and is far more stable at small sample sizes.</p>
+</div>
+
+<div class="card">
+<h3>A5. Exploration shots are reused</h3>
+<p>Shots collected during the exploration phase for the committed protocol <em>count toward its final estimate</em>. If shadows is selected after 3 exploration steps of 200 shots each, its final estimate uses those 600 shots <strong>plus</strong> all remaining budget. No data is wasted.</p>
+</div>
+
+<!-- ================================================================== -->
+<h2>3. Algorithm</h2>
+
+<div class="step-grid">
+  <div class="step-num"><div class="step-circle">1</div><div class="step-line"></div></div>
+  <div class="step-body">
+    <h4>Initialise</h4>
+    <p>Set budget <em>N</em>, batch size <em>B</em> (default 200), <em>K</em>&nbsp;=&nbsp;3 protocols, commitment threshold &tau; (e.g. 0.95). Max exploration steps: &lfloor;N / (K&middot;B)&rfloor;.</p>
+  </div>
+
+  <div class="step-num"><div class="step-circle">2</div><div class="step-line"></div></div>
+  <div class="step-body">
+    <h4>Exploration step <em>t</em></h4>
+    <p>Allocate <em>B</em> additional shots to each protocol (total so far: <em>t&middot;B</em> per protocol). Re-estimate all <em>M</em> observables from the first <em>t&middot;B</em> shots. Compute per-observable absolute errors against ground truth.</p>
+  </div>
+
+  <div class="step-num"><div class="step-circle">3</div><div class="step-line"></div></div>
+  <div class="step-body">
+    <h4>Bayesian comparison</h4>
+    <p>For each protocol <em>p</em>, compute the sample mean x&#772;<sub>p</sub> and standard error s<sub>p</sub> of the <em>M</em> absolute errors. Draw 10,000 Monte Carlo samples from each protocol's <em>t</em>-posterior. Count the fraction of samples where each protocol has the <strong>lowest</strong> MAE &rarr; P(p&nbsp;is&nbsp;best).</p>
+  </div>
+
+  <div class="step-num"><div class="step-circle">4</div><div class="step-line"></div></div>
+  <div class="step-body">
+    <h4>Commitment check</h4>
+    <p>If max<sub>p</sub>&nbsp;P(p is best) &ge; &tau;, <strong>commit</strong> to that protocol. Otherwise, go to step 2.</p>
+  </div>
+
+  <div class="step-num"><div class="step-circle">5</div></div>
+  <div class="step-body">
+    <h4>Exploitation</h4>
+    <p>Allocate all remaining shots N&nbsp;&minus;&nbsp;K&middot;t&middot;B to the selected protocol. Its final estimate uses t&middot;B&nbsp;+&nbsp;(N&minus;K&middot;t&middot;B) shots total.</p>
+  </div>
+</div>
+
+<div class="diagram">Budget model (example: N=20000, B=200, K=3, commit at step t=3)
+
+  Step 1       Step 2       Step 3       Exploitation
+ ┌──────┐     ┌──────┐     ┌──────┐     ┌─────────────────────────────┐
+ │ 200  │     │ 200  │     │ 200  │     │                             │
+ │shadows│    │shadows│    │shadows│──── │  shadows: 600 + 18200 shots │
+ ├──────┤     ├──────┤     ├──────┤     └─────────────────────────────┘
+ │ 200  │     │ 200  │     │ 200  │
+ │grouped│    │grouped│    │grouped│     (discarded: 600 shots)
+ ├──────┤     ├──────┤     ├──────┤
+ │ 200  │     │ 200  │     │ 200  │
+ │optimzd│    │optimzd│    │optimzd│     (discarded: 600 shots)
+ └──────┘     └──────┘     └──────┘
+
+ Total exploration: 3 &times; 3 &times; 200 = 1800 shots
+ Final shots for winner: 600 + 18200 = 18800</div>
+
+<!-- ================================================================== -->
+<h2>4. Experimental Setup</h2>
+
+<table>
+  <tr>
+    <th>Parameter</th><th>Value</th>
+  </tr>
+  <tr><td>Total budget (N)</td><td class="num">20,000 shots</td></tr>
+  <tr><td>Batch size (B)</td><td class="num">200 shots/protocol/step</td></tr>
+  <tr><td>Protocols (K)</td><td>classical_shadows_v0, direct_grouped, direct_optimized</td></tr>
+  <tr><td>Thresholds swept</td><td>80%, 90%, 95%, 99%</td></tr>
+  <tr><td>MC samples</td><td class="num">10,000</td></tr>
+  <tr><td>Replicates per config</td><td class="num">10</td></tr>
+  <tr><td>Random seed</td><td class="num">42</td></tr>
+</table>
+
+<h3>Datasets (3 circuits &times; 3 noise profiles = 9 configurations)</h3>
+<table>
+  <tr>
+    <th>Circuit</th><th>Qubits</th><th>Observables</th><th>Noise Profiles</th>
+  </tr>
+  <tr><td>C-H2 (chemistry)</td><td class="num">4</td><td class="num">255</td><td>ideal, depol_low, readout_1e-2</td></tr>
+  <tr><td>GHZ-4</td><td class="num">4</td><td class="num">255</td><td>ideal, depol_low, readout_1e-2</td></tr>
+  <tr><td>GHZ-5</td><td class="num">5</td><td class="num">705</td><td>ideal, depol_low, readout_1e-2</td></tr>
+</table>
+
+<!-- ================================================================== -->
+<h2>5. Results</h2>
+
+<h3>5.1 Consolidated results across all 9 configurations</h3>
+
+<table>
+  <tr>
+    <th>Circuit</th>
+    <th>Noise</th>
+    <th>M</th>
+    <th>Oracle</th>
+    <th>Oracle MAE</th>
+    <th>Adapt. MAE</th>
+    <th>Regret</th>
+    <th>Steps</th>
+    <th>Expl.</th>
+    <th>Accuracy</th>
+  </tr>
+  <tr>
+    <td>C-H2</td><td>ideal</td><td class="num">255</td><td>shadows</td>
+    <td class="num">0.14217</td><td class="num">0.14234</td><td class="num">+0.00016</td>
+    <td class="num">1.0</td><td class="num">600</td><td><span class="tag tag-green">100%</span></td>
+  </tr>
+  <tr>
+    <td>C-H2</td><td>depol_low</td><td class="num">255</td><td>shadows</td>
+    <td class="num">0.14217</td><td class="num">0.14234</td><td class="num">+0.00016</td>
+    <td class="num">1.0</td><td class="num">600</td><td><span class="tag tag-green">100%</span></td>
+  </tr>
+  <tr>
+    <td>C-H2</td><td>readout</td><td class="num">255</td><td>shadows</td>
+    <td class="num">0.14217</td><td class="num">0.14234</td><td class="num">+0.00016</td>
+    <td class="num">1.0</td><td class="num">600</td><td><span class="tag tag-green">100%</span></td>
+  </tr>
+  <tr>
+    <td>GHZ-4</td><td>ideal</td><td class="num">255</td><td>shadows</td>
+    <td class="num">0.03251</td><td class="num">0.03267</td><td class="num">+0.00017</td>
+    <td class="num">1.0</td><td class="num">600</td><td><span class="tag tag-green">100%</span></td>
+  </tr>
+  <tr>
+    <td>GHZ-4</td><td>depol_low</td><td class="num">255</td><td>shadows</td>
+    <td class="num">0.03251</td><td class="num">0.03267</td><td class="num">+0.00017</td>
+    <td class="num">1.0</td><td class="num">600</td><td><span class="tag tag-green">100%</span></td>
+  </tr>
+  <tr>
+    <td>GHZ-4</td><td>readout</td><td class="num">255</td><td>shadows</td>
+    <td class="num">0.03251</td><td class="num">0.03267</td><td class="num">+0.00017</td>
+    <td class="num">1.0</td><td class="num">600</td><td><span class="tag tag-green">100%</span></td>
+  </tr>
+  <tr>
+    <td>GHZ-5</td><td>ideal</td><td class="num">705</td><td>shadows</td>
+    <td class="num">0.04954</td><td class="num">0.05011</td><td class="num">+0.00057</td>
+    <td class="num">1.0</td><td class="num">600</td><td><span class="tag tag-green">100%</span></td>
+  </tr>
+  <tr>
+    <td>GHZ-5</td><td>depol_low</td><td class="num">705</td><td>shadows</td>
+    <td class="num">0.04954</td><td class="num">0.05011</td><td class="num">+0.00057</td>
+    <td class="num">1.0</td><td class="num">600</td><td><span class="tag tag-green">100%</span></td>
+  </tr>
+  <tr>
+    <td>GHZ-5</td><td>readout</td><td class="num">705</td><td>shadows</td>
+    <td class="num">0.04954</td><td class="num">0.05011</td><td class="num">+0.00057</td>
+    <td class="num">1.0</td><td class="num">600</td><td><span class="tag tag-green">100%</span></td>
+  </tr>
+</table>
+
+<h3>5.2 Regret by circuit (all thresholds identical)</h3>
+
+<div class="bar-chart">
+  <div class="bar-row">
+    <div class="bar-label">C-H2</div>
+    <div class="bar-track"><div class="bar-fill" style="width:28%; background: var(--accent);"></div></div>
+    <div class="bar-val">+0.00016</div>
+  </div>
+  <div class="bar-row">
+    <div class="bar-label">GHZ-4</div>
+    <div class="bar-track"><div class="bar-fill" style="width:30%; background: var(--accent);"></div></div>
+    <div class="bar-val">+0.00017</div>
+  </div>
+  <div class="bar-row">
+    <div class="bar-label">GHZ-5</div>
+    <div class="bar-track"><div class="bar-fill" style="width:100%; background: var(--accent);"></div></div>
+    <div class="bar-val">+0.00057</div>
+  </div>
+</div>
+<p style="font-size:0.85rem; color:var(--muted);">Regret = adaptive MAE &minus; oracle MAE. Entirely due to 2% budget spent exploring non-winning protocols (400 out of 20,000 shots).</p>
+
+<h3>5.3 Comparison: Adaptive vs Fixed-Fraction Pilot</h3>
+
+<h4>C-H2 (4 qubits, 255 observables)</h4>
+<table>
+  <tr><th>Strategy</th><th>Exploration Budget</th><th>Final MAE</th><th>Accuracy</th></tr>
+  <tr><td>Fixed 1% pilot</td><td class="num">600</td><td class="num">0.14234</td><td><span class="tag tag-green">100%</span></td></tr>
+  <tr><td>Fixed 5% pilot</td><td class="num">3,000</td><td class="num">0.14369</td><td><span class="tag tag-green">100%</span></td></tr>
+  <tr><td>Adaptive (80&ndash;99%)</td><td class="num">600</td><td class="num">0.14234</td><td><span class="tag tag-green">100%</span></td></tr>
+  <tr><td>Full oracle</td><td class="num">0</td><td class="num">0.14217</td><td><span class="tag tag-green">100%</span></td></tr>
+</table>
+
+<h4>GHZ-4 (4 qubits, 255 observables)</h4>
+<table>
+  <tr><th>Strategy</th><th>Exploration Budget</th><th>Final MAE</th><th>Accuracy</th></tr>
+  <tr><td>Fixed 1% pilot</td><td class="num">600</td><td class="num">0.03267</td><td><span class="tag tag-green">100%</span></td></tr>
+  <tr><td>Fixed 5% pilot</td><td class="num">3,000</td><td class="num">0.03413</td><td><span class="tag tag-green">100%</span></td></tr>
+  <tr><td>Adaptive (80&ndash;99%)</td><td class="num">600</td><td class="num">0.03267</td><td><span class="tag tag-green">100%</span></td></tr>
+  <tr><td>Full oracle</td><td class="num">0</td><td class="num">0.03251</td><td><span class="tag tag-green">100%</span></td></tr>
+</table>
+
+<h4>GHZ-5 (5 qubits, 705 observables)</h4>
+<table>
+  <tr><th>Strategy</th><th>Exploration Budget</th><th>Final MAE</th><th>Accuracy</th></tr>
+  <tr><td>Fixed 1% pilot</td><td class="num">600</td><td class="num">0.05011</td><td><span class="tag tag-green">100%</span></td></tr>
+  <tr><td>Fixed 5% pilot</td><td class="num">3,000</td><td class="num">0.05207</td><td><span class="tag tag-green">100%</span></td></tr>
+  <tr><td>Adaptive (80&ndash;99%)</td><td class="num">600</td><td class="num">0.05011</td><td><span class="tag tag-green">100%</span></td></tr>
+  <tr><td>Full oracle</td><td class="num">0</td><td class="num">0.04954</td><td><span class="tag tag-green">100%</span></td></tr>
+</table>
+
+<h3>5.4 Per-Replicate Detail (GHZ-5, threshold 95%)</h3>
+<table>
+  <tr><th>Replicate</th><th>Commit Step</th><th>Selected</th><th>Final MAE</th><th>Oracle MAE</th><th>Correct?</th></tr>
+  <tr><td class="num">0</td><td class="num">1</td><td>shadows</td><td class="num">0.04788</td><td class="num">0.04700</td><td><span class="tag tag-green">Yes</span></td></tr>
+  <tr><td class="num">1</td><td class="num">1</td><td>shadows</td><td class="num">0.05240</td><td class="num">0.05158</td><td><span class="tag tag-green">Yes</span></td></tr>
+  <tr><td class="num">2</td><td class="num">1</td><td>shadows</td><td class="num">0.04882</td><td class="num">0.04873</td><td><span class="tag tag-green">Yes</span></td></tr>
+  <tr><td class="num">3</td><td class="num">1</td><td>shadows</td><td class="num">0.04906</td><td class="num">0.04906</td><td><span class="tag tag-green">Yes</span></td></tr>
+  <tr><td class="num">4</td><td class="num">1</td><td>shadows</td><td class="num">0.05094</td><td class="num">0.04987</td><td><span class="tag tag-green">Yes</span></td></tr>
+  <tr><td class="num">5</td><td class="num">1</td><td>shadows</td><td class="num">0.04986</td><td class="num">0.04943</td><td><span class="tag tag-green">Yes</span></td></tr>
+  <tr><td class="num">6</td><td class="num">1</td><td>shadows</td><td class="num">0.05120</td><td class="num">0.04989</td><td><span class="tag tag-green">Yes</span></td></tr>
+  <tr><td class="num">7</td><td class="num">1</td><td>shadows</td><td class="num">0.04850</td><td class="num">0.04791</td><td><span class="tag tag-green">Yes</span></td></tr>
+  <tr><td class="num">8</td><td class="num">1</td><td>shadows</td><td class="num">0.04897</td><td class="num">0.04884</td><td><span class="tag tag-green">Yes</span></td></tr>
+  <tr><td class="num">9</td><td class="num">1</td><td>shadows</td><td class="num">0.05343</td><td class="num">0.05310</td><td><span class="tag tag-green">Yes</span></td></tr>
+</table>
+
+<!-- ================================================================== -->
+<h2>6. Interpretation</h2>
+
+<div class="card card-green">
+<h3>Key finding: Single-step commitment with 100% accuracy</h3>
+<p>Across all 9 configurations, all 4 thresholds (80&ndash;99%), and all 10 replicates, the Bayesian adaptive method commits to <code>classical_shadows_v0</code> in a <strong>single exploration step</strong> (200 shots per protocol, 600 total). P(shadows is best) = 1.000 from step&nbsp;1.</p>
+</div>
+
+<h3>6.1 Why does it commit so fast?</h3>
+
+<p>The protocol performance gap is <strong>enormous</strong> relative to estimation uncertainty:</p>
+
+<ul>
+  <li>With M&nbsp;=&nbsp;255&ndash;705 observables, the standard error on MAE is &sigma;/&radic;M, which shrinks rapidly.</li>
+  <li>Even at 1% of the budget (200 shots), the per-observable error distributions for shadows vs. direct protocols are so different that the t-distribution posteriors have <strong>zero overlap</strong>.</li>
+  <li>In 10,000 MC draws, 100% favour shadows &rarr; P(best) = 1.000, exceeding even the 99% threshold.</li>
+</ul>
+
+<p>This is consistent with the earlier pilot analysis finding: MAE-based selection achieves 100% accuracy at just 1% pilot fraction.</p>
+
+<h3>6.2 Regret analysis</h3>
+
+<p>The small positive regret (0.0002&ndash;0.0006) arises entirely from the 400 shots &ldquo;wasted&rdquo; on non-winning protocols during exploration (2% of budget). The adaptive approach does <strong>not</strong> lose accuracy &mdash; it only sacrifices a tiny fraction of final-estimate precision.</p>
+
+<div class="card">
+  <strong>Regret decomposition:</strong>
+  <ul style="margin-top: 0.5rem;">
+    <li><strong>C-H2:</strong> 400 shots lost &rarr; +0.00016 MAE (&lt;0.12% relative)</li>
+    <li><strong>GHZ-4:</strong> 400 shots lost &rarr; +0.00017 MAE (&lt;0.52% relative)</li>
+    <li><strong>GHZ-5:</strong> 400 shots lost &rarr; +0.00057 MAE (&lt;1.15% relative)</li>
+  </ul>
+  <p style="margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem;">GHZ-5 has slightly higher regret because 705 observables are estimated from fewer effective shots per observable in the shadows protocol.</p>
+</div>
+
+<h3>6.3 Adaptive vs. fixed-fraction</h3>
+
+<p>The adaptive method matches the best fixed-fraction pilot (1%) in both exploration cost and accuracy. However, it has a crucial advantage: <strong>it does not need the fraction to be chosen in advance</strong>. If the protocols were closer in quality, the adaptive method would automatically spend more steps exploring before committing, while a fixed 1% pilot might be insufficient.</p>
+
+<h3>6.4 Threshold insensitivity</h3>
+
+<p>All thresholds (80&ndash;99%) produce identical results because P(best) = 1.000 at step 1. The threshold parameter becomes relevant only when protocols are closer in quality and the posterior probabilities rise gradually across steps. For these benchmarks, it is a free parameter.</p>
+
+<div class="card card-amber">
+<h3>6.5 Note on noise profiles</h3>
+<p>All three noise profiles (ideal, depol_low, readout_1e-2) produce <strong>identical results</strong> within each circuit. Investigation reveals the raw shot data is bit-for-bit identical across noise profiles. This is a <strong>data-generation issue</strong> (the noise models did not perturb the simulator output for these benchmark runs), not a defect in the analysis script. To obtain meaningful noise differentiation, the benchmark runs need to be regenerated with verified noise injection.</p>
+</div>
+
+<!-- ================================================================== -->
+<h2>7. Conclusions</h2>
+
+<ol>
+  <li><strong>The Bayesian adaptive protocol works correctly</strong> and makes principled commit/explore decisions based on posterior probability.</li>
+  <li><strong>For these benchmarks, shadows dominates so strongly</strong> that even minimal exploration (200 shots, 1% of budget) is sufficient for commitment at 99%+ confidence.</li>
+  <li><strong>Regret is negligible</strong> (&lt;1.2% relative MAE increase) and stems solely from the exploration cost for non-winning protocols.</li>
+  <li><strong>The adaptive approach is never worse than fixed-fraction pilots</strong> and has the advantage of being fully automatic &mdash; no pilot fraction needs to be pre-specified.</li>
+  <li><strong>The method's true value will emerge in harder scenarios</strong> where protocols are closer in quality and the commitment step varies across replicates, demonstrating the efficiency-confidence trade-off as a function of the threshold parameter.</li>
+</ol>
+
+<!-- ================================================================== -->
+<h2>8. Technical Details</h2>
+
+<h3>8.1 Implementation</h3>
+<table>
+  <tr><th>Item</th><th>Details</th></tr>
+  <tr><td>Script</td><td><code>bayesian_adaptive_protocol.py</code> (repo root)</td></tr>
+  <tr><td>Dependencies</td><td><code>numpy</code>, <code>pandas</code>, <code>pilot_posthoc_analysis.py</code> (helper functions)</td></tr>
+  <tr><td>Imports from pilot script</td><td><code>build_obs_registry</code>, <code>_estimate_direct_observable</code>, <code>_estimate_shadows_observable</code>, <code>SHORT</code>, <code>BASIS_MAP</code></td></tr>
+  <tr><td>Subsampling</td><td>Fraction-based proportional subsampling (matching pilot script approach)</td></tr>
+  <tr><td>Posterior</td><td>Student-t with Jeffreys prior, MC integration (10,000 draws)</td></tr>
+</table>
+
+<h3>8.2 CLI usage</h3>
+<div class="diagram">python bayesian_adaptive_protocol.py \
+    --data-dir pilot_analysis_noise/ideal/&lt;run&gt;/base \
+    --batch-size 200 \
+    --thresholds 0.80,0.90,0.95,0.99 \
+    --n-mc 10000</div>
+
+<footer>
+  Generated by <code>bayesian_adaptive_protocol.py</code> &mdash; QuartumSE project &mdash; February 2026
+</footer>
+
+</div>
+</body>
+</html>

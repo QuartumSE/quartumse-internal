@@ -1,8 +1,8 @@
 """Post-hoc pilot analysis from stored raw shots.
 
-Runs C-H2 (ideal, N=5000, 10 replicates) with raw shot storage, then
-simulates what would happen if only a fraction of shots were used as a
-pilot to select the best protocol.
+Loads raw shot data from a benchmark run and simulates what would happen
+if only a fraction of shots were used as a pilot to select the best
+protocol. Auto-detects N from the data.
 
 Usage:
     python pilot_posthoc_analysis.py                   # generate + analyse
@@ -220,15 +220,18 @@ def run_pilot_analysis(base_dir: Path):
     print(f"Loaded: {len(raw_df)} raw-shot rows, {len(lf_df)} long-form rows, "
           f"{len(truth)} ground-truth values")
 
-    # Filter to N_BUDGET
-    raw_df = raw_df[raw_df["N_total"] == N_BUDGET].copy()
-    lf_df = lf_df[lf_df["N_total"] == N_BUDGET].copy()
+    # Auto-detect N: use the maximum N_total in the raw data
+    n_budget = int(raw_df["N_total"].max())
+
+    # Filter to n_budget
+    raw_df = raw_df[raw_df["N_total"] == n_budget].copy()
+    lf_df = lf_df[lf_df["N_total"] == n_budget].copy()
 
     protocols_present = sorted(raw_df["protocol_id"].unique())
     replicates = sorted(raw_df["replicate_id"].unique())
     n_reps = len(replicates)
     print(f"Protocols: {protocols_present}")
-    print(f"Replicates: {n_reps}, N={N_BUDGET}")
+    print(f"Replicates: {n_reps}, N={n_budget}")
 
     # -- Build observable registry ----------------------------------------
     obs_reg = build_obs_registry()
@@ -285,7 +288,7 @@ def run_pilot_analysis(base_dir: Path):
     full_winner_se = min(protocols_present, key=lambda p: full_metrics[p]["se"])
 
     print(f"\n{'='*72}")
-    print("FULL-BUDGET (N={}) RESULTS".format(N_BUDGET))
+    print("FULL-BUDGET (N={}) RESULTS".format(n_budget))
     print(f"{'='*72}")
     print(f"{'Protocol':<28} {'Mean MAE':>10} {'Mean SE':>10}")
     print("-" * 50)
@@ -319,7 +322,7 @@ def run_pilot_analysis(base_dir: Path):
     all_results: list[dict] = []
 
     for frac in PILOT_FRACTIONS:
-        n_pilot = int(frac * N_BUDGET)
+        n_pilot = int(frac * n_budget)
         # per-replicate: pilot_estimates[rep][protocol] = {obs_id: (est, se)}
         pilot_estimates: dict[int, dict[str, dict[str, tuple]]] = {}
 

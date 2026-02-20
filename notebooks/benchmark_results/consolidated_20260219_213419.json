@@ -1,0 +1,111 @@
+{
+  "timestamp": "2026-02-19T21:34:19.612733",
+  "n_runs": 1,
+  "config": {
+    "mode": "analysis",
+    "n_shots_grid": [
+      5000,
+      10000,
+      20000
+    ],
+    "n_replicates": 10,
+    "epsilon": 0.05
+  },
+  "suites_enabled": {
+    "merged": true,
+    "stress": true,
+    "commuting": true,
+    "posthoc": true,
+    "diagnostics": true
+  },
+  "circuits_enabled": [
+    "S-BELL-2"
+  ],
+  "merge_enabled": true,
+  "runs": {
+    "S-BELL-2__merged": {
+      "circuit_id": "S-BELL-2",
+      "suite_name": "_merged_",
+      "n_qubits": 4,
+      "merged": true,
+      "merged_suites": [
+        "diagnostics_single_qubit",
+        "diagnostics_cross_pair",
+        "stress_random_1000"
+      ],
+      "overlap_eliminated": 5,
+      "suite_metadata": {
+        "diagnostics_single_qubit": {
+          "suite_type": "diagnostic",
+          "objective": "per_observable",
+          "n_observables": 4,
+          "fully_commuting": true,
+          "n_commuting_groups": 1,
+          "has_weights": false,
+          "description": "Single-qubit Z for readout bias diagnostics"
+        },
+        "diagnostics_cross_pair": {
+          "suite_type": "diagnostic",
+          "objective": "per_observable",
+          "n_observables": 1,
+          "fully_commuting": true,
+          "n_commuting_groups": 1,
+          "has_weights": false,
+          "description": "Cross-pair ZZ correlators for crosstalk detection"
+        },
+        "stress_random_1000": {
+          "suite_type": "stress",
+          "objective": "per_observable",
+          "n_observables": 87,
+          "fully_commuting": false,
+          "n_commuting_groups": 34,
+          "has_weights": false,
+          "description": "100 observables, stratified sampling"
+        }
+      },
+      "run_id": "S-BELL-2__merged_20260219_212506_fb08b805",
+      "output_dir": "benchmark_results\\S-BELL-2__merged_20260219_212506_fb08b805",
+      "summary": {
+        "run_id": "publication_benchmark_5e6ca1f8",
+        "n_protocols": 3,
+        "n_shots_grid": [
+          5000,
+          10000,
+          20000
+        ],
+        "n_replicates": 10,
+        "n_observables": 87,
+        "has_ground_truth": true,
+        "n_long_form_rows": 7830,
+        "protocols": [
+          "direct_grouped",
+          "direct_optimized",
+          "classical_shadows_v0"
+        ],
+        "protocol_summaries": {
+          "direct_grouped": {
+            "mean_se": 0.03944374028702783,
+            "max_se": 0.04188532659580175,
+            "median_se": 0.041870935838227166,
+            "mean_abs_error": 0.029824667351088054,
+            "max_abs_error": 0.14185639229422067
+          },
+          "direct_optimized": {
+            "mean_se": 0.03616148833918115,
+            "max_se": 0.05089848993176282,
+            "median_se": 0.03594422781208805,
+            "mean_abs_error": 0.02779321948251982,
+            "max_abs_error": 0.1330049261083744
+          },
+          "classical_shadows_v0": {
+            "mean_se": 0.036546217977337,
+            "max_se": 0.06872466945718983,
+            "median_se": 0.036235363173371324,
+            "mean_abs_error": 0.029240287356321844,
+            "max_abs_error": 0.18225
+          }
+        }
+      }
+    }
+  }
+}

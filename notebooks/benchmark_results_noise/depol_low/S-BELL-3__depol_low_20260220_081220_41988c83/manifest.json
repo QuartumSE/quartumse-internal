@@ -1,0 +1,54 @@
+{
+  "run_id": "S-BELL-3__depol_low_20260220_081220_41988c83",
+  "timestamp": "2026-02-20T08:12:20.777474",
+  "mode": "analysis",
+  "circuit_id": "S-BELL-3__depol_low",
+  "n_observables": 103,
+  "n_protocols": 3,
+  "protocols": [
+    "direct_grouped",
+    "direct_optimized",
+    "classical_shadows_v0"
+  ],
+  "n_shots_grid": [
+    5000,
+    10000,
+    20000
+  ],
+  "n_replicates": 10,
+  "n_long_form_rows": 9270,
+  "has_ground_truth": true,
+  "tasks_completed": [
+    "task1_direct_grouped",
+    "task1_direct_optimized",
+    "task1_classical_shadows_v0",
+    "task3_direct_grouped",
+    "task3_direct_optimized",
+    "task3_classical_shadows_v0",
+    "task6_direct_grouped",
+    "task6_direct_optimized",
+    "task6_classical_shadows_v0"
+  ],
+  "all_tasks_completed": [
+    "task1_direct_grouped",
+    "task1_direct_optimized",
+    "task1_classical_shadows_v0",
+    "task2_direct_grouped",
+    "task2_direct_optimized",
+    "task2_classical_shadows_v0",
+    "task3_direct_grouped",
+    "task3_direct_optimized",
+    "task3_classical_shadows_v0",
+    "task6_direct_grouped",
+    "task6_direct_optimized",
+    "task6_classical_shadows_v0"
+  ],
+  "has_analysis": true,
+  "reports": {
+    "basic": "benchmark_results_noise\\depol_low\\S-BELL-3__depol_low_20260220_081220_41988c83\\basic_report.md",
+    "complete": "benchmark_results_noise\\depol_low\\S-BELL-3__depol_low_20260220_081220_41988c83\\complete_report.md",
+    "analysis": "benchmark_results_noise\\depol_low\\S-BELL-3__depol_low_20260220_081220_41988c83\\analysis_report.md",
+    "analysis_json": "benchmark_results_noise\\depol_low\\S-BELL-3__depol_low_20260220_081220_41988c83\\analysis.json",
+    "config": "benchmark_results_noise\\depol_low\\S-BELL-3__depol_low_20260220_081220_41988c83\\config.json"
+  }
+}

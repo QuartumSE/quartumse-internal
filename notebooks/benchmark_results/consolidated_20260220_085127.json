@@ -1,0 +1,87 @@
+{
+  "timestamp": "2026-02-20T08:51:27.702825",
+  "n_runs": 1,
+  "config": {
+    "mode": "analysis",
+    "n_shots_grid": [
+      5000,
+      10000,
+      20000
+    ],
+    "n_replicates": 10,
+    "epsilon": 0.05
+  },
+  "suites_enabled": {
+    "merged": true,
+    "stress": true,
+    "commuting": true,
+    "posthoc": true,
+    "diagnostics": true
+  },
+  "circuits_enabled": [
+    "S-ISING-4"
+  ],
+  "merge_enabled": true,
+  "runs": {
+    "S-ISING-4__stress_random_1000": {
+      "circuit_id": "S-ISING-4",
+      "suite_name": "stress_random_1000",
+      "n_qubits": 4,
+      "merged": false,
+      "suite_metadata": {
+        "stress_random_1000": {
+          "suite_type": "stress",
+          "objective": "per_observable",
+          "n_observables": 87,
+          "fully_commuting": false,
+          "n_commuting_groups": 33,
+          "has_weights": false,
+          "description": "100 observables, stratified sampling"
+        }
+      },
+      "run_id": "S-ISING-4__stress_random_1000_20260220_083023_8fbbb14b",
+      "output_dir": "benchmark_results\\S-ISING-4__stress_random_1000_20260220_083023_8fbbb14b",
+      "summary": {
+        "run_id": "publication_benchmark_95911532",
+        "n_protocols": 3,
+        "n_shots_grid": [
+          5000,
+          10000,
+          20000
+        ],
+        "n_replicates": 10,
+        "n_observables": 87,
+        "has_ground_truth": true,
+        "n_long_form_rows": 7830,
+        "protocols": [
+          "direct_grouped",
+          "direct_optimized",
+          "classical_shadows_v0"
+        ],
+        "protocol_summaries": {
+          "direct_grouped": {
+            "mean_se": 0.03912967049810658,
+            "max_se": 0.040655781409087086,
+            "median_se": 0.040456017123505945,
+            "mean_abs_error": 0.03243017841802546,
+            "max_abs_error": 0.1419141914191419
+          },
+          "direct_optimized": {
+            "mean_se": 0.03558143479046763,
+            "max_se": 0.049937616943892225,
+            "median_se": 0.035273507621292,
+            "mean_abs_error": 0.027328688559600352,
+            "max_abs_error": 0.12935323383084577
+          },
+          "classical_shadows_v0": {
+            "mean_se": 0.03652717160558481,
+            "max_se": 0.06871070585796657,
+            "median_se": 0.036189100001940575,
+            "mean_abs_error": 0.029987957876293693,
+            "max_abs_error": 0.2096263934704365
+          }
+        }
+      }
+    }
+  }
+}

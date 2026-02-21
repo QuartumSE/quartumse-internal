@@ -1,0 +1,196 @@
+{
+  "timestamp": "2026-02-20T08:20:09.768106",
+  "n_runs": 2,
+  "config": {
+    "mode": "analysis",
+    "n_shots_grid": [
+      5000,
+      10000,
+      20000
+    ],
+    "n_replicates": 10,
+    "epsilon": 0.05
+  },
+  "suites_enabled": {
+    "merged": true,
+    "stress": true,
+    "commuting": true,
+    "posthoc": true,
+    "diagnostics": true
+  },
+  "circuits_enabled": [
+    "S-BELL-2",
+    "S-BELL-3"
+  ],
+  "merge_enabled": true,
+  "runs": {
+    "S-BELL-2__merged": {
+      "circuit_id": "S-BELL-2",
+      "suite_name": "_merged_",
+      "n_qubits": 4,
+      "merged": true,
+      "merged_suites": [
+        "diagnostics_single_qubit",
+        "diagnostics_cross_pair",
+        "stress_random_1000"
+      ],
+      "overlap_eliminated": 5,
+      "suite_metadata": {
+        "diagnostics_single_qubit": {
+          "suite_type": "diagnostic",
+          "objective": "per_observable",
+          "n_observables": 4,
+          "fully_commuting": true,
+          "n_commuting_groups": 1,
+          "has_weights": false,
+          "description": "Single-qubit Z for readout bias diagnostics"
+        },
+        "diagnostics_cross_pair": {
+          "suite_type": "diagnostic",
+          "objective": "per_observable",
+          "n_observables": 1,
+          "fully_commuting": true,
+          "n_commuting_groups": 1,
+          "has_weights": false,
+          "description": "Cross-pair ZZ correlators for crosstalk detection"
+        },
+        "stress_random_1000": {
+          "suite_type": "stress",
+          "objective": "per_observable",
+          "n_observables": 87,
+          "fully_commuting": false,
+          "n_commuting_groups": 34,
+          "has_weights": false,
+          "description": "100 observables, stratified sampling"
+        }
+      },
+      "run_id": "S-BELL-2__merged_20260219_214216_7d5aeb36",
+      "output_dir": "benchmark_results\\S-BELL-2__merged_20260219_214216_7d5aeb36",
+      "summary": {
+        "run_id": "publication_benchmark_cc58c898",
+        "n_protocols": 3,
+        "n_shots_grid": [
+          5000,
+          10000,
+          20000
+        ],
+        "n_replicates": 10,
+        "n_observables": 87,
+        "has_ground_truth": true,
+        "n_long_form_rows": 7830,
+        "protocols": [
+          "direct_grouped",
+          "direct_optimized",
+          "classical_shadows_v0"
+        ],
+        "protocol_summaries": {
+          "direct_grouped": {
+            "mean_se": 0.03944261917849816,
+            "max_se": 0.04188532659580175,
+            "median_se": 0.041870935838227166,
+            "mean_abs_error": 0.03039233448074564,
+            "max_abs_error": 0.14185639229422067
+          },
+          "direct_optimized": {
+            "mean_se": 0.036272081532215866,
+            "max_se": 0.050964719143762556,
+            "median_se": 0.036012609569145856,
+            "mean_abs_error": 0.028697859671327947,
+            "max_abs_error": 0.14507772020725387
+          },
+          "classical_shadows_v0": {
+            "mean_se": 0.03654621797733701,
+            "max_se": 0.06872466945718983,
+            "median_se": 0.036235363173371324,
+            "mean_abs_error": 0.029240287356321844,
+            "max_abs_error": 0.18225
+          }
+        }
+      }
+    },
+    "S-BELL-3__merged": {
+      "circuit_id": "S-BELL-3",
+      "suite_name": "_merged_",
+      "n_qubits": 6,
+      "merged": true,
+      "merged_suites": [
+        "diagnostics_single_qubit",
+        "diagnostics_cross_pair",
+        "stress_random_1000"
+      ],
+      "overlap_eliminated": 6,
+      "suite_metadata": {
+        "diagnostics_single_qubit": {
+          "suite_type": "diagnostic",
+          "objective": "per_observable",
+          "n_observables": 6,
+          "fully_commuting": true,
+          "n_commuting_groups": 1,
+          "has_weights": false,
+          "description": "Single-qubit Z for readout bias diagnostics"
+        },
+        "diagnostics_cross_pair": {
+          "suite_type": "diagnostic",
+          "objective": "per_observable",
+          "n_observables": 3,
+          "fully_commuting": true,
+          "n_commuting_groups": 1,
+          "has_weights": false,
+          "description": "Cross-pair ZZ correlators for crosstalk detection"
+        },
+        "stress_random_1000": {
+          "suite_type": "stress",
+          "objective": "per_observable",
+          "n_observables": 100,
+          "fully_commuting": false,
+          "n_commuting_groups": 42,
+          "has_weights": false,
+          "description": "100 observables, stratified sampling"
+        }
+      },
+      "run_id": "S-BELL-3__merged_20260219_215022_ab381489",
+      "output_dir": "benchmark_results\\S-BELL-3__merged_20260219_215022_ab381489",
+      "summary": {
+        "run_id": "publication_benchmark_e949838a",
+        "n_protocols": 3,
+        "n_shots_grid": [
+          5000,
+          10000,
+          20000
+        ],
+        "n_replicates": 10,
+        "n_observables": 103,
+        "has_ground_truth": true,
+        "n_long_form_rows": 9270,
+        "protocols": [
+          "direct_grouped",
+          "direct_optimized",
+          "classical_shadows_v0"
+        ],
+        "protocol_summaries": {
+          "direct_grouped": {
+            "mean_se": 0.04502844455683222,
+            "max_se": 0.04642372719338259,
+            "median_se": 0.04639967433729525,
+            "mean_abs_error": 0.03436266833698717,
+            "max_abs_error": 0.15268817204301074
+          },
+          "direct_optimized": {
+            "mean_se": 0.041153256844895375,
+            "max_se": 0.055989251095585425,
+            "median_se": 0.04246599328498995,
+            "mean_abs_error": 0.03217347818199512,
+            "max_abs_error": 0.1434878587196468
+          },
+          "classical_shadows_v0": {
+            "mean_se": 0.0688022660733205,
+            "max_se": 0.24451281076637887,
+            "median_se": 0.03757022091572934,
+            "mean_abs_error": 0.053083300970873784,
+            "max_abs_error": 0.5103
+          }
+        }
+      }
+    }
+  }
+}

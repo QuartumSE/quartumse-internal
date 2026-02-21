@@ -168,7 +168,7 @@ def compute_objective_metrics(
     # Group results by (protocol, N, replicate)
     by_protocol_n_rep = {}
     for row in long_form_results:
-        key = (row.protocol_id, row.N_total, row.replicate)
+        key = (row.protocol_id, row.N_total, row.replicate_id)
         if key not in by_protocol_n_rep:
             by_protocol_n_rep[key] = {}
         by_protocol_n_rep[key][row.observable_id] = row.estimate

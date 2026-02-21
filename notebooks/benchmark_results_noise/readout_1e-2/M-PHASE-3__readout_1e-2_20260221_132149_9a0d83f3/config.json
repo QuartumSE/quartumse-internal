@@ -1,0 +1,17 @@
+{
+  "mode": "analysis",
+  "n_shots_grid": [
+    5000,
+    10000,
+    20000
+  ],
+  "n_replicates": 10,
+  "seed": 42,
+  "epsilon": 0.05,
+  "delta": 0.05,
+  "compute_truth": true,
+  "shadows_protocol_id": "classical_shadows_v0",
+  "baseline_protocol_id": "direct_grouped",
+  "output_base_dir": "benchmark_results_noise/readout_1e-2",
+  "noise_profile": "readout_1e-2"
+}

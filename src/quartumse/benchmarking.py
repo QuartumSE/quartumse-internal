@@ -38,7 +38,7 @@ import numpy as np
 from .backends.truth import GroundTruthConfig
 from .io import LongFormResultBuilder, LongFormResultSet, ParquetWriter, SummaryAggregator
 from .io.schemas import RunManifest
-from .noise.profiles import CANONICAL_PROFILES, NoiseType, get_profile
+from .noise.profiles import NoiseType, get_profile
 from .observables import ObservableSet, generate_observable_set
 from .protocols import (
     DirectGroupedProtocol,
@@ -458,6 +458,8 @@ def _extract_raw_shot_records(
     protocol_id = estimates.protocol_id or ""
     for chunk in estimates.raw_chunks:
         if chunk.bitstrings:
+            # Check metadata for measurement bases (shadows protocol)
+            meta_bases = chunk.metadata.get("measurement_bases") if chunk.metadata else None
             for setting_id, bitstring_list in chunk.bitstrings.items():
                 records.append(
                     {
@@ -468,7 +470,9 @@ def _extract_raw_shot_records(
                         "noise_profile": noise_profile,
                         "setting_id": setting_id,
                         "bitstrings": json.dumps(bitstring_list),
-                        "measurement_bases": None,
+                        "measurement_bases": json.dumps(meta_bases.tolist())
+                        if meta_bases is not None
+                        else None,
                     }
                 )
         elif chunk.outcomes is not None:
@@ -559,7 +563,6 @@ def run_publication_benchmark(
         - summary: Aggregate statistics
     """
     from qiskit import QuantumCircuit
-    from qiskit_aer import AerSimulator
 
     from .backends import compute_ground_truth as _compute_ground_truth
     from .io import (

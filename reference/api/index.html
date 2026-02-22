@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
     
     
       
@@ -33373,7 +33373,7 @@ and collects results.</p>
     <span class="c1"># Group results by (protocol, N, replicate)</span>
     <span class="n">by_protocol_n_rep</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">long_form_results</span><span class="p">:</span>
-        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">protocol_id</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">N_total</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">replicate</span><span class="p">)</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">protocol_id</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">N_total</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">replicate_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">by_protocol_n_rep</span><span class="p">:</span>
             <span class="n">by_protocol_n_rep</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">by_protocol_n_rep</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">row</span><span class="o">.</span><span class="n">observable_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">estimate</span>

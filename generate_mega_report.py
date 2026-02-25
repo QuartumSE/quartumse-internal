@@ -25,6 +25,7 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
+
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
@@ -216,6 +217,105 @@ def compute_p_best_from_longform(
         result[int(n_total)] = p_best
 
     return result
+
+
+
+# ---------------------------------------------------------------------------
+# Extended metrics: percentile + locality breakdown
+# ---------------------------------------------------------------------------
+
+def compute_extended_metrics(lf_df: pd.DataFrame, gt_dict: dict) -> dict:
+    """Compute percentile and locality breakdown metrics from long-form data.
+
+    Returns {"percentiles": {...}, "locality": {...}} where:
+      - percentiles[metric_name] = {protocol_id: value, ..., "winner": pid}
+      - locality[weight] = {"n_obs": int, protocols: {pid: {"mean": .., "median": .., "max": ..}}, "winner": pid}
+    """
+    truth = gt_dict.get("truth_values", {})
+
+    # Ensure se column exists
+    if "se" not in lf_df.columns:
+        return {"percentiles": {}, "locality": {}}
+
+    # Filter to max N_total
+    max_n = lf_df["N_total"].max()
+    df = lf_df[lf_df["N_total"] == max_n].copy()
+
+    if df.empty:
+        return {"percentiles": {}, "locality": {}}
+
+    # --- Percentile metrics ---
+    # Mean SE across replicates per (protocol, observable)
+    per_obs = (
+        df.groupby(["protocol_id", "observable_id"])["se"]
+        .mean()
+        .reset_index()
+        .rename(columns={"se": "mean_se"})
+    )
+
+    protocols = sorted(per_obs["protocol_id"].unique())
+    metric_names = ["mean", "p25", "median", "p75", "max"]
+    percentiles_result = {"max_n": int(max_n), "protocols": protocols, "metrics": {}}
+
+    for pid in protocols:
+        vals = per_obs.loc[per_obs["protocol_id"] == pid, "mean_se"].values
+        if len(vals) == 0:
+            continue
+        percentiles_result["metrics"].setdefault("mean", {})[pid] = float(np.mean(vals))
+        percentiles_result["metrics"].setdefault("p25", {})[pid] = float(np.percentile(vals, 25))
+        percentiles_result["metrics"].setdefault("median", {})[pid] = float(np.median(vals))
+        percentiles_result["metrics"].setdefault("p75", {})[pid] = float(np.percentile(vals, 75))
+        percentiles_result["metrics"].setdefault("max", {})[pid] = float(np.max(vals))
+
+    # Determine winner (lowest value) at each metric level
+    for mname in metric_names:
+        mdata = percentiles_result["metrics"].get(mname, {})
+        if mdata:
+            winner = min(mdata, key=mdata.get)
+            mdata["_winner"] = winner
+
+    # --- Locality breakdown ---
+    locality_result = {}
+    has_locality = (
+        "locality" in df.columns
+        and df["locality"].notna().any()
+        and (df["locality"] != 0).any()
+    )
+
+    if has_locality:
+        # Mean SE across replicates per (protocol, locality, observable)
+        per_obs_loc = (
+            df.groupby(["protocol_id", "locality", "observable_id"])["se"]
+            .mean()
+            .reset_index()
+            .rename(columns={"se": "mean_se"})
+        )
+
+        for weight, grp in per_obs_loc.groupby("locality"):
+            weight_int = int(weight)
+            n_obs = grp["observable_id"].nunique()
+            proto_stats = {}
+            for pid in protocols:
+                pvals = grp.loc[grp["protocol_id"] == pid, "mean_se"].values
+                if len(pvals) == 0:
+                    continue
+                proto_stats[pid] = {
+                    "mean": float(np.mean(pvals)),
+                    "median": float(np.median(pvals)),
+                    "max": float(np.max(pvals)),
+                }
+            # Winner by mean SE
+            if proto_stats:
+                winner = min(proto_stats, key=lambda p: proto_stats[p]["mean"])
+            else:
+                winner = None
+            locality_result[weight_int] = {
+                "n_obs": n_obs,
+                "protocols": proto_stats,
+                "winner": winner,
+            }
+
+    return {"percentiles": percentiles_result, "locality": locality_result}
 
 
 # ---------------------------------------------------------------------------
@@ -418,14 +518,67 @@ def _section_executive_summary(all_data: dict, adaptive_data: dict) -> str:
       <p>Shadows wins in <strong>{shadows_wins}/{total_compared}</strong> conditions
          (ratio &lt; 1.0 means shadows has lower MAE).</p>
       <p>{"Classical shadows generally outperforms the grouped direct baseline across most circuits and noise conditions."
-         if shadows_wins > total_compared / 2
+         if shadows_wins >= 0.65 * total_compared
          else "Performance is mixed — protocol advantage depends on circuit and noise profile."}</p>
     </div>
     """
 
 
-def _section_overview_table(all_data: dict) -> str:
+def _overview_cell(analysis: dict | None, ext: dict | None) -> str:
+    """Build a single overview cell with median winner + median/max SE ratios.
+
+    Prefers extended-metrics (percentile) data when available, falls back
+    to analysis.json summary.
+    """
+    pct = (ext or {}).get("percentiles", {})
+    metrics = pct.get("metrics", {})
+    protocols = pct.get("protocols", [])
+
+    # Try to get shadows SE at median and max from extended metrics
+    median_m = metrics.get("median", {})
+    max_m = metrics.get("max", {})
+    shadows_pid = next((p for p in protocols if SHORT.get(p, p) == "shadows"), None)
+    grouped_pid = next((p for p in protocols if SHORT.get(p, p) == "grouped"), None)
+
+    if shadows_pid and grouped_pid and shadows_pid in median_m and grouped_pid in median_m:
+        median_winner = median_m.get("_winner")
+        median_ratio = median_m[shadows_pid] / median_m[grouped_pid] if median_m[grouped_pid] else None
+        max_ratio = (
+            max_m.get(shadows_pid, 0) / max_m[grouped_pid]
+            if grouped_pid in max_m and max_m[grouped_pid]
+            else None
+        )
+        median_color = _ratio_color(median_ratio)
+        max_color = _ratio_color(max_ratio)
+        return (
+            f'<td style="text-align:center;">'
+            f'{_winner_tag(median_winner)}<br>'
+            f'<small style="color:{median_color};font-weight:600;">'
+            f'med {_fmt(median_ratio, ".3f")}</small> '
+            f'<small style="color:{max_color};">'
+            f'max {_fmt(max_ratio, ".3f")}</small></td>'
+        )
+
+    # Fallback: analysis.json summary
+    if analysis and "summary" in analysis:
+        s = analysis["summary"]
+        winner = s.get("winner_at_max_n")
+        ratio = s.get("shadows_vs_baseline_ratio")
+        color = _ratio_color(ratio)
+        return (
+            f'<td style="text-align:center;">'
+            f'{_winner_tag(winner)}<br>'
+            f'<small style="color:{color};font-weight:600;">'
+            f'{_fmt(ratio, ".3f")}</small></td>'
+        )
+
+    return '<td style="text-align:center;color:var(--muted);">&mdash;</td>'
+
+
+def _section_overview_table(all_data: dict, extended_metrics: dict | None = None) -> str:
     """Section 2: Circuit overview heatmap table."""
+    if extended_metrics is None:
+        extended_metrics = {}
     conditions = ["merged"] + NOISE_PROFILES
     cond_labels = {
         "merged": "Merged",
@@ -442,24 +595,14 @@ def _section_overview_table(all_data: dict) -> str:
         for cond in conditions:
             entry = all_data.get(cid, {}).get(cond, {})
             a = entry.get("analysis")
-            if a and "summary" in a:
-                s = a["summary"]
-                winner = s.get("winner_at_max_n")
-                ratio = s.get("shadows_vs_baseline_ratio")
-                color = _ratio_color(ratio)
-                cells += (
-                    f'<td style="text-align:center;">'
-                    f'{_winner_tag(winner)}<br>'
-                    f'<small style="color:{color};font-weight:600;">'
-                    f'{_fmt(ratio, ".3f")}</small></td>'
-                )
-            else:
-                cells += '<td style="text-align:center;color:var(--muted);">&mdash;</td>'
+            ext = extended_metrics.get(cid, {}).get(cond)
+            cells += _overview_cell(a, ext)
         rows.append(f"<tr>{cells}</tr>")
 
     return f"""
     <h2>2. Circuit Overview</h2>
-    <p>Winner protocol and shadows/baseline SE ratio at maximum shot budget.
+    <p>Median-SE winner and shadows/grouped SE ratios at maximum shot budget.
+       <em>med</em> = median SE ratio, <em>max</em> = max SE ratio.
        Ratio &lt; 1 means shadows outperforms the grouped baseline.</p>
     <div style="overflow-x:auto;">
     <table>
@@ -473,15 +616,126 @@ def _section_overview_table(all_data: dict) -> str:
     """
 
 
-def _section_circuit_detail(cid: str, data_by_cond: dict, p_best_data: dict) -> str:
+def _percentile_comparison_table(ext_by_cond: dict) -> str:
+    """Generate percentile comparison table across conditions."""
+    cond_labels = {"merged": "Merged", "ideal": "Ideal", "readout_1e-2": "Readout", "depol_low": "Depol"}
+    metric_labels = {"mean": "Mean SE", "p25": "P25 SE", "median": "Median SE", "p75": "P75 SE", "max": "Max SE"}
+    metric_order = ["mean", "p25", "median", "p75", "max"]
+
+    # Collect all protocols across conditions
+    all_protos = set()
+    for cond_ext in ext_by_cond.values():
+        pct = cond_ext.get("percentiles", {})
+        all_protos.update(pct.get("protocols", []))
+    if not all_protos:
+        return ""
+    proto_list = sorted(all_protos, key=lambda p: SHORT.get(p, p))
+
+    header = "<tr><th>Condition</th><th class='num'>N</th><th>Metric</th>"
+    for pid in proto_list:
+        header += f"<th class='num'>{_esc(SHORT.get(pid, pid))}</th>"
+    header += "<th>Winner</th></tr>"
+
+    rows = []
+    for cond in ["merged"] + NOISE_PROFILES:
+        cond_ext = ext_by_cond.get(cond, {})
+        pct = cond_ext.get("percentiles", {})
+        if not pct or not pct.get("metrics"):
+            continue
+        max_n = pct.get("max_n", "")
+        for i, mname in enumerate(metric_order):
+            mdata = pct["metrics"].get(mname, {})
+            if not mdata:
+                continue
+            winner = mdata.get("_winner")
+            # Show condition + N only on first row of each condition block
+            if i == 0:
+                cond_cell = f'<td rowspan="{len(metric_order)}">{cond_labels.get(cond, cond)}</td>'
+                n_cell = f'<td rowspan="{len(metric_order)}" class="num">{max_n:,}</td>'
+            else:
+                cond_cell = ""
+                n_cell = ""
+            row = f"{cond_cell}{n_cell}<td>{metric_labels[mname]}</td>"
+            for pid in proto_list:
+                v = mdata.get(pid)
+                bold = " font-weight:700;" if pid == winner else ""
+                row += f'<td class="num" style="{bold}">{_fmt(v)}</td>'
+            row += f"<td>{_winner_tag(winner)}</td>"
+            rows.append(f"<tr>{row}</tr>")
+
+    if not rows:
+        return ""
+    return (
+        "<h4>Percentile Comparison at Max N</h4>"
+        f"<table><thead>{header}</thead><tbody>{''.join(rows)}</tbody></table>"
+    )
+
+
+def _locality_breakdown_table(ext_by_cond: dict) -> str:
+    """Generate locality (Pauli weight) breakdown table across conditions."""
+    cond_labels = {"merged": "Merged", "ideal": "Ideal", "readout_1e-2": "Readout", "depol_low": "Depol"}
+
+    # Collect all protocols and weights
+    all_protos = set()
+    all_weights = set()
+    for cond_ext in ext_by_cond.values():
+        loc = cond_ext.get("locality", {})
+        for w, wdata in loc.items():
+            all_weights.add(w)
+            all_protos.update(wdata.get("protocols", {}).keys())
+    if not all_protos or not all_weights:
+        return ""
+    proto_list = sorted(all_protos, key=lambda p: SHORT.get(p, p))
+    weight_list = sorted(all_weights)
+
+    header = "<tr><th>Condition</th><th class='num'>Weight</th><th class='num'># Obs</th>"
+    for pid in proto_list:
+        header += f"<th class='num'>{_esc(SHORT.get(pid, pid))} SE</th>"
+    header += "<th>Winner</th></tr>"
+
+    rows = []
+    for cond in ["merged"] + NOISE_PROFILES:
+        cond_ext = ext_by_cond.get(cond, {})
+        loc = cond_ext.get("locality", {})
+        if not loc:
+            continue
+        cond_weights = sorted(w for w in weight_list if w in loc)
+        for i, w in enumerate(cond_weights):
+            wdata = loc[w]
+            # Show condition only on first row
+            if i == 0:
+                cond_cell = f'<td rowspan="{len(cond_weights)}">{cond_labels.get(cond, cond)}</td>'
+            else:
+                cond_cell = ""
+            winner = wdata.get("winner")
+            row = f'{cond_cell}<td class="num">{w}</td><td class="num">{wdata["n_obs"]}</td>'
+            for pid in proto_list:
+                pstats = wdata.get("protocols", {}).get(pid, {})
+                v = pstats.get("mean")
+                bold = " font-weight:700;" if pid == winner else ""
+                row += f'<td class="num" style="{bold}">{_fmt(v)}</td>'
+            row += f"<td>{_winner_tag(winner)}</td>"
+            rows.append(f"<tr>{row}</tr>")
+
+    if not rows:
+        return ""
+    return (
+        "<h4>Locality Breakdown (by Pauli Weight)</h4>"
+        "<p><small>Mean SE per protocol at each observable locality (Pauli weight). "
+        "Classical shadows have 3<sup>k</sup> variance scaling, so advantage depends on weight.</small></p>"
+        f"<table><thead>{header}</thead><tbody>{''.join(rows)}</tbody></table>"
+    )
+
+
+def _section_circuit_detail(cid: str, data_by_cond: dict, p_best_data: dict, ext_by_cond: dict | None = None) -> str:
     """Section 3: Per-circuit detail card (collapsible)."""
+    if ext_by_cond is None:
+        ext_by_cond = {}
     info = CIRCUITS[cid]
     parts = []
+    cond_labels = {"merged": "Merged", "ideal": "Ideal", "readout_1e-2": "Readout", "depol_low": "Depol"}
 
-    # --- Protocol comparison at max N ---
-    parts.append("<h4>Protocol Comparison at Max N</h4>")
-    header_row = "<tr><th>Condition</th><th>N</th>"
-    # Collect all protocols seen
+    # Collect all protocols seen across conditions (needed by multiple sub-tables)
     all_protocols_seen = set()
     for cond, entry in data_by_cond.items():
         a = entry.get("analysis")
@@ -489,32 +743,44 @@ def _section_circuit_detail(cid: str, data_by_cond: dict, p_best_data: dict) -> 
             dists = a["task_analyses"]["task3_distribution"]["base_results"].get("distributions", {})
             all_protocols_seen.update(dists.keys())
     proto_list = sorted(all_protocols_seen, key=lambda p: SHORT.get(p, p))
-    for pid in proto_list:
-        header_row += f"<th class='num'>{_esc(SHORT.get(pid, pid))} MAE</th>"
-    header_row += "</tr>"
 
-    cond_labels = {"merged": "Merged", "ideal": "Ideal", "readout_1e-2": "Readout", "depol_low": "Depol"}
-    table_rows = []
-    for cond in ["merged"] + NOISE_PROFILES:
-        entry = data_by_cond.get(cond, {})
-        a = entry.get("analysis")
-        if not a or "task_analyses" not in a:
-            continue
-        t3 = a["task_analyses"].get("task3_distribution", {}).get("base_results", {}).get("distributions", {})
-        n_shots = a.get("n_shots_grid", [])
-        max_n = max(n_shots) if n_shots else None
-        row = f'<td>{cond_labels.get(cond, cond)}</td><td class="num">{_fmt(max_n, ".0f")}</td>'
+    # --- Percentile comparison at max N ---
+    pct_html = _percentile_comparison_table(ext_by_cond)
+    if pct_html:
+        parts.append(pct_html)
+    else:
+        # Fallback: old-style protocol comparison from analysis.json
+        parts.append("<h4>Protocol Comparison at Max N</h4>")
+        header_row = "<tr><th>Condition</th><th>N</th>"
         for pid in proto_list:
-            pdist = t3.get(pid, {})
-            if max_n and str(max_n) in pdist:
-                row += f'<td class="num">{_fmt(pdist[str(max_n)].get("mean"), ".5f")}</td>'
-            elif max_n and max_n in pdist:
-                row += f'<td class="num">{_fmt(pdist[max_n].get("mean"), ".5f")}</td>'
-            else:
-                row += '<td class="num">&mdash;</td>'
-        table_rows.append(f"<tr>{row}</tr>")
-    if table_rows:
-        parts.append(f"<table><thead>{header_row}</thead><tbody>{''.join(table_rows)}</tbody></table>")
+            header_row += f"<th class='num'>{_esc(SHORT.get(pid, pid))} MAE</th>"
+        header_row += "</tr>"
+        table_rows = []
+        for cond in ["merged"] + NOISE_PROFILES:
+            entry = data_by_cond.get(cond, {})
+            a = entry.get("analysis")
+            if not a or "task_analyses" not in a:
+                continue
+            t3 = a["task_analyses"].get("task3_distribution", {}).get("base_results", {}).get("distributions", {})
+            n_shots = a.get("n_shots_grid", [])
+            max_n = max(n_shots) if n_shots else None
+            row = f'<td>{cond_labels.get(cond, cond)}</td><td class="num">{_fmt(max_n, ".0f")}</td>'
+            for pid in proto_list:
+                pdist = t3.get(pid, {})
+                if max_n and str(max_n) in pdist:
+                    row += f'<td class="num">{_fmt(pdist[str(max_n)].get("mean"), ".5f")}</td>'
+                elif max_n and max_n in pdist:
+                    row += f'<td class="num">{_fmt(pdist[max_n].get("mean"), ".5f")}</td>'
+                else:
+                    row += '<td class="num">&mdash;</td>'
+            table_rows.append(f"<tr>{row}</tr>")
+        if table_rows:
+            parts.append(f"<table><thead>{header_row}</thead><tbody>{''.join(table_rows)}</tbody></table>")
+
+    # --- Locality breakdown ---
+    loc_html = _locality_breakdown_table(ext_by_cond)
+    if loc_html:
+        parts.append(loc_html)
 
     # --- Interpolated N* ---
     parts.append("<h4>Interpolated N* (Power-Law Fit)</h4>")
@@ -731,80 +997,13 @@ def _section_noise_impact(all_data: dict) -> str:
     """
 
 
-def _section_pilot_analysis(all_data: dict) -> str:
-    """Section 5: Pilot fraction analysis from analysis.json."""
-    fractions = ["0.02", "0.05", "0.1", "0.2"]
-    frac_labels = ["2%", "5%", "10%", "20%"]
-
-    # Aggregate accuracy and regret across all circuits
-    agg_acc = {f: [] for f in fractions}
-    agg_reg = {f: [] for f in fractions}
-
-    rows = []
-    for cid in CIRCUITS:
-        row = f'<td><strong>{_esc(cid)}</strong></td>'
-        # Use merged as primary source
-        for source in ["merged"] + NOISE_PROFILES:
-            entry = all_data.get(cid, {}).get(source, {})
-            a = entry.get("analysis")
-            if a and "pilot_analysis" in a:
-                pa = a["pilot_analysis"]
-                break
-        else:
-            pa = None
-
-        if pa and "results" in pa:
-            opt_frac = pa.get("optimal_fraction")
-            row += f'<td class="num">{_fmt(opt_frac, ".0%") if opt_frac else "&mdash;"}</td>'
-            for f in fractions:
-                fr = pa["results"].get(f, {})
-                acc = fr.get("selection_accuracy")
-                reg = fr.get("mean_regret")
-                if acc is not None:
-                    agg_acc[f].append(acc)
-                if reg is not None:
-                    agg_reg[f].append(reg)
-                style = ' style="color:var(--green);font-weight:600;"' if acc is not None and acc >= 0.9 else ""
-                row += f'<td class="num"{style}>{_fmt(acc, ".0%")}</td>'
-                row += f'<td class="num">{_fmt(reg, ".5f")}</td>'
-        else:
-            row += '<td class="num">&mdash;</td>'
-            for _ in fractions:
-                row += '<td class="num">&mdash;</td><td class="num">&mdash;</td>'
-        rows.append(f"<tr>{row}</tr>")
-
-    # Aggregate row
-    agg_row = '<td><strong>Mean</strong></td><td></td>'
-    for f in fractions:
-        mean_acc = np.mean(agg_acc[f]) if agg_acc[f] else float("nan")
-        mean_reg = np.mean(agg_reg[f]) if agg_reg[f] else float("nan")
-        agg_row += f'<td class="num" style="font-weight:600;">{_fmt(mean_acc, ".0%")}</td>'
-        agg_row += f'<td class="num" style="font-weight:600;">{_fmt(mean_reg, ".5f")}</td>'
-    rows.append(f'<tr style="border-top:2px solid var(--accent);">{agg_row}</tr>')
-
-    header = "<tr><th>Circuit</th><th class='num'>Opt. Frac</th>"
-    for fl in frac_labels:
-        header += f"<th class='num'>{fl} Acc</th><th class='num'>{fl} Regret</th>"
-    header += "</tr>"
-
-    return f"""
-    <h2>5. Pilot Fraction Analysis</h2>
-    <p>Fixed-fraction pilot selection: accuracy and mean regret at each pilot fraction
-       (from merged runs). Accuracy = fraction of replicates selecting the oracle-best protocol.</p>
-    <div style="overflow-x:auto;">
-    <table>
-      <thead>{header}</thead>
-      <tbody>{"".join(rows)}</tbody>
-    </table>
-    </div>
-    """
 
 
 def _section_bayesian_adaptive(adaptive_data: dict) -> str:
-    """Section 6: Bayesian adaptive protocol selection."""
+    """Section 5: Bayesian adaptive protocol selection."""
     if not adaptive_data:
         return """
-        <h2>6. Bayesian Adaptive Protocol Selection</h2>
+        <h2>5. Bayesian Adaptive Protocol Selection</h2>
         <div class="card card-amber">
           <p><strong>Skipped.</strong> Use <code>--skip-adaptive=false</code> or ensure
           <code>bayesian_adaptive_protocol.py</code> is available to include this section.</p>
@@ -812,7 +1011,7 @@ def _section_bayesian_adaptive(adaptive_data: dict) -> str:
         """
 
     parts = []
-    parts.append('<h2>6. Bayesian Adaptive Protocol Selection</h2>')
+    parts.append('<h2>5. Bayesian Adaptive Protocol Selection</h2>')
     parts.append(
         '<p>Bayesian adaptive simulation incrementally allocates shot batches and commits '
         'to a protocol when P(best) exceeds the threshold. Available for circuits with '
@@ -894,7 +1093,7 @@ def _section_bayesian_adaptive(adaptive_data: dict) -> str:
 
 
 def _section_statistical_significance(all_data: dict) -> str:
-    """Section 7: Aggregate p-value summary."""
+    """Section 6: Aggregate p-value summary."""
     rows = []
     sig_count = 0
     total_count = 0
@@ -948,7 +1147,7 @@ def _section_statistical_significance(all_data: dict) -> str:
             )
 
     return f"""
-    <h2>7. Statistical Significance</h2>
+    <h2>6. Statistical Significance</h2>
     <p>Bootstrap permutation test comparing shadows vs. grouped baseline at highest shot budget.
        <strong>{sig_count}/{total_count}</strong> comparisons are statistically significant
        (p &lt; 0.05).</p>
@@ -975,14 +1174,18 @@ def generate_html(
     all_data: dict,
     p_best_data: dict,
     adaptive_data: dict,
+    extended_metrics: dict | None = None,
 ) -> str:
     """Assemble the full HTML report."""
+    if extended_metrics is None:
+        extended_metrics = {}
 
     # Per-circuit detail cards
     circuit_cards = []
     for cid in CIRCUITS:
         data_by_cond = all_data.get(cid, {})
-        circuit_cards.append(_section_circuit_detail(cid, data_by_cond, p_best_data))
+        ext_by_cond = extended_metrics.get(cid, {})
+        circuit_cards.append(_section_circuit_detail(cid, data_by_cond, p_best_data, ext_by_cond))
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -1112,7 +1315,7 @@ def generate_html(
 
 {_section_executive_summary(all_data, adaptive_data)}
 
-{_section_overview_table(all_data)}
+{_section_overview_table(all_data, extended_metrics)}
 
 <h2>3. Per-Circuit Details</h2>
 <p>Click to expand each circuit for protocol comparison, crossover analysis,
@@ -1120,8 +1323,6 @@ def generate_html(
 {"".join(circuit_cards)}
 
 {_section_noise_impact(all_data)}
-
-{_section_pilot_analysis(all_data)}
 
 {_section_bayesian_adaptive(adaptive_data)}
 
@@ -1159,7 +1360,7 @@ def main():
     print("=" * 70)
 
     # --- Step 1: Discover runs ---
-    print("\n[1/4] Discovering benchmark runs ...")
+    print("\n[1/5] Discovering benchmark runs ...")
     run_map = discover_all_runs()
 
     found_count = 0
@@ -1170,7 +1371,7 @@ def main():
     print(f"  Total: {found_count} runs discovered")
 
     # --- Step 2: Load analysis.json for all runs ---
-    print("\n[2/4] Loading analysis.json files ...")
+    print("\n[2/5] Loading analysis.json files ...")
     all_data: dict = {}  # circuit_id -> condition -> {"analysis": ..., "run_dir": ...}
     for cid, entry in run_map.items():
         all_data[cid] = {}
@@ -1185,12 +1386,14 @@ def main():
                 ratio = a.get("summary", {}).get("shadows_vs_baseline_ratio")
                 print(f"  {cid}/{cond}: winner={SHORT.get(winner, winner)}, ratio={_fmt(ratio, '.3f')}")
 
-    # --- Step 3: Compute Bayesian P(best) from long_form ---
+    # --- Step 3: Compute Bayesian P(best) + extended metrics from long_form ---
     p_best_data: dict = {}  # circuit_id -> condition -> {N_total -> {proto -> P(best)}}
+    extended_metrics: dict = {}  # circuit_id -> condition -> {percentiles: ..., locality: ...}
     if not args.skip_pbest:
-        print("\n[3/4] Computing Bayesian P(best) from long-form data ...")
+        print("\n[3/5] Computing Bayesian P(best) + extended metrics from long-form data ...")
         for cid in CIRCUITS:
             p_best_data[cid] = {}
+            extended_metrics[cid] = {}
             for cond in ["merged"] + NOISE_PROFILES:
                 entry = all_data.get(cid, {}).get(cond, {})
                 run_dir = entry.get("run_dir")
@@ -1210,21 +1413,26 @@ def main():
                         print(f"  {cid}/{cond} N={max_n}: best={SHORT.get(top, top)} "
                               f"P={pb[max_n][top]:.3f}")
                 except Exception as e:
-                    print(f"  [WARN] {cid}/{cond}: {e}")
+                    print(f"  [WARN] {cid}/{cond} P(best): {e}")
+                try:
+                    ext = compute_extended_metrics(lf, gt)
+                    extended_metrics[cid][cond] = ext
+                except Exception as e:
+                    print(f"  [WARN] {cid}/{cond} extended metrics: {e}")
     else:
-        print("\n[3/4] Skipping P(best) computation (--skip-pbest)")
+        print("\n[3/5] Skipping P(best) (--skip-pbest)")
 
     # --- Step 4: Bayesian adaptive ---
     if not args.skip_adaptive:
-        print("\n[4/4] Running Bayesian adaptive simulation ...")
+        print("\n[4/5] Running Bayesian adaptive simulation ...")
         adaptive_data = run_bayesian_adaptive_for_report(skip=False)
     else:
-        print("\n[4/4] Skipping Bayesian adaptive (--skip-adaptive)")
+        print("\n[4/5] Skipping Bayesian adaptive (--skip-adaptive)")
         adaptive_data = {}
 
-    # --- Generate HTML ---
-    print("\nGenerating HTML report ...")
-    html = generate_html(all_data, p_best_data, adaptive_data)
+    # --- Step 5: Generate HTML ---
+    print("\n[5/5] Generating HTML report ...")
+    html = generate_html(all_data, p_best_data, adaptive_data, extended_metrics)
 
     output_path = ROOT / args.output
     output_path.write_text(html, encoding="utf-8")

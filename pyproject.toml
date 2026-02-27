@@ -135,6 +135,7 @@ markers = [
     "hardware: marks tests that require real quantum hardware",
     "integration: marks integration tests",
     "smoke: marks smoke tests for quick validation of critical paths",
+    "perf: marks performance regression tests",
 ]
 
 [tool.black]

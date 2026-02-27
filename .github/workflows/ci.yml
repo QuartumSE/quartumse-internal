@@ -66,6 +66,8 @@ jobs:
         mypy src/quartumse
 
     - name: Run tests
+      # Filter runs all tests EXCEPT those marked @slow or @hardware.
+      # This includes: unit, integration, smoke, validation, and perf tests.
       run: |
         pytest tests/ -v --cov=quartumse --cov-report=xml --cov-report=html -m "not slow and not hardware"
 

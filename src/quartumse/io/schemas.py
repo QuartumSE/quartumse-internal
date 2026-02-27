@@ -75,6 +75,27 @@ class LongFormRow(BaseModel):
     )
     memory_bytes: int | None = Field(default=None, description="Peak memory usage")
 
+    # === Timing breakdown (optional) ===
+    time_total_s: float | None = Field(default=None, description="Total wall-clock time in seconds")
+    time_pre_compute_s: float | None = Field(
+        default=None, description="Pre-compute (initialize + plan) time in seconds"
+    )
+    time_aer_simulate_s: float | None = Field(
+        default=None, description="AER simulation time in seconds"
+    )
+    time_post_process_s: float | None = Field(
+        default=None, description="Post-processing (update + finalize) time in seconds"
+    )
+    est_quantum_hw_s: float | None = Field(
+        default=None, description="Estimated quantum hardware execution time in seconds"
+    )
+
+    # === Timeout (optional) ===
+    timed_out: bool = Field(default=False, description="Whether the protocol run timed out")
+    n_shots_completed: int | None = Field(
+        default=None, description="Actual shots completed (when timed out)"
+    )
+
     # === Cost (optional) ===
     cost_model_id: str | None = Field(default=None, description="Cost model identifier")
     cost_usd_estimate: float | None = Field(default=None, description="Estimated cost in USD")

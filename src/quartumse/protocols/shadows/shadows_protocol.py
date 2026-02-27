@@ -11,6 +11,7 @@ Supported variants:
 
 from __future__ import annotations
 
+import time as _time
 from dataclasses import dataclass
 from typing import Any
 
@@ -183,6 +184,7 @@ class ClassicalShadowsProtocol(StaticProtocol):
         plan: MeasurementPlan,
         backend: AerSimulator | Any,
         seed: int,
+        deadline: float | None = None,
     ) -> RawDatasetChunk:
         """Execute shadow measurements.
 
@@ -194,6 +196,8 @@ class ClassicalShadowsProtocol(StaticProtocol):
             plan: Measurement plan.
             backend: Quantum backend for execution.
             seed: Random seed.
+            deadline: Absolute time (time.time()) by which to stop.
+                If None, no timeout.
 
         Returns:
             RawDatasetChunk with shadow measurement data.
@@ -207,12 +211,23 @@ class ClassicalShadowsProtocol(StaticProtocol):
 
         # Simulate measurements
         # In ideal case, sample from statevector probabilities
-        measurement_outcomes = self._simulate_shadow_measurements(circuit, measurement_bases, rng)
+        aer_start = _time.time()
+        measurement_outcomes, actual_shots = self._simulate_shadow_measurements(
+            circuit, measurement_bases, rng, deadline=deadline,
+        )
+        aer_elapsed = _time.time() - aer_start
+
+        hit_deadline = actual_shots < n_shots
+
+        # Trim bases to actual shots completed
+        if hit_deadline:
+            measurement_bases = measurement_bases[:actual_shots]
+            measurement_outcomes = measurement_outcomes[:actual_shots]
 
         # Store as bitstrings for compatibility with Protocol interface
         bitstrings = {}
         setting_bitstrings = []
-        for i in range(n_shots):
+        for i in range(actual_shots):
             # Convert outcome array to bitstring
             bs = "".join(str(measurement_outcomes[i, q]) for q in range(n_qubits))
             setting_bitstrings.append(bs)
@@ -225,7 +240,10 @@ class ClassicalShadowsProtocol(StaticProtocol):
             n_qubits=n_qubits,
             metadata={
                 "measurement_bases": measurement_bases,
-                "n_shots": n_shots,
+                "n_shots": actual_shots,
+                "aer_simulate_s": aer_elapsed,
+                "per_setting_aer_times_s": [aer_elapsed],
+                "timed_out": hit_deadline,
             },
         )
 
@@ -234,7 +252,8 @@ class ClassicalShadowsProtocol(StaticProtocol):
         circuit: QuantumCircuit,
         measurement_bases: np.ndarray,
         rng: np.random.Generator,
-    ) -> np.ndarray:
+        deadline: float | None = None,
+    ) -> tuple[np.ndarray, int]:
         """Simulate shadow measurements with random bases.
 
         For ideal simulation, we sample from the rotated statevector
@@ -244,9 +263,11 @@ class ClassicalShadowsProtocol(StaticProtocol):
             circuit: State preparation circuit.
             measurement_bases: Shape (n_shots, n_qubits), values in {0,1,2}.
             rng: Random number generator.
+            deadline: Absolute time (time.time()) by which to stop.
+                If None, no timeout.
 
         Returns:
-            Measurement outcomes array, shape (n_shots, n_qubits).
+            Tuple of (outcomes array shape (actual_shots, n_qubits), actual_shots).
         """
         from qiskit.quantum_info import Statevector
 
@@ -256,8 +277,16 @@ class ClassicalShadowsProtocol(StaticProtocol):
         Statevector.from_instruction(circuit)
 
         outcomes = np.zeros((n_shots, n_qubits), dtype=int)
+        actual_shots = n_shots
 
         for shot_idx in range(n_shots):
+            # Check deadline every 100 shots
+            if deadline is not None and shot_idx % 100 == 0 and shot_idx > 0:
+                if _time.time() >= deadline:
+                    actual_shots = shot_idx
+                    outcomes = outcomes[:actual_shots]
+                    break
+
             # For each shot, apply basis rotations and measure
             # This is done by computing conditional probabilities
             bases = measurement_bases[shot_idx]
@@ -284,7 +313,7 @@ class ClassicalShadowsProtocol(StaticProtocol):
             for q in range(n_qubits):
                 outcomes[shot_idx, q] = (outcome_int >> q) & 1
 
-        return outcomes
+        return outcomes, actual_shots
 
     def update(
         self,

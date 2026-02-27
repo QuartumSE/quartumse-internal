@@ -306,6 +306,39 @@ class LongFormResultBuilder:
         self._data["truth_se"] = truth_se
         return self
 
+    def with_timing_breakdown(
+        self,
+        timing: Any | None = None,
+        timed_out: bool = False,
+        n_shots_completed: int | None = None,
+    ) -> LongFormResultBuilder:
+        """Set fine-grained timing breakdown fields.
+
+        Also sets backward-compatible time_quantum_s / time_classical_s.
+
+        Args:
+            timing: TimingBreakdown dataclass (from protocols.state).
+            timed_out: Whether the run timed out.
+            n_shots_completed: Actual shots completed (when timed out).
+        """
+        self._data["timed_out"] = timed_out
+        self._data["n_shots_completed"] = n_shots_completed
+
+        if timing is not None:
+            self._data["time_total_s"] = timing.time_total_s
+            self._data["time_pre_compute_s"] = timing.time_pre_compute_s
+            self._data["time_aer_simulate_s"] = timing.time_aer_simulate_s
+            self._data["time_post_process_s"] = timing.time_post_process_s
+            self._data["est_quantum_hw_s"] = timing.est_quantum_hw_s
+
+            # Backward-compatible coarse timing
+            self._data["time_quantum_s"] = timing.time_acquire_wall_s
+            self._data["time_classical_s"] = (
+                timing.time_pre_compute_s + timing.time_post_process_s
+            )
+
+        return self
+
     def with_metadata(self, **kwargs: Any) -> LongFormResultBuilder:
         """Add additional metadata.
 

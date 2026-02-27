@@ -67,6 +67,7 @@ from .state import (
     ObservableEstimate,
     ProtocolState,
     RawDatasetChunk,
+    TimingBreakdown,
 )
 
 __all__ = [
@@ -84,6 +85,7 @@ __all__ = [
     "ObservableEstimate",
     "CIResult",
     "CIMethod",
+    "TimingBreakdown",
     # Registry
     "register_protocol",
     "get_protocol",

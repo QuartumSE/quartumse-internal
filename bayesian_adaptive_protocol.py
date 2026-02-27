@@ -125,13 +125,17 @@ def estimate_protocol_errors(
     obs_ids: list[str],
     group_to_obs: dict[str, list[str]],
     ground_truth: dict[str, float],
+    rng: np.random.Generator | None = None,
 ) -> dict[str, float]:
     """Subsample from raw shots proportionally, re-estimate, return abs errors.
 
     n_shots is the total budget allocated to this protocol. For direct
-    protocols the per-group subsample is proportional: each group gets
-    ceil(n_shots / n_budget * n_group_shots_at_full_budget).  For shadows
+    protocols, shots are distributed across groups using largest-remainder
+    proportional allocation (summing exactly to n_shots).  For shadows
     the single setting is subsampled directly.
+
+    When *rng* is provided, subsamples are drawn randomly; otherwise
+    prefix slicing is used (deterministic fallback).
 
     Returns dict[obs_id -> absolute_error].
     """
@@ -139,15 +143,43 @@ def estimate_protocol_errors(
     errors: dict[str, float] = {}
 
     if protocol in ("direct_grouped", "direct_optimized"):
-        for gid, obs_list in group_to_obs.items():
-            key = (protocol, replicate, gid)
-            if key not in raw_lookup:
-                continue
-            bs_all, _ = raw_lookup[key]
-            n_sub = max(1, math.ceil(frac * len(bs_all)))
-            bs_sub = bs_all[:n_sub]
+        # Collect valid groups and their full sizes
+        group_ids = [gid for gid in group_to_obs if (protocol, replicate, gid) in raw_lookup]
+        group_sizes = {
+            gid: len(raw_lookup[(protocol, replicate, gid)][0]) for gid in group_ids
+        }
+        total_full = sum(group_sizes.values())
 
-            for oid in obs_list:
+        if total_full > 0 and group_ids:
+            # Largest-remainder proportional allocation summing to n_shots
+            quotas: dict[str, int] = {}
+            remainders: dict[str, float] = {}
+            allocated = 0
+            for gid in group_ids:
+                exact = n_shots * group_sizes[gid] / total_full
+                floor_val = max(1, int(exact))  # at least 1 shot per group
+                quotas[gid] = floor_val
+                remainders[gid] = exact - floor_val
+                allocated += floor_val
+            # Distribute remaining slots by largest remainder
+            remaining = n_shots - allocated
+            for gid in sorted(remainders, key=remainders.get, reverse=True):
+                if remaining <= 0:
+                    break
+                quotas[gid] += 1
+                remaining -= 1
+
+        for gid in group_ids:
+            key = (protocol, replicate, gid)
+            bs_all, _ = raw_lookup[key]
+            n_sub = min(quotas[gid], len(bs_all))
+            if rng is not None:
+                idx = rng.choice(len(bs_all), size=n_sub, replace=False)
+                bs_sub = [bs_all[i] for i in idx]
+            else:
+                bs_sub = bs_all[:n_sub]
+
+            for oid in group_to_obs[gid]:
                 if oid not in obs_registry or oid not in ground_truth:
                     continue
                 info = obs_registry[oid]
@@ -164,10 +196,14 @@ def estimate_protocol_errors(
         bs_all, mb_all = raw_lookup[key]
         n_sub = max(1, int(frac * len(bs_all)))
 
+        if rng is not None:
+            idx = rng.choice(len(bs_all), size=n_sub, replace=False)
+        else:
+            idx = range(n_sub)
         outcomes = np.array(
-            [[int(c) for c in s] for s in bs_all[:n_sub]], dtype=np.int8
+            [[int(c) for c in bs_all[i]] for i in idx], dtype=np.int8
         )
-        bases = np.array(mb_all[:n_sub], dtype=np.int8)
+        bases = np.array([mb_all[i] for i in idx], dtype=np.int8)
 
         for oid in obs_ids:
             if oid not in obs_registry or oid not in ground_truth:
@@ -215,9 +251,13 @@ def bayesian_p_best(
     for j, pid in enumerate(protos):
         errs = protocol_errors[pid]
         m = len(errs)
-        if m < 2:
-            # Not enough data — draw from a very wide distribution
-            draws[:, j] = rng.standard_t(df=1, size=n_mc) * 10 + (errs.mean() if m > 0 else 1.0)
+        if m == 0:
+            # No data — assume worst case (never win)
+            draws[:, j] = np.inf
+            continue
+        if m == 1:
+            # Single observation — wide prior centered on the single value
+            draws[:, j] = rng.standard_t(df=1, size=n_mc) * max(errs[0], 0.01) + errs[0]
             continue
 
         x_bar = errs.mean()
@@ -227,8 +267,13 @@ def bayesian_p_best(
         # Draw from t(df, loc=x_bar, scale=s)
         draws[:, j] = rng.standard_t(df=df, size=n_mc) * s + x_bar
 
+    # Safety net: replace any remaining NaN columns with +inf before argmin
+    nan_mask = np.isnan(draws)
+    if nan_mask.any():
+        draws[nan_mask] = np.inf
+
     # P(best) = fraction of draws where protocol has the LOWEST MAE
-    best_idx = draws.argmin(axis=1)
+    best_idx = np.nanargmin(draws, axis=1)
     counts = np.bincount(best_idx, minlength=n_protos)
     p_best = {pid: float(counts[j] / n_mc) for j, pid in enumerate(protos)}
     return p_best
@@ -279,9 +324,9 @@ def simulate_one_replicate(
         for pid in protocols:
             errs = estimate_protocol_errors(
                 raw_lookup, pid, replicate_id, n_shots_so_far, n_budget,
-                obs_registry, obs_ids, group_to_obs, ground_truth,
+                obs_registry, obs_ids, group_to_obs, ground_truth, rng=rng,
             )
-            protocol_errors[pid] = np.array(list(errs.values())) if errs else np.array([np.nan])
+            protocol_errors[pid] = np.array(list(errs.values())) if errs else np.array([])
 
         # Bayesian comparison
         p_best = bayesian_p_best(protocol_errors, n_mc=n_mc, rng=rng)
@@ -316,7 +361,7 @@ def simulate_one_replicate(
     # Compute final MAE using the selected protocol with its final shot count
     final_errors = estimate_protocol_errors(
         raw_lookup, selected, replicate_id, final_shots_for_selected, n_budget,
-        obs_registry, obs_ids, group_to_obs, ground_truth,
+        obs_registry, obs_ids, group_to_obs, ground_truth, rng=rng,
     )
     final_mae = float(np.mean(list(final_errors.values()))) if final_errors else np.nan
 

@@ -58,6 +58,8 @@ class BenchmarkSuiteConfig:
     baseline_protocol_id: str = "direct_grouped"
     output_base_dir: str = "benchmark_results"
     noise_profile: str | None = None  # Noise profile ID (e.g., "readout_1e-2", "depol_medium")
+    timeout_per_protocol_s: float | None = None  # Per-protocol timeout in seconds
+    hw_timing_profile: Any | None = None  # HardwareTimingProfile for hw time estimates
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -72,6 +74,7 @@ class BenchmarkSuiteConfig:
             "baseline_protocol_id": self.baseline_protocol_id,
             "output_base_dir": self.output_base_dir,
             "noise_profile": self.noise_profile,
+            "timeout_per_protocol_s": self.timeout_per_protocol_s,
         }
 
 
@@ -545,6 +548,8 @@ def run_benchmark_suite(
         epsilon=config.epsilon,
         delta=config.delta,
         noise_profile=config.noise_profile,
+        timeout_per_protocol_s=config.timeout_per_protocol_s,
+        hw_timing_profile=config.hw_timing_profile,
     )
 
     long_form_rows = base_results["long_form_results"]

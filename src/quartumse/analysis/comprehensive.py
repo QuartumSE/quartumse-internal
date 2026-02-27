@@ -35,7 +35,11 @@ from .cost_normalized import CostModel, compare_cost_normalized, compute_cost_no
 from .crossover import CrossoverAnalysis, per_observable_crossover
 from .interpolation import compute_percentile_n_star, interpolate_n_star
 from .observable_properties import analyze_by_locality
-from .pilot_analysis import MultiPilotAnalysis, multi_pilot_analysis
+from .pilot_analysis import (
+    MultiPilotAnalysis,
+    interpolated_pilot_analysis,
+    multi_pilot_analysis,
+)
 from .statistical_tests import StatisticalComparison, compare_protocols_statistically
 
 
@@ -78,6 +82,7 @@ class ComprehensiveBenchmarkAnalysis:
     statistical_comparison: dict[int, StatisticalComparison]
     cost_analysis: dict[str, Any]
     pilot_analysis: MultiPilotAnalysis | None
+    pilot_analysis_interpolated: MultiPilotAnalysis | None
     interpolated_n_star: dict[str, dict[str, Any]]
     summary: dict[str, Any]
 
@@ -105,6 +110,11 @@ class ComprehensiveBenchmarkAnalysis:
             },
             "cost_analysis": self.cost_analysis,
             "pilot_analysis": self.pilot_analysis.to_dict() if self.pilot_analysis else None,
+            "pilot_analysis_interpolated": (
+                self.pilot_analysis_interpolated.to_dict()
+                if self.pilot_analysis_interpolated
+                else None
+            ),
             "interpolated_n_star": self.interpolated_n_star,
             "summary": self.summary,
         }
@@ -522,6 +532,13 @@ def run_comprehensive_analysis(
         pilot_fractions=[0.02, 0.05, 0.10, 0.20],
     )
 
+    # Also compute interpolated pilot analysis (avoids grid degeneracy)
+    pilot_analysis_interp = interpolated_pilot_analysis(
+        long_form_results,
+        target_n=n_shots_grid[-1],
+        pilot_fractions=[0.02, 0.05, 0.10, 0.20],
+    )
+
     # =========================================================================
     # N* interpolation
     # =========================================================================
@@ -591,6 +608,7 @@ def run_comprehensive_analysis(
         statistical_comparison=statistical_comparison,
         cost_analysis=cost_analysis,
         pilot_analysis=pilot_analysis,
+        pilot_analysis_interpolated=pilot_analysis_interp,
         interpolated_n_star=interpolated_n_star,
         summary=summary,
     )

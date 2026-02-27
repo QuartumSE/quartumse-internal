@@ -28,6 +28,7 @@ from .state import (
     MeasurementPlan,
     ProtocolState,
     RawDatasetChunk,
+    TimingBreakdown,
 )
 
 if TYPE_CHECKING:
@@ -170,6 +171,7 @@ class Protocol(ABC):
         plan: MeasurementPlan,
         backend: AerSimulator | Any,
         seed: int,
+        deadline: float | None = None,
     ) -> RawDatasetChunk:
         """Execute measurements according to the plan (§5.1).
 
@@ -181,6 +183,8 @@ class Protocol(ABC):
             plan: Measurement plan to execute.
             backend: Quantum backend for execution.
             seed: Random seed for measurement randomness.
+            deadline: Absolute time (time.time()) by which to stop.
+                If None, no timeout.
 
         Returns:
             RawDatasetChunk containing measurement outcomes.
@@ -235,6 +239,8 @@ class Protocol(ABC):
         total_budget: int,
         backend: AerSimulator | Any,
         seed: int | None = None,
+        timeout_s: float | None = None,
+        hw_timing_profile: Any | None = None,
     ) -> Estimates:
         """Execute the full protocol pipeline.
 
@@ -247,22 +253,38 @@ class Protocol(ABC):
             total_budget: Total shot budget.
             backend: Quantum backend.
             seed: Random seed (uses config.random_seed if None).
+            timeout_s: Optional per-run timeout in seconds. If the deadline
+                is exceeded, the run stops early, finalizes with partial data,
+                and sets timed_out=True on the returned Estimates.
+            hw_timing_profile: Optional HardwareTimingProfile for estimating
+                real-device execution time.
 
         Returns:
             Final Estimates.
         """
         seed = seed if seed is not None else (self.config.random_seed or 42)
 
-        # Initialize
+        deadline = (time.time() + timeout_s) if timeout_s is not None else None
+        timed_out = False
+
+        # Initialize + plan (pre-compute phase)
+        pre_compute_start = time.time()
         state = self.initialize(observable_set, total_budget, seed)
         remaining = total_budget
         round_seed = seed
 
         start_time = time.time()
+        total_aer_time = 0.0
+        all_per_setting_aer_times: list[float] = []
 
         # Main loop (single iteration for static protocols)
         while remaining > 0 and not state.converged:
             if state.n_rounds >= self.config.max_rounds:
+                break
+
+            # Check deadline before planning
+            if deadline is not None and time.time() >= deadline:
+                timed_out = True
                 break
 
             # Plan
@@ -270,10 +292,25 @@ class Protocol(ABC):
             if plan.total_shots == 0:
                 break
 
+            pre_compute_time = time.time() - pre_compute_start
+
             # Acquire
             round_start = time.time()
-            chunk = self.acquire(circuit, plan, backend, round_seed)
+            chunk = self.acquire(circuit, plan, backend, round_seed, deadline=deadline)
             quantum_time = time.time() - round_start
+
+            # Extract per-setting AER times from chunk metadata
+            chunk_aer_time = chunk.metadata.get("aer_simulate_s", 0.0)
+            total_aer_time += chunk_aer_time
+            per_setting_times = chunk.metadata.get("per_setting_aer_times_s", [])
+            all_per_setting_aer_times.extend(per_setting_times)
+
+            # Check if acquire() hit the deadline
+            if chunk.metadata.get("timed_out", False):
+                timed_out = True
+
+            # Accumulate raw data for post-hoc analysis
+            state.add_chunk(chunk)
 
             # Update
             classical_start = time.time()
@@ -295,8 +332,16 @@ class Protocol(ABC):
             remaining -= chunk.n_shots
             round_seed += 1
 
-        # Finalize
+            # Reset pre_compute_start for next round's planning
+            pre_compute_start = time.time()
+
+            if timed_out:
+                break
+
+        # Finalize (post-process phase)
+        post_start = time.time()
         estimates = self.finalize(state, observable_set)
+        post_time = time.time() - post_start
         estimates.raw_chunks = state.accumulated_data
 
         # Add timing and protocol info
@@ -305,6 +350,44 @@ class Protocol(ABC):
         estimates.time_classical_s = total_time - (estimates.time_quantum_s or 0)
         estimates.protocol_id = self.protocol_id
         estimates.protocol_version = self.protocol_version
+
+        # Timeout info
+        estimates.timed_out = timed_out
+        if timed_out:
+            estimates.n_shots_completed = state.total_shots_used
+
+        # Build timing breakdown
+        pre_compute_total = sum(
+            m.get("quantum_time_s", 0) for m in state.round_metadata
+        )
+        # pre_compute_time is from first round; approximate total pre-compute
+        # as total_time - acquire_wall - post_process
+        acquire_wall = estimates.time_quantum_s or 0.0
+        timing = TimingBreakdown(
+            time_total_s=total_time,
+            time_pre_compute_s=total_time - acquire_wall - post_time,
+            time_acquire_wall_s=acquire_wall,
+            time_aer_simulate_s=total_aer_time,
+            time_post_process_s=post_time,
+            per_setting_aer_times_s=all_per_setting_aer_times,
+        )
+
+        # Estimate quantum hardware time if profile provided
+        if hw_timing_profile is not None:
+            from quartumse.analysis.quantum_time_model import (
+                estimate_quantum_hw_time,
+                extract_circuit_timing_info,
+            )
+
+            circuit_info = extract_circuit_timing_info(circuit)
+            timing.est_quantum_hw_s = estimate_quantum_hw_time(
+                circuit_info=circuit_info,
+                n_shots=state.total_shots_used,
+                n_settings=estimates.n_settings or 1,
+                hw_profile=hw_timing_profile,
+            )
+
+        estimates.timing_breakdown = timing
 
         return estimates
 
@@ -372,6 +455,7 @@ class StaticProtocol(Protocol):
         plan: MeasurementPlan,
         backend: AerSimulator | Any,
         seed: int,
+        deadline: float | None = None,
     ) -> RawDatasetChunk:
         """Execute measurements according to the plan.
 
@@ -383,6 +467,8 @@ class StaticProtocol(Protocol):
             plan: Measurement plan to execute.
             backend: Quantum backend for execution.
             seed: Random seed for measurement randomness.
+            deadline: Absolute time (time.time()) by which to stop.
+                If None, no timeout.
 
         Returns:
             RawDatasetChunk containing measurement outcomes.
@@ -391,20 +477,32 @@ class StaticProtocol(Protocol):
 
         bitstrings: dict[str, list[str]] = {}
         backend = backend or AerSimulator()
+        hit_deadline = False
+        per_setting_aer_times: list[float] = []
+        total_aer_time = 0.0
 
         for setting, n_shots in zip(plan.settings, plan.shots_per_setting, strict=False):
+            # Check deadline before each setting
+            if deadline is not None and time.time() >= deadline:
+                hit_deadline = True
+                break
+
             measurement_circuit = self._build_measurement_circuit(
                 circuit=circuit,
                 measurement_basis=setting.measurement_basis,
                 target_qubits=setting.target_qubits,
             )
 
+            aer_start = time.time()
             setting_bitstrings = self._execute_measurement_circuit(
                 circuit=measurement_circuit,
                 backend=backend,
                 n_shots=n_shots,
                 seed=seed,
             )
+            aer_elapsed = time.time() - aer_start
+            per_setting_aer_times.append(aer_elapsed)
+            total_aer_time += aer_elapsed
 
             bitstrings[setting.setting_id] = setting_bitstrings
 
@@ -412,6 +510,11 @@ class StaticProtocol(Protocol):
             bitstrings=bitstrings,
             settings_executed=list(bitstrings.keys()),
             n_qubits=circuit.num_qubits,
+            metadata={
+                "aer_simulate_s": total_aer_time,
+                "per_setting_aer_times_s": per_setting_aer_times,
+                "timed_out": hit_deadline,
+            },
         )
 
     def _build_measurement_circuit(

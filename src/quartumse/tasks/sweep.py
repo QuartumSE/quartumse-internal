@@ -56,6 +56,8 @@ class SweepConfig:
     seed_policy: str = "base_replicate_config"
     tasks: list[str] = field(default_factory=list)
     store_raw_shots: bool = True
+    timeout_per_protocol_s: float | None = None
+    hw_timing_profile: Any | None = None
 
 
 @dataclass
@@ -141,6 +143,8 @@ class SweepOrchestrator:
             total_budget=n_shots,
             backend=backend,
             seed=seed,
+            timeout_s=self.config.timeout_per_protocol_s,
+            hw_timing_profile=self.config.hw_timing_profile,
         )
 
     def _resolve_backend(self, noise_profile: str) -> Any:
@@ -336,6 +340,11 @@ class SweepOrchestrator:
                     ci_low=est.ci.ci_low if est.ci else None,
                     ci_high=est.ci.ci_high if est.ci else None,
                 )
+                .with_timing_breakdown(
+                    timing=estimates.timing_breakdown,
+                    timed_out=estimates.timed_out,
+                    n_shots_completed=estimates.n_shots_completed,
+                )
                 .build()
             )
             rows.append(row)
@@ -354,6 +363,8 @@ class SweepOrchestrator:
         protocol_id = estimates.protocol_id or ""
         for chunk in estimates.raw_chunks:
             if chunk.bitstrings:
+                # Check metadata for measurement bases (shadows protocol)
+                meta_bases = chunk.metadata.get("measurement_bases") if chunk.metadata else None
                 for setting_id, bitstring_list in chunk.bitstrings.items():
                     self.raw_shot_records.append(
                         {
@@ -364,7 +375,9 @@ class SweepOrchestrator:
                             "noise_profile": noise_profile,
                             "setting_id": setting_id,
                             "bitstrings": json.dumps(bitstring_list),
-                            "measurement_bases": None,
+                            "measurement_bases": json.dumps(meta_bases.tolist())
+                            if meta_bases is not None
+                            else None,
                         }
                     )
             elif chunk.outcomes is not None:

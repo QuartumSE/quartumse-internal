@@ -63,6 +63,8 @@ class MultiPilotAnalysis:
         results: Results per fraction
         optimal_fraction: Fraction with best accuracy-cost tradeoff
         summary: Summary statistics
+        degenerate: True if all fractions snapped to the same grid point
+        unique_pilot_ns: Number of distinct pilot_n values across fractions
     """
 
     target_n: int
@@ -70,6 +72,8 @@ class MultiPilotAnalysis:
     results: dict[float, PilotFractionResult]
     optimal_fraction: float | None
     summary: dict[str, Any]
+    degenerate: bool = False
+    unique_pilot_ns: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -78,6 +82,8 @@ class MultiPilotAnalysis:
             "results": {f: r.to_dict() for f, r in self.results.items()},
             "optimal_fraction": self.optimal_fraction,
             "summary": self.summary,
+            "degenerate": self.degenerate,
+            "unique_pilot_ns": self.unique_pilot_ns,
         }
 
     def to_dataframe(self):
@@ -233,8 +239,13 @@ def multi_pilot_analysis(
             per_replicate=selection_results,
         )
 
+    # Detect degeneracy: all fractions snapped to the same grid point
+    pilot_n_values = [r.pilot_n for r in results.values()]
+    unique_ns = len(set(pilot_n_values)) if pilot_n_values else 0
+    is_degenerate = unique_ns < len(pilot_fractions) and unique_ns <= 1
+
     # Find optimal fraction (highest accuracy with reasonable cost)
-    if results:
+    if results and not is_degenerate:
         # Simple heuristic: highest accuracy
         optimal = max(results.keys(), key=lambda f: results[f].selection_accuracy)
     else:
@@ -248,6 +259,12 @@ def multi_pilot_analysis(
         "accuracy_by_fraction": {f: r.selection_accuracy for f, r in results.items()},
         "regret_by_fraction": {f: r.mean_regret for f, r in results.items()},
     }
+    if is_degenerate:
+        summary["degenerate_warning"] = (
+            f"All {len(pilot_fractions)} pilot fractions snapped to pilot_n="
+            f"{pilot_n_values[0] if pilot_n_values else '?'}. "
+            f"Results are meaningless — use interpolated_pilot_analysis() instead."
+        )
 
     return MultiPilotAnalysis(
         target_n=target_n,
@@ -255,6 +272,218 @@ def multi_pilot_analysis(
         results=results,
         optimal_fraction=optimal,
         summary=summary,
+        degenerate=is_degenerate,
+        unique_pilot_ns=unique_ns,
+    )
+
+
+def interpolated_pilot_analysis(
+    long_form_results: list[LongFormRow],
+    target_n: int | None = None,
+    pilot_fractions: list[float] | None = None,
+    metric: str = "mae",
+) -> MultiPilotAnalysis:
+    """Pilot analysis using power-law interpolation instead of grid snapping.
+
+    Fits MAE(N) = a * N^b per protocol using available grid points, then
+    interpolates to the actual pilot shot count (e.g., 2% of 20000 = 400).
+    This avoids the degeneracy problem where all fractions snap to the same
+    grid point.
+
+    Args:
+        long_form_results: Long-form benchmark results (must have abs_err).
+        target_n: Final shot budget (None = use max).
+        pilot_fractions: List of pilot fractions to test.
+        metric: Quality metric ("mae" uses mean absolute error).
+
+    Returns:
+        MultiPilotAnalysis with interpolated results.
+    """
+    from .interpolation import fit_power_law
+
+    if pilot_fractions is None:
+        pilot_fractions = [0.02, 0.05, 0.10, 0.20]
+
+    # Determine target N and grid
+    all_ns = sorted({r.N_total for r in long_form_results})
+    if target_n is None:
+        target_n = all_ns[-1]
+
+    # Group by (protocol, replicate, N_total) -> list of abs_err
+    by_proto: dict[str, dict[int, dict[int, list[float]]]] = defaultdict(
+        lambda: defaultdict(lambda: defaultdict(list))
+    )
+    for row in long_form_results:
+        ae = row.abs_err
+        if ae is None:
+            # Fall back to SE if abs_err not available
+            ae = row.se
+        by_proto[row.protocol_id][row.replicate_id][row.N_total].append(ae)
+
+    protocols = list(by_proto.keys())
+    replicate_ids = sorted(
+        {r.replicate_id for r in long_form_results if r.N_total == target_n}
+    )
+
+    if len(all_ns) < 2:
+        # Can't fit power law with < 2 grid points
+        return MultiPilotAnalysis(
+            target_n=target_n,
+            fractions=pilot_fractions,
+            results={},
+            optimal_fraction=None,
+            summary={"error": "Need at least 2 grid points for interpolation"},
+            degenerate=False,
+            unique_pilot_ns=0,
+        )
+
+    # Step 1: Fit power law per (protocol, replicate) so each replicate can
+    #         select a different protocol at different pilot budgets.
+    # fits[pid][rid] = PowerLawFit or None
+    fits: dict[str, dict[int, Any]] = defaultdict(dict)
+    for pid in protocols:
+        for rid in replicate_ids:
+            ns_for_fit = []
+            maes_for_fit = []
+            for n in all_ns:
+                errs = by_proto[pid][rid][n]
+                if errs:
+                    ns_for_fit.append(n)
+                    maes_for_fit.append(float(np.mean(errs)))
+            if len(ns_for_fit) >= 2:
+                fits[pid][rid] = fit_power_law(ns_for_fit, maes_for_fit)
+            else:
+                fits[pid][rid] = None
+
+    # Also compute protocol-level fits for summary reporting
+    proto_fits: dict[str, Any] = {}
+    for pid in protocols:
+        ns_for_fit = []
+        maes_for_fit = []
+        for n in all_ns:
+            rep_maes = []
+            for rid in replicate_ids:
+                errs = by_proto[pid][rid][n]
+                if errs:
+                    rep_maes.append(float(np.mean(errs)))
+            if rep_maes:
+                ns_for_fit.append(n)
+                maes_for_fit.append(float(np.mean(rep_maes)))
+        if len(ns_for_fit) >= 2:
+            proto_fits[pid] = fit_power_law(ns_for_fit, maes_for_fit)
+
+    # Step 2: For each replicate, compute MAE at target_n (for oracle)
+    target_mae: dict[str, dict[int, float]] = defaultdict(dict)
+    for pid in protocols:
+        for rid in replicate_ids:
+            errs = by_proto[pid][rid][target_n]
+            if errs:
+                target_mae[pid][rid] = float(np.mean(errs))
+
+    results = {}
+
+    for frac in pilot_fractions:
+        pilot_n = int(frac * target_n)
+        if pilot_n >= target_n or pilot_n <= 0:
+            continue
+
+        selection_results = []
+        selections: Counter[str] = Counter()
+
+        for rid in replicate_ids:
+            # Interpolate MAE for each protocol at pilot_n using per-replicate fits
+            interp_mae: dict[str, float] = {}
+            for pid in protocols:
+                fit = fits.get(pid, {}).get(rid)
+                if fit is not None and not np.isnan(fit.amplitude):
+                    interp_mae[pid] = fit.predict(pilot_n)
+                else:
+                    # Fallback: use nearest grid point for this replicate
+                    nearest_n = min(all_ns, key=lambda x: abs(x - pilot_n))
+                    errs = by_proto[pid][rid][nearest_n]
+                    interp_mae[pid] = float(np.mean(errs)) if errs else float("inf")
+
+            if not interp_mae:
+                continue
+
+            # Select best protocol based on interpolated MAE
+            selected = min(interp_mae, key=interp_mae.get)
+            # Oracle: best at target_n for this replicate
+            rep_target = {
+                pid: target_mae[pid].get(rid, float("inf")) for pid in protocols
+            }
+            oracle = min(rep_target, key=rep_target.get)
+
+            selections[selected] += 1
+            regret = rep_target[selected] - rep_target[oracle]
+
+            selection_results.append(
+                {
+                    "replicate_id": rid,
+                    "selected": selected,
+                    "oracle": oracle,
+                    "correct": selected == oracle,
+                    "regret": regret,
+                    "interpolated_mae": interp_mae,
+                    "target_mae": dict(rep_target),
+                }
+            )
+
+        if not selection_results:
+            continue
+
+        accuracy = float(np.mean([r["correct"] for r in selection_results]))
+        regrets = [r["regret"] for r in selection_results]
+
+        results[frac] = PilotFractionResult(
+            pilot_fraction=frac,
+            pilot_n=pilot_n,
+            target_n=target_n,
+            selection_accuracy=accuracy,
+            mean_regret=float(np.mean(regrets)),
+            max_regret=float(np.max(regrets)),
+            protocol_selections=dict(selections),
+            per_replicate=selection_results,
+        )
+
+    # Find optimal fraction
+    if results:
+        optimal = max(results.keys(), key=lambda f: results[f].selection_accuracy)
+    else:
+        optimal = None
+
+    # Unique pilot_n values (should all be different now)
+    pilot_n_values = [r.pilot_n for r in results.values()]
+    unique_ns = len(set(pilot_n_values))
+
+    # Power-law fit quality summary (protocol-level averages for reporting)
+    fit_summary = {}
+    for pid, fit in proto_fits.items():
+        if fit is not None and not np.isnan(fit.amplitude):
+            fit_summary[pid] = {
+                "amplitude": fit.amplitude,
+                "exponent": fit.exponent,
+                "r_squared": fit.r_squared,
+            }
+
+    summary = {
+        "n_protocols": len(protocols),
+        "protocols": protocols,
+        "n_replicates": len(replicate_ids),
+        "method": "power_law_interpolation",
+        "accuracy_by_fraction": {f: r.selection_accuracy for f, r in results.items()},
+        "regret_by_fraction": {f: r.mean_regret for f, r in results.items()},
+        "power_law_fits": fit_summary,
+    }
+
+    return MultiPilotAnalysis(
+        target_n=target_n,
+        fractions=pilot_fractions,
+        results=results,
+        optimal_fraction=optimal,
+        summary=summary,
+        degenerate=False,
+        unique_pilot_ns=unique_ns,
     )
 
 

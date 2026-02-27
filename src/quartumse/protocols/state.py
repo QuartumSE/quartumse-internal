@@ -277,6 +277,29 @@ class CIResult:
 
 
 @dataclass
+class TimingBreakdown:
+    """Fine-grained timing breakdown for a protocol run.
+
+    Attributes:
+        time_total_s: Total wall-clock time for the run.
+        time_pre_compute_s: Time spent in initialize() + next_plan().
+        time_acquire_wall_s: Total acquire() wall time.
+        time_aer_simulate_s: Time spent in backend.run() / simulation only.
+        time_post_process_s: Time spent in update() + finalize().
+        est_quantum_hw_s: Estimated wall-clock time on real quantum hardware.
+        per_setting_aer_times_s: Per-setting AER simulation times.
+    """
+
+    time_total_s: float = 0.0
+    time_pre_compute_s: float = 0.0
+    time_acquire_wall_s: float = 0.0
+    time_aer_simulate_s: float = 0.0
+    time_post_process_s: float = 0.0
+    est_quantum_hw_s: float | None = None
+    per_setting_aer_times_s: list[float] = field(default_factory=list)
+
+
+@dataclass
 class ObservableEstimate:
     """Estimation result for a single observable (§5.3).
 
@@ -335,6 +358,11 @@ class Estimates:
     # Timing
     time_quantum_s: float | None = None
     time_classical_s: float | None = None
+    timing_breakdown: TimingBreakdown | None = None
+
+    # Timeout
+    timed_out: bool = False
+    n_shots_completed: int | None = None
 
     # Protocol info
     protocol_id: str | None = None

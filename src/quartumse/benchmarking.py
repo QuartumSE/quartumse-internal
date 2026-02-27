@@ -527,6 +527,8 @@ def run_publication_benchmark(
     ground_truth_config: GroundTruthConfig | None = None,
     noise_profile: str | None = None,
     max_workers: int | None = None,
+    timeout_per_protocol_s: float | None = None,
+    hw_timing_profile: Any | None = None,
 ) -> dict[str, Any]:
     """Run publication-grade benchmark with ground truth (Measurements Bible).
 
@@ -671,6 +673,8 @@ def run_publication_benchmark(
             total_budget=n_shots,
             backend=execution_backend,
             seed=seeds["seed_protocol"],
+            timeout_s=timeout_per_protocol_s,
+            hw_timing_profile=hw_timing_profile,
         )
         return protocol, seeds, estimates
 
@@ -739,9 +743,10 @@ def run_publication_benchmark(
                             ci_high_raw=est.ci.ci_high_raw if est.ci else None,
                             ci_method_id=est.ci.method.value if est.ci else None,
                         )
-                        .with_timing(
-                            time_quantum_s=estimates.time_quantum_s,
-                            time_classical_s=estimates.time_classical_s,
+                        .with_timing_breakdown(
+                            timing=estimates.timing_breakdown,
+                            timed_out=estimates.timed_out,
+                            n_shots_completed=estimates.n_shots_completed,
                         )
                     )
 

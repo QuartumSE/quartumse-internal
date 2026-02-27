@@ -11925,10 +11925,7 @@ Each group is measured in a shared basis.</p>
 <span class="normal">318</span>
 <span class="normal">319</span>
 <span class="normal">320</span>
-<span class="normal">321</span>
-<span class="normal">322</span>
-<span class="normal">323</span>
-<span class="normal">324</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@register_protocol</span>
+<span class="normal">321</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@register_protocol</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">DirectGroupedProtocol</span><span class="p">(</span><span class="n">StaticProtocol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Direct measurement with commuting grouping (§4.1B).</span>
 
@@ -12185,18 +12182,15 @@ Each group is measured in a shared basis.</p>
         <span class="c1"># Get positions where the observable has non-identity operators</span>
         <span class="n">support</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pauli_string</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="s2">&quot;I&quot;</span><span class="p">]</span>
 
-        <span class="c1"># Compute eigenvalues for each bitstring</span>
-        <span class="n">eigenvalues</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">bs</span> <span class="ow">in</span> <span class="n">bitstrings</span><span class="p">:</span>
-            <span class="c1"># Count parity on support qubits</span>
-            <span class="n">parity</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">support</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span>
-            <span class="n">eigenvalues</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="n">parity</span><span class="p">)</span>
-
-        <span class="c1"># Compute mean and standard error</span>
-        <span class="n">eigenvalues_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">eigenvalues</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="c1"># Vectorized eigenvalue computation (numpy, no Python loop)</span>
+        <span class="n">bs_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span>
+            <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bitstrings</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bitstrings</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)[:,</span> <span class="n">support</span><span class="p">]</span>
+        <span class="n">parities</span> <span class="o">=</span> <span class="p">(</span><span class="n">bs_array</span> <span class="o">-</span> <span class="mi">48</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span>
+        <span class="n">eigenvalues_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">parities</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
         <span class="n">mean</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">eigenvalues_array</span><span class="p">))</span> <span class="o">*</span> <span class="n">coefficient</span>
         <span class="n">std</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">eigenvalues_array</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-        <span class="n">se</span> <span class="o">=</span> <span class="n">std</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">eigenvalues</span><span class="p">))</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">coefficient</span><span class="p">)</span>
+        <span class="n">se</span> <span class="o">=</span> <span class="n">std</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">eigenvalues_array</span><span class="p">))</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">coefficient</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">mean</span><span class="p">,</span> <span class="n">se</span>
 </code></pre></div></td></tr></table></div>
@@ -14723,10 +14717,7 @@ all observables, subject to the total shot budget constraint.</p>
 <span class="normal">393</span>
 <span class="normal">394</span>
 <span class="normal">395</span>
-<span class="normal">396</span>
-<span class="normal">397</span>
-<span class="normal">398</span>
-<span class="normal">399</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@register_protocol</span>
+<span class="normal">396</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@register_protocol</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">DirectOptimizedProtocol</span><span class="p">(</span><span class="n">StaticProtocol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Direct measurement with optimal shot allocation (§4.1C).</span>
 
@@ -15057,18 +15048,15 @@ all observables, subject to the total shot budget constraint.</p>
         <span class="c1"># Get positions where the observable has non-identity operators</span>
         <span class="n">support</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pauli_string</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="s2">&quot;I&quot;</span><span class="p">]</span>
 
-        <span class="c1"># Compute eigenvalues for each bitstring</span>
-        <span class="n">eigenvalues</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">bs</span> <span class="ow">in</span> <span class="n">bitstrings</span><span class="p">:</span>
-            <span class="c1"># Count parity on support qubits</span>
-            <span class="n">parity</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">support</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span>
-            <span class="n">eigenvalues</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="n">parity</span><span class="p">)</span>
-
-        <span class="c1"># Compute mean and standard error</span>
-        <span class="n">eigenvalues_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">eigenvalues</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="c1"># Vectorized eigenvalue computation (numpy, no Python loop)</span>
+        <span class="n">bs_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span>
+            <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bitstrings</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bitstrings</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)[:,</span> <span class="n">support</span><span class="p">]</span>
+        <span class="n">parities</span> <span class="o">=</span> <span class="p">(</span><span class="n">bs_array</span> <span class="o">-</span> <span class="mi">48</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span>
+        <span class="n">eigenvalues_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">parities</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
         <span class="n">mean</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">eigenvalues_array</span><span class="p">))</span> <span class="o">*</span> <span class="n">coefficient</span>
         <span class="n">std</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">eigenvalues_array</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-        <span class="n">se</span> <span class="o">=</span> <span class="n">std</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">eigenvalues</span><span class="p">))</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">coefficient</span><span class="p">)</span>
+        <span class="n">se</span> <span class="o">=</span> <span class="n">std</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">eigenvalues_array</span><span class="p">))</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">coefficient</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">mean</span><span class="p">,</span> <span class="n">se</span>
 </code></pre></div></td></tr></table></div>

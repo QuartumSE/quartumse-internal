@@ -477,6 +477,7 @@ class StaticProtocol(Protocol):
 
         bitstrings: dict[str, list[str]] = {}
         backend = backend or AerSimulator()
+        circuit_cache: dict[str, QuantumCircuit] = {}
         hit_deadline = False
         per_setting_aer_times: list[float] = []
         total_aer_time = 0.0
@@ -487,18 +488,21 @@ class StaticProtocol(Protocol):
                 hit_deadline = True
                 break
 
-            measurement_circuit = self._build_measurement_circuit(
-                circuit=circuit,
-                measurement_basis=setting.measurement_basis,
-                target_qubits=setting.target_qubits,
-            )
+            basis_key = setting.measurement_basis
+            if basis_key not in circuit_cache:
+                measurement_circuit = self._build_measurement_circuit(
+                    circuit=circuit,
+                    measurement_basis=setting.measurement_basis,
+                    target_qubits=setting.target_qubits,
+                )
+                circuit_cache[basis_key] = self._transpile_circuit(
+                    measurement_circuit, backend
+                )
 
+            compiled = circuit_cache[basis_key]
             aer_start = time.time()
-            setting_bitstrings = self._execute_measurement_circuit(
-                circuit=measurement_circuit,
-                backend=backend,
-                n_shots=n_shots,
-                seed=seed,
+            setting_bitstrings = self._run_compiled_circuit(
+                compiled, backend, n_shots, seed
             )
             aer_elapsed = time.time() - aer_start
             per_setting_aer_times.append(aer_elapsed)
@@ -575,29 +579,41 @@ class StaticProtocol(Protocol):
                         basis[qubit] = measurement_basis[qubit]
         return "".join(basis).replace("I", "Z")
 
-    def _execute_measurement_circuit(
+    def _transpile_circuit(
         self,
         circuit: QuantumCircuit,
+        backend: Any,
+    ) -> QuantumCircuit:
+        """Transpile a measurement circuit for the given backend.
+
+        For backends with a `.sample()` method, returns the circuit unchanged.
+        """
+        if hasattr(backend, "sample"):
+            return circuit
+
+        from qiskit import transpile
+
+        if circuit.num_clbits == 0:
+            raise ValueError(
+                f"Circuit has no classical bits for measurement. "
+                f"name={circuit.name}, num_qubits={circuit.num_qubits}, "
+                f"num_clbits={circuit.num_clbits}"
+            )
+
+        return transpile(circuit, backend)
+
+    def _run_compiled_circuit(
+        self,
+        compiled: QuantumCircuit,
         backend: Any,
         n_shots: int,
         seed: int,
     ) -> list[str]:
-        """Execute a measurement circuit and return normalized bitstrings."""
+        """Execute an already-transpiled circuit and return normalized bitstrings."""
         if hasattr(backend, "sample"):
-            result = backend.sample(circuit, n_shots=n_shots, seed=seed)
+            result = backend.sample(compiled, n_shots=n_shots, seed=seed)
             bitstrings = result.bitstrings
         else:
-            from qiskit import transpile
-
-            # Verify circuit has measurements before running
-            if circuit.num_clbits == 0:
-                raise ValueError(
-                    f"Circuit has no classical bits for measurement. "
-                    f"name={circuit.name}, num_qubits={circuit.num_qubits}, "
-                    f"num_clbits={circuit.num_clbits}"
-                )
-
-            compiled = transpile(circuit, backend)
             job = backend.run(compiled, shots=n_shots, seed_simulator=seed)
             result = job.result()
 
@@ -606,8 +622,8 @@ class StaticProtocol(Protocol):
             except Exception as e:
                 raise RuntimeError(
                     f"No counts from circuit execution. "
-                    f"name={circuit.name}, num_qubits={circuit.num_qubits}, "
-                    f"num_clbits={circuit.num_clbits}, shots={n_shots}. "
+                    f"num_qubits={compiled.num_qubits}, "
+                    f"num_clbits={compiled.num_clbits}, shots={n_shots}. "
                     f"Original error: {e}"
                 ) from e
 
@@ -618,6 +634,21 @@ class StaticProtocol(Protocol):
                 bitstrings.extend([cleaned] * count)
 
         return [bs[::-1] for bs in bitstrings]
+
+    def _execute_measurement_circuit(
+        self,
+        circuit: QuantumCircuit,
+        backend: Any,
+        n_shots: int,
+        seed: int,
+    ) -> list[str]:
+        """Execute a measurement circuit and return normalized bitstrings.
+
+        Legacy method preserved for backward compatibility with subclasses.
+        Delegates to _transpile_circuit + _run_compiled_circuit.
+        """
+        compiled = self._transpile_circuit(circuit, backend)
+        return self._run_compiled_circuit(compiled, backend, n_shots, seed)
 
     def update(
         self,
